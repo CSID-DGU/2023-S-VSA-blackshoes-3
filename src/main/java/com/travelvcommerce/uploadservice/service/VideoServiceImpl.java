@@ -22,6 +22,8 @@ public class VideoServiceImpl implements VideoService{
     private ModelMapper modelMapper;
     @Autowired
     private VideoRepository videoRepository;
+    @Autowired
+    private AdRepository adRepository;
 
     @Override
     @Transactional
@@ -45,6 +47,22 @@ public class VideoServiceImpl implements VideoService{
         } catch (Exception e) {
             log.error("save video error", e);
             throw new RuntimeException("save video error");
+        }
+
+        Video savedVideo = video;
+
+        try {
+            requestUpload.getAdList().forEach(
+                    requestAd -> {
+                        Ad ad = modelMapper.map(requestAd, Ad.class);
+                        ad.setAdId(UUID.randomUUID().toString());
+                        ad.setVideo(savedVideo);
+                        adRepository.save(ad);
+                    }
+            );
+        } catch (Exception e) {
+            log.error("save ad error", e);
+            throw new RuntimeException("save ad error");
         }
     }
 }

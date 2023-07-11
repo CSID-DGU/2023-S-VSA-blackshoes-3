@@ -1,26 +1,38 @@
 package com.travelvcommerce.uploadservice.entity;
 
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.UUID;
 
+@Data
 @Entity
-@Table(name = "ads")
+@Table(name = "ads",
+        uniqueConstraints = @UniqueConstraint(name = "ad_unique",
+                columnNames = {"ad_id", "ad_url", "ad_content"}))
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ad_id;
+    @Column(name = "ad_id")
+    private String adId;
 
-    private String ad_url;
+    @Column(name = "ad_url", nullable = false)
+    private String adUrl;
 
-    private String ad_content;
+    @Column(name = "ad_content", nullable = false)
+    private String adContent;
 
-    private String start_time;
+    @Column(name = "start_time", nullable = false)
+    private String startTime;
 
-    private String  end_time;
+    @Column(name = "end_time", nullable = false)
+    private String endTime;
 
     @ManyToOne
-    @JoinColumn(name = "video_id", referencedColumnName = "video_id")
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "ad_fk"))
     private Video video;
 }
