@@ -3,6 +3,7 @@ package com.travelvcommerce.uploadservice.controller;
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.TagService;
+import com.travelvcommerce.uploadservice.service.VideoService;
 import com.travelvcommerce.uploadservice.vo.RequestUpload;
 import com.travelvcommerce.uploadservice.vo.ResponseBody;
 import com.travelvcommerce.uploadservice.vo.ResponseTag;
@@ -14,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping
@@ -29,6 +27,8 @@ public class UploadController {
     private TagService tagService;
     @Autowired
     private AwsS3Service awsS3Service;
+    @Autowired
+    private VideoService videoService;
 
     @GetMapping("/tags")
     public ResponseEntity<ResponseBody> getTags() {
@@ -82,7 +82,7 @@ public class UploadController {
                                                     @RequestPart(value = "video") MultipartFile video,
                                                     @RequestPart(value = "thumbnail") MultipartFile thumbnail,
                                                     @RequestPart(value = "requestUpload") RequestUpload requestUpload) {
-        String fileName = userId + "_" + requestUpload.getVideoName();
+        String fileName = userId + "_" + requestUpload.getVideoName() + "_" + UUID.randomUUID().toString();
 
         String videoUrl;
         String thumbnailUrl;
@@ -102,10 +102,14 @@ public class UploadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
 
-        ResponseBody responseBody = ResponseBody.builder()
-                .payload(Map.of("videoUrl", videoUrl, "thumbnailUrl", thumbnailUrl))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+        try {
+            videoService.saveVideo(userId, requestUpload, videoUrl, thumbnailUrl);
+        } catch (RuntimeException e) {
+            ResponseBody responseBody = ResponseBody.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 }

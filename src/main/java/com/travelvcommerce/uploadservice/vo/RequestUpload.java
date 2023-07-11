@@ -8,5 +8,9 @@ import java.util.List;
 public class RequestUpload {
     private String videoName;
 
+    private String sellerName;
+
     private List<String> tagIdList;
+
+    private List<RequestAd> adList;
 }
