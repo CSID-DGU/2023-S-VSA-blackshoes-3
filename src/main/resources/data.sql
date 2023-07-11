@@ -105,6 +105,4 @@ VALUES (UUID(), 'region', '국내'),
        (UUID(), 'theme', '공연'),
 
        (UUID(), 'theme', '휴양'),
-       (UUID(), 'theme', '로맨틱'),
-
-       (UUID(), 'region', '');
+       (UUID(), 'theme', '로맨틱');
