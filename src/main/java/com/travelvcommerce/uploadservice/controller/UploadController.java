@@ -2,15 +2,17 @@ package com.travelvcommerce.uploadservice.controller;
 
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.service.TagService;
+import com.travelvcommerce.uploadservice.vo.ResponseBody;
 import com.travelvcommerce.uploadservice.vo.ResponseTag;
+import com.travelvcommerce.uploadservice.vo.TagTypes;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -23,7 +25,7 @@ public class UploadController {
     private TagService tagService;
 
     @GetMapping("/tags")
-    public ResponseEntity<List<ResponseTag>> getTags() {
+    public ResponseEntity<ResponseBody> getTags() {
 
         List<TagDto> tagDtoList = tagService.getAllTags();
 
@@ -34,7 +36,39 @@ public class UploadController {
             responseTagList.add(responseTag);
         });
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseTagList);
+        ResponseBody responseBody = ResponseBody.builder()
+                .payload(Collections.singletonMap("tags", responseTagList))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
+    @GetMapping("/tags/{type}")
+    public ResponseEntity<ResponseBody> getTagsByType(@PathVariable(name = "type") String type) {
+
+        if (!TagTypes.contains(type)) {
+
+            ResponseBody responseBody = ResponseBody.builder()
+                    .error("Invalid type")
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+        }
+
+        List<TagDto> tagDtoList = tagService.getTagsByType(type);
+
+        List<ResponseTag> responseTagList = new ArrayList<>();
+
+        tagDtoList.forEach(tagDto -> {
+            ResponseTag responseTag = modelMapper.map(tagDto, ResponseTag.class);
+            responseTagList.add(responseTag);
+        });
+
+        ResponseBody responseBody = ResponseBody.builder()
+                .payload(Collections.singletonMap("tags", responseTagList))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
 //    @PostMapping("/videos/{userId}")

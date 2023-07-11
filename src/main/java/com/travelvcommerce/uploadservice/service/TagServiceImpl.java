@@ -34,4 +34,18 @@ public class TagServiceImpl implements TagService{
 
         return tagDtoList;
     }
+
+    @Override
+    public List<TagDto> getTagsByType(String type) {
+        List<Tag> tagList = tagRepository.findByType(type);
+
+        List<TagDto> tagDtoList = new ArrayList<>();
+
+        tagList.forEach(tag -> {
+            TagDto tagDto = modelMapper.map(tag, TagDto.class);
+            tagDtoList.add(tagDto);
+        });
+
+        return tagDtoList;
+    }
 }
