@@ -3,9 +3,13 @@ package com.travelvcommerce.uploadservice.service;
 import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.entity.Ad;
+import com.travelvcommerce.uploadservice.entity.Tag;
 import com.travelvcommerce.uploadservice.entity.Video;
+import com.travelvcommerce.uploadservice.entity.VideoTag;
 import com.travelvcommerce.uploadservice.repository.AdRepository;
+import com.travelvcommerce.uploadservice.repository.TagRepository;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
+import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
 import com.travelvcommerce.uploadservice.vo.RequestUpload;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,6 +28,10 @@ public class VideoServiceImpl implements VideoService{
     private VideoRepository videoRepository;
     @Autowired
     private AdRepository adRepository;
+    @Autowired
+    private TagRepository tagRepository;
+    @Autowired
+    private VideoTagRepository videoTagRepository;
 
     @Override
     @Transactional
@@ -63,6 +71,23 @@ public class VideoServiceImpl implements VideoService{
         } catch (Exception e) {
             log.error("save ad error", e);
             throw new RuntimeException("save ad error");
+        }
+
+        try {
+            requestUpload.getTagIdList().forEach(
+                    tagId -> {
+                        Tag tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
+
+                        VideoTag videoTag = new VideoTag();
+                        videoTag.setVideo(savedVideo);
+                        videoTag.setTag(tag);
+
+                        videoTagRepository.save(videoTag);
+                    }
+            );
+        } catch (Exception e) {
+            log.error("save video tag error", e);
+            throw new RuntimeException("save video tag error");
         }
     }
 }
