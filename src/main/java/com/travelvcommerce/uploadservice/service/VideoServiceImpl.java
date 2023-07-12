@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,14 +37,16 @@ public class VideoServiceImpl implements VideoService {
     private TagRepository tagRepository;
     @Autowired
     private VideoTagRepository videoTagRepository;
+    @Autowired
+    private FFmpegWrapper ffmpegWrapper;
 
     @Override
 //    @Async
-    public void uploadVideo(String fileName, MultipartFile videoFile) {
+    public String uploadVideo(String fileName, MultipartFile videoFile) {
         try {
             String originalFileName = videoFile.getOriginalFilename();
             String uploadFileName = fileName + originalFileName.substring(originalFileName.lastIndexOf("."));
-            Path uploadPath = Path.of("src/main/resources/static/videos/tmp");
+            Path uploadPath = Path.of("src/main/resources/static/videos/original");
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -55,6 +58,8 @@ public class VideoServiceImpl implements VideoService {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             inputStream.close();
 
+            return filePath.toString();
+
         } catch (Exception e) {
             log.error("upload video error", e);
             throw new RuntimeException("upload video error");
@@ -62,10 +67,36 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    @Async
-    public void encodeVideo(String videoPath) {
+//    @Async
+    public String encodeVideo(String filePath) {
+        String inputPath = filePath;
 
+        String fileName = new File(filePath).getName();
+        fileName = fileName.substring(0, fileName.lastIndexOf("."));
 
+        Path encodingPath = Path.of("src\\main\\resources\\static\\videos\\encoded\\" + fileName);
+
+        try {
+            if (!Files.exists(encodingPath)) {
+                Files.createDirectories(encodingPath);
+            }
+
+            String outputPath = encodingPath + "\\" + fileName + ".m3u8";
+            ffmpegWrapper.encodeToHls(inputPath, outputPath);
+
+            File file = new File(inputPath);
+            file.delete();
+
+            return encodingPath.toString();
+
+        } catch (Exception e) {
+            log.error("encode video error", e);
+            File originalfile = new File(inputPath);
+            originalfile.delete();
+            File encodingPathFile = new File(encodingPath.toString());
+            encodingPathFile.delete();
+            throw new RuntimeException("encode video error");
+        }
     }
 
     @Override

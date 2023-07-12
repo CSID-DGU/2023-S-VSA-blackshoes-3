@@ -84,11 +84,22 @@ public class UploadController {
                                                        VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
         String fileName = userId + "_" + videoUploadRequestDto.getVideoName() + "_" + UUID.randomUUID().toString();
 
+        String uploadedFilePath;
+        String encodedFilePath;
         String videoUrl;
         String thumbnailUrl;
 
         try {
-            videoService.uploadVideo(fileName, video);
+            uploadedFilePath = videoService.uploadVideo(fileName, video);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        try {
+            videoService.encodeVideo(uploadedFilePath);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
@@ -119,6 +130,7 @@ public class UploadController {
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 }
