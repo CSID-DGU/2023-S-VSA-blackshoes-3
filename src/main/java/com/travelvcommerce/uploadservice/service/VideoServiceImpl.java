@@ -1,6 +1,5 @@
 package com.travelvcommerce.uploadservice.service;
 
-import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.entity.Ad;
 import com.travelvcommerce.uploadservice.entity.Tag;
@@ -10,7 +9,6 @@ import com.travelvcommerce.uploadservice.repository.AdRepository;
 import com.travelvcommerce.uploadservice.repository.TagRepository;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
 import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
-import com.travelvcommerce.uploadservice.vo.RequestUpload;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +33,17 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     @Transactional
-    public void saveVideo(String sellerId, RequestUpload requestUpload, String videoUrl, String thumbnailUrl) {
+    public void saveVideo(String sellerId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, String videoUrl, String thumbnailUrl) {
         Video video = new Video();
 
         try {
             VideoDto videoDto = VideoDto.builder().
                     videoId(UUID.randomUUID().toString()).
-                    videoName(requestUpload.getVideoName()).
+                    videoName(videoUploadRequestDto.getVideoName()).
                     videoUrl(videoUrl).
                     thumbnailUrl(thumbnailUrl).
                     sellerId(sellerId).
-                    sellerName(requestUpload.getSellerName()).
+                    sellerName(videoUploadRequestDto.getSellerName()).
                     build();
 
             video = modelMapper.map(videoDto, Video.class);
@@ -60,7 +58,7 @@ public class VideoServiceImpl implements VideoService{
         Video savedVideo = video;
 
         try {
-            requestUpload.getAdList().forEach(
+            videoUploadRequestDto.getAdList().forEach(
                     requestAd -> {
                         Ad ad = modelMapper.map(requestAd, Ad.class);
                         ad.setAdId(UUID.randomUUID().toString());
@@ -74,7 +72,7 @@ public class VideoServiceImpl implements VideoService{
         }
 
         try {
-            requestUpload.getTagIdList().forEach(
+            videoUploadRequestDto.getTagIdList().forEach(
                     tagId -> {
                         Tag tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
 

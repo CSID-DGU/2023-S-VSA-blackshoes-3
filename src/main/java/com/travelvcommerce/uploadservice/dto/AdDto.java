@@ -15,4 +15,15 @@ public class AdDto {
     private String startTime;
 
     private String endTime;
+
+    @Data
+    public static class AdRequestDto {
+        private String adUrl;
+
+        private String adContent;
+
+        private String startTime;
+
+        private String endTime;
+    }
 }
