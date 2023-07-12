@@ -88,6 +88,15 @@ public class UploadController {
         String thumbnailUrl;
 
         try {
+            videoService.uploadVideo(fileName, video);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        try {
             videoUrl = awsS3Service.uploadFile("videos", fileName, video);
             thumbnailUrl = awsS3Service.uploadFile("thumbnail", fileName, thumbnail);
         } catch (IllegalArgumentException e) {

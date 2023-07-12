@@ -12,14 +12,20 @@ import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
 @Slf4j
-public class VideoServiceImpl implements VideoService{
+public class VideoServiceImpl implements VideoService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -30,6 +36,37 @@ public class VideoServiceImpl implements VideoService{
     private TagRepository tagRepository;
     @Autowired
     private VideoTagRepository videoTagRepository;
+
+    @Override
+//    @Async
+    public void uploadVideo(String fileName, MultipartFile videoFile) {
+        try {
+            String originalFileName = videoFile.getOriginalFilename();
+            String uploadFileName = fileName + originalFileName.substring(originalFileName.lastIndexOf("."));
+            Path uploadPath = Path.of("src/main/resources/static/videos/tmp");
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(uploadFileName);
+
+            InputStream inputStream = videoFile.getInputStream();
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            inputStream.close();
+
+        } catch (Exception e) {
+            log.error("upload video error", e);
+            throw new RuntimeException("upload video error");
+        }
+    }
+
+    @Override
+    @Async
+    public void encodeVideo(String videoPath) {
+
+
+    }
 
     @Override
     @Transactional

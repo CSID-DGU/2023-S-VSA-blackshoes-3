@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+src/main/resources/static/videos
 application.yml
 
 ### NetBeans ###
@@ -36,3 +37,4 @@ application.yml
 
 ### VS Code ###
 .vscode/
+!/.gitignore
