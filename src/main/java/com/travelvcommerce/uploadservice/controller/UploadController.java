@@ -99,7 +99,7 @@ public class UploadController {
         }
 
         try {
-            videoService.encodeVideo(uploadedFilePath);
+            encodedFilePath = videoService.encodeVideo(uploadedFilePath);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
@@ -108,8 +108,8 @@ public class UploadController {
         }
 
         try {
-            videoUrl = awsS3Service.uploadFile("videos", fileName, video);
-            thumbnailUrl = awsS3Service.uploadFile("thumbnail", fileName, thumbnail);
+            videoUrl = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
+            thumbnailUrl = awsS3Service.uploadThumbnail(fileName, thumbnail);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())

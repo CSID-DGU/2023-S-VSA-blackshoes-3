@@ -41,7 +41,6 @@ public class VideoServiceImpl implements VideoService {
     private FFmpegWrapper ffmpegWrapper;
 
     @Override
-//    @Async
     public String uploadVideo(String fileName, MultipartFile videoFile) {
         try {
             String originalFileName = videoFile.getOriginalFilename();
@@ -67,7 +66,6 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-//    @Async
     public String encodeVideo(String filePath) {
         String inputPath = filePath;
 
@@ -93,10 +91,18 @@ public class VideoServiceImpl implements VideoService {
             log.error("encode video error", e);
             File originalfile = new File(inputPath);
             originalfile.delete();
-            File encodingPathFile = new File(encodingPath.toString());
-            encodingPathFile.delete();
+            deleteFolder(encodingPath.toString());
             throw new RuntimeException("encode video error");
         }
+    }
+
+    private static void deleteFolder(String filePath) {
+        File encodingPathFile = new File(filePath.toString());
+        File[] encodingPathFileList = encodingPathFile.listFiles();
+        for (File file : encodingPathFileList) {
+            file.delete();
+        }
+        encodingPathFile.delete();
     }
 
     @Override
