@@ -2,7 +2,8 @@ package com.travelvcommerce.uploadservice.controller;
 
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
-import com.travelvcommerce.uploadservice.service.VideoService;
+import com.travelvcommerce.uploadservice.service.VideoDeleteService;
+import com.travelvcommerce.uploadservice.service.VideoUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class DeleteController {
     @Autowired
     AwsS3Service awsS3Service;
     @Autowired
-    VideoService videoService;
+    VideoDeleteService videoDeleteService;
 
     @DeleteMapping("/videos/{userId}/{videoId}")
     public ResponseEntity<ResponseDto> deleteVideo(@PathVariable(name = "userId") String userId,
@@ -26,7 +27,7 @@ public class DeleteController {
         String s3key;
 
         try {
-            s3key = videoService.deleteVideo(userId, videoId);
+            s3key = videoDeleteService.deleteVideo(userId, videoId);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())

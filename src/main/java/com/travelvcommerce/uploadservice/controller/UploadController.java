@@ -2,7 +2,7 @@ package com.travelvcommerce.uploadservice.controller;
 
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
-import com.travelvcommerce.uploadservice.service.VideoService;
+import com.travelvcommerce.uploadservice.service.VideoUploadService;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
@@ -21,7 +21,7 @@ public class UploadController {
     @Autowired
     private AwsS3Service awsS3Service;
     @Autowired
-    private VideoService videoService;
+    private VideoUploadService videoUploadService;
 
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
@@ -38,7 +38,7 @@ public class UploadController {
         S3Thumbnail thumbnailUrls;
 
         try {
-            uploadedFilePath = videoService.uploadVideo(fileName, video);
+            uploadedFilePath = videoUploadService.uploadVideo(fileName, video);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
@@ -47,7 +47,7 @@ public class UploadController {
         }
 
         try {
-            encodedFilePath = videoService.encodeVideo(uploadedFilePath);
+            encodedFilePath = videoUploadService.encodeVideo(uploadedFilePath);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
@@ -71,7 +71,7 @@ public class UploadController {
         }
 
         try {
-            videoService.saveVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
+            videoUploadService.saveVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
