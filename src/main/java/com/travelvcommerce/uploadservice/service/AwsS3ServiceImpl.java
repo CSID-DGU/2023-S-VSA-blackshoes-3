@@ -58,7 +58,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
         } catch (Exception e) {
             log.error(e.getMessage());
             deleteFolder(filePath);
-            throw new RuntimeException("Encoded video upload error");
+            throw new RuntimeException("AWS encoded video upload error");
         }
     }
 
@@ -84,6 +84,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             String fileExtension = multipartFile.getOriginalFilename().
                     substring(multipartFile.getOriginalFilename().lastIndexOf("."));
             String key = "videos/" + fileName + "/" + fileName + fileExtension;
+
             amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -99,7 +100,31 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new RuntimeException("thumbnail upload error");
+            throw new RuntimeException("AWS thumbnail upload error");
+        }
+    }
+
+    @Override
+    public void updateThumbnail(String s3Key, MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("file must not be empty");
+        }
+
+        try {
+            if (amazonS3Client.doesObjectExist(BUCKET, s3Key)) {
+                amazonS3Client.deleteObject(BUCKET, s3Key);
+            }
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(multipartFile.getContentType());
+            objectMetadata.setContentLength(multipartFile.getSize());
+
+            amazonS3Client.putObject(new PutObjectRequest(BUCKET, s3Key, multipartFile.getInputStream(), objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("AWS thumbnail update error");
         }
     }
 
