@@ -1,11 +1,15 @@
 package com.travelvcommerce.userservice.security;
 
+import com.travelvcommerce.userservice.entity.RefreshToken;
+import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -17,20 +21,41 @@ public class JwtTokenProvider {
     @Value("${app.jwt.token-expiry}")
     private Long jwtTokenExpiry;
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    @Value("${app.jwt.refresh-token-expiry}")
+    private Long jwtRefreshTokenExpiry;
 
-    public String createToken(String username) {
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    public Map<String, String> createTokens(String username) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtTokenExpiry);
+        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
+        Date refreshTokenExpiryDate = new Date(now.getTime() + jwtRefreshTokenExpiry);
+
+        String token = Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(tokenExpiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+
         String refreshToken = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .setExpiration(refreshTokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
-        redisTemplate.opsForValue().set(refreshToken, username, jwtTokenExpiry, TimeUnit.MILLISECONDS);
-        return refreshToken;
+
+        RefreshToken tokenEntity = new RefreshToken();
+        tokenEntity.setId(refreshToken);
+        tokenEntity.setUsername(username);
+
+        refreshTokenRepository.save(tokenEntity);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("token", token);
+        tokens.put("refreshToken", refreshToken);
+        return tokens;
     }
 
     public String getUsernameFromToken(String token) {
@@ -44,7 +69,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            if(redisTemplate.opsForValue().get(token) == null) {
+            if(refreshTokenRepository.findById(token).isEmpty()) {
                 throw new ExpiredJwtException(null, null, "Refresh token has expired");
             }
             return true;
