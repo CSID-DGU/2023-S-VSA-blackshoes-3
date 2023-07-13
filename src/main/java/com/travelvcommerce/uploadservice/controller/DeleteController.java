@@ -3,7 +3,6 @@ package com.travelvcommerce.uploadservice.controller;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.VideoDeleteService;
-import com.travelvcommerce.uploadservice.service.VideoUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,18 +28,14 @@ public class DeleteController {
         try {
             s3key = videoDeleteService.deleteVideo(userId, videoId);
         } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         try {
             awsS3Service.deleteVideo(s3key);
         } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 

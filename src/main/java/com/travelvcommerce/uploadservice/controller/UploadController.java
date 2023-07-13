@@ -40,44 +40,31 @@ public class UploadController {
         try {
             uploadedFilePath = videoUploadService.uploadVideo(fileName, video);
         } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         try {
             encodedFilePath = videoUploadService.encodeVideo(uploadedFilePath);
         } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         try {
             videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
             thumbnailUrls = awsS3Service.uploadThumbnail(fileName, thumbnail);
-        } catch (IllegalArgumentException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
         try {
             videoUploadService.saveVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error(e.getMessage())
-                    .build();
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);

@@ -49,9 +49,7 @@ public class TagController {
 
         if (!TagTypes.contains(type)) {
 
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error("Invalid type")
-                    .build();
+            ResponseDto responseDto = ResponseDto.buildResponseDto("invalid tag type");
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
@@ -65,9 +63,7 @@ public class TagController {
             tagResponseDtoList.add(tagResponseDto);
         });
 
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(Collections.singletonMap("tags", tagResponseDtoList))
-                .build();
+        ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("tags", tagResponseDtoList));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

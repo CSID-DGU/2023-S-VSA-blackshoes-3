@@ -16,19 +16,10 @@ public class VideoDeleteServiceImpl implements VideoDeleteService {
     public String deleteVideo(String userId, String videoId) {
         Video video;
         try {
-            video = (Video) videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
+            video = videoRepository.findBySellerIdAndVideoId(userId, videoId).orElseThrow(() -> new RuntimeException("video not found"));
         } catch (Exception e) {
             log.error("video not found", e);
             throw new RuntimeException("video not found");
-        }
-
-        try {
-            if (!video.getSellerId().equals(userId)) {
-                throw new RuntimeException("sellerId not match");
-            }
-        } catch (Exception e) {
-            log.error("sellerId not match", e);
-            throw new RuntimeException("sellerId not match");
         }
 
         String s3Key = video.getVideoUrl().getVideoS3Url().substring(video.getVideoUrl().getVideoS3Url().indexOf("videos"));
