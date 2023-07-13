@@ -18,64 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/upload-service")
 public class UploadController {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private TagService tagService;
     @Autowired
     private AwsS3Service awsS3Service;
     @Autowired
     private VideoService videoService;
-
-    @GetMapping("/tags")
-    public ResponseEntity<ResponseDto> getTags() {
-
-        List<TagDto> tagDtoList = tagService.getAllTags();
-
-        List<TagDto.TagResponseDto> tagResponseDtoList = new ArrayList<>();
-
-        tagDtoList.forEach(tagDto -> {
-            TagDto.TagResponseDto tagResponseDto = modelMapper.map(tagDto, TagDto.TagResponseDto.class);
-            tagResponseDtoList.add(tagResponseDto);
-        });
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(Collections.singletonMap("tags", tagResponseDtoList))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
-    @GetMapping("/tags/{type}")
-    public ResponseEntity<ResponseDto> getTagsByType(@PathVariable(name = "type") String type) {
-
-        if (!TagTypes.contains(type)) {
-
-            ResponseDto responseDto = ResponseDto.builder()
-                    .error("Invalid type")
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        List<TagDto> tagDtoList = tagService.getTagsByType(type);
-
-        List<TagDto.TagResponseDto> tagResponseDtoList = new ArrayList<>();
-
-        tagDtoList.forEach(tagDto -> {
-            TagDto.TagResponseDto tagResponseDto = modelMapper.map(tagDto, TagDto.TagResponseDto.class);
-            tagResponseDtoList.add(tagResponseDto);
-        });
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(Collections.singletonMap("tags", tagResponseDtoList))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
 
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
