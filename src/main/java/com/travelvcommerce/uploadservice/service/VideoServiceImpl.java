@@ -164,8 +164,13 @@ public class VideoServiceImpl implements VideoService {
         try {
             videoUploadRequestDto.getTagIdList().forEach(
                     tagId -> {
-                        Tag tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
-
+                        Tag tag;
+                        try {
+                            tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
+                        } catch (Exception e) {
+                            log.error("tag not found", e);
+                            throw new RuntimeException("tag not found");
+                        }
                         VideoTag videoTag = new VideoTag();
                         videoTag.setVideo(savedVideo);
                         videoTag.setTag(tag);
@@ -177,5 +182,36 @@ public class VideoServiceImpl implements VideoService {
             log.error("save video tag error", e);
             throw new RuntimeException("save video tag error");
         }
+    }
+
+    @Override
+    public String deleteVideo(String userId, String videoId) {
+        Video video;
+        try {
+            video = (Video) videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
+        } catch (Exception e) {
+            log.error("video not found", e);
+            throw new RuntimeException("video not found");
+        }
+
+        try {
+            if (!video.getSellerId().equals(userId)) {
+                throw new RuntimeException("sellerId not match");
+            }
+        } catch (Exception e) {
+            log.error("sellerId not match", e);
+            throw new RuntimeException("sellerId not match");
+        }
+
+        String s3Key = video.getVideoUrl().getVideoS3Url().substring(video.getVideoUrl().getVideoS3Url().indexOf("videos"));
+
+        try {
+            videoRepository.delete(video);
+        } catch (Exception e) {
+            log.error("delete video error", e);
+            throw new RuntimeException("delete video error");
+        }
+
+        return s3Key;
     }
 }

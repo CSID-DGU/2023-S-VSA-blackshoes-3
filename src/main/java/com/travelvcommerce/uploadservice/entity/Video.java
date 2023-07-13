@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name = "videos",
         uniqueConstraints = @UniqueConstraint(name = "video_unique",
                 columnNames = {"video_id", "video_name"}))
-public class Video {
+public class Video implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

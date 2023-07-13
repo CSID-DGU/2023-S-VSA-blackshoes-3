@@ -13,4 +13,5 @@ public interface VideoService {
     public void saveVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls);
+    public String deleteVideo(String userId, String videoId);
 }
