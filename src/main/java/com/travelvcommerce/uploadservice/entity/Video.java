@@ -2,13 +2,11 @@ package com.travelvcommerce.uploadservice.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -25,6 +23,9 @@ public class Video {
 
     @Column(name = "video_name", nullable = false, length = 100)
     private String videoName;
+
+    @Column(name = "s3_url", nullable = false)
+    private String s3Url;
 
     @Column(name = "video_url", nullable = false)
     private String videoUrl;

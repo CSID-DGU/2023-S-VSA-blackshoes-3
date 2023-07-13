@@ -6,6 +6,7 @@ import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.TagService;
 import com.travelvcommerce.uploadservice.service.VideoService;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
+import com.travelvcommerce.uploadservice.vo.S3Video;
 import com.travelvcommerce.uploadservice.vo.TagTypes;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +87,7 @@ public class UploadController {
 
         String uploadedFilePath;
         String encodedFilePath;
-        String videoUrl;
+        S3Video videoUrls;
         String thumbnailUrl;
 
         try {
@@ -108,7 +109,7 @@ public class UploadController {
         }
 
         try {
-            videoUrl = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
+            videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
             thumbnailUrl = awsS3Service.uploadThumbnail(fileName, thumbnail);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder()
@@ -123,7 +124,7 @@ public class UploadController {
         }
 
         try {
-            videoService.saveVideo(userId, videoUploadRequestDto, videoUrl, thumbnailUrl);
+            videoService.saveVideo(userId, videoUploadRequestDto, videoUrls, thumbnailUrl);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())

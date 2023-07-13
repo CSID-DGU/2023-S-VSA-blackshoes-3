@@ -9,10 +9,10 @@ import com.travelvcommerce.uploadservice.repository.AdRepository;
 import com.travelvcommerce.uploadservice.repository.TagRepository;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
 import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
+import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -107,14 +107,15 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     @Transactional
-    public void saveVideo(String sellerId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, String videoUrl, String thumbnailUrl) {
+    public void saveVideo(String sellerId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, S3Video videoUrls, String thumbnailUrl) {
         Video video = new Video();
 
         try {
             VideoDto videoDto = VideoDto.builder().
                     videoId(UUID.randomUUID().toString()).
                     videoName(videoUploadRequestDto.getVideoName()).
-                    videoUrl(videoUrl).
+                    s3Url(videoUrls.getS3Url()).
+                    videoUrl(videoUrls.getCloudFrontUrl()).
                     thumbnailUrl(thumbnailUrl).
                     sellerId(sellerId).
                     sellerName(videoUploadRequestDto.getSellerName()).
