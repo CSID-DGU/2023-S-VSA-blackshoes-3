@@ -13,10 +13,6 @@ public class VideoUrl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "video_url_fk"))
-    private Video video;
-
     @Column(name = "video_s3_url", nullable = false)
     private String videoS3Url;
 

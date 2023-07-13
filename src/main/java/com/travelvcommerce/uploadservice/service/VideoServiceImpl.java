@@ -138,9 +138,8 @@ public class VideoServiceImpl implements VideoService {
                     build();
 
             VideoUrl videoUrl = modelMapper.map(videoUrlDto, VideoUrl.class);
-            videoUrl.setVideo(savedVideo);
-
             videoUrlRepository.save(videoUrl);
+            savedVideo.setVideoUrl(videoUrl);
 
         } catch (Exception e) {
             log.error("save video url error", e);

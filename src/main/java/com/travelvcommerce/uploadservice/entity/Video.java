@@ -2,6 +2,8 @@ package com.travelvcommerce.uploadservice.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -19,7 +21,7 @@ public class Video implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "video_id", nullable = false)
+    @Column(name = "video_id")
     private String videoId;
 
     @Column(name = "video_name", nullable = false, length = 100)
@@ -45,6 +47,7 @@ public class Video implements Serializable {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<Ad> ads;
 
-    @OneToOne(mappedBy = "video", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "video_url_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "video_fk"))
     private VideoUrl videoUrl;
 }
