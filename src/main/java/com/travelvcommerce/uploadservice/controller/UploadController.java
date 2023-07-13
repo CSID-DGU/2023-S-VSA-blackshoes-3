@@ -1,0 +1,86 @@
+package com.travelvcommerce.uploadservice.controller;
+
+import com.travelvcommerce.uploadservice.dto.TagDto;
+import com.travelvcommerce.uploadservice.dto.VideoDto;
+import com.travelvcommerce.uploadservice.service.AwsS3Service;
+import com.travelvcommerce.uploadservice.service.TagService;
+import com.travelvcommerce.uploadservice.service.VideoService;
+import com.travelvcommerce.uploadservice.dto.ResponseDto;
+import com.travelvcommerce.uploadservice.vo.S3Video;
+import com.travelvcommerce.uploadservice.vo.TagTypes;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
+
+@RestController
+@RequestMapping("/upload-service")
+public class UploadController {
+
+    @Autowired
+    private AwsS3Service awsS3Service;
+    @Autowired
+    private VideoService videoService;
+
+    @PostMapping("/videos/{userId}")
+    public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
+                                                   @RequestPart(value = "video") MultipartFile video,
+                                                   @RequestPart(value = "thumbnail") MultipartFile thumbnail,
+                                                   @RequestPart(value = "requestUpload")
+                                                       VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
+        String fileName = userId + "_" + videoUploadRequestDto.getVideoName() + "_" + UUID.randomUUID().toString();
+
+        String uploadedFilePath;
+        String encodedFilePath;
+        S3Video videoUrls;
+        String thumbnailUrl;
+
+        try {
+            uploadedFilePath = videoService.uploadVideo(fileName, video);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        try {
+            encodedFilePath = videoService.encodeVideo(uploadedFilePath);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        try {
+            videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
+            thumbnailUrl = awsS3Service.uploadThumbnail(fileName, thumbnail);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        try {
+            videoService.saveVideo(userId, videoUploadRequestDto, videoUrls, thumbnailUrl);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
+}
