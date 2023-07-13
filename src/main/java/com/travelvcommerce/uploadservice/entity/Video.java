@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "videos",
         uniqueConstraints = @UniqueConstraint(name = "video_unique",
-                columnNames = {"video_id", "video_name", "video_url", "thumbnail_url"}))
+                columnNames = {"video_id", "video_name"}))
 public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +23,6 @@ public class Video {
 
     @Column(name = "video_name", nullable = false, length = 100)
     private String videoName;
-
-    @Column(name = "s3_url", nullable = false)
-    private String s3Url;
-
-    @Column(name = "video_url", nullable = false)
-    private String videoUrl;
-
-    @Column(name = "thumbnail_url", nullable = false)
-    private String thumbnailUrl;
 
     @Column(name = "seller_id", nullable = false)
     private String sellerId;
@@ -53,4 +44,6 @@ public class Video {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<Ad> ads;
 
+    @OneToOne(mappedBy = "video", cascade = CascadeType.ALL)
+    private VideoUrl videoUrl;
 }

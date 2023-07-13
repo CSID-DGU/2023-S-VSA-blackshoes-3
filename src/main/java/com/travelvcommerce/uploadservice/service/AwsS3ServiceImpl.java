@@ -2,8 +2,10 @@ package com.travelvcommerce.uploadservice.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +72,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public String uploadThumbnail(String fileName, MultipartFile multipartFile) {
+    public S3Thumbnail uploadThumbnail(String fileName, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
@@ -79,17 +81,44 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             objectMetadata.setContentType(multipartFile.getContentType());
             objectMetadata.setContentLength(multipartFile.getSize());
 
-            String fileExtension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf("."));
+            String fileExtension = multipartFile.getOriginalFilename().
+                    substring(multipartFile.getOriginalFilename().lastIndexOf("."));
             String key = "videos/" + fileName + "/" + fileName + fileExtension;
-            amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
+            amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
 
+            String s3url = amazonS3Client.getUrl(BUCKET, key).toString();
             String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + key;
 
-            return cloudFrontUrl;
+            S3Thumbnail s3Thumbnail = new S3Thumbnail();
+
+            s3Thumbnail.setS3Url(s3url);
+            s3Thumbnail.setCloudFrontUrl(cloudFrontUrl);
+
+            return s3Thumbnail;
 
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException("thumbnail upload error");
+        }
+    }
+
+    @Override
+    public void deleteVideo(String s3Key) {
+        try {
+            log.info("delete video : " + s3Key);
+
+            amazonS3Client.listObjects(BUCKET, s3Key).getObjectSummaries()
+                    .forEach(objectSummary -> {
+                        String key = objectSummary.getKey();
+                        amazonS3Client.deleteObject(new DeleteObjectRequest(BUCKET, key));
+                    });
+
+            amazonS3Client.deleteObject(BUCKET, s3Key);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("video delete error");
         }
     }
 }

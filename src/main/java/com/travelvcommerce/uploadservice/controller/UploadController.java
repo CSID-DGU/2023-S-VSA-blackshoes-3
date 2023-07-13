@@ -1,14 +1,11 @@
 package com.travelvcommerce.uploadservice.controller;
 
-import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
-import com.travelvcommerce.uploadservice.service.TagService;
 import com.travelvcommerce.uploadservice.service.VideoService;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
+import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
-import com.travelvcommerce.uploadservice.vo.TagTypes;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +29,13 @@ public class UploadController {
                                                    @RequestPart(value = "thumbnail") MultipartFile thumbnail,
                                                    @RequestPart(value = "requestUpload")
                                                        VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
-        String fileName = userId + "_" + videoUploadRequestDto.getVideoName() + "_" + UUID.randomUUID().toString();
+        String videoId = UUID.randomUUID().toString();
+        String fileName = userId + "_" + videoUploadRequestDto.getVideoName() + "_" + videoId;
 
         String uploadedFilePath;
         String encodedFilePath;
         S3Video videoUrls;
-        String thumbnailUrl;
+        S3Thumbnail thumbnailUrls;
 
         try {
             uploadedFilePath = videoService.uploadVideo(fileName, video);
@@ -59,7 +57,7 @@ public class UploadController {
 
         try {
             videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
-            thumbnailUrl = awsS3Service.uploadThumbnail(fileName, thumbnail);
+            thumbnailUrls = awsS3Service.uploadThumbnail(fileName, thumbnail);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
@@ -73,11 +71,12 @@ public class UploadController {
         }
 
         try {
-            videoService.saveVideo(userId, videoUploadRequestDto, videoUrls, thumbnailUrl);
+            videoService.saveVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder()
                     .error(e.getMessage())
                     .build();
+            awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
