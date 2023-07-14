@@ -63,7 +63,7 @@ public class ModifyController {
         List<String> tagIdList = tagRequestDto.getTagIds();
 
         try {
-            videoModifyService.updateTag(userId, videoId, tagIdList);
+            videoModifyService.updateTags(userId, videoId, tagIdList);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -74,6 +74,15 @@ public class ModifyController {
 
     @PutMapping("/videos/{userId}/{videoId}/ads")
     public ResponseEntity<ResponseDto> modifyAds(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId, @RequestBody AdDto.AdRequestsDto adRequestsDto) {
-        return null;
+        List<AdDto.AdRequestDto> adRequestDtoList = adRequestsDto.getAdRequests();
+
+        try {
+            videoModifyService.updateAds(userId, videoId, adRequestDtoList);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
