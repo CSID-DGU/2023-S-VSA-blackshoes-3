@@ -1,14 +1,10 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.travelvcommerce.uploadservice.dto.VideoDto;
-import com.travelvcommerce.uploadservice.entity.Ad;
-import com.travelvcommerce.uploadservice.entity.Tag;
-import com.travelvcommerce.uploadservice.entity.Video;
-import com.travelvcommerce.uploadservice.entity.VideoTag;
-import com.travelvcommerce.uploadservice.repository.AdRepository;
-import com.travelvcommerce.uploadservice.repository.TagRepository;
-import com.travelvcommerce.uploadservice.repository.VideoRepository;
-import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
+import com.travelvcommerce.uploadservice.dto.VideoUrlDto;
+import com.travelvcommerce.uploadservice.entity.*;
+import com.travelvcommerce.uploadservice.repository.*;
+import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,11 +22,13 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class VideoServiceImpl implements VideoService {
+public class VideoUploadServiceImpl implements VideoUploadService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
     private VideoRepository videoRepository;
+    @Autowired
+    private VideoUrlRepository videoUrlRepository;
     @Autowired
     private AdRepository adRepository;
     @Autowired
@@ -107,16 +105,15 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     @Transactional
-    public void saveVideo(String sellerId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, S3Video videoUrls, String thumbnailUrl) {
+    public void saveVideo(String sellerId, String videoId,
+                          VideoDto.VideoUploadRequestDto videoUploadRequestDto,
+                          S3Video videoUrls, S3Thumbnail thumbnailUrl) {
         Video video = new Video();
 
         try {
             VideoDto videoDto = VideoDto.builder().
-                    videoId(UUID.randomUUID().toString()).
+                    videoId(videoId).
                     videoName(videoUploadRequestDto.getVideoName()).
-                    s3Url(videoUrls.getS3Url()).
-                    videoUrl(videoUrls.getCloudFrontUrl()).
-                    thumbnailUrl(thumbnailUrl).
                     sellerId(sellerId).
                     sellerName(videoUploadRequestDto.getSellerName()).
                     build();
@@ -131,6 +128,23 @@ public class VideoServiceImpl implements VideoService {
         }
 
         Video savedVideo = video;
+
+        try {
+            VideoUrlDto videoUrlDto = VideoUrlDto.builder().
+                    videoS3Url(videoUrls.getS3Url()).
+                    videoCloudfrontUrl(videoUrls.getCloudFrontUrl()).
+                    thumbnailS3Url(thumbnailUrl.getS3Url()).
+                    thumbnailCloudfrontUrl(thumbnailUrl.getCloudFrontUrl()).
+                    build();
+
+            VideoUrl videoUrl = modelMapper.map(videoUrlDto, VideoUrl.class);
+            videoUrlRepository.save(videoUrl);
+            savedVideo.setVideoUrl(videoUrl);
+
+        } catch (Exception e) {
+            log.error("save video url error", e);
+            throw new RuntimeException("save video url error");
+        }
 
         try {
             videoUploadRequestDto.getAdList().forEach(
@@ -149,8 +163,13 @@ public class VideoServiceImpl implements VideoService {
         try {
             videoUploadRequestDto.getTagIdList().forEach(
                     tagId -> {
-                        Tag tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
-
+                        Tag tag;
+                        try {
+                            tag = tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
+                        } catch (Exception e) {
+                            log.error("tag not found", e);
+                            throw new RuntimeException("tag not found");
+                        }
                         VideoTag videoTag = new VideoTag();
                         videoTag.setVideo(savedVideo);
                         videoTag.setTag(tag);

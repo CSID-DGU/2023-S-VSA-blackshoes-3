@@ -2,9 +2,12 @@ package com.travelvcommerce.uploadservice.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -12,26 +15,17 @@ import java.util.List;
 @Entity
 @Table(name = "videos",
         uniqueConstraints = @UniqueConstraint(name = "video_unique",
-                columnNames = {"video_id", "video_name", "video_url", "thumbnail_url"}))
-public class Video {
+                columnNames = {"video_id", "video_name"}))
+public class Video implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "video_id", nullable = false)
+    @Column(name = "video_id")
     private String videoId;
 
     @Column(name = "video_name", nullable = false, length = 100)
     private String videoName;
-
-    @Column(name = "s3_url", nullable = false)
-    private String s3Url;
-
-    @Column(name = "video_url", nullable = false)
-    private String videoUrl;
-
-    @Column(name = "thumbnail_url", nullable = false)
-    private String thumbnailUrl;
 
     @Column(name = "seller_id", nullable = false)
     private String sellerId;
@@ -53,4 +47,7 @@ public class Video {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<Ad> ads;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "video_url_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "video_fk"))
+    private VideoUrl videoUrl;
 }

@@ -15,12 +15,6 @@ public class VideoDto {
 
     private String videoName;
 
-    private String s3Url;
-
-    private String videoUrl;
-
-    private String thumbnailUrl;
-
     private String sellerId;
 
     private String sellerName;

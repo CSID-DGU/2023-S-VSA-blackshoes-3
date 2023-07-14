@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findByType(String type);
 
-    Optional<Object> findByTagId(String tagId);
+    Optional<Tag> findByTagId(String tagId);
 }
