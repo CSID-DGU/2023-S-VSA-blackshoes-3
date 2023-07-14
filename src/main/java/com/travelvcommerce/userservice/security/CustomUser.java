@@ -22,7 +22,7 @@ public class CustomUser implements OAuth2User {
 
     public CustomUser(Map<String, Object> attributes, Users user, TokenDto tokenDto) { // 수정: 생성자 매개변수 수정
         this.oAuth2User = new DefaultOAuth2User(
-                AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole()),
+                AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole().getRoleName()),
                 attributes,
                 "email");
         this.user = user;

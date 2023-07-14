@@ -1,5 +1,6 @@
 package com.travelvcommerce.userservice.security;
 
+import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.entity.RefreshToken;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -27,13 +28,14 @@ public class JwtTokenProvider {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public Map<String, String> createTokens(String username) {
+    public TokenDto createTokens(String username, String userType) {
         Date now = new Date();
         Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
         Date refreshTokenExpiryDate = new Date(now.getTime() + jwtRefreshTokenExpiry);
 
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("userType", userType)  // userType claim 추가
                 .setIssuedAt(now)
                 .setExpiration(tokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -41,21 +43,40 @@ public class JwtTokenProvider {
 
         String refreshToken = Jwts.builder()
                 .setSubject(username)
+                .claim("userType", userType)  // userType claim 추가
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        RefreshToken tokenEntity = new RefreshToken();
-        tokenEntity.setId(refreshToken);
-        tokenEntity.setUsername(username);
+        refreshTokenRepository.save(username, refreshToken, jwtRefreshTokenExpiry);
 
-        refreshTokenRepository.save(tokenEntity);
+        return new TokenDto(token, refreshToken);
+    }
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("token", token);
-        tokens.put("refreshToken", refreshToken);
-        return tokens;
+    public String createAccessToken(String username, String userType) {
+        Date now = new Date();
+        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("userType", userType)  // userType claim 추가
+                .setIssuedAt(now)
+                .setExpiration(tokenExpiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    public String createAccessToken(String username) {
+        Date now = new Date();
+        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(tokenExpiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
     public String getUsernameFromToken(String token) {
@@ -69,7 +90,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            if(refreshTokenRepository.findById(token).isEmpty()) {
+            if(refreshTokenRepository.find(token) == null) {
                 throw new ExpiredJwtException(null, null, "Refresh token has expired");
             }
             return true;
@@ -86,4 +107,13 @@ public class JwtTokenProvider {
         }
         return false;
     }
+    public String getUserTypeFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("userType", String.class);
+    }
+
 }

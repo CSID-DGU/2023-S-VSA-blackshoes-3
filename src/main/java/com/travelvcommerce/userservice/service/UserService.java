@@ -1,14 +1,22 @@
 package com.travelvcommerce.userservice.service;
 
 
+import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.dto.UserDto;
-import com.travelvcommerce.userservice.dto.request.LoginRequestDto;
-import com.travelvcommerce.userservice.dto.request.RegisterRequestDto;
+import com.travelvcommerce.userservice.dto.SellerDto;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Map;
+
+@Transactional
+@Service
 public interface UserService {
     void updateUser(String userId, UserDto userDto);
     void deleteUser(String userId);
     void findPassword(String userId);
-    void registerUser(RegisterRequestDto registerRequestDto);
-    String login(LoginRequestDto loginRequestDto);
+    void registerUser(UserDto.UserRegisterRequestDto registerRequestDto);
+    Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto);
+    String getUserEmailByUserId(String userId);
+
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -39,13 +40,24 @@ public class Users {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    //Role: ROLE_ADMIN, ROLE_USER, ROLE_SELLER
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
 
     @Column(name = "provider")
     private String provider;
 
     @Column(name = "provider_id")
     private String providerId;
+
+    @PreUpdate
+    public void updatedAt() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void createdDate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

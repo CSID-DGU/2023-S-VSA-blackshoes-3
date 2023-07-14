@@ -1,5 +1,6 @@
 package com.travelvcommerce.userservice.security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +23,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenProvider tokenProvider;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    @Qualifier("customUserDetailsService")
+    private UserDetailsService customUserDetailsService;
 
+    @Autowired
+    @Qualifier("sellerDetailsService")
+    private UserDetailsService sellerDetailsService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -31,6 +36,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (token != null && tokenProvider.validateToken(token)) {
             String username = tokenProvider.getUsernameFromToken(token);
+            String userType = tokenProvider.getUserTypeFromToken(token);  // userType을 가져옵니다.
+
+            UserDetailsService userDetailsService;
+
+            if ("user".equals(userType)) {
+                userDetailsService = customUserDetailsService;
+            } else if ("seller".equals(userType)) {
+                userDetailsService = sellerDetailsService;
+            } else {
+                throw new RuntimeException("Unknown user type: " + userType);
+            }
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
