@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/upload-service")
 public class ModifyController {
@@ -58,7 +60,16 @@ public class ModifyController {
 
     @PutMapping("/videos/{userId}/{videoId}/tags")
     public ResponseEntity<ResponseDto> modifyTags(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId, @RequestBody TagDto.TagRequestDto tagRequestDto) {
-        return null;
+        List<String> tagIdList = tagRequestDto.getTagIds();
+
+        try {
+            videoModifyService.updateTag(userId, videoId, tagIdList);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PutMapping("/videos/{userId}/{videoId}/ads")

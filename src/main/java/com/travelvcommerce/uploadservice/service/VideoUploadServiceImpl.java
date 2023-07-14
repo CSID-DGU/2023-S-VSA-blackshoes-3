@@ -165,7 +165,7 @@ public class VideoUploadServiceImpl implements VideoUploadService {
                     tagId -> {
                         Tag tag;
                         try {
-                            tag = (Tag) tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
+                            tag = tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
                         } catch (Exception e) {
                             log.error("tag not found", e);
                             throw new RuntimeException("tag not found");

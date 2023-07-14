@@ -17,4 +17,9 @@ public class TagDto {
         private String type;
         private String content;
     }
+
+    @Data
+    public static class TagRequestDto {
+        private List<String> tagIds;
+    }
 }
