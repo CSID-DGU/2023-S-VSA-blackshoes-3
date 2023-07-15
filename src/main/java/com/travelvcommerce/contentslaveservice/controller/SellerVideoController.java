@@ -3,7 +3,7 @@ package com.travelvcommerce.contentslaveservice.controller;
 import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
-import com.travelvcommerce.contentslaveservice.vo.SellerSortType;
+import com.travelvcommerce.contentslaveservice.vo.SellerSortTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class SellerVideoController {
                                                            @QueryParam("q") String q,
                                                            @QueryParam("page") int page,
                                                            @QueryParam("size") int size) {
-        if (!SellerSortType.contains(q.toUpperCase())) {
+        if (!SellerSortTypes.contains(q.toUpperCase())) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
