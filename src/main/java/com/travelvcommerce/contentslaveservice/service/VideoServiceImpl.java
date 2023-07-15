@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class VideoServiceImpl implements VideoService {
@@ -29,6 +31,15 @@ public class VideoServiceImpl implements VideoService {
         Sort sortBy = Sort.by(Sort.Direction.DESC, q);
         Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<VideoDto.VideoListResponseDto> videos = videoRepository.findVideosWithSellerIdAndSelectedFields(sellerId, pageable);
+        return videos;
+    }
+
+    @Override
+    public Page<VideoDto.VideoListResponseDto> getVideosByIdList(String idType, List<String> idData, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        Page<VideoDto.VideoListResponseDto> videos =
+                videoRepository.findVideosWithIdListAndSelectedFields(idType, idData, pageable);
         return videos;
     }
 
