@@ -35,16 +35,17 @@ public class UserVideoController {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
-        ;
 
         if (q.equals("recent")) {
             q = "createdAt";
         }
 
+        Map<String, Object> videoPagePayload;
+
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
 
-            Map<String, Object> payload = new LinkedHashMap<>() {{
+            videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
                 put("currentPage", videoPage.getNumber());
                 put("hasNext", videoPage.hasNext());
@@ -53,12 +54,13 @@ public class UserVideoController {
                 put("videos", videoPage.getContent());
             }};
 
-            ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/videos/{userId}/personalized")
@@ -82,10 +84,12 @@ public class UserVideoController {
 
         String idType = userPersonalizedData.getIdType();
         List<String> idList = userPersonalizedData.getIdList();
+        Map<String, Object> videoPagePayload;
+
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByIdList(idType, idList, page, size);
 
-            Map<String, Object> payload = new LinkedHashMap<>() {{
+            videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
                 put("currentPage", videoPage.getNumber());
                 put("hasNext", videoPage.hasNext());
@@ -94,11 +98,12 @@ public class UserVideoController {
                 put("videos", videoPage.getContent());
             }};
 
-            ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

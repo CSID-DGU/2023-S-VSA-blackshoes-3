@@ -36,10 +36,13 @@ public class SellerVideoController {
         if (q.equals("recent")) {
             q = "createdAt";
         }
+
+        Map<String, Object> videoPagePayload;
+
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosBySellerId(sellerId, q, page, size);
 
-            Map<String, Object> payload = new LinkedHashMap<>() {{
+            videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
                 put("currentPage", videoPage.getNumber());
                 put("hasNext", videoPage.hasNext());
@@ -48,11 +51,12 @@ public class SellerVideoController {
                 put("videos", videoPage.getContent());
             }};
 
-            ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
