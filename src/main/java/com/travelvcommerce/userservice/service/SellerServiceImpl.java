@@ -53,7 +53,6 @@ public class SellerServiceImpl implements SellerService {
     public void updateSeller(String sellerId, SellerDto sellerDto) {
         Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
         if(existingSeller.isPresent()) {
-            existingSeller.get().setEmail(sellerDto.getEmail());
             existingSeller.get().setCompanyName(sellerDto.getCompanyName());
             existingSeller.get().setIcon(sellerDto.getIcon());
             existingSeller.get().setPassword(passwordEncoder.encode(sellerDto.getPassword()));
@@ -65,7 +64,7 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public void deleteSeller(String sellerId) {
-        sellerRepository.deleteById(sellerId);
+        sellerRepository.deleteBySellerId(sellerId);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class SellerServiceImpl implements SellerService {
         seller.setSellerId(uuid);
         sellerRepository.save(seller);
 
-        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), "SELLER");
+        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), seller.getRole().getRoleName());
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", tokenDto.getAccessToken());
