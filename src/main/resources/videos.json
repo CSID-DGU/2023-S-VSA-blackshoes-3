@@ -1,0 +1,973 @@
+[
+  {
+    "videoId": "v43039a5-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test1",
+    "videoUrl": "test1.com/video",
+    "thumbnailUrl": "test1.com/thumbnail",
+    "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+      },
+      {
+        "e4303ba3-2199-11ee-9ef2-0a0027000003": "전시"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 100,
+    "views": 1000
+  },
+  {
+    "videoId": "v43039a6-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test2",
+    "videoUrl": "test2.com/video",
+    "thumbnailUrl": "test2.com/thumbnail",
+    "sellerId": "s43039a6-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+      },
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 200,
+    "views": 4000
+  },
+  {
+    "videoId": "v43039a7-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test3",
+    "videoUrl": "test3.com/video",
+    "thumbnailUrl": "test3.com/thumbnail",
+    "sellerId": "s43039a7-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      },
+      {
+        "e43039a5-2199-11ee-9ef2-0a0027000003": "모험"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 300,
+    "views": 500
+  },
+  {
+    "videoId": "v43039a8-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test4",
+    "videoUrl": "test4.com/video",
+    "thumbnailUrl": "test4.com/thumbnail",
+    "sellerId": "s43039a8-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4303394-2199-11ee-9ef2-0a0027000003": "베트남"
+      },
+      {
+        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 50,
+    "views": 3500
+  },
+  {
+    "videoId": "v43039a9-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test5",
+    "videoUrl": "test5.com/video",
+    "thumbnailUrl": "test5.com/thumbnail",
+    "sellerId": "s43039a9-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43033e6-2199-11ee-9ef2-0a0027000003": "서유럽"
+      },
+      {
+        "e4303ae9-2199-11ee-9ef2-0a0027000003": "건축"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 1500,
+    "views": 2000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc4",
+    "videoId": "v43039aa-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test6",
+    "videoUrl": "test6.com/video",
+    "thumbnailUrl": "test6.com/thumbnail",
+    "sellerId": "s43039aa-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 500,
+    "views": 6000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc5",
+    "videoId": "v43039ab-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test7",
+    "videoUrl": "test7.com/video",
+    "thumbnailUrl": "test7.com/thumbnail",
+    "sellerId": "s43039ab-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+      },
+      {
+        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 1000,
+    "views": 8000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc6",
+    "videoId": "v43039ac-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test8",
+    "videoUrl": "test8.com/video",
+    "thumbnailUrl": "test8.com/thumbnail",
+    "sellerId": "s43039ac-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+      },
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 2000,
+    "views": 10000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc7",
+    "videoId": "v43039ad-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test9",
+    "videoUrl": "test9.com/video",
+    "thumbnailUrl": "test9.com/thumbnail",
+    "sellerId": "s43039ad-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+      },
+      {
+        "e43034f7-2199-11ee-9ef2-0a0027000003": "동남아"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 1500,
+    "views": 12000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc8",
+    "videoId": "v43039ae-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test10",
+    "videoUrl": "test10.com/video",
+    "thumbnailUrl": "test10.com/thumbnail",
+    "sellerId": "s43039ae-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+      },
+      {
+        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 3000,
+    "views": 14000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dc9",
+    "videoId": "v43039af-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test11",
+    "videoUrl": "test11.com/video",
+    "thumbnailUrl": "test11.com/thumbnail",
+    "sellerId": "s43039af-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      },
+      {
+        "e43034b6-2199-11ee-9ef2-0a0027000003": "북유럽"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 4000,
+    "views": 16000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dca",
+    "videoId": "v43039b0-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test12",
+    "videoUrl": "test12.com/video",
+    "thumbnailUrl": "test12.com/thumbnail",
+    "sellerId": "s43039b0-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+      },
+      {
+        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 6000,
+    "views": 18000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dcb",
+    "videoId": "v43039b1-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test13",
+    "videoUrl": "test13.com/video",
+    "thumbnailUrl": "test13.com/thumbnail",
+    "sellerId": "s43039b1-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43034b6-2199-11ee-9ef2-0a0027000003": "북유럽"
+      },
+      {
+        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 8000,
+    "views": 20000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dcc",
+    "videoId": "v43039b2-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test14",
+    "videoUrl": "test14.com/video",
+    "thumbnailUrl": "test14.com/thumbnail",
+    "sellerId": "s43039b2-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+      },
+      {
+        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 10000,
+    "views": 22000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dcd",
+    "videoId": "v43039b3-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test15",
+    "videoUrl": "test15.com/video",
+    "thumbnailUrl": "test15.com/thumbnail",
+    "sellerId": "s43039b3-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+      },
+      {
+        "e4303be6-2199-11ee-9ef2-0a0027000003": "축제"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 12000,
+    "views": 24000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dce",
+    "videoId": "v43039b4-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test16",
+    "videoUrl": "test16.com/video",
+    "thumbnailUrl": "test16.com/thumbnail",
+    "sellerId": "s43039b4-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 14000,
+    "views": 26000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dcf",
+    "videoId": "v43039b5-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test17",
+    "videoUrl": "test17.com/video",
+    "thumbnailUrl": "test17.com/thumbnail",
+    "sellerId": "s43039b5-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 16000,
+    "views": 28000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd0",
+    "videoId": "v43039b6-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test18",
+    "videoUrl": "test18.com/video",
+    "thumbnailUrl": "test18.com/thumbnail",
+    "sellerId": "s43039b6-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 18000,
+    "views": 30000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd1",
+    "videoId": "v43039b7-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test19",
+    "videoUrl": "test19.com/video",
+    "thumbnailUrl": "test19.com/thumbnail",
+    "sellerId": "s43039b7-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+      },
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 20000,
+    "views": 32000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd2",
+    "videoId": "v43039b8-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test20",
+    "videoUrl": "test20.com/video",
+    "thumbnailUrl": "test20.com/thumbnail",
+    "sellerId": "s43039b8-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+      },
+      {
+        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 22000,
+    "views": 34000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd3",
+    "videoId": "v43039b9-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test21",
+    "videoUrl": "test21.com/video",
+    "thumbnailUrl": "test21.com/thumbnail",
+    "sellerId": "s43039b9-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 24000,
+    "views": 36000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd4",
+    "videoId": "v43039ba-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test22",
+    "videoUrl": "test22.com/video",
+    "thumbnailUrl": "test22.com/thumbnail",
+    "sellerId": "s43039ba-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+      },
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 26000,
+    "views": 38000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd5",
+    "videoId": "v43039bb-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test23",
+    "videoUrl": "test23.com/video",
+    "thumbnailUrl": "test23.com/thumbnail",
+    "sellerId": "s43039bb-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 28000,
+    "views": 40000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd6",
+    "videoId": "v43039bc-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test24",
+    "videoUrl": "test24.com/video",
+    "thumbnailUrl": "test24.com/thumbnail",
+    "sellerId": "s43039bc-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+      },
+      {
+        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 30000,
+    "views": 42000
+  },
+  {
+    "_id": "64b26ee8354096393d7e5dd7",
+    "videoId": "v43039bd-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test25",
+    "videoUrl": "test25.com/video",
+    "thumbnailUrl": "test25.com/thumbnail",
+    "sellerId": "s43039bd-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+      },
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 32000,
+    "views": 44000
+  }
+]
+
