@@ -12,4 +12,13 @@ public class TokenDto {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+    @Data
+    public static class RefreshTokenDto {
+        private String refreshToken;
+
+        public RefreshTokenDto(String refreshToken, String email) {
+            this.refreshToken = refreshToken;
+        }
+    }
 }
+

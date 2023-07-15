@@ -13,15 +13,18 @@ public class RefreshTokenRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    public void save(String email, String refreshToken, long expiryTime) {
-        redisTemplate.opsForValue().set(email, refreshToken, expiryTime, TimeUnit.MILLISECONDS);
+    public void save(String userType, String email, String refreshToken, long expiryTime) {
+        String key = userType + ":" + email;
+        redisTemplate.opsForValue().set(key, refreshToken, expiryTime, TimeUnit.MILLISECONDS);
     }
 
-    public String find(String email) {
-        return redisTemplate.opsForValue().get(email);
+    public String find(String userType, String email) {
+        String key = userType + ":" + email;
+        return redisTemplate.opsForValue().get(key);
     }
 
-    public void delete(String email) {
-        redisTemplate.delete(email);
+    public void deleteRefreshTokenByUserEmail(String userType, String email) {
+        String key = userType + ":" + email;
+        redisTemplate.delete(key);
     }
 }

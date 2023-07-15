@@ -49,7 +49,7 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        refreshTokenRepository.save(email, refreshToken, jwtRefreshTokenExpiry);
+        refreshTokenRepository.save(userType, email, refreshToken, jwtRefreshTokenExpiry);
 
         return new TokenDto(token, refreshToken);
     }
@@ -60,20 +60,8 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(username)
-                .claim("userType", userType)  // userType claim 추가
                 .setIssuedAt(now)
-                .setExpiration(tokenExpiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
-
-    public String createAccessToken(String username) {
-        Date now = new Date();
-        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
+                .claim("userType", userType)
                 .setExpiration(tokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
@@ -112,5 +100,4 @@ public class JwtTokenProvider {
 
         return claims.get("userType", String.class);
     }
-
 }
