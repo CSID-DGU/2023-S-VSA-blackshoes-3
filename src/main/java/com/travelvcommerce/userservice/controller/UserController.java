@@ -1,6 +1,7 @@
 package com.travelvcommerce.userservice.controller;
 
 import com.travelvcommerce.userservice.dto.ResponseDto;
+import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.dto.UserDto;
 import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
@@ -48,21 +49,11 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<ResponseDto> updateUser(@PathVariable String userId, @RequestBody UserDto userDto) {
-        try {
-            userService.updateUser(userId, userDto);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String token, @PathVariable String userId) {
+    public ResponseEntity<ResponseDto> updateUser(@RequestHeader("Authorization") String token,
+                                                  @PathVariable String userId,
+                                                  @RequestBody UserDto userDto) {
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
@@ -79,7 +70,40 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
 
+            userService.updateUser(userId, userDto);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+    }
+
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String token, @PathVariable String userId) {
+        try {
+            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+            if (!jwtTokenProvider.validateToken(bearerToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            }
+
+            String tokenUserEmail = jwtTokenProvider.getUsernameFromToken(bearerToken);
+            String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
+
+            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            if (!userOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+            String userEmail = userOptional.get().getEmail();
+
+            if (!userEmail.equals(tokenUserEmail)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+
             userService.deleteUser(userId);
+            refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenUserType, userEmail);
+
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (UsernameNotFoundException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
@@ -130,35 +154,33 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/refresh")
-    public ResponseEntity<ResponseDto> refreshToken(@PathVariable String userId, @RequestBody Map<String, Object> payload) {
+    @PostMapping("/refresh")
+    public ResponseEntity<ResponseDto> refreshToken(@RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
         try {
-            Map<String, Object> payloadMap = (Map<String, Object>) payload.get("payload");
-            String refreshToken = (String) payloadMap.get("refreshToken");
-
+            String refreshToken = refreshTokenDto.getRefreshToken();
             if (refreshToken == null || refreshToken.isEmpty()) {
                 return ResponseEntity.badRequest().body(ResponseDto.builder()
                         .error("리프레시 토큰은 비어 있거나 null일 수 없습니다.")
                         .build());
             }
 
-            // 1. 가져온 userId로 email을 찾는다.
-            String email = userService.getUserEmailByUserId(userId);
+            // 1. refreshToken으로부터 email과 userType을 추출한다.
+            String emailFromToken = jwtTokenProvider.getUsernameFromToken(refreshToken);
+            String userTypeFromToken = jwtTokenProvider.getUserTypeFromToken(refreshToken);
 
-            // 2. email로 refreshToken이 있는지 찾는다.
-            String existingRefreshToken = refreshTokenRepository.find(email);
+            // 2. email과 userType으로 refreshToken이 있는지 찾는다.
+            String existingRefreshToken = refreshTokenRepository.find(userTypeFromToken, emailFromToken);
             if (existingRefreshToken == null || existingRefreshToken.isEmpty()) {
                 throw new BadCredentialsException("리프레시 토큰이 존재하지 않습니다.");
             }
 
-            // 3. refreshToken 내의 email과 요청 유저의 email이 일치하는지 검사한다.
-            String emailFromToken = jwtTokenProvider.getUsernameFromToken(refreshToken);
-            if (!emailFromToken.equals(email)) {
+            // 3. DB에서 찾은 refreshToken과 요청의 refreshToken이 일치하는지 검사한다.
+            if (!existingRefreshToken.equals(refreshToken)) {
                 throw new BadCredentialsException("리프레시 토큰이 일치하지 않습니다.");
             }
 
             // 4. refreshToken이 존재한다면 newAccessToken을 발급한다.
-            String newAccessToken = jwtTokenProvider.createAccessToken(email);
+            String newAccessToken = jwtTokenProvider.createAccessToken(emailFromToken, userTypeFromToken);
             return ResponseEntity.ok()
                     .header("Authorization", "Bearer " + newAccessToken)
                     .body(ResponseDto.builder()
@@ -173,6 +195,7 @@ public class UserController {
                     .build());
         }
     }
+
 
 
     @PostMapping("/logout")

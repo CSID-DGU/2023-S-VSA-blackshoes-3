@@ -50,8 +50,8 @@ public class UserServiceImpl implements UserService {
     public void updateUser(String userId, UserDto userDto){
         Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
-            existingUser.get().setEmail(userDto.getEmail());
             existingUser.get().setName(userDto.getName());
+            existingUser.get().setPassword(passwordEncoder.encode(userDto.getPassword()));
             existingUser.get().setBirthdate(userDto.getBirthdate());
             usersRepository.save(existingUser.get());
         }
