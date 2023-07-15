@@ -49,5 +49,6 @@ public class VideoDto {
         private List<Map<String, Map<String, String>>> videoAds;
         private int likes;
         private int views;
+        private int adClicks;
     }
 }

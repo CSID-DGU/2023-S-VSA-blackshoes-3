@@ -20,18 +20,23 @@ public class VideoServiceImpl implements VideoService {
     public Page<VideoDto.VideoListResponseDto> getVideos(String q, int page, int size) {
         Sort sortBy = Sort.by(Sort.Direction.DESC, q);
         Pageable pageable = PageRequest.of(page, size, sortBy);
-        return videoRepository.findVideosWithSelectedFields(pageable);
+        Page<VideoDto.VideoListResponseDto> videos = videoRepository.findVideosWithSelectedFields(pageable);
+        return videos;
     }
 
     @Override
     public Page<VideoDto.VideoListResponseDto> getVideosBySellerId(String sellerId, String q, int page, int size) {
         Sort sortBy = Sort.by(Sort.Direction.DESC, q);
         Pageable pageable = PageRequest.of(page, size, sortBy);
-        return videoRepository.findVideosWithSellerIdAndSelectedFields(sellerId, pageable);
+        Page<VideoDto.VideoListResponseDto> videos = videoRepository.findVideosWithSellerIdAndSelectedFields(sellerId, pageable);
+        return videos;
     }
 
     @Override
     public VideoDto.VideoDetailResponseDto getVideo(String videoId) {
-        return videoRepository.findByVideoId(videoId);
+        VideoDto.VideoDetailResponseDto video =
+                videoRepository.findByVideoId(videoId)
+                        .orElseThrow(() -> new RuntimeException("No video found"));
+        return video;
     }
 }
