@@ -9,7 +9,7 @@ import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.CustomUserDetailsService;
 import com.travelvcommerce.userservice.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,18 +24,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user-service/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private UsersRepository usersRepository;
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final UserService userService;
+    private final CustomUserDetailsService userDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UsersRepository usersRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
@@ -61,7 +57,7 @@ public class UserController {
             String tokenUserEmail = jwtTokenProvider.getUsernameFromToken(bearerToken);
 
             Optional<Users> userOptional = usersRepository.findByUserId(userId);
-            if (!userOptional.isPresent()) {
+            if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
             String userEmail = userOptional.get().getEmail();
@@ -92,7 +88,7 @@ public class UserController {
             String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<Users> userOptional = usersRepository.findByUserId(userId);
-            if (!userOptional.isPresent()) {
+            if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
             String userEmail = userOptional.get().getEmail();

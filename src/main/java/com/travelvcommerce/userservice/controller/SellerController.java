@@ -4,13 +4,12 @@ package com.travelvcommerce.userservice.controller;
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.SellerDto;
 import com.travelvcommerce.userservice.entity.Seller;
-import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.SellerDetailsService;
 import com.travelvcommerce.userservice.service.SellerServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,22 +25,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user-service/seller")
+@RequiredArgsConstructor
 public class SellerController {
 
-    @Autowired
-    private SellerServiceImpl sellerService;
-
-    @Autowired
-    private SellerDetailsService sellerDetailsService;
-
-    @Autowired
-    private SellerRepository sellerRepository;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final SellerServiceImpl sellerService;
+    private final SellerDetailsService sellerDetailsService;
+    private final SellerRepository sellerRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestParam("email") String email,
@@ -75,7 +66,7 @@ public class SellerController {
             String tokenSellerType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<Seller> sellerOptional = sellerRepository.findBySellerId(sellerId);
-            if (!sellerOptional.isPresent()) {
+            if (sellerOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
             String sellerEmail = sellerOptional.get().getEmail();

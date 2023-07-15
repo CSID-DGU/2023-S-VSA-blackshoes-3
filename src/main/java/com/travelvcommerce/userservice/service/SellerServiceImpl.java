@@ -6,6 +6,7 @@ import com.travelvcommerce.userservice.entity.Role;
 import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,17 +22,15 @@ import java.util.UUID;
 
 
 @Transactional
+@RequiredArgsConstructor
 @Service
 public class SellerServiceImpl implements SellerService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private SellerRepository sellerRepository;
+    private final SellerRepository sellerRepository;
 
     @Override
     public void registerSeller(SellerDto.SellerRegisterRequestDto registerRequestDto) {

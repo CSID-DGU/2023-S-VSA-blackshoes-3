@@ -6,6 +6,7 @@ import com.travelvcommerce.userservice.entity.Role;
 import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,18 +17,16 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.*;
 
+@RequiredArgsConstructor
 @Transactional
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
 
     @Override
