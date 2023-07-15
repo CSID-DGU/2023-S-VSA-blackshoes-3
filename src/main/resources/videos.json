@@ -1,0 +1,192 @@
+[
+  {
+    "videoId": "v43039a5-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test1",
+    "videoUrl": "test1.com/video",
+    "thumbnailUrl": "test1.com/thumbnail",
+    "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+      },
+      {
+        "e4303ba3-2199-11ee-9ef2-0a0027000003": "전시"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 100,
+    "views": 1000
+  },
+  {
+    "videoId": "v43039a6-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test2",
+    "videoUrl": "test2.com/video",
+    "thumbnailUrl": "test2.com/thumbnail",
+    "sellerId": "s43039a6-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+      },
+      {
+        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 200,
+    "views": 4000
+  },
+  {
+    "videoId": "v43039a7-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test3",
+    "videoUrl": "test3.com/video",
+    "thumbnailUrl": "test3.com/thumbnail",
+    "sellerId": "s43039a7-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller2",
+    "sellerLogoUrl": "seller2.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+      },
+      {
+        "e43039a5-2199-11ee-9ef2-0a0027000003": "모험"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 300,
+    "views": 500
+  },
+  {
+    "videoId": "v43039a8-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test4",
+    "videoUrl": "test4.com/video",
+    "thumbnailUrl": "test4.com/thumbnail",
+    "sellerId": "s43039a8-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller1",
+    "sellerLogoUrl": "seller1.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e4303394-2199-11ee-9ef2-0a0027000003": "베트남"
+      },
+      {
+        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 50,
+    "views": 3500
+  },
+  {
+    "videoId": "v43039a9-2199-11ee-9ef2-0a0027000003",
+    "videoName": "test5",
+    "videoUrl": "test5.com/video",
+    "thumbnailUrl": "test5.com/thumbnail",
+    "sellerId": "s43039a9-2199-11ee-9ef2-0a0027000003",
+    "sellerName": "seller3",
+    "sellerLogoUrl": "seller3.com/icon",
+    "createdAt": "2023-07-15 12:49:23.480000",
+    "videoTags": [
+      {
+        "e43033e6-2199-11ee-9ef2-0a0027000003": "서유럽"
+      },
+      {
+        "e4303ae9-2199-11ee-9ef2-0a0027000003": "건축"
+      }
+    ],
+    "videoAds": [
+      {
+        "a4302d24-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad1.com",
+          "adContent": "ad1",
+          "endTime": "00:00:20",
+          "startTime": "00:00:30"
+        }
+      },
+      {
+        "a4302d25-2199-11ee-9ef2-0a0027000003": {
+          "adUrl": "ad2.com",
+          "adContent": "ad2",
+          "endTime": "00:00:30",
+          "startTime": "00:00:40"
+        }
+      }
+    ],
+    "likes": 1500,
+    "views": 2000
+  }
+]
