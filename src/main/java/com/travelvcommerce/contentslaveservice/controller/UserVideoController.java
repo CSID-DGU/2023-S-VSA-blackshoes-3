@@ -2,7 +2,6 @@ package com.travelvcommerce.contentslaveservice.controller;
 
 import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
-import com.travelvcommerce.contentslaveservice.entity.Video;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,7 @@ public class UserVideoController {
             q = "createdAt";
         }
         try {
-        Page<Video> videoPage = videoService.getVideos(q, page, size);
+        Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
         Map<String, Object> payload = Map.of("videos", videoPage.getContent(),
                 "totalPages", videoPage.getTotalPages(),
                 "currentPage", videoPage.getNumber(),
