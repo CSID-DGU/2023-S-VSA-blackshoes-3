@@ -40,9 +40,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             UserDetailsService userDetailsService;
 
-            if ("user".equals(userType)) {
+            if ("ROLE_USER".equals(userType)) {
                 userDetailsService = customUserDetailsService;
-            } else if ("seller".equals(userType)) {
+            } else if ("ROLE_SELLER".equals(userType)) {
                 userDetailsService = sellerDetailsService;
             } else {
                 throw new RuntimeException("Unknown user type: " + userType);

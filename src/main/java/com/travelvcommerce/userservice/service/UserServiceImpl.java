@@ -48,14 +48,11 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void updateUser(String userId, UserDto userDto){
-        Optional<Users> existingUser = usersRepository.findById(userId);
+        Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
             existingUser.get().setEmail(userDto.getEmail());
             existingUser.get().setName(userDto.getName());
             existingUser.get().setBirthdate(userDto.getBirthdate());
-            existingUser.get().setRole(userDto.getRole());
-            existingUser.get().setProvider(userDto.getProvider());
-            existingUser.get().setProviderId(userDto.getProviderId());
             usersRepository.save(existingUser.get());
         }
     }

@@ -28,13 +28,13 @@ public class JwtTokenProvider {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public TokenDto createTokens(String username, String userType) {
+    public TokenDto createTokens(String email, String userType) {
         Date now = new Date();
         Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
         Date refreshTokenExpiryDate = new Date(now.getTime() + jwtRefreshTokenExpiry);
 
         String token = Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .claim("userType", userType)  // userType claim 추가
                 .setIssuedAt(now)
                 .setExpiration(tokenExpiryDate)
@@ -42,14 +42,14 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .claim("userType", userType)  // userType claim 추가
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        refreshTokenRepository.save(username, refreshToken, jwtRefreshTokenExpiry);
+        refreshTokenRepository.save(email, refreshToken, jwtRefreshTokenExpiry);
 
         return new TokenDto(token, refreshToken);
     }
@@ -90,9 +90,6 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            if(refreshTokenRepository.find(token) == null) {
-                throw new ExpiredJwtException(null, null, "Refresh token has expired");
-            }
             return true;
         } catch (SignatureException ex) {
             System.out.println("유효하지 않은 JWT 서명입니다");

@@ -2,6 +2,7 @@ package com.travelvcommerce.userservice.controller;
 
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.UserDto;
+import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -65,10 +67,16 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            String tokenUserId = jwtTokenProvider.getUsernameFromToken(bearerToken);
+            String tokenUserEmail = jwtTokenProvider.getUsernameFromToken(bearerToken);
 
-            if (!tokenUserId.equals(userId)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Not authorized to delete this user").build());
+            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            if (!userOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+            String userEmail = userOptional.get().getEmail();
+
+            if (!userEmail.equals(tokenUserEmail)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
 
             userService.deleteUser(userId);
@@ -81,6 +89,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
+
 
 
     @PostMapping("/login")
