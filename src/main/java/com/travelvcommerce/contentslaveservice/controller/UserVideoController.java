@@ -52,16 +52,4 @@ public class UserVideoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
-
-    @GetMapping("/videos/{videoId}")
-    public ResponseEntity<ResponseDto> getVideo(@PathVariable(name = "videoId") String videoId) {
-        try {
-            VideoDto.VideoDetailResponseDto videoDetailResponseDto = videoService.getVideo(videoId);
-            ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("video", videoDetailResponseDto));
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-        }
-    }
 }
