@@ -24,6 +24,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
+    public Page<VideoDto.VideoListResponseDto> getVideosBySellerId(String sellerId, String q, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, q);
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        return videoRepository.findVideosWithSellerIdAndSelectedFields(sellerId, pageable);
+    }
+
+    @Override
     public VideoDto.VideoDetailResponseDto getVideo(String videoId) {
         return videoRepository.findByVideoId(videoId);
     }

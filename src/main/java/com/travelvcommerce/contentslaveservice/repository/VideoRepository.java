@@ -12,5 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface VideoRepository extends MongoRepository<Video, String> {
     @Query(value = "{}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogoUrl: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
     Page<VideoDto.VideoListResponseDto> findVideosWithSelectedFields(Pageable pageable);
+    @Query(value = "{sellerId: ?0}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogoUrl: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
+    Page<VideoDto.VideoListResponseDto> findVideosWithSellerIdAndSelectedFields(String sellerId, Pageable pageable);
     VideoDto.VideoDetailResponseDto findByVideoId(String videoId);
 }

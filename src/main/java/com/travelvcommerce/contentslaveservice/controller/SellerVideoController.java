@@ -7,27 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.QueryParam;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("content-slave-service")
-public class UserVideoController {
-
+@RequestMapping("/content-slave-service")
+public class SellerVideoController {
     @Autowired
-    private VideoService videoService;
+    VideoService videoService;
 
-    @GetMapping("/videos/sort")
-    public ResponseEntity<ResponseDto> getVideos(@QueryParam("q") String q, @QueryParam("page") int page, @QueryParam("size") int size) {
+    @GetMapping("/videos/{sellerId}/sort")
+    public ResponseEntity<ResponseDto> getVideosBySellerId(@PathVariable(name = "sellerId") String sellerId,
+                                                           @QueryParam("q") String q,
+                                                           @QueryParam("page") int page,
+                                                           @QueryParam("size") int size) {
         if (q.equals("recent")) {
             q = "createdAt";
         }
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosBySellerId(sellerId, q, page, size);
             Map<String, Object> payload = new LinkedHashMap<>();
             payload = Map.of(
                     "hasNext", videoPage.hasNext(),
@@ -41,18 +45,6 @@ public class UserVideoController {
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-    }
-
-    @GetMapping("/videos/{videoId}")
-    public ResponseEntity<ResponseDto> getVideo(@PathVariable(name = "videoId") String videoId) {
-        try {
-            VideoDto.VideoDetailResponseDto videoDetailResponseDto = videoService.getVideo(videoId);
-            ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("video", videoDetailResponseDto));
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
     }
 }
