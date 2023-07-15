@@ -16,13 +16,13 @@ public class Seller {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String companyName;
 
     @Column(name = "created_at")
@@ -32,14 +32,14 @@ public class Seller {
     private LocalDateTime updatedAt;
 
     @Lob
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] icon;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "seller_id", updatable = false, nullable = false, unique = true)
+    @Column(name = "seller_id", unique = true)
     private String sellerId;
 
     @PreUpdate
