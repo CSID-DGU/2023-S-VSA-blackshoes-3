@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.QueryParam;
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -36,6 +35,18 @@ public class UserVideoController {
                 "totalElements", videoPage.getTotalElements());
         ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+    }
+
+    @GetMapping("/videos/{videoId}")
+    public ResponseEntity<ResponseDto> getVideo(@PathVariable(name = "videoId") String videoId) {
+        try {
+            VideoDto.VideoDetailResponseDto videoDetailResponseDto = videoService.getVideo(videoId);
+            ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("video", videoDetailResponseDto));
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);

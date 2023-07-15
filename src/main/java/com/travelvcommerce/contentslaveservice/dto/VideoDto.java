@@ -34,7 +34,7 @@ public class VideoDto {
     }
 
     @Data
-    public static class VideoResponseDto {
+    public static class VideoDetailResponseDto {
         private String videoId;
         private String videoName;
         private String videoUrl;

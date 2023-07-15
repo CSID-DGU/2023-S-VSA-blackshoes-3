@@ -22,4 +22,9 @@ public class VideoServiceImpl implements VideoService {
         Pageable pageable = PageRequest.of(page, size, sortBy);
         return videoRepository.findVideosWithSelectedFields(pageable);
     }
+
+    @Override
+    public VideoDto.VideoDetailResponseDto getVideo(String videoId) {
+        return videoRepository.findByVideoId(videoId);
+    }
 }
