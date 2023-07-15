@@ -8,12 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.QueryParam;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,9 +21,9 @@ public class SellerVideoController {
 
     @GetMapping("/videos/{sellerId}/sort")
     public ResponseEntity<ResponseDto> getVideosBySellerId(@PathVariable(name = "sellerId") String sellerId,
-                                                           @QueryParam("q") String q,
-                                                           @QueryParam("page") int page,
-                                                           @QueryParam("size") int size) {
+                                                           @RequestParam("q") String q,
+                                                           @RequestParam("page") int page,
+                                                           @RequestParam("size") int size) {
         if (!SellerSortTypes.contains(q.toUpperCase())) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.QueryParam;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +27,9 @@ public class UserVideoController {
     private UserPersonalizedService userPersonalizedService;
 
     @GetMapping("/videos/sort")
-    public ResponseEntity<ResponseDto> getVideos(@QueryParam("q") String q,
-                                                 @QueryParam("page") int page,
-                                                 @QueryParam("size") int size) {
+    public ResponseEntity<ResponseDto> getVideos(@RequestParam("q") String q,
+                                                 @RequestParam("page") int page,
+                                                 @RequestParam("size") int size) {
         if (!UserSortTypes.contains(q.toUpperCase())) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -65,9 +64,9 @@ public class UserVideoController {
 
     @GetMapping("/videos/{userId}/personalized")
     public ResponseEntity<ResponseDto> getPersonalizedVideos(@PathVariable(name = "userId") String userId,
-                                                             @QueryParam("q") String q,
-                                                             @QueryParam("page") int page,
-                                                             @QueryParam("size") int size) {
+                                                             @RequestParam("q") String q,
+                                                             @RequestParam("page") int page,
+                                                             @RequestParam("size") int size) {
         String personalizedType = q.toUpperCase();
 
         UserPersonalizedData userPersonalizedData;
