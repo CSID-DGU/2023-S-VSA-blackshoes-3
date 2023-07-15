@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.QueryParam;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -26,15 +27,17 @@ public class UserVideoController {
             q = "createdAt";
         }
         try {
-        Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
-        Map<String, Object> payload = Map.of("videos", videoPage.getContent(),
-                "totalPages", videoPage.getTotalPages(),
-                "currentPage", videoPage.getNumber(),
-                "hasNext", videoPage.hasNext(),
-                "pageSize", videoPage.getSize(),
-                "totalElements", videoPage.getTotalElements());
-        ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload = Map.of(
+                    "hasNext", videoPage.hasNext(),
+                    "pageSize", videoPage.getSize(),
+                    "totalPages", videoPage.getTotalPages(),
+                    "currentPage", videoPage.getNumber(),
+                    "totalElements", videoPage.getTotalElements(),
+                    "videos", videoPage.getContent());
+            ResponseDto responseDto = ResponseDto.buildResponseDto(payload);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
