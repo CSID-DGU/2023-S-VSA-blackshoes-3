@@ -26,11 +26,13 @@ public class VideoDto {
     public static class VideoListResponseDto {
         private String videoId;
         private String videoName;
+        private String thumbnailUrl;
         private String sellerName;
         private String sellerLogoUrl;
         private String createdAt;
         private int likes;
         private int views;
+        private int adClicks;
     }
 
     @Data
