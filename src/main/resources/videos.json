@@ -12,28 +12,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+        "tagId": "e4302d24-2199-11ee-9ef2-0a0027000003",
+        "tagName": "국내"
       },
       {
-        "e4303ba3-2199-11ee-9ef2-0a0027000003": "전시"
+        "tagId": "e4303ba3-2199-11ee-9ef2-0a0027000003",
+        "tagName": "전시"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 100,
@@ -53,28 +53,28 @@
     "updatedAt": "2023-07-16 12:49:23.480000",
     "videoTags": [
       {
-        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+        "tagId": "e43030eb-2199-11ee-9ef2-0a0027000003",
+        "tagName": "중국"
       },
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 200,
@@ -94,28 +94,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       },
       {
-        "e43039a5-2199-11ee-9ef2-0a0027000003": "모험"
+        "tagId": "e43039a5-2199-11ee-9ef2-0a0027000003",
+        "tagName": "모험"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 300,
@@ -135,28 +135,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e4303394-2199-11ee-9ef2-0a0027000003": "베트남"
+        "tagId": "e4303394-2199-11ee-9ef2-0a0027000003",
+        "tagName": "베트남"
       },
       {
-        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+        "tagId": "e430375c-2199-11ee-9ef2-0a0027000003",
+        "tagName": "자연"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 50,
@@ -176,28 +176,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43033e6-2199-11ee-9ef2-0a0027000003": "서유럽"
+        "tagId": "e43033e6-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서유럽"
       },
       {
-        "e4303ae9-2199-11ee-9ef2-0a0027000003": "건축"
+        "tagId": "e4303ae9-2199-11ee-9ef2-0a0027000003",
+        "tagName": "건축"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 1500,
@@ -217,28 +217,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+        "tagId": "e4302d24-2199-11ee-9ef2-0a0027000003",
+        "tagName": "국내"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 500,
@@ -258,28 +258,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e4302d24-2199-11ee-9ef2-0a0027000003": "국내"
+        "tagId": "e4302d24-2199-11ee-9ef2-0a0027000003",
+        "tagName": "국내"
       },
       {
-        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+        "tagId": "e430375c-2199-11ee-9ef2-0a0027000003",
+        "tagName": "자연"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 1000,
@@ -299,28 +299,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+        "tagId": "e43030eb-2199-11ee-9ef2-0a0027000003",
+        "tagName": "중국"
       },
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 2000,
@@ -340,28 +340,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+        "tagId": "e43032aa-2199-11ee-9ef2-0a0027000003",
+        "tagName": "대만"
       },
       {
-        "e43034f7-2199-11ee-9ef2-0a0027000003": "동남아"
+        "tagId": "e43034f7-2199-11ee-9ef2-0a0027000003",
+        "tagName": "동남아"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 1500,
@@ -381,28 +381,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+        "tagId": "e430353a-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서남아"
       },
       {
-        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+        "tagId": "e4303860-2199-11ee-9ef2-0a0027000003",
+        "tagName": "예술"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 3000,
@@ -422,28 +422,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       },
       {
-        "e43034b6-2199-11ee-9ef2-0a0027000003": "북유럽"
+        "tagId": "e43034b6-2199-11ee-9ef2-0a0027000003",
+        "tagName": "북유럽"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 40,
@@ -463,28 +463,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+        "tagId": "일본",
+        "tagName": "e4303240-2199-11ee-9ef2-0a0027000003"
       },
       {
-        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+        "tagId": "e430353a-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서남아"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 600,
@@ -504,28 +504,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43034b6-2199-11ee-9ef2-0a0027000003": "북유럽"
+        "tagId": "e43034b6-2199-11ee-9ef2-0a0027000003",
+        "tagName": "북유럽"
       },
       {
-        "e430375c-2199-11ee-9ef2-0a0027000003": "자연"
+        "tagId": "e430375c-2199-11ee-9ef2-0a0027000003",
+        "tagName": "자연"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 8000,
@@ -545,28 +545,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+        "tagId": "e43030eb-2199-11ee-9ef2-0a0027000003",
+        "tagName": "중국"
       },
       {
-        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+        "tagId": "e4303860-2199-11ee-9ef2-0a0027000003",
+        "tagName": "예술"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 10000,
@@ -586,28 +586,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+        "tagId": "e43032aa-2199-11ee-9ef2-0a0027000003",
+        "tagName": "대만"
       },
       {
-        "e4303be6-2199-11ee-9ef2-0a0027000003": "축제"
+        "tagId": "e4303be6-2199-11ee-9ef2-0a0027000003",
+        "tagName": "축제"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 120,
@@ -627,28 +627,28 @@
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
       {
-        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+        "tagId": "e430353a-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서남아"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 14000,
@@ -668,28 +668,28 @@
     "updatedAt": "2023-07-16 12:49:23.480000",
     "videoTags": [
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 16000,
@@ -709,28 +709,28 @@
     "updatedAt": "2023-07-17 12:49:23.480000",
     "videoTags": [
       {
-        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+        "tagId": "e4303240-2199-11ee-9ef2-0a0027000003",
+        "tagName": "일본"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 1800,
@@ -750,28 +750,28 @@
     "updatedAt": "2023-07-18 12:49:23.480000",
     "videoTags": [
       {
-        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+        "tagId": "e43032aa-2199-11ee-9ef2-0a0027000003",
+        "tagName": "대만"
       },
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 20000,
@@ -791,28 +791,28 @@
     "updatedAt": "2023-07-19 12:49:23.480000",
     "videoTags": [
       {
-        "e43030eb-2199-11ee-9ef2-0a0027000003": "중국"
+        "tagId": "e43030eb-2199-11ee-9ef2-0a0027000003",
+        "tagName": "중국"
       },
       {
-        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+        "tagId": "e4303860-2199-11ee-9ef2-0a0027000003",
+        "tagName": "예술"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 22000,
@@ -832,28 +832,28 @@
     "updatedAt": "2023-07-21 12:49:23.480000",
     "videoTags": [
       {
-        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+        "tagId": "e43032aa-2199-11ee-9ef2-0a0027000003",
+        "tagName": "대만"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 2000,
@@ -873,28 +873,28 @@
     "updatedAt": "2023-07-23 12:49:23.480000",
     "videoTags": [
       {
-        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+        "tagId": "e430353a-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서남아"
       },
       {
-        "e430381f-2199-11ee-9ef2-0a0027000003": "문화"
+        "tagId": "e430381f-2199-11ee-9ef2-0a0027000003",
+        "tagName": "문화"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 26000,
@@ -914,28 +914,28 @@
     "updatedAt": "2023-07-25 12:49:23.480000",
     "videoTags": [
       {
-        "e4303240-2199-11ee-9ef2-0a0027000003": "일본"
+        "tagId": "e4303240-2199-11ee-9ef2-0a0027000003",
+        "tagName": "일본"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 28000,
@@ -955,28 +955,28 @@
     "updatedAt": "2023-07-27 12:49:23.480000",
     "videoTags": [
       {
-        "e43032aa-2199-11ee-9ef2-0a0027000003": "대만"
+        "tagId": "e43032aa-2199-11ee-9ef2-0a0027000003",
+        "tagName": "대만"
       },
       {
-        "e4303860-2199-11ee-9ef2-0a0027000003": "예술"
+        "tagId": "e4303860-2199-11ee-9ef2-0a0027000003",
+        "tagName": "예술"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 30000,
@@ -996,28 +996,28 @@
     "updatedAt": "2023-07-30 12:49:23.480000",
     "videoTags": [
       {
-        "e430353a-2199-11ee-9ef2-0a0027000003": "서남아"
+        "tagId": "e430353a-2199-11ee-9ef2-0a0027000003",
+        "tagName": "서남아"
       },
       {
-        "e430391e-2199-11ee-9ef2-0a0027000003": "산"
+        "tagId": "e430391e-2199-11ee-9ef2-0a0027000003",
+        "tagName": "산"
       }
     ],
     "videoAds": [
       {
-        "a4302d24-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad1.com",
-          "adContent": "ad1",
-          "endTime": "00:00:20",
-          "startTime": "00:00:30"
-        }
+        "adId": "a4302d24-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad1.com",
+        "adContent": "ad1",
+        "endTime": "00:00:20",
+        "startTime": "00:00:30"
       },
       {
-        "a4302d25-2199-11ee-9ef2-0a0027000003": {
-          "adUrl": "ad2.com",
-          "adContent": "ad2",
-          "endTime": "00:00:30",
-          "startTime": "00:00:40"
-        }
+        "adId": "a4302d25-2199-11ee-9ef2-0a0027000003",
+        "adUrl": "ad2.com",
+        "adContent": "ad2",
+        "endTime": "00:00:30",
+        "startTime": "00:00:40"
       }
     ],
     "likes": 320,
