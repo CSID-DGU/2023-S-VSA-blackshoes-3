@@ -22,6 +22,7 @@ public class VideoDto {
     private int likes;
     private int views;
 
+    // 영상 리스트 조회 dto
     @Data
     public static class VideoListResponseDto {
         private String videoId;
@@ -35,6 +36,7 @@ public class VideoDto {
         private int adClicks;
     }
 
+    // 개별 영상 조회 dto
     @Data
     public static class VideoDetailResponseDto {
         private String videoId;

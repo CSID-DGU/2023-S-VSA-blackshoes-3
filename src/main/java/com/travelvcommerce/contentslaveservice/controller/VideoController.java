@@ -19,6 +19,7 @@ public class VideoController {
     @Autowired
     private VideoService videoService;
 
+    // 개별 영상 조회
     @GetMapping("/videos/{videoId}")
     public ResponseEntity<ResponseDto> getVideo(@PathVariable(name = "videoId") String videoId) {
         try {

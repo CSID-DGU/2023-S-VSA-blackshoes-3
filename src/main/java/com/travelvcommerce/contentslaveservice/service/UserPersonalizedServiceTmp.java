@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// 테스트용 임시 구현체 -> 차후 서비스간 연동으로 실제 정보 조회
 @Service
 @Slf4j
 public class UserPersonalizedServiceTmp implements UserPersonalizedService {

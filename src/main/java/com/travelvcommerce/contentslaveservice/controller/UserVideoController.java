@@ -26,21 +26,26 @@ public class UserVideoController {
     @Autowired
     private UserPersonalizedService userPersonalizedService;
 
+    // 전체 영상 조회
     @GetMapping("/videos/sort")
     public ResponseEntity<ResponseDto> getVideos(@RequestParam("q") String q,
                                                  @RequestParam("page") int page,
                                                  @RequestParam("size") int size) {
+        // q로 받은 정렬 타입 검증
         if (!UserSortTypes.contains(q.toUpperCase())) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        // q로 받은 정렬타입 recent -> createdAt, 도큐먼트 key 매칭
         if (q.equals("recent")) {
             q = "createdAt";
         }
 
         Map<String, Object> videoPagePayload;
 
+
+        // 비디오 조회 로직 호출
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
 
@@ -62,6 +67,7 @@ public class UserVideoController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    // 사용자 개인화된 영상 조회
     @GetMapping("/videos/{userId}/personalized")
     public ResponseEntity<ResponseDto> getPersonalizedVideos(@PathVariable(name = "userId") String userId,
                                                              @RequestParam("q") String q,
@@ -69,6 +75,7 @@ public class UserVideoController {
                                                              @RequestParam("size") int size) {
         String personalizedType = q.toUpperCase();
 
+        // q로 받은 personalizedType 해당 서비스 호출, 개인화 정보 조회
         UserPersonalizedData userPersonalizedData;
         if (personalizedType.equals(UserPersonalizedTypes.HISTORY.toString())) {
             userPersonalizedData = userPersonalizedService.getPersonalizedHistory(userId);
@@ -81,10 +88,13 @@ public class UserVideoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        // 개인화 정보의 idType(조회에 사용할 key), idList(조회에 사용할 value list) 변수 저장
         String idType = userPersonalizedData.getIdType();
         List<String> idList = userPersonalizedData.getIdList();
+
         Map<String, Object> videoPagePayload;
 
+        // 비디오 조회 로직 호출
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByIdList(idType, idList, page, size);
 
