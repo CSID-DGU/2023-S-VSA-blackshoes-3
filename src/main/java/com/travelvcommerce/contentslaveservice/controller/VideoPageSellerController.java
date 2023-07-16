@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/content-slave-service")
-public class SellerVideoController {
+public class VideoPageSellerController {
     @Autowired
     VideoService videoService;
 
