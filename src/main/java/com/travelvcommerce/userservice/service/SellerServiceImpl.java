@@ -93,4 +93,15 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public void findSellerPassword(String sellerId) {
     }
+
+    @Override
+    public void updatePassword(String sellerId, String password) {
+        Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
+        if(existingSeller.isPresent()) {
+            existingSeller.get().setPassword(passwordEncoder.encode(password));
+            sellerRepository.save(existingSeller.get());
+        } else {
+            throw new RuntimeException("존재하지 않는 판매자입니다.");
+        }
+    }
 }

@@ -13,6 +13,7 @@ public interface SellerService {
     void updateSeller(String sellerId, SellerDto sellerDto);
     void deleteSeller(String sellerId);
     void findSellerPassword(String sellerId);
+    void updatePassword(String sellerId, String password);
     void registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
     Map<String, String> login(SellerDto.SellerLoginRequestDto sellerLoginRequestDto);
 }

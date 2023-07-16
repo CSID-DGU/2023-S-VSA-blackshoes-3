@@ -142,15 +142,25 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/password")
-    public ResponseEntity<ResponseDto> findPassword(@PathVariable String userId) {
+    @PostMapping("/change-password/{userId}")
+    public ResponseEntity<ResponseDto> findPassword(@RequestHeader("Authorization") String token,
+                                                    @PathVariable String userId,
+                                                    @RequestBody String password) {
+
         try {
-            userService.findPassword(userId);
+            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            if (!jwtTokenProvider.validateToken(bearerToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            }
+
+            userService.updatePassword(userId, password);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
-
 }

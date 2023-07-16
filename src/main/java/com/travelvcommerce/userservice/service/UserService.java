@@ -15,6 +15,8 @@ public interface UserService {
     void updateUser(String userId, UserDto userDto);
     void deleteUser(String userId);
     void findPassword(String userId);
+    void updatePassword(String userId, String password);
+
     void registerUser(UserDto.UserRegisterRequestDto registerRequestDto);
     Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto);
 
