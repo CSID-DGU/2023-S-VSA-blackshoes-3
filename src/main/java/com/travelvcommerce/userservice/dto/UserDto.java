@@ -30,6 +30,11 @@ public class UserDto {
     public static class UserLoginRequestDto {
         private String email;
         private String password;
+
+        public UserLoginRequestDto(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
     }
 
     @Data

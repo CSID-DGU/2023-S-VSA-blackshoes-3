@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,7 +35,6 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final EmailService emailService;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
@@ -152,4 +152,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
+
 }

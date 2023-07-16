@@ -3,20 +3,24 @@ package com.travelvcommerce.userservice.controller;
 import com.travelvcommerce.userservice.dto.EmailDto;
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.TokenDto;
-import com.travelvcommerce.userservice.dto.UserDto;
+import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.CustomUserDetailsService;
 import com.travelvcommerce.userservice.service.EmailService;
+import com.travelvcommerce.userservice.service.SocialLoginService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user-service")
@@ -29,7 +33,7 @@ public class UserServiceController {
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
-
+    private final SocialLoginService socialLoginService;
     @PostMapping("/refresh")
     public ResponseEntity<ResponseDto> refreshToken(@RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
         try {
@@ -142,5 +146,43 @@ public class UserServiceController {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+    }
+
+    @GetMapping("/social-login-success")
+    public ResponseEntity<ResponseDto> handleLoginSuccess(@RequestParam String email) {
+        // 이메일을 이용해서 데이터베이스에서 사용자를 찾고,
+        // 해당 사용자가 패스워드를 가지고 있는지 확인할 수 있습니다.
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user == null) {
+            // 사용자를 찾지 못했다면 에러를 던집니다.
+            throw new RuntimeException("User not found");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()){
+            //Response Error
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("회원가입이 필요합니다").build());
+        }
+
+        // 패스워드가 있다면 토큰을 생성하고 발급합니다.
+        Map<String, String> loginResponse = userService.socialLogin(user.getEmail());
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .payload(loginResponse)
+                .build();
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + loginResponse.get("token"))
+                .body(responseDto);
+    }
+
+
+    @GetMapping("/login/oauth2/code/*")
+    public String naverLogin(@RequestParam(value = "code") String code) throws JSONException {
+
+        String accessToken = socialLoginService.getAccessToken(code);
+        Map<String, String> userInfo = socialLoginService.getSocialUserInfo(accessToken);
+
+        return "redirect:/social-login-success?email=" + userInfo.get("email");
     }
 }

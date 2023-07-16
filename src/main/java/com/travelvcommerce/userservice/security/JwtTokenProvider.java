@@ -1,17 +1,12 @@
 package com.travelvcommerce.userservice.security;
 
 import com.travelvcommerce.userservice.dto.TokenDto;
-import com.travelvcommerce.userservice.entity.RefreshToken;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtTokenProvider {
