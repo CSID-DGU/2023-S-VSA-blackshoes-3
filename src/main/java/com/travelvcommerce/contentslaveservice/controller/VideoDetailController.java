@@ -15,7 +15,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("content-slave-service")
-public class VideoController {
+public class VideoDetailController {
     @Autowired
     private VideoService videoService;
 
