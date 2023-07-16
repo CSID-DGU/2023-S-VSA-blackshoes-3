@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
         Users user = new Users();
         user.setEmail(registerRequestDto.getEmail());
-        user.setName(registerRequestDto.getName());
+        user.setNickname(registerRequestDto.getNickname());
         user.setBirthdate(registerRequestDto.getBirthdate());
         user.setRole(Role.valueOf("USER"));
         user.setProvider(registerRequestDto.getProvider());
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(String userId, UserDto userDto){
         Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
-            existingUser.get().setName(userDto.getName());
+            existingUser.get().setNickname(userDto.getNickname());
             existingUser.get().setPassword(passwordEncoder.encode(userDto.getPassword()));
             existingUser.get().setBirthdate(userDto.getBirthdate());
             usersRepository.save(existingUser.get());
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         user.setId(userDto.getId());
         user.setUserId(userDto.getUserId());
         user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
+        user.setNickname(userDto.getNickname());
         user.setBirthdate(userDto.getBirthdate());
         user.setRole(userDto.getRole());
         user.setProvider(userDto.getProvider());
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
         userDto.setId(user.getId());
         userDto.setUserId(user.getUserId());
         userDto.setEmail(user.getEmail());
-        userDto.setName(user.getName());
+        userDto.setNickname(user.getNickname());
         userDto.setBirthdate(user.getBirthdate());
         userDto.setRole(user.getRole());
         userDto.setProvider(user.getProvider());

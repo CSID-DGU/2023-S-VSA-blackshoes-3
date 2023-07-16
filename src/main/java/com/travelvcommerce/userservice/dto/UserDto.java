@@ -17,7 +17,7 @@ public class UserDto {
     private int id;
     private String userId;
     private String email;
-    private String name;
+    private String nickname;
     private String password;
     private LocalDate birthdate;
     private Role role;
@@ -36,7 +36,7 @@ public class UserDto {
     public static class UserRegisterRequestDto {
         private String email;
         private String password;
-        private String name;
+        private String nickname;
         private LocalDate birthdate;
         private Role role;
         private String provider;

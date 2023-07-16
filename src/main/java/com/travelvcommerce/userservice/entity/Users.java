@@ -28,8 +28,8 @@ public class Users {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "nickname")
+    private String nickname;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
