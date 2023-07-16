@@ -1,4 +1,4 @@
-package com.travelvcommerce.userservice.service;
+package com.travelvcommerce.userservice.service.social;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
 

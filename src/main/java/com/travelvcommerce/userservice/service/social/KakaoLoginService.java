@@ -1,4 +1,4 @@
-package com.travelvcommerce.userservice.service;
+package com.travelvcommerce.userservice.service.social;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;

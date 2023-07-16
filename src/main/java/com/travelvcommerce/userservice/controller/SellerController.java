@@ -145,4 +145,28 @@ public class SellerController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
         }
     }
+
+    @PostMapping("/change-password/{sellerId}")
+    public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
+                                                      @RequestHeader("Authorization") String token,
+                                                      @RequestParam("password") String password) {
+        try {
+            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            if (!jwtTokenProvider.validateToken(bearerToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            }
+
+            sellerService.updatePassword(sellerId, password);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error("서버 내부 오류").build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+    }
 }

@@ -1,4 +1,6 @@
-package com.travelvcommerce.userservice.security;
+package com.travelvcommerce.userservice.userinfo;
+
+import com.travelvcommerce.userservice.security.OAuth2UserInfo;
 
 import java.util.Map;
 

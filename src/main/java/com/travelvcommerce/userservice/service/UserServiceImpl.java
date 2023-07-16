@@ -118,47 +118,15 @@ public class UserServiceImpl implements UserService {
         //이메일로 인증번호 받기
 
     }
-    private Users convertToUser(UserDto userDto) {
-        if (userDto == null) {
-            return null;
+
+    @Override
+    public void updatePassword(String userId, String password) {
+        Optional<Users> existingUser = usersRepository.findByUserId(userId);
+        if(existingUser.isPresent()) {
+            existingUser.get().setPassword(passwordEncoder.encode(password));
+            usersRepository.save(existingUser.get());
         }
-
-        Users user = new Users();
-        user.setId(userDto.getId());
-        user.setUserId(userDto.getUserId());
-        user.setEmail(userDto.getEmail());
-        user.setNickname(userDto.getNickname());
-        user.setBirthdate(userDto.getBirthdate());
-        user.setRole(userDto.getRole());
-        user.setProvider(userDto.getProvider());
-        user.setProviderId(userDto.getProviderId());
-        return user;
     }
-
-    private UserDto convertToUserDto(Users user, TokenDto tokenDto, Collection<? extends GrantedAuthority> authorities) {
-        if (user == null) {
-            return null;
-        }
-
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUserId(user.getUserId());
-        userDto.setEmail(user.getEmail());
-        userDto.setNickname(user.getNickname());
-        userDto.setBirthdate(user.getBirthdate());
-        userDto.setRole(user.getRole());
-        userDto.setProvider(user.getProvider());
-        userDto.setProviderId(user.getProviderId());
-        userDto.setTokenDto(tokenDto);  // TokenDto 설정
-        userDto.setAuthorities(authorities);
-        return userDto;
-    }
-    public String getUserEmailByUserId(String userId) {
-        return usersRepository.findByUserId(userId)
-                .map(Users::getEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with userId: " + userId));
-    }
-
 
 }
 
