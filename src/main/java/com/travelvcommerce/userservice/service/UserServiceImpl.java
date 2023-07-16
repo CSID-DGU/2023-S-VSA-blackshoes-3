@@ -8,6 +8,8 @@ import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -135,5 +137,7 @@ public class UserServiceImpl implements UserService {
                 .map(Users::getEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with userId: " + userId));
     }
+
+
 }
 

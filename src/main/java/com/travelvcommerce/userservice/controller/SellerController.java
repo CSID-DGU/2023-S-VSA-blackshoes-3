@@ -62,7 +62,7 @@ public class SellerController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            String tokenSellerEmail = jwtTokenProvider.getUsernameFromToken(bearerToken);
+            String tokenSellerEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
             String tokenSellerType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<Seller> sellerOptional = sellerRepository.findBySellerId(sellerId);

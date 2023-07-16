@@ -35,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = getToken(request);
 
         if (token != null && tokenProvider.validateToken(token)) {
-            String username = tokenProvider.getUsernameFromToken(token);
+            String email = tokenProvider.getEmailFromToken(token);
             String userType = tokenProvider.getUserTypeFromToken(token);  // userType을 가져옵니다.
 
             UserDetailsService userDetailsService;
@@ -48,7 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 throw new RuntimeException("Unknown user type: " + userType);
             }
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
