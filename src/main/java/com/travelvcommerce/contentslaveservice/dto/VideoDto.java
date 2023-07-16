@@ -48,7 +48,7 @@ public class VideoDto {
         private String sellerLogoUrl;
         private String createdAt;
         private List<Map<String, String>> videoTags;
-        private List<Map<String, Map<String, String>>> videoAds;
+        private List<Map<String, String>> videoAds;
         private int likes;
         private int views;
         private int adClicks;
