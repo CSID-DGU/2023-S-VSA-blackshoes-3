@@ -36,3 +36,6 @@ application.yml
 
 ### VS Code ###
 .vscode/
+
+
+my-debug-key.keystore
