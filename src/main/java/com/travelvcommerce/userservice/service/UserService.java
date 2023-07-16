@@ -17,6 +17,7 @@ public interface UserService {
     void findPassword(String userId);
     void registerUser(UserDto.UserRegisterRequestDto registerRequestDto);
     Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto);
-    String getUserEmailByUserId(String userId);
+
+    Map<String, String> socialLogin(String email);
 
 }

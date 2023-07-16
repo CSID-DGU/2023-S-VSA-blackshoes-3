@@ -91,6 +91,27 @@ public class UserServiceImpl implements UserService {
 
         return responseBody;
     }
+    public Map<String, String> socialLogin(String email) {
+        // 사용자 검색
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        // UUID 생성 및 저장
+        String uuid = UUID.randomUUID().toString();
+        user.setUserId(uuid);
+        usersRepository.save(user);
+
+        // JWT 토큰 생성
+        TokenDto tokenDto = jwtTokenProvider.createTokens(email, user.getRole().getRoleName());
+
+        // 토큰과 UUID 반환
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("accessToken", tokenDto.getAccessToken());
+        responseBody.put("refreshToken", tokenDto.getRefreshToken());
+        responseBody.put("userId", uuid);
+
+        return responseBody;
+    }
 
     @Override
     public void findPassword(String userId) {
