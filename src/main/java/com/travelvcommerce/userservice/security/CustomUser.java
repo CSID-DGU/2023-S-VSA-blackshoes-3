@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -20,13 +21,28 @@ public class CustomUser implements OAuth2User {
 
     private TokenDto tokenDto;  // 수정: tokenDto 필드 추가
 
-    public CustomUser(Map<String, Object> attributes, Users user, TokenDto tokenDto) { // 수정: 생성자 매개변수 수정
+    public CustomUser(Map<String, Object> attributes, Users user, TokenDto tokenDto, String provider) { // 수정: 생성자 매개변수 수정
+        Map<String, Object> attributesWithEmail;
+
+        // provider에 따라 email의 위치가 다를 수 있음
+        if ("kakao".equals(provider)) {
+            Map<String, Object> kakaoAccountAttributes = (Map<String, Object>) attributes.get("kakao_account");
+            if (kakaoAccountAttributes != null) {
+                attributesWithEmail = new HashMap<>(attributes);
+                attributesWithEmail.put("email", kakaoAccountAttributes.get("email"));
+            } else {
+                attributesWithEmail = attributes;
+            }
+        } else {
+            attributesWithEmail = attributes;
+        }
+
         this.oAuth2User = new DefaultOAuth2User(
                 AuthorityUtils.commaSeparatedStringToAuthorityList(user.getRole().getRoleName()),
-                attributes,
+                attributesWithEmail,
                 "email");
         this.user = user;
-        this.tokenDto = tokenDto;  // 수정: tokenDto 필드 설정
+        this.tokenDto = tokenDto;
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface SocialLoginService {
     //getAccessToken
-    String getAccessToken(String code);
+    String getAccessToken(String code) throws JSONException;
 
     //getSocialUserInfo
     Map<String, String> getSocialUserInfo(String accessToken) throws JSONException;

@@ -33,7 +33,8 @@ public class UserServiceController {
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
-    private final SocialLoginService socialLoginService;
+    private final SocialLoginService naverLoginService;
+    private final SocialLoginService kakaoLoginService;
     @PostMapping("/refresh")
     public ResponseEntity<ResponseDto> refreshToken(@RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
         try {
@@ -177,11 +178,20 @@ public class UserServiceController {
     }
 
 
-    @GetMapping("/login/oauth2/code/*")
+    @GetMapping("/login/oauth2/code/naver")
     public String naverLogin(@RequestParam(value = "code") String code) throws JSONException {
 
-        String accessToken = socialLoginService.getAccessToken(code);
-        Map<String, String> userInfo = socialLoginService.getSocialUserInfo(accessToken);
+        String accessToken = naverLoginService.getAccessToken(code);
+        Map<String, String> userInfo = naverLoginService.getSocialUserInfo(accessToken);
+
+        return "redirect:/social-login-success?email=" + userInfo.get("email");
+    }
+
+    @GetMapping("/login/oauth2/code/kakao")
+    public String kakaoLogin(@RequestParam(value = "code") String code) throws JSONException {
+
+        String accessToken = kakaoLoginService.getAccessToken(code);
+        Map<String, String> userInfo = kakaoLoginService.getSocialUserInfo(accessToken);
 
         return "redirect:/social-login-success?email=" + userInfo.get("email");
     }

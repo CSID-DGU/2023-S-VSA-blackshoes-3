@@ -22,7 +22,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UsersRepository usersRepository;
     private final JwtTokenProvider tokenProvider;
 
-    @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         System.out.println("CustomOAuth2UserService - loadUser method called");
 
@@ -40,12 +39,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2UserInfo oAuth2UserInfo = null;	//추가
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
-        //추가
         if(provider.equals("google")){
             oAuth2UserInfo = new GoogleUserInfo(attributes);
         }
         else if(provider.equals("naver")){
             oAuth2UserInfo = new NaverUserInfo(attributes);
+        }else if(provider.equals("kakao")) {
+            oAuth2UserInfo = new KakaoUserInfo(attributes);
         }
 
         String providerId = oAuth2UserInfo.getProviderId();
@@ -64,6 +64,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         TokenDto tokenDto = tokenProvider.createTokens(email, user.getRole().getRoleName());
 
-        return new CustomUser(attributes, user, tokenDto);
+        return new CustomUser(attributes, user, tokenDto, provider);
     }
 }
