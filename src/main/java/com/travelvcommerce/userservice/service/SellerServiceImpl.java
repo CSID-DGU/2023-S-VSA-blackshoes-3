@@ -7,7 +7,6 @@ import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,9 +26,7 @@ import java.util.UUID;
 public class SellerServiceImpl implements SellerService {
 
     private final PasswordEncoder passwordEncoder;
-
     private final JwtTokenProvider jwtTokenProvider;
-
     private final SellerRepository sellerRepository;
 
     @Override
@@ -88,10 +85,6 @@ public class SellerServiceImpl implements SellerService {
         responseBody.put("sellerId", uuid);
 
         return responseBody;
-    }
-
-    @Override
-    public void findSellerPassword(String sellerId) {
     }
 
     @Override

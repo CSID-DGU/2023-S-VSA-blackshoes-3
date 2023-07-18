@@ -23,4 +23,18 @@ public class SellerDto {
         private String email;
         private String password;
     }
+
+    @Data
+    public static class SellerUpdateRequestDto{
+        private String email;
+        private String password;
+        private String companyName;
+    }
+
+    @Data
+    public static class SellerJoinRequestDto{
+        private String email;
+        private String password;
+        private String companyName;
+    }
 }

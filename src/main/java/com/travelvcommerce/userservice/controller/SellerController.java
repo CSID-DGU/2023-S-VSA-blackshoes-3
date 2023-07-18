@@ -35,24 +35,23 @@ public class SellerController {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/join")
-    public ResponseEntity<ResponseDto> registerSeller(@RequestParam("email") String email,
-                                                      @RequestParam("password") String password,
-                                                      @RequestParam("companyName") String companyName,
+    public ResponseEntity<ResponseDto> registerSeller(@RequestBody SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestParam("icon") MultipartFile icon) {
         try {
-            SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto = new SellerDto.SellerRegisterRequestDto();
-            sellerRegisterRequestDto.setEmail(email);
-            sellerRegisterRequestDto.setPassword(password);
-            sellerRegisterRequestDto.setCompanyName(companyName);
-            sellerRegisterRequestDto.setIcon(icon.getBytes());
+            // MultipartFile를 byte 배열로 변환
+            byte[] iconBytes = icon.getBytes();
+            sellerRegisterRequestDto.setIcon(iconBytes);
 
+            // SellerService를 이용하여 저장
             sellerService.registerSeller(sellerRegisterRequestDto);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
         } catch (RuntimeException | IOException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
     }
+
     @DeleteMapping("/{sellerId}")
     public ResponseEntity<ResponseDto> deleteSeller(@RequestHeader("Authorization") String token,
                                                     @PathVariable String sellerId) {
@@ -89,20 +88,17 @@ public class SellerController {
     @PutMapping("/{sellerId}")
     public ResponseEntity<ResponseDto> updateSeller(@RequestHeader("Authorization") String token,
                                                     @PathVariable String sellerId,
-                                                    @RequestParam("password") String password,
-                                                    @RequestParam("companyName") String companyName,
-                                                    @RequestParam("icon") MultipartFile icon) {
+                                                    @RequestBody SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto,
+                                                    @RequestPart("icon") MultipartFile icon) {
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            // You'll need a similar check for the seller here, similar to updateUser
-
             SellerDto sellerDto = new SellerDto();
-            sellerDto.setPassword(password);
-            sellerDto.setCompanyName(companyName);
+            sellerDto.setPassword(sellerUpdateRequestDto.getPassword());
+            sellerDto.setCompanyName(sellerUpdateRequestDto.getCompanyName());
             sellerDto.setIcon(icon.getBytes());
 
             sellerService.updateSeller(sellerId, sellerDto);

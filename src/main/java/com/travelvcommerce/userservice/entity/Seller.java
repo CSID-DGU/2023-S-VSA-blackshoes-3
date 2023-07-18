@@ -32,7 +32,7 @@ public class Seller {
     private LocalDateTime updatedAt;
 
     @Lob
-    @Column(columnDefinition = "LONGBLOB")
+    @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] icon;
 
     @Column(name = "role")
