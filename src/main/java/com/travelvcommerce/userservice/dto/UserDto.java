@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import com.travelvcommerce.userservice.entity.Role;
 import com.travelvcommerce.userservice.security.CustomUser;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,5 +47,14 @@ public class UserDto {
         private Role role;
         private String provider;
         private String providerId;
+    }
+
+    @Data
+    public static class UserInfoResponseDto{
+        private String email;
+        private String nickname;
+        private LocalDate birthdate;
+        private Role role;
+        private String provider;
     }
 }

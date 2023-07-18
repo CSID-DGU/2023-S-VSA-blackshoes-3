@@ -114,12 +114,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void findPassword(String userId) {
-        //이메일로 인증번호 받기
-
-    }
-
-    @Override
     public void updatePassword(String userId, String password) {
         Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
@@ -128,5 +122,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public UserDto.UserInfoResponseDto getUserInfo(String userId) {
+        Optional<Users> existingUser = usersRepository.findByUserId(userId);
+
+        UserDto.UserInfoResponseDto userInfoResponseDto = new UserDto.UserInfoResponseDto();
+        if(existingUser.isPresent()) {
+            userInfoResponseDto.setNickname(existingUser.get().getNickname());
+            userInfoResponseDto.setEmail(existingUser.get().getEmail());
+            userInfoResponseDto.setBirthdate(existingUser.get().getBirthdate());
+            userInfoResponseDto.setRole(existingUser.get().getRole());
+            userInfoResponseDto.setProvider(existingUser.get().getProvider());
+        }
+
+        return userInfoResponseDto;
+    }
 }
 

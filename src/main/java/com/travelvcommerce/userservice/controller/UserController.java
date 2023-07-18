@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -143,10 +144,9 @@ public class UserController {
     }
 
     @PostMapping("/change-password/{userId}")
-    public ResponseEntity<ResponseDto> findPassword(@RequestHeader("Authorization") String token,
+    public ResponseEntity<ResponseDto> changePassword(@RequestHeader("Authorization") String token,
                                                     @PathVariable String userId,
                                                     @RequestBody String password) {
-
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
@@ -159,6 +159,47 @@ public class UserController {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+    }
+
+    //getUserInfo (Request with Json, Response with Json, use Dto)
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseDto> getUserInfo(@RequestHeader("Authorization") String accessToken, @PathVariable String userId) {
+        try {
+            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
+
+            if (!jwtTokenProvider.validateToken(bearerToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            }
+
+            String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
+            String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
+
+            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            if (userOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+            String userEmail = userOptional.get().getEmail();
+
+            if (!userEmail.equals(tokenUserEmail)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+
+
+            UserDto.UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(userId);
+
+            ResponseDto responseDto = ResponseDto.builder()
+                    .payload(Collections.singletonMap("user", userInfoResponseDto))
+                    .build();
+
+            return ResponseEntity.ok().body(responseDto);
+
+        } catch (UsernameNotFoundException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
