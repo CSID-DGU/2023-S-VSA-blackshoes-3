@@ -31,6 +31,6 @@ public class VideoDto {
 
         private List<String> tagIdList;
 
-        private List<AdDto.AdRequestDto> adList;
+        private List<AdDto.AdUploadRequestDto> adList;
     }
 }

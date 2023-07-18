@@ -23,7 +23,9 @@ public class ModifyController {
     private AwsS3Service awsS3Service;
 
     @PutMapping("/videos/{userId}/{videoId}/thumbnail")
-    public ResponseEntity<ResponseDto> modifyThumbnail(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId, @RequestPart(value = "thumbnail") MultipartFile thumbnail) {
+    public ResponseEntity<ResponseDto> modifyThumbnail(@PathVariable("userId") String userId,
+                                                       @PathVariable("videoId") String videoId,
+                                                       @RequestPart(value = "thumbnail") MultipartFile thumbnail) {
         Video video;
         String s3Key;
 
@@ -59,7 +61,9 @@ public class ModifyController {
     }
 
     @PutMapping("/videos/{userId}/{videoId}/tags")
-    public ResponseEntity<ResponseDto> modifyTags(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId, @RequestBody TagDto.TagRequestDto tagRequestDto) {
+    public ResponseEntity<ResponseDto> modifyTags(@PathVariable("userId") String userId,
+                                                  @PathVariable("videoId") String videoId,
+                                                  @RequestBody TagDto.TagRequestDto tagRequestDto) {
         List<String> tagIdList = tagRequestDto.getTagIds();
 
         try {
@@ -73,11 +77,13 @@ public class ModifyController {
     }
 
     @PutMapping("/videos/{userId}/{videoId}/ads")
-    public ResponseEntity<ResponseDto> modifyAds(@PathVariable("userId") String userId, @PathVariable("videoId") String videoId, @RequestBody AdDto.AdRequestsDto adRequestsDto) {
-        List<AdDto.AdRequestDto> adRequestDtoList = adRequestsDto.getAdRequests();
+    public ResponseEntity<ResponseDto> modifyAds(@PathVariable("userId") String userId,
+                                                 @PathVariable("videoId") String videoId,
+                                                 @RequestBody AdDto.AdModifyRequestsDto adModifyRequestsDto) {
+        List<AdDto.AdModifyRequestDto> adModifyRequestDtoList = adModifyRequestsDto.getAdModifyRequests();
 
         try {
-            videoModifyService.updateAds(userId, videoId, adRequestDtoList);
+            videoModifyService.updateAds(userId, videoId, adModifyRequestDtoList);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

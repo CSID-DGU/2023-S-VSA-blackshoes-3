@@ -109,7 +109,8 @@ public class VideoModifyServiceImpl implements VideoModifyService {
     }
 
     @Override
-    public void updateAds(String userId, String videoId, List<AdDto.AdRequestDto> adRequestDtoList) {
+    @Transactional
+    public void updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
         Video video;
 
         try {
@@ -118,30 +119,43 @@ public class VideoModifyServiceImpl implements VideoModifyService {
             log.error("Video not found", e);
             throw new RuntimeException("video not found");
         }
-
-        adRequestDtoList.forEach(adRequestDto -> {
-            if (adRequestDto.getAdId().equals("new")) {
+        adModifyRequestDtoList.forEach(adModifyRequestDto -> {
+            if (adModifyRequestDto.getModifyType().equals("create")) {
                 try {
-                    Ad ad = modelMapper.map(adRequestDto, Ad.class);
+                    Ad ad = modelMapper.map(adModifyRequestDto, Ad.class);
                     ad.setVideo(video);
                     ad.setAdId(UUID.randomUUID().toString());
                     adRepository.save(ad);
                 } catch (Exception e) {
-                    log.error("add ad error", e);
-                    throw new RuntimeException("add ad error");
+                    log.error("create ad error", e);
+                    throw new RuntimeException("create ad error");
                 }
-            } else {
+            }
+            else if (adModifyRequestDto.getModifyType().equals("update")) {
                 try {
-                Ad ad = adRepository.findByAdId(adRequestDto.getAdId()).orElseThrow(() -> new RuntimeException("ad not found"));
-                ad.setAdUrl(adRequestDto.getAdUrl());
-                ad.setAdContent(adRequestDto.getAdContent());
-                ad.setStartTime(adRequestDto.getStartTime());
-                ad.setEndTime(adRequestDto.getEndTime());
-                adRepository.save(ad);
+                    Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new RuntimeException("ad not found"));
+                    ad.setAdUrl(adModifyRequestDto.getAdUrl());
+                    ad.setAdContent(adModifyRequestDto.getAdContent());
+                    ad.setStartTime(adModifyRequestDto.getStartTime());
+                    ad.setEndTime(adModifyRequestDto.getEndTime());
+                    adRepository.save(ad);
                 } catch (Exception e) {
                     log.error("update ad error", e);
                     throw new RuntimeException("update ad error");
                 }
+            }
+            else if (adModifyRequestDto.getModifyType().equals("delete")) {
+                try {
+                    Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new RuntimeException("ad not found"));
+                    adRepository.delete(ad);
+                } catch (Exception e) {
+                    log.error("delete ad error", e);
+                    throw new RuntimeException("delete ad error");
+                }
+            }
+            else {
+                log.error("invalid modify type");
+                throw new RuntimeException("invalid modify type");
             }
         });
 
