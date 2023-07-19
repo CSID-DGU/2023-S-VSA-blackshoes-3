@@ -183,7 +183,7 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/{sellerId}/uploaderInfo")
+    @GetMapping("/{sellerId}/uploader-info")
     public ResponseEntity<ResponseDto> getSellerUploaderInfo(@PathVariable String sellerId) {
         SellerDto.SellerInfoDto sellerUploaderInfoDto;
 
