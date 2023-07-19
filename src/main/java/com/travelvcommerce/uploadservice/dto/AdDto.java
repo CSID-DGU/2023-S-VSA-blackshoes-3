@@ -19,7 +19,7 @@ public class AdDto {
     private String endTime;
 
     @Data
-    public static class AdRequestDto {
+    public static class AdUploadRequestDto {
         private String adId;
 
         private String adUrl;
@@ -32,7 +32,22 @@ public class AdDto {
     }
 
     @Data
-    public static class AdRequestsDto {
-        private List<AdDto.AdRequestDto> adRequests;
+    public static class AdModifyRequestDto {
+        private String modifyType;
+
+        private String adId;
+
+        private String adUrl;
+
+        private String adContent;
+
+        private String startTime;
+
+        private String endTime;
+    }
+
+    @Data
+    public static class AdModifyRequestsDto {
+        private List<AdDto.AdModifyRequestDto> adModifyRequests;
     }
 }

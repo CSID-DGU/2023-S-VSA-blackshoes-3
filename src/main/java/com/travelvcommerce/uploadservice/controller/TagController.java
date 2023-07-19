@@ -3,7 +3,7 @@ package com.travelvcommerce.uploadservice.controller;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.service.TagService;
-import com.travelvcommerce.uploadservice.vo.TagTypes;
+import com.travelvcommerce.uploadservice.vo.TagType;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +47,7 @@ public class TagController {
     @GetMapping("/tags/{type}")
     public ResponseEntity<ResponseDto> getTagsByType(@PathVariable(name = "type") String type) {
 
-        if (!TagTypes.contains(type)) {
+        if (!TagType.contains(type)) {
 
             ResponseDto responseDto = ResponseDto.buildResponseDto("invalid tag type");
 

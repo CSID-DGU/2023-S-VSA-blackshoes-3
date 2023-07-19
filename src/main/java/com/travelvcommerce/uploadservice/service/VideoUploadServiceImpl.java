@@ -70,14 +70,14 @@ public class VideoUploadServiceImpl implements VideoUploadService {
         String fileName = new File(filePath).getName();
         fileName = fileName.substring(0, fileName.lastIndexOf("."));
 
-        Path encodingPath = Path.of("src\\main\\resources\\static\\videos\\encoded\\" + fileName);
+        Path encodingPath = Path.of("src/main/resources/static/videos/encoded/" + fileName);
 
         try {
             if (!Files.exists(encodingPath)) {
                 Files.createDirectories(encodingPath);
             }
 
-            String outputPath = encodingPath + "\\" + fileName + ".m3u8";
+            String outputPath = encodingPath + "/" + fileName + ".m3u8";
             ffmpegWrapper.encodeToHls(inputPath, outputPath);
 
             File file = new File(inputPath);
@@ -107,7 +107,7 @@ public class VideoUploadServiceImpl implements VideoUploadService {
     @Transactional
     public void saveVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
-                          S3Video videoUrls, S3Thumbnail thumbnailUrl) {
+                          S3Video videoUrls, S3Thumbnail thumbnailUrls) {
         Video video = new Video();
 
         try {
@@ -132,9 +132,9 @@ public class VideoUploadServiceImpl implements VideoUploadService {
         try {
             VideoUrlDto videoUrlDto = VideoUrlDto.builder().
                     videoS3Url(videoUrls.getS3Url()).
-                    videoCloudfrontUrl(videoUrls.getCloudFrontUrl()).
-                    thumbnailS3Url(thumbnailUrl.getS3Url()).
-                    thumbnailCloudfrontUrl(thumbnailUrl.getCloudFrontUrl()).
+                    videoCloudfrontUrl(videoUrls.getCloudfrontUrl()).
+                    thumbnailS3Url(thumbnailUrls.getS3Url()).
+                    thumbnailCloudfrontUrl(thumbnailUrls.getCloudfrontUrl()).
                     build();
 
             VideoUrl videoUrl = modelMapper.map(videoUrlDto, VideoUrl.class);

@@ -51,7 +51,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             S3Video s3Video = new S3Video();
 
             s3Video.setS3Url(s3Url);
-            s3Video.setCloudFrontUrl(cloudFrontUrl);
+            s3Video.setCloudfrontUrl(cloudFrontUrl);
 
             return s3Video;
 
@@ -94,7 +94,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             S3Thumbnail s3Thumbnail = new S3Thumbnail();
 
             s3Thumbnail.setS3Url(s3url);
-            s3Thumbnail.setCloudFrontUrl(cloudFrontUrl);
+            s3Thumbnail.setCloudfrontUrl(cloudFrontUrl);
 
             return s3Thumbnail;
 
@@ -105,27 +105,42 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public void updateThumbnail(String s3Key, MultipartFile multipartFile) {
+    public S3Thumbnail updateThumbnail(String s3Key, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
+
+        String newS3Key;
 
         try {
             if (amazonS3Client.doesObjectExist(BUCKET, s3Key)) {
                 amazonS3Client.deleteObject(BUCKET, s3Key);
             }
+            newS3Key =
+                    s3Key.substring(0, s3Key.lastIndexOf(".")) +
+                            multipartFile.getOriginalFilename()
+                                    .substring(multipartFile.getOriginalFilename().lastIndexOf("."));
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(multipartFile.getContentType());
             objectMetadata.setContentLength(multipartFile.getSize());
 
-            amazonS3Client.putObject(new PutObjectRequest(BUCKET, s3Key, multipartFile.getInputStream(), objectMetadata)
+            amazonS3Client.putObject(new PutObjectRequest(BUCKET, newS3Key, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException("AWS thumbnail update error");
         }
+
+        String s3url = amazonS3Client.getUrl(BUCKET, newS3Key).toString();
+        String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + newS3Key;
+
+        S3Thumbnail s3Thumbnail = new S3Thumbnail();
+        s3Thumbnail.setS3Url(s3url);
+        s3Thumbnail.setCloudfrontUrl(cloudFrontUrl);
+
+        return s3Thumbnail;
     }
 
     @Override

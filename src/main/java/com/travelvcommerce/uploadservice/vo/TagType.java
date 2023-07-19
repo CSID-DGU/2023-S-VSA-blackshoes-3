@@ -1,13 +1,11 @@
 package com.travelvcommerce.uploadservice.vo;
 
-import lombok.Data;
-
-public enum TagTypes {
+public enum TagType {
     REGION,
     THEME;
 
     public static boolean contains(String type) {
-        for (TagTypes tagType : TagTypes.values()) {
+        for (TagType tagType : TagType.values()) {
             if (tagType.name().equals(type.toUpperCase())) {
                 return true;
             }
