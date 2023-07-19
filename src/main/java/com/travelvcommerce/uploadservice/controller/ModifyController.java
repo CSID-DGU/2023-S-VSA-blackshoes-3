@@ -4,8 +4,10 @@ import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.entity.Video;
+import com.travelvcommerce.uploadservice.entity.VideoUrl;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.VideoModifyService;
+import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +29,13 @@ public class ModifyController {
                                                        @PathVariable("videoId") String videoId,
                                                        @RequestPart(value = "thumbnail") MultipartFile thumbnail) {
         Video video;
+        VideoUrl videoUrl;
         String s3Key;
+        S3Thumbnail newS3Thumbnail;
 
         try {
             video = videoModifyService.getVideo(userId, videoId);
+            videoUrl = video.getVideoUrl();
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -44,14 +49,14 @@ public class ModifyController {
         }
 
         try {
-            awsS3Service.updateThumbnail(s3Key, thumbnail);
+            newS3Thumbnail = awsS3Service.updateThumbnail(s3Key, thumbnail);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         try {
-            videoModifyService.updateThumbnail(video);
+            videoModifyService.updateThumbnail(video, videoUrl, newS3Thumbnail);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

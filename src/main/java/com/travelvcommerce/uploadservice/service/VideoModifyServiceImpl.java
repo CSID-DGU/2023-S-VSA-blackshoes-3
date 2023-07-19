@@ -4,10 +4,9 @@ import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.entity.Ad;
 import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.entity.VideoTag;
-import com.travelvcommerce.uploadservice.repository.AdRepository;
-import com.travelvcommerce.uploadservice.repository.TagRepository;
-import com.travelvcommerce.uploadservice.repository.VideoRepository;
-import com.travelvcommerce.uploadservice.repository.VideoTagRepository;
+import com.travelvcommerce.uploadservice.entity.VideoUrl;
+import com.travelvcommerce.uploadservice.repository.*;
+import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,9 @@ public class VideoModifyServiceImpl implements VideoModifyService {
     }
 
     @Override
-    public void updateThumbnail(Video video) {
+    public void updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail) {
+        videoUrl.setThumbnailS3Url(s3Thumbnail.getS3Url());
+        videoUrl.setThumbnailCloudfrontUrl(s3Thumbnail.getCloudfrontUrl());
         updateVideo(video, "Thumbnail");
     }
 
