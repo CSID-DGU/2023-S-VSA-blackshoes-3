@@ -17,8 +17,6 @@ public class VideoDto {
 
     private String sellerId;
 
-    private String sellerName;
-
     private String createdAt;
 
     private String updatedAt;
@@ -26,8 +24,6 @@ public class VideoDto {
     @Data
     public static class VideoUploadRequestDto {
         private String videoName;
-
-        private String sellerName;
 
         private List<String> tagIdList;
 

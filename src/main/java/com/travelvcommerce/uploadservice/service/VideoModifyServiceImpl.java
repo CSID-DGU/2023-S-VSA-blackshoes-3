@@ -38,7 +38,7 @@ public class VideoModifyServiceImpl implements VideoModifyService {
         Video video;
 
         try {
-            video = videoRepository.findBySellerIdAndVideoId(userId, videoId).orElseThrow(() -> new Exception("Video not found"));
+            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
         } catch (Exception e) {
             log.error("Video not found", e);
             throw new RuntimeException("video not found");
@@ -72,7 +72,7 @@ public class VideoModifyServiceImpl implements VideoModifyService {
         Video video;
 
         try {
-            video = videoRepository.findBySellerIdAndVideoId(userId, videoId).orElseThrow(() -> new Exception("Video not found"));
+            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
         } catch (Exception e) {
             log.error("Video not found", e);
             throw new RuntimeException("video not found");
@@ -115,7 +115,7 @@ public class VideoModifyServiceImpl implements VideoModifyService {
         Video video;
 
         try {
-            video = videoRepository.findBySellerIdAndVideoId(userId, videoId).orElseThrow(() -> new Exception("Video not found"));
+            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
         } catch (Exception e) {
             log.error("Video not found", e);
             throw new RuntimeException("video not found");
