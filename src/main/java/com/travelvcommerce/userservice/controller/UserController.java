@@ -143,7 +143,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/change-password/{userId}")
+    @PutMapping("/{userId}/password")
     public ResponseEntity<ResponseDto> changePassword(@RequestHeader("Authorization") String token,
                                                     @PathVariable String userId,
                                                     @RequestBody String password) {

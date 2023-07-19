@@ -143,7 +143,7 @@ public class SellerController {
         }
     }
 
-    @PostMapping("/change-password/{sellerId}")
+    @PutMapping("/{sellerId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
                                                       @RequestHeader("Authorization") String token,
                                                       @RequestParam("password") String password) {
