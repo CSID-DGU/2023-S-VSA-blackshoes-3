@@ -15,4 +15,10 @@ public class UploaderDto {
         private String sellerName;
         private byte[] sellerLogo;
     }
+
+    @Data
+    public static class UploaderModifyRequestDto {
+        private String sellerName;
+        private byte[] sellerLogo;
+    }
 }

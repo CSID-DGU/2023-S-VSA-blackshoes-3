@@ -1,6 +1,7 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.travelvcommerce.uploadservice.dto.AdDto;
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.entity.VideoUrl;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
@@ -13,4 +14,5 @@ public interface VideoModifyService {
     public void updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail);
     public void updateTags(String userId, String videoId, List<String> tagIdList);
     public void updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList);
+    void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto);
 }

@@ -19,6 +19,6 @@ public class Uploader {
     @Column(name = "seller_logo", nullable = false, columnDefinition = "LONGBLOB")
     @Lob
     private byte[] sellerLogo;
-    @OneToMany(mappedBy = "uploader")
-    private List<Video> video;
+    @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL)
+    private List<Video> videos;
 }

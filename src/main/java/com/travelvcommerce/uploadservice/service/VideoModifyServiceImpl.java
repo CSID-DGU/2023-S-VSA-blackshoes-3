@@ -1,10 +1,8 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.travelvcommerce.uploadservice.dto.AdDto;
-import com.travelvcommerce.uploadservice.entity.Ad;
-import com.travelvcommerce.uploadservice.entity.Video;
-import com.travelvcommerce.uploadservice.entity.VideoTag;
-import com.travelvcommerce.uploadservice.entity.VideoUrl;
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
+import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +28,8 @@ public class VideoModifyServiceImpl implements VideoModifyService {
     private TagRepository tagRepository;
     @Autowired
     private AdRepository adRepository;
+    @Autowired
+    private UploaderRepository uploaderRepository;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -161,6 +161,27 @@ public class VideoModifyServiceImpl implements VideoModifyService {
         });
 
         updateVideo(video, "Ads");
+    }
+
+    @Override
+    public void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
+        Uploader uploader;
+
+        try {
+            uploader = uploaderRepository.findBySellerId(userId)
+                    .orElseThrow(() -> new RuntimeException("uploader not found"));
+            uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
+            uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
+        } catch (Exception e) {
+            log.error("update uploader error", e);
+            throw new RuntimeException("update uploader error");
+        }
+
+        List<Video> videoList = uploader.getVideos();
+
+        videoList.stream().forEach(video -> {
+           updateVideo(video, "Uploader");
+        });
     }
 
     private void updateVideo(Video video, String type) {

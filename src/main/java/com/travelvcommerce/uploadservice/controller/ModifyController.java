@@ -3,6 +3,7 @@ package com.travelvcommerce.uploadservice.controller;
 import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.dto.TagDto;
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.entity.VideoUrl;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
@@ -89,6 +90,20 @@ public class ModifyController {
 
         try {
             videoModifyService.updateAds(userId, videoId, adModifyRequestDtoList);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @PutMapping("/videos/{userId})")
+    public ResponseEntity<ResponseDto> modifyUploader(@PathVariable("userId") String userId,
+                                                      @RequestBody UploaderDto.UploaderModifyRequestDto
+                                                              uploaderModifyRequestDto) {
+        try {
+            videoModifyService.updateUploader(userId, uploaderModifyRequestDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
