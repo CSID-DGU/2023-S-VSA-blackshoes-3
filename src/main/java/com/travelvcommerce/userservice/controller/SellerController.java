@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user-service/seller")
+@RequestMapping("/user-service/sellers")
 @RequiredArgsConstructor
 public class SellerController {
 
@@ -142,7 +142,7 @@ public class SellerController {
         }
     }
 
-    @PostMapping("/change-password/{sellerId}")
+    @PostMapping("/{sellerId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
                                                       @RequestHeader("Authorization") String token,
                                                       @RequestParam("password") String password) {
