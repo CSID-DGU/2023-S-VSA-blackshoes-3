@@ -48,6 +48,6 @@ public class Video implements Serializable {
     private List<Ad> ads;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "video_url_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "video_fk"))
+    @JoinColumn(name = "video_url_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "video_fk_video_url_id"))
     private VideoUrl videoUrl;
 }
