@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -142,7 +143,7 @@ public class SellerController {
         }
     }
 
-    @PostMapping("/{sellerId}/password")
+    @PostMapping("/change-password/{sellerId}")
     public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
                                                       @RequestHeader("Authorization") String token,
                                                       @RequestParam("password") String password) {
@@ -164,5 +165,37 @@ public class SellerController {
             ResponseDto responseDto = ResponseDto.builder().error("서버 내부 오류").build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+    }
+
+    @GetMapping("/{sellerId}")
+    public ResponseEntity<ResponseDto> getSellerInfo(@PathVariable String sellerId) {
+        SellerDto.SellerInfoDto sellerInfoDto;
+
+        try {
+            sellerInfoDto = sellerService.getSellerInfo(sellerId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .payload(Collections.singletonMap("sellerInfo", sellerInfoDto)).build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/{sellerId}/uploaderInfo")
+    public ResponseEntity<ResponseDto> getSellerUploaderInfo(@PathVariable String sellerId) {
+        SellerDto.SellerInfoDto sellerUploaderInfoDto;
+
+        try {
+            sellerUploaderInfoDto = sellerService.getSellerUploaderInfo(sellerId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .payload(Collections.singletonMap("sellerInfo", sellerUploaderInfoDto)).build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

@@ -15,4 +15,6 @@ public interface SellerService {
     void updatePassword(String sellerId, String password);
     void registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
     Map<String, String> login(SellerDto.SellerLoginRequestDto sellerLoginRequestDto);
+    SellerDto.SellerInfoDto getSellerInfo(String sellerId);
+    SellerDto.SellerInfoDto getSellerUploaderInfo(String sellerId);
 }

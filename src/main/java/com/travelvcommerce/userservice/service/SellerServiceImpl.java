@@ -97,4 +97,37 @@ public class SellerServiceImpl implements SellerService {
             throw new RuntimeException("존재하지 않는 판매자입니다.");
         }
     }
+
+    @Override
+    public SellerDto.SellerInfoDto getSellerInfo(String sellerId) {
+        Seller seller;
+        try {
+            seller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("존재하지 않는 판매자입니다."));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("존재하지 않는 판매자입니다.");
+        }
+        SellerDto.SellerInfoDto sellerInfoDto = SellerDto.SellerInfoDto.builder()
+                .sellerId(seller.getSellerId())
+                .email(seller.getEmail())
+                .companyName(seller.getCompanyName())
+                .icon(seller.getIcon())
+                .build();
+        return sellerInfoDto;
+    }
+
+    @Override
+    public SellerDto.SellerInfoDto getSellerUploaderInfo(String sellerId) {
+        Seller seller;
+        try {
+            seller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("존재하지 않는 판매자입니다."));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("존재하지 않는 판매자입니다.");
+        }
+        SellerDto.SellerInfoDto sellerUploaderInfoDto = SellerDto.SellerInfoDto.builder()
+                .sellerId(seller.getSellerId())
+                .companyName(seller.getCompanyName())
+                .icon(seller.getIcon())
+                .build();
+        return sellerUploaderInfoDto;
+    }
 }
