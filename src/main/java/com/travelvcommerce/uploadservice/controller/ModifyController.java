@@ -98,7 +98,7 @@ public class ModifyController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @PutMapping("/videos/{userId})")
+    @PutMapping("/videos/uploaders/{userId}")
     public ResponseEntity<ResponseDto> modifyUploader(@PathVariable("userId") String userId,
                                                       @RequestBody UploaderDto.UploaderModifyRequestDto
                                                               uploaderModifyRequestDto) {

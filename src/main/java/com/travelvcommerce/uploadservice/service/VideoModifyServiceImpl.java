@@ -164,20 +164,20 @@ public class VideoModifyServiceImpl implements VideoModifyService {
     }
 
     @Override
+    @Transactional
     public void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
-        Uploader uploader;
+        List<Video> videoList;
 
         try {
-            uploader = uploaderRepository.findBySellerId(userId)
+            Uploader uploader = uploaderRepository.findBySellerId(userId)
                     .orElseThrow(() -> new RuntimeException("uploader not found"));
             uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
             uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
+            videoList = uploader.getVideos();
         } catch (Exception e) {
             log.error("update uploader error", e);
             throw new RuntimeException("update uploader error");
         }
-
-        List<Video> videoList = uploader.getVideos();
 
         videoList.stream().forEach(video -> {
            updateVideo(video, "Uploader");
