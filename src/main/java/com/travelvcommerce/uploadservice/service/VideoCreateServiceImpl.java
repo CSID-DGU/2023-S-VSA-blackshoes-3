@@ -28,7 +28,7 @@ import java.util.UUID;
 @Primary
 @Service
 @Slf4j
-public class VideoUploadServiceImpl implements VideoUploadService {
+public class VideoCreateServiceImpl implements VideoCreateService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -113,7 +113,7 @@ public class VideoUploadServiceImpl implements VideoUploadService {
 
     @Override
     @Transactional
-    public void saveVideo(String sellerId, String videoId,
+    public void createVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls) {
         Video video;

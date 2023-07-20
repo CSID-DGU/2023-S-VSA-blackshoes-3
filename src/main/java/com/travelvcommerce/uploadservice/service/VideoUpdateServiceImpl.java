@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class VideoModifyServiceImpl implements VideoModifyService {
+public class VideoUpdateServiceImpl implements VideoUpdateService {
     @Autowired
     private VideoRepository videoRepository;
     @Autowired

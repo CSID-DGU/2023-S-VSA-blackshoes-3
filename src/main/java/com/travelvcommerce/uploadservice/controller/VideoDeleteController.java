@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/upload-service")
-public class DeleteController {
+public class VideoDeleteController {
     @Autowired
     AwsS3Service awsS3Service;
     @Autowired

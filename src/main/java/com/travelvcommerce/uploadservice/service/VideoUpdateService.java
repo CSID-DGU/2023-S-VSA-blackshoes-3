@@ -8,7 +8,7 @@ import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 
 import java.util.List;
 
-public interface VideoModifyService {
+public interface VideoUpdateService {
     public Video getVideo(String userId, String videoId);
     public String getThumbnailS3Key(Video video);
     public void updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail);
