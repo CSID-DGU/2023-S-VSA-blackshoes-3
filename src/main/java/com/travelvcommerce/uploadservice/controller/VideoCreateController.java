@@ -1,8 +1,10 @@
 package com.travelvcommerce.uploadservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.travelvcommerce.uploadservice.dto.DenormalizedVideoDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
+import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
 import com.travelvcommerce.uploadservice.service.VideoCreateService;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
@@ -25,6 +27,8 @@ public class VideoCreateController {
     private VideoCreateService videoCreateService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private DenormalizeDbService denormalizeDbService;
 
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> createVideo(@PathVariable String userId,
@@ -70,6 +74,9 @@ public class VideoCreateController {
             awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeDbService.denormalizeDb(userId, videoId);
+        denormalizeDbService.postDenormalizeData(denormalizedVideoDto);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoCreateResponseDto, Map.class));
 
