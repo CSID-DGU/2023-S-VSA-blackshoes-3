@@ -37,7 +37,12 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void delete(String videoId, VideoDto videoDto) {
-
+    public void delete(String videoId) {
+        try {
+            videoRepository.findByByVideoId(videoId).ifPresent(video -> videoRepository.delete(video));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("fail to delete video", e);
+        }
     }
 }

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public interface DatabaseService {
     void create(VideoDto videoDto);
     void update(String videoId, VideoDto videoDto);
-    void delete(String videoId, VideoDto videoDto);
+    void delete(String videoId);
 }

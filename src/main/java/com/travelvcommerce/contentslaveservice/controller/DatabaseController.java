@@ -32,6 +32,12 @@ public class DatabaseController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("/delete/{videoId}")
-    public void delete(@RequestBody VideoDto videoDto) {
+    public ResponseEntity delete(@PathVariable(name = "videoId") String videoId) {
+        try {
+            databaseService.delete(videoId);
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
