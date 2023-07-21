@@ -1,6 +1,7 @@
 package com.travelvcommerce.contentslaveservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.travelvcommerce.contentslaveservice.entity.Video;
 import lombok.Data;
 
 import java.util.List;
@@ -15,12 +16,31 @@ public class VideoDto {
     private String thumbnailUrl;
     private String sellerId;
     private String sellerName;
-    private String sellerLogoUrl;
+    private String sellerLogo;
     private String createdAt;
     private List<Map<String, String>> videoTags;
-    private List<Map<String, Map<String, String>>> videoAds;
+    private List<Map<String, String>> videoAds;
     private int likes;
     private int views;
+    private int adClicks;
+
+    public Video toEntity() {
+        return Video.builder()
+                .videoId(videoId)
+                .videoName(videoName)
+                .videoUrl(videoUrl)
+                .thumbnailUrl(thumbnailUrl)
+                .sellerId(sellerId)
+                .sellerName(sellerName)
+                .sellerLogo(sellerLogo)
+                .createdAt(createdAt)
+                .videoTags(videoTags)
+                .videoAds(videoAds)
+                .likes(likes)
+                .views(views)
+                .adClicks(adClicks)
+                .build();
+    }
 
     // 영상 리스트 조회 dto
     @Data

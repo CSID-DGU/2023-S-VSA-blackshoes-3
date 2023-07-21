@@ -1,5 +1,6 @@
 package com.travelvcommerce.contentslaveservice.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 @Document(collection = "videos")
 @Data
+@Builder
 public class Video {
     @Id
     private String _id;
