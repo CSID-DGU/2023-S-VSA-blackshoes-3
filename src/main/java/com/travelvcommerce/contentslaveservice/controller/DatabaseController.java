@@ -22,8 +22,14 @@ public class DatabaseController {
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-    @PutMapping("/upadate/{videoId}")
-    public void update(@RequestBody VideoDto videoDto) {
+    @PutMapping("/update/{videoId}")
+    public ResponseEntity update(@PathVariable(name = "videoId") String videoId, @RequestBody VideoDto videoDto) {
+        try {
+            databaseService.update(videoId, videoDto);
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("/delete/{videoId}")
     public void delete(@RequestBody VideoDto videoDto) {

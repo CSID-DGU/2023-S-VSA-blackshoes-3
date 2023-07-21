@@ -25,4 +25,6 @@ public interface VideoRepository extends MongoRepository<Video, String> {
     // idType을 key로 갖는 value가 idData에 포함되는 영상 필요한 필드만 페이징 조회
     @Query(value = "{?0: {$in: ?1}}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogo: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
     Page<VideoDto.VideoListResponseDto> findVideosWithIdListAndSelectedFields(String idType, List<String> idData, Pageable pageable);
+    @Query(value = "{videoId: ?0}")
+    Optional<Video> findByByVideoId(String videoId);
 }
