@@ -29,4 +29,16 @@ public class VideoDto {
 
         private List<AdDto.AdUploadRequestDto> adList;
     }
+
+    @Data
+    public static class VideoCreateResponseDto {
+        private String videoId;
+        private String createdAt;
+    }
+
+    @Data
+    public static class VideoUpdateResponseDto {
+        private String videoId;
+        private String updatedAt;
+    }
 }

@@ -2,6 +2,7 @@ package com.travelvcommerce.uploadservice.service;
 
 import com.travelvcommerce.uploadservice.dto.AdDto;
 import com.travelvcommerce.uploadservice.dto.UploaderDto;
+import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
@@ -60,15 +61,16 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     }
 
     @Override
-    public void updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail) {
+    public VideoDto.VideoUpdateResponseDto updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail) {
         videoUrl.setThumbnailS3Url(s3Thumbnail.getS3Url());
         videoUrl.setThumbnailCloudfrontUrl(s3Thumbnail.getCloudfrontUrl());
-        updateVideo(video, "Thumbnail");
+        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Thumbnail");
+        return videoUpdateResponseDto;
     }
 
     @Override
     @Transactional
-    public void updateTags(String userId, String videoId, List<String> tagIdList) {
+    public VideoDto.VideoUpdateResponseDto updateTags(String userId, String videoId, List<String> tagIdList) {
         Video video;
 
         try {
@@ -106,12 +108,14 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
             throw new RuntimeException("add video tag error");
         }
 
-        updateVideo(video, "Tags");
+        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Tags");
+
+        return videoUpdateResponseDto;
     }
 
     @Override
     @Transactional
-    public void updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
+    public VideoDto.VideoUpdateResponseDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
         Video video;
 
         try {
@@ -160,34 +164,30 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
             }
         });
 
-        updateVideo(video, "Ads");
+        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Ads");
+
+        return videoUpdateResponseDto;
     }
 
     @Override
     @Transactional
     public void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
-        List<Video> videoList;
-
         try {
             Uploader uploader = uploaderRepository.findBySellerId(userId)
                     .orElseThrow(() -> new RuntimeException("uploader not found"));
             uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
             uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
-            videoList = uploader.getVideos();
         } catch (Exception e) {
             log.error("update uploader error", e);
             throw new RuntimeException("update uploader error");
         }
-
-        videoList.stream().forEach(video -> {
-           updateVideo(video, "Uploader");
-        });
     }
 
-    private void updateVideo(Video video, String type) {
+    private VideoDto.VideoUpdateResponseDto updateVideo(Video video, String type) {
         try {
             video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             videoRepository.save(video);
+            return modelMapper.map(video, VideoDto.VideoUpdateResponseDto.class);
         } catch (Exception e) {
             log.error("update video error :" + type, e);
             throw new RuntimeException("update video error :" + type);

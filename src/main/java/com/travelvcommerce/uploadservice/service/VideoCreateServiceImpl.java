@@ -113,7 +113,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
 
     @Override
     @Transactional
-    public void createVideo(String sellerId, String videoId,
+    public VideoDto.VideoCreateResponseDto createVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls) {
         Video video;
@@ -218,6 +218,13 @@ public class VideoCreateServiceImpl implements VideoCreateService {
         } catch (Exception e) {
             log.error("save video tag error", e);
             throw new RuntimeException("save video tag error");
+        }
+
+        try {
+            return modelMapper.map(savedVideo, VideoDto.VideoCreateResponseDto.class);
+        } catch (Exception e) {
+            log.error("map video to videoDto error", e);
+            throw new RuntimeException("map video to videoDto error");
         }
     }
 }

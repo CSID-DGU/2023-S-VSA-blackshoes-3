@@ -1,5 +1,6 @@
 package com.travelvcommerce.uploadservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.VideoCreateService;
@@ -22,6 +23,8 @@ public class VideoCreateController {
     private AwsS3Service awsS3Service;
     @Autowired
     private VideoCreateService videoCreateService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> createVideo(@PathVariable String userId,
@@ -36,6 +39,7 @@ public class VideoCreateController {
         String encodedFilePath;
         S3Video videoUrls;
         S3Thumbnail thumbnailUrls;
+        VideoDto.VideoCreateResponseDto videoCreateResponseDto;
 
         try {
             uploadedFilePath = videoCreateService.uploadVideo(fileName, video);
@@ -60,13 +64,15 @@ public class VideoCreateController {
         }
 
         try {
-            videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
+            videoCreateResponseDto = videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoCreateResponseDto, Map.class));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 }

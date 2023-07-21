@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface VideoCreateService {
     public String uploadVideo(String fileName, MultipartFile videoFile);
     public String encodeVideo(String filePath);
-    public void createVideo(String sellerId, String videoId,
+    public VideoDto.VideoCreateResponseDto createVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls);
 }
