@@ -18,7 +18,7 @@ public class Video {
     private String thumbnailUrl;
     private String sellerId;
     private String sellerName;
-    private String sellerLogoUrl;
+    private String sellerLogo;
     private String createdAt;
     private List<Map<String, String>> videoTags;
     private List<Map<String, String>> videoAds;
