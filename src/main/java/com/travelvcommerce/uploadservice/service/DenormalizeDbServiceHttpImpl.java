@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,7 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                 .videoName(video.getVideoName())
                 .sellerId(uploader.getSellerId())
                 .sellerName(uploader.getSellerName())
-                .sellerLogo(uploader.getSellerLogo().toString())
+                .sellerLogo(Base64.getEncoder().encodeToString(uploader.getSellerLogo()))
                 .videoUrl(videoUrl.getVideoCloudfrontUrl())
                 .thumbnailUrl(videoUrl.getThumbnailCloudfrontUrl())
                 .createdAt(video.getCreatedAt().toString())
