@@ -118,6 +118,19 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
 
     @Override
     public void deleteDenormalizeData(String userId, String videoId) {
-
+        try {
+            WebClient webClient = WebClient.builder()
+                    .baseUrl(CONTENT_SLAVE_SERVICE_URL)
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+            webClient.delete()
+                    .uri("/content-slave-service/delete/" + videoId)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("deleteDenormalizeData error", e);
+            throw new RuntimeException("deleteDenormalizeData error");
+        }
     }
 }
