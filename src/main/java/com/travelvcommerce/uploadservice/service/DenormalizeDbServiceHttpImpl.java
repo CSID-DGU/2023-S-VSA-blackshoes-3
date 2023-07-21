@@ -30,7 +30,6 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional
     @Override
     public DenormalizedVideoDto denormalizeDb(String userId, String videoId) {
         Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
@@ -64,14 +63,15 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                 .updatedAt(video.getUpdatedAt().toString())
                 .videoTags(videoTags)
                 .videoAds(videoAds)
-                .likes(0)
-                .views(0)
-                .adClicks(0)
+                .likes((int) (Math.random() * 100))
+                .views((int) (Math.random() * 100))
+                .adClicks((int) (Math.random() * 100))
                 .build();
 
         return denormalizedVideoDto;
     }
 
+    @Transactional
     @Override
     public void postDenormalizeData(String userId, String videoId) {
 
@@ -94,9 +94,26 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
         }
     }
 
+    @Transactional
     @Override
     public void putDenormalizeData(String userId, String videoId) {
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeDb(userId, videoId);
 
+        try {
+            WebClient webClient = WebClient.builder()
+                    .baseUrl(CONTENT_SLAVE_SERVICE_URL)
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+            webClient.put()
+                    .uri("/content-slave-service/update/" + videoId)
+                    .bodyValue(denormalizedVideoDto)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("putDenormalizeData error", e);
+            throw new RuntimeException("putDenormalizeData error");
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.travelvcommerce.uploadservice.dto.*;
 import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.entity.VideoUrl;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
+import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
 import com.travelvcommerce.uploadservice.service.VideoUpdateService;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class VideoUpdateController {
     private AwsS3Service awsS3Service;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private DenormalizeDbService denormalizeDbService;
 
     @PutMapping("/videos/{userId}/{videoId}/thumbnail")
     public ResponseEntity<ResponseDto> updateThumbnail(@PathVariable("userId") String userId,
@@ -65,6 +68,8 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        denormalizeDbService.putDenormalizeData(userId, videoId);
+
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -85,6 +90,8 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        denormalizeDbService.putDenormalizeData(userId, videoId);
+
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -104,6 +111,8 @@ public class VideoUpdateController {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        denormalizeDbService.putDenormalizeData(userId, videoId);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
