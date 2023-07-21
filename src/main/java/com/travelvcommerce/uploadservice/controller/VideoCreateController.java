@@ -75,8 +75,7 @@ public class VideoCreateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        DenormalizedVideoDto denormalizedVideoDto = denormalizeDbService.denormalizeDb(userId, videoId);
-        denormalizeDbService.postDenormalizeData(denormalizedVideoDto);
+        denormalizeDbService.postDenormalizeData(userId, videoId);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoCreateResponseDto, Map.class));
 

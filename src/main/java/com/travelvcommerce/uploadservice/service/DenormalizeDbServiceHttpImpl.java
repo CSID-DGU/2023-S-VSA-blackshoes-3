@@ -73,7 +73,10 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     }
 
     @Override
-    public void postDenormalizeData(DenormalizedVideoDto denormalizedVideoDto) {
+    public void postDenormalizeData(String userId, String videoId) {
+
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeDb(userId, videoId);
+
         try {
             WebClient webClient = WebClient.builder()
                     .baseUrl(CONTENT_SLAVE_SERVICE_URL)
@@ -92,12 +95,12 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     }
 
     @Override
-    public void putDenormalizeData(String videoId, DenormalizedVideoDto denormalizedVideoDto) {
+    public void putDenormalizeData(String userId, String videoId) {
 
     }
 
     @Override
-    public void deleteDenormalizeData(String videoId, DenormalizedVideoDto denormalizedVideoDto) {
+    public void deleteDenormalizeData(String userId, String videoId) {
 
     }
 }
