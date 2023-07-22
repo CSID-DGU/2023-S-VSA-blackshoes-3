@@ -37,7 +37,7 @@ public class VideoCreateController {
                                                    @RequestPart(value = "requestUpload")
                                                        VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
         String videoId = UUID.randomUUID().toString();
-        String fileName = userId + "_" + videoUploadRequestDto.getVideoName() + "_" + videoId;
+        String fileName = userId + "_" + videoId;
 
         String uploadedFilePath;
         String encodedFilePath;
