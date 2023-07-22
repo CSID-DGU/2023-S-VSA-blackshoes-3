@@ -31,6 +31,8 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     private String BUCKET;
     @Value("${cloud.aws.cloudfront.distribution-domain}")
     private String DISTRIBUTION_DOMAIN;
+    @Value("${video.directory}")
+    private String DIRECTORY;
 
     @Override
     public S3Video uploadEncodedVideo(String fileName, String filePath) {
@@ -38,20 +40,20 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             Files.walk(Path.of(filePath))
                     .filter(Files::isRegularFile)
                     .forEach(file -> {
-                        String key = "videos/" + fileName + "/" + file.getFileName().toString();
+                        String key = DIRECTORY + "/" + fileName + "/" + file.getFileName().toString();
                         amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, file.toFile()).withCannedAcl(CannedAccessControlList.PublicRead));
                     });
-            String hlsKey = "videos/" + fileName + "/" + fileName + ".m3u8";
-            String directoryKey = "videos/" + fileName;
+            String hlsKey = DIRECTORY + "/" + fileName + "/" + fileName + ".m3u8";
+            String directoryKey = DIRECTORY + "/" + fileName;
             String s3Url = amazonS3Client.getUrl(BUCKET, directoryKey).toString();
             String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + hlsKey;
 
             deleteFolder(filePath);
 
-            S3Video s3Video = new S3Video();
-
-            s3Video.setS3Url(s3Url);
-            s3Video.setCloudfrontUrl(cloudFrontUrl);
+            S3Video s3Video = S3Video.builder()
+                    .s3Url(s3Url)
+                    .cloudfrontUrl(cloudFrontUrl)
+                    .build();
 
             return s3Video;
 
@@ -83,7 +85,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
             String fileExtension = multipartFile.getOriginalFilename().
                     substring(multipartFile.getOriginalFilename().lastIndexOf("."));
-            String key = "videos/" + fileName + "/" + fileName + fileExtension;
+            String key = DIRECTORY + "/" + fileName + "/" + fileName + fileExtension;
 
             amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
@@ -91,10 +93,10 @@ public class AwsS3ServiceImpl implements AwsS3Service{
             String s3url = amazonS3Client.getUrl(BUCKET, key).toString();
             String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + key;
 
-            S3Thumbnail s3Thumbnail = new S3Thumbnail();
-
-            s3Thumbnail.setS3Url(s3url);
-            s3Thumbnail.setCloudfrontUrl(cloudFrontUrl);
+            S3Thumbnail s3Thumbnail = S3Thumbnail.builder()
+                    .s3Url(s3url)
+                    .cloudfrontUrl(cloudFrontUrl)
+                    .build();
 
             return s3Thumbnail;
 
@@ -136,9 +138,10 @@ public class AwsS3ServiceImpl implements AwsS3Service{
         String s3url = amazonS3Client.getUrl(BUCKET, newS3Key).toString();
         String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + newS3Key;
 
-        S3Thumbnail s3Thumbnail = new S3Thumbnail();
-        s3Thumbnail.setS3Url(s3url);
-        s3Thumbnail.setCloudfrontUrl(cloudFrontUrl);
+        S3Thumbnail s3Thumbnail = S3Thumbnail.builder()
+                .s3Url(s3url)
+                .cloudfrontUrl(cloudFrontUrl)
+                .build();
 
         return s3Thumbnail;
     }

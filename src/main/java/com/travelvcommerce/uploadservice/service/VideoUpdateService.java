@@ -15,5 +15,5 @@ public interface VideoUpdateService {
     VideoDto.VideoUpdateResponseDto updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail);
     VideoDto.VideoUpdateResponseDto updateTags(String userId, String videoId, List<String> tagIdList);
     VideoDto.VideoUpdateResponseDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList);
-    void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto);
+    List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto);
 }

@@ -42,7 +42,7 @@ public class VideoDeleteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        denormalizeDbService.deleteDenormalizeData(userId, videoId);
+        denormalizeDbService.deleteDenormalizeData(videoId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

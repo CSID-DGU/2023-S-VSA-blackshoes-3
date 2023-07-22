@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,6 +44,11 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
         } catch (Exception e) {
             log.error("Video not found", e);
             throw new RuntimeException("video not found");
+        }
+
+        if (!video.getUploader().getSellerId().equals(userId)) {
+            log.error("Invalid user");
+            throw new RuntimeException("Invalid user");
         }
 
         return video;
@@ -171,12 +177,16 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
     @Override
     @Transactional
-    public void updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
+    public List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
         try {
             Uploader uploader = uploaderRepository.findBySellerId(userId)
                     .orElseThrow(() -> new RuntimeException("uploader not found"));
+
             uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
             uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
+
+            List<String> videoIdList = uploader.getVideos().stream().map(video -> video.getVideoId()).collect(Collectors.toList());
+            return videoIdList;
         } catch (Exception e) {
             log.error("update uploader error", e);
             throw new RuntimeException("update uploader error");

@@ -4,6 +4,7 @@ import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 public class VideoDeleteServiceImpl implements VideoDeleteService {
     @Autowired
     private VideoRepository videoRepository;
+    @Value("${video.directory}")
+    private String DIRECTORY;
 
     @Override
     public String deleteVideo(String userId, String videoId) {
@@ -21,8 +24,9 @@ public class VideoDeleteServiceImpl implements VideoDeleteService {
             log.error("video not found", e);
             throw new RuntimeException("video not found");
         }
+        String s3Url = video.getVideoUrl().getVideoS3Url();
 
-        String s3Key = video.getVideoUrl().getVideoS3Url().substring(video.getVideoUrl().getVideoS3Url().indexOf("videos"));
+        String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
 
         try {
             videoRepository.delete(video);
