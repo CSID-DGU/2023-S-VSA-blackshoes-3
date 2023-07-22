@@ -1,17 +1,19 @@
 package com.travelvcommerce.uploadservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelvcommerce.uploadservice.dto.DenormalizedVideoDto;
+import com.travelvcommerce.uploadservice.dto.TemporaryVideoDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
 import com.travelvcommerce.uploadservice.service.VideoCreateService;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
+import com.travelvcommerce.uploadservice.service.TemporaryVideoService;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,21 +31,18 @@ public class VideoCreateController {
     private ObjectMapper objectMapper;
     @Autowired
     private DenormalizeDbService denormalizeDbService;
+    @Autowired
+    private TemporaryVideoService temporaryVideoService;
 
     @PostMapping("/videos/{userId}")
-    public ResponseEntity<ResponseDto> createVideo(@PathVariable String userId,
-                                                   @RequestPart(value = "video") MultipartFile video,
-                                                   @RequestPart(value = "thumbnail") MultipartFile thumbnail,
-                                                   @RequestPart(value = "requestUpload")
-                                                       VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
+    public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
+                                                   @RequestPart(value = "video") MultipartFile video) {
         String videoId = UUID.randomUUID().toString();
         String fileName = userId + "_" + videoId;
-
         String uploadedFilePath;
         String encodedFilePath;
         S3Video videoUrls;
-        S3Thumbnail thumbnailUrls;
-        VideoDto.VideoCreateResponseDto videoCreateResponseDto;
+        TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
         try {
             uploadedFilePath = videoCreateService.uploadVideo(fileName, video);
@@ -61,6 +60,44 @@ public class VideoCreateController {
 
         try {
             videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
+            temporaryVideoResponseDto = temporaryVideoService.createTemporaryVideo(userId, videoId, videoUrls);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        temporaryVideoService.checkAndDeleteExpiredVideo(videoId);
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(temporaryVideoResponseDto, Map.class));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PostMapping("/videos/{userId}/{videoId}")
+    public ResponseEntity<ResponseDto> createVideo(@PathVariable String userId,
+                                                   @PathVariable String videoId,
+                                                   @RequestPart(value = "thumbnail") MultipartFile thumbnail,
+                                                   @RequestPart(value = "requestUpload")
+                                                   VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
+        String fileName = userId + "_" + videoId;
+        S3Video videoUrls;
+        S3Thumbnail thumbnailUrls;
+        VideoDto.VideoCreateResponseDto videoCreateResponseDto;
+
+        try {
+            videoUrls = temporaryVideoService.findTemporaryVideoUrls(userId, videoId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
             thumbnailUrls = awsS3Service.uploadThumbnail(fileName, thumbnail);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
@@ -71,14 +108,20 @@ public class VideoCreateController {
             videoCreateResponseDto = videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
         try {
             denormalizeDbService.postDenormalizeData(videoId);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
+            temporaryVideoService.deleteTemporaryVideo(userId, videoId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
