@@ -100,15 +100,25 @@ table {
   box-sizing: border-box;
 }
 
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: ${(props) => props.theme.primaryColor};
+  border-radius: 10px;
+}
+
 *::selection {
   color: black;
   background: #daa520;
 }
 
 body {
-    font-family: "MontserratMedium";
-    background-color: ${(props) => props.theme.bgColor};
-    color: ${(props) => props.theme.textColor};
+  font-family: "MontserratMedium";
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
 }
 
 `;
