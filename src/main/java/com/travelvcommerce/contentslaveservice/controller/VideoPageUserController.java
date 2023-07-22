@@ -115,4 +115,30 @@ public class VideoPageUserController {
         ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+    // VideoPageUserController.java
+    @GetMapping("/videos/search")
+    public ResponseEntity<ResponseDto> searchVideos(@RequestParam("type") String type,
+                                                    @RequestParam("q") String q,
+                                                    @RequestParam("page") int page,
+                                                    @RequestParam("size") int size) {
+        try {
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.searchVideos(type, q, page, size);
+
+            Map<String, Object> videoPagePayload = new LinkedHashMap<>() {{
+                put("totalPages", videoPage.getTotalPages());
+                put("currentPage", videoPage.getNumber());
+                put("hasNext", videoPage.hasNext());
+                put("pageSize", videoPage.getSize());
+                put("totalElements", videoPage.getTotalElements());
+                put("videos", videoPage.getContent());
+            }};
+
+            ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+    }
+
 }

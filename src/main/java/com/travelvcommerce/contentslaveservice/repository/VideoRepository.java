@@ -27,4 +27,13 @@ public interface VideoRepository extends MongoRepository<Video, String> {
     Page<VideoDto.VideoListResponseDto> findVideosWithIdListAndSelectedFields(String idType, List<String> idData, Pageable pageable);
     @Query(value = "{videoId: ?0}")
     Optional<Video> findByByVideoId(String videoId);
+    @Query(value = "{ 'videoName': { $regex: ?0 } }")
+    Page<VideoDto.VideoListResponseDto> findVideosByVideoName(String videoName, Pageable pageable);
+
+    @Query(value = "{ 'videoTags.tagName': { $regex: ?0 } }")
+    Page<VideoDto.VideoListResponseDto> findVideosByTagName(String tagName, Pageable pageable);
+
+    @Query(value = "{ 'sellerName': { $regex: ?0 } }")
+    Page<VideoDto.VideoListResponseDto> findVideosBySellerName(String sellerName, Pageable pageable);
 }
+
