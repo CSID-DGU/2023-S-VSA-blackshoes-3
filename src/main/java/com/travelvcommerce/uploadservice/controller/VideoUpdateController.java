@@ -135,6 +135,33 @@ public class VideoUpdateController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    @PutMapping("/videos/{userId}/{videoId}/title")
+    public ResponseEntity<ResponseDto> updateVideoName(@PathVariable("userId") String userId,
+                                                       @PathVariable("videoId") String videoId,
+                                                       @RequestBody VideoDto.VideoNameUpdateRequestDto videoNameUpdateRequestDto) {
+        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto;
+
+        String videoName = videoNameUpdateRequestDto.getVideoName();
+
+        try {
+            videoUpdateResponseDto = videoUpdateService.updateVideoName(userId, videoId, videoName);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
+            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.VIDEO_NAME);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
     @PutMapping("/videos/uploaders/{userId}")
     public ResponseEntity<ResponseDto> updateUploader(@PathVariable("userId") String userId,
                                                       @RequestBody UploaderDto.UploaderModifyRequestDto

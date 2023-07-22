@@ -111,6 +111,9 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                     denormalizedVideoDto.setSellerName(uploader.getSellerName());
                     denormalizedVideoDto.setSellerLogo(Base64.getEncoder().encodeToString(uploader.getSellerLogo()));
                     return denormalizedVideoDto;
+                case VIDEO_NAME:
+                    denormalizedVideoDto.setVideoName(video.getVideoName());
+                    return denormalizedVideoDto;
                 default:
                     throw new RuntimeException("updateType error");
             }
