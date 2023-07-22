@@ -20,7 +20,7 @@ export const GridWrapper = styled.div`
 `;
 
 // Header-------------------------------------------------------------
-export const Header = styled.div`
+export const HeaderSection = styled.div`
   width: 100%;
   height: 100px;
   grid-column: 1 / 3;
@@ -60,7 +60,7 @@ export const LogoCircleBox = styled.section`
   align-items: center;
   border: none;
   border-radius: 30%;
-  background-color: ${(props) => props.theme.primaryColor};
+  background-color: ${(props) => props.theme.lightGray};
   font-size: 12px;
 `;
 // Nav-------------------------------------------------------------
@@ -85,19 +85,28 @@ export const NavBox = styled.div`
   gap: 10px;
 `;
 
-export const HoverButton = styled.button`
+export const HoverButton0 = styled.button`
   width: ${(props) => props.width};
   height: 50px;
   border: none;
   border-radius: 16px;
-  background-color: transparent;
-  color: ${(props) => props.theme.textColor};
+  background-color: ${(props) => (props.page === 0 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.page === 0 ? props.theme.bgColor : props.theme.textColor)};
   font-size: 14px;
   cursor: pointer;
   &:hover {
-    background-color: ${(props) => props.theme.primaryColor};
-    color: ${(props) => props.theme.bgColor};
+    text-decoration: underline;
   }
+`;
+
+export const HoverButton1 = styled(HoverButton0)`
+  background-color: ${(props) => (props.page === 1 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.page === 1 ? props.theme.bgColor : props.theme.textColor)};
+`;
+
+export const HoverButton2 = styled(HoverButton0)`
+  background-color: ${(props) => (props.page === 2 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.page === 2 ? props.theme.bgColor : props.theme.textColor)};
 `;
 
 export const BorderButton = styled.button`
@@ -117,7 +126,7 @@ export const BorderButton = styled.button`
 
 // Body-------------------------------------------------------------
 export const Body = styled.div`
-  width: 100%;
+  width: calc(100vw - 336px);
   height: 100%;
   grid-column: 2 / 3;
   grid-row: 2 / 3;
