@@ -7,7 +7,7 @@
     "thumbnailUrl": "test1.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-01 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -48,7 +48,7 @@
     "thumbnailUrl": "test2.com/thumbnail",
     "sellerId": "s43039a6-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-02 12:49:23.480000",
     "updatedAt": "2023-07-16 12:49:23.480000",
     "videoTags": [
@@ -89,7 +89,7 @@
     "thumbnailUrl": "test3.com/thumbnail",
     "sellerId": "s43039a7-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-03 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -130,7 +130,7 @@
     "thumbnailUrl": "test4.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-04 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -171,7 +171,7 @@
     "thumbnailUrl": "test5.com/thumbnail",
     "sellerId": "s43039a9-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-05 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -212,7 +212,7 @@
     "thumbnailUrl": "test6.com/thumbnail",
     "sellerId": "s43039aa-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-05 12:50:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -253,7 +253,7 @@
     "thumbnailUrl": "test7.com/thumbnail",
     "sellerId": "s43039ab-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-06 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -294,7 +294,7 @@
     "thumbnailUrl": "test8.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-07 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -335,7 +335,7 @@
     "thumbnailUrl": "test9.com/thumbnail",
     "sellerId": "s43039ad-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-08 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -376,7 +376,7 @@
     "thumbnailUrl": "test10.com/thumbnail",
     "sellerId": "s43039ae-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-09 14:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -417,7 +417,7 @@
     "thumbnailUrl": "test11.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-09 18:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -458,7 +458,7 @@
     "thumbnailUrl": "test12.com/thumbnail",
     "sellerId": "s43039b0-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-10 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -499,7 +499,7 @@
     "thumbnailUrl": "test13.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-11 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -540,7 +540,7 @@
     "thumbnailUrl": "test14.com/thumbnail",
     "sellerId": "s43039b2-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-12 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -581,7 +581,7 @@
     "thumbnailUrl": "test15.com/thumbnail",
     "sellerId": "s43039b3-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-13 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -622,7 +622,7 @@
     "thumbnailUrl": "test16.com/thumbnail",
     "sellerId": "s43039b4-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-14 12:49:23.480000",
     "updatedAt": "2023-07-15 12:49:23.480000",
     "videoTags": [
@@ -663,7 +663,7 @@
     "thumbnailUrl": "test17.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-15 12:49:23.480000",
     "updatedAt": "2023-07-16 12:49:23.480000",
     "videoTags": [
@@ -704,7 +704,7 @@
     "thumbnailUrl": "test18.com/thumbnail",
     "sellerId": "s43039b6-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-16 12:49:23.480000",
     "updatedAt": "2023-07-17 12:49:23.480000",
     "videoTags": [
@@ -745,7 +745,7 @@
     "thumbnailUrl": "test19.com/thumbnail",
     "sellerId": "s43039b7-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-17 12:49:23.480000",
     "updatedAt": "2023-07-18 12:49:23.480000",
     "videoTags": [
@@ -786,7 +786,7 @@
     "thumbnailUrl": "test20.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-18 12:49:23.480000",
     "updatedAt": "2023-07-19 12:49:23.480000",
     "videoTags": [
@@ -827,7 +827,7 @@
     "thumbnailUrl": "test21.com/thumbnail",
     "sellerId": "s43039b9-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-20 12:49:23.480000",
     "updatedAt": "2023-07-21 12:49:23.480000",
     "videoTags": [
@@ -868,7 +868,7 @@
     "thumbnailUrl": "test22.com/thumbnail",
     "sellerId": "s43039ba-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-22 12:49:23.480000",
     "updatedAt": "2023-07-23 12:49:23.480000",
     "videoTags": [
@@ -909,7 +909,7 @@
     "thumbnailUrl": "test23.com/thumbnail",
     "sellerId": "s43039a5-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller1",
-    "sellerLogoUrl": "seller1.com/icon",
+    "sellerLogo": "seller1.com/icon",
     "createdAt": "2023-07-22 12:55:23.480000",
     "updatedAt": "2023-07-25 12:49:23.480000",
     "videoTags": [
@@ -950,7 +950,7 @@
     "thumbnailUrl": "test24.com/thumbnail",
     "sellerId": "s43039bc-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller2",
-    "sellerLogoUrl": "seller2.com/icon",
+    "sellerLogo": "seller2.com/icon",
     "createdAt": "2023-07-24 12:49:23.480000",
     "updatedAt": "2023-07-27 12:49:23.480000",
     "videoTags": [
@@ -991,7 +991,7 @@
     "thumbnailUrl": "test25.com/thumbnail",
     "sellerId": "s43039bd-2199-11ee-9ef2-0a0027000003",
     "sellerName": "seller3",
-    "sellerLogoUrl": "seller3.com/icon",
+    "sellerLogo": "seller3.com/icon",
     "createdAt": "2023-07-25 12:49:23.480000",
     "updatedAt": "2023-07-30 12:49:23.480000",
     "videoTags": [
