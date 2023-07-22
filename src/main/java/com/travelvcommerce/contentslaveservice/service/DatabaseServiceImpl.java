@@ -26,10 +26,12 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public void update(String videoId, VideoDto videoDto) {
         try {
-            Video video = videoDto.toEntity();
-            String id = videoRepository.findByByVideoId(videoId).get().get_id();
-            video.set_id(id);
+            Video video = videoRepository.findByByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
+
+            video.update(videoDto);
+
             videoRepository.save(video);
+
             } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("fail to update video", e);
