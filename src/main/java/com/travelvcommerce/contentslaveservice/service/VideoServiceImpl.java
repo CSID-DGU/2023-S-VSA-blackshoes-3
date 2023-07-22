@@ -63,4 +63,23 @@ public class VideoServiceImpl implements VideoService {
 
         return video;
     }
+
+    // 비디오 검색, 타입에 따라 쿼리 호출
+    @Override
+    public Page<VideoDto.VideoListResponseDto> searchVideos(String type, String q, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+
+        switch(type) {
+            case "videoName":
+                return videoRepository.findVideosByVideoName(q, pageable);
+            case "tagName":
+                return videoRepository.findVideosByTagName(q, pageable);
+            case "sellerName":
+                return videoRepository.findVideosBySellerName(q, pageable);
+            default:
+                throw new IllegalArgumentException("Invalid search type: " + type);
+        }
+    }
+
 }
