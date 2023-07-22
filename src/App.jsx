@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { GlobalStyle } from "./GlobalStyle";
+import { Container } from "./components/Home/HomeStyle";
+import Router from "./Router";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <p>HI</p>
+      <GlobalStyle />
+      <Container>
+        <Router />
+      </Container>
     </>
   );
 }
