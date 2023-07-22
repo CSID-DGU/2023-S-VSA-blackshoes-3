@@ -9,6 +9,7 @@ import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     private UploaderRepository uploaderRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Value("${video.directory}")
+    private String DIRECTORY;
 
     @Override
     public Video getVideo(String userId, String videoId) {
@@ -57,7 +60,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     @Override
     public String getThumbnailS3Key(Video video) {
         try {
-        String s3Key = video.getVideoUrl().getThumbnailS3Url().substring(video.getVideoUrl().getThumbnailS3Url().indexOf("videos"));
+        String s3Key = video.getVideoUrl().getThumbnailS3Url().substring(video.getVideoUrl().getThumbnailS3Url().indexOf(DIRECTORY));
 
         return s3Key;
         } catch (Exception e) {
