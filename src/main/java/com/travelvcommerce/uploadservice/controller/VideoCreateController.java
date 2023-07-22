@@ -74,8 +74,13 @@ public class VideoCreateController {
             awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
-
-        denormalizeDbService.postDenormalizeData(userId, videoId);
+        try {
+            denormalizeDbService.postDenormalizeData(videoId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            awsS3Service.deleteVideo(videoUrls.getS3Url().substring(videoUrls.getS3Url().indexOf("videos")));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoCreateResponseDto, Map.class));
 

@@ -8,6 +8,7 @@ import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
 import com.travelvcommerce.uploadservice.service.VideoUpdateService;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
+import com.travelvcommerce.uploadservice.vo.UpdatedField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,12 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        denormalizeDbService.putDenormalizeData(userId, videoId);
+        try {
+            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.THUMBNAIL);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -90,7 +96,12 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        denormalizeDbService.putDenormalizeData(userId, videoId);
+        try {
+            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.TAGS);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -112,7 +123,12 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        denormalizeDbService.putDenormalizeData(userId, videoId);
+        try {
+            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.ADS);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -123,8 +139,17 @@ public class VideoUpdateController {
     public ResponseEntity<ResponseDto> updateUploader(@PathVariable("userId") String userId,
                                                       @RequestBody UploaderDto.UploaderModifyRequestDto
                                                               uploaderModifyRequestDto) {
+        List<String> updatedVideoIdList;
+
         try {
-            videoUpdateService.updateUploader(userId, uploaderModifyRequestDto);
+            updatedVideoIdList = videoUpdateService.updateUploader(userId, uploaderModifyRequestDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
+            updatedVideoIdList.forEach(videoId -> denormalizeDbService.putDenormalizeData(videoId, UpdatedField.UPLOADER));
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
