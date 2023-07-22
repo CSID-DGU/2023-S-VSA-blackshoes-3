@@ -175,6 +175,25 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
         return videoUpdateResponseDto;
     }
 
+    @Transactional
+    @Override
+    public VideoDto.VideoUpdateResponseDto updateVideoName(String userId, String videoId, String videoName) {
+        Video video;
+
+        try {
+            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
+        } catch (Exception e) {
+            log.error("Video not found", e);
+            throw new RuntimeException("video not found");
+        }
+
+        video.setVideoName(videoName);
+
+        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "VideoName");
+
+        return videoUpdateResponseDto;
+    }
+
     @Override
     @Transactional
     public List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {

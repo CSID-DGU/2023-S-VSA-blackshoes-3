@@ -41,4 +41,9 @@ public class VideoDto {
         private String videoId;
         private String updatedAt;
     }
+
+    @Data
+    public static class VideoNameUpdateRequestDto {
+        private String videoName;
+    }
 }
