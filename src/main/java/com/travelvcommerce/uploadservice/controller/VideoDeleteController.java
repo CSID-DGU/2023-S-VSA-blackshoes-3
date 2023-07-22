@@ -2,6 +2,7 @@ package com.travelvcommerce.uploadservice.controller;
 
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
+import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
 import com.travelvcommerce.uploadservice.service.VideoDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/upload-service")
-public class DeleteController {
+public class VideoDeleteController {
     @Autowired
     AwsS3Service awsS3Service;
     @Autowired
     VideoDeleteService videoDeleteService;
+    @Autowired
+    DenormalizeDbService denormalizeDbService;
 
     @DeleteMapping("/videos/{userId}/{videoId}")
     public ResponseEntity<ResponseDto> deleteVideo(@PathVariable(name = "userId") String userId,
@@ -38,6 +41,8 @@ public class DeleteController {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        denormalizeDbService.deleteDenormalizeData(userId, videoId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

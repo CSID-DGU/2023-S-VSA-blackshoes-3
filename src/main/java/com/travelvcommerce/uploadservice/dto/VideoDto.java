@@ -17,8 +17,6 @@ public class VideoDto {
 
     private String sellerId;
 
-    private String sellerName;
-
     private String createdAt;
 
     private String updatedAt;
@@ -27,10 +25,20 @@ public class VideoDto {
     public static class VideoUploadRequestDto {
         private String videoName;
 
-        private String sellerName;
-
         private List<String> tagIdList;
 
         private List<AdDto.AdUploadRequestDto> adList;
+    }
+
+    @Data
+    public static class VideoCreateResponseDto {
+        private String videoId;
+        private String createdAt;
+    }
+
+    @Data
+    public static class VideoUpdateResponseDto {
+        private String videoId;
+        private String updatedAt;
     }
 }

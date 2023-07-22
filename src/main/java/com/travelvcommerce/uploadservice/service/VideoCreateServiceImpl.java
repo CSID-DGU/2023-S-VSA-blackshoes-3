@@ -1,6 +1,8 @@
 package com.travelvcommerce.uploadservice.service;
 
+import com.google.common.net.HttpHeaders;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.dto.VideoUrlDto;
 import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
@@ -9,9 +11,12 @@ import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,9 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+@Primary
 @Service
 @Slf4j
-public class VideoUploadServiceImpl implements VideoUploadService {
+public class VideoCreateServiceImpl implements VideoCreateService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -35,6 +41,8 @@ public class VideoUploadServiceImpl implements VideoUploadService {
     private TagRepository tagRepository;
     @Autowired
     private VideoTagRepository videoTagRepository;
+    @Autowired
+    private UploaderRepository uploaderRepository;
     @Autowired
     private FFmpegWrapper ffmpegWrapper;
 
@@ -105,23 +113,53 @@ public class VideoUploadServiceImpl implements VideoUploadService {
 
     @Override
     @Transactional
-    public void saveVideo(String sellerId, String videoId,
+    public VideoDto.VideoCreateResponseDto createVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls) {
-        Video video = new Video();
+        Video video;
+        Uploader uploader;
+
+        if (uploaderRepository.existsBySellerId(sellerId)) {
+            try {
+                uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("uploader not found"));
+            } catch (Exception e) {
+                log.error("get video uploader error", e);
+                throw new RuntimeException("get video uploader error");
+            }
+        } else {
+            UploaderDto.UploaderResponseDto uploaderResponseDto;
+            try {
+                WebClient webClient = WebClient.builder()
+                        .baseUrl("http://localhost:8021")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .build();
+                uploaderResponseDto = webClient.get()
+                        .uri("/user-service/sellers/" + sellerId + "/uploader-info")
+                        .retrieve()
+                        .bodyToMono(UploaderDto.UploaderResponseDto.class)
+                        .block();
+            } catch (Exception e) {
+                log.error("get video uploader info error", e);
+                throw new RuntimeException("get video uploader info error");
+            }
+            uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
+            try {
+                uploaderRepository.save(uploader);
+            } catch (Exception e) {
+                log.error("save video uploader error", e);
+                throw new RuntimeException("save video uploader error");
+            }
+        }
 
         try {
             VideoDto videoDto = VideoDto.builder().
                     videoId(videoId).
                     videoName(videoUploadRequestDto.getVideoName()).
-                    sellerId(sellerId).
-                    sellerName(videoUploadRequestDto.getSellerName()).
                     build();
 
             video = modelMapper.map(videoDto, Video.class);
-
+            video.setUploader(uploader);
             videoRepository.save(video);
-
         } catch (Exception e) {
             log.error("save video error", e);
             throw new RuntimeException("save video error");
@@ -180,6 +218,13 @@ public class VideoUploadServiceImpl implements VideoUploadService {
         } catch (Exception e) {
             log.error("save video tag error", e);
             throw new RuntimeException("save video tag error");
+        }
+
+        try {
+            return modelMapper.map(savedVideo, VideoDto.VideoCreateResponseDto.class);
+        } catch (Exception e) {
+            log.error("map video to videoDto error", e);
+            throw new RuntimeException("map video to videoDto error");
         }
     }
 }

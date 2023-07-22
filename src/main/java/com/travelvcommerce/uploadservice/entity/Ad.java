@@ -33,6 +33,6 @@ public class Ad {
     private String endTime;
 
     @ManyToOne
-    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "ad_fk"))
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "ad_fk_video_id"))
     private Video video;
 }
