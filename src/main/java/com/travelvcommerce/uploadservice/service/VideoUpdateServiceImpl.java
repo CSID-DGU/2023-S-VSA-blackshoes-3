@@ -123,8 +123,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                 }
             }
             else if (adModifyRequestDto.getModifyType().equals("update")) {
+                Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new NoSuchElementException("ad not found"));
                 try {
-                    Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new RuntimeException("ad not found"));
                     ad.setAdUrl(adModifyRequestDto.getAdUrl());
                     ad.setAdContent(adModifyRequestDto.getAdContent());
                     ad.setStartTime(adModifyRequestDto.getStartTime());
@@ -136,8 +136,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                 }
             }
             else if (adModifyRequestDto.getModifyType().equals("delete")) {
+                Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new NoSuchElementException("ad not found"));
                 try {
-                    Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new RuntimeException("ad not found"));
                     adRepository.delete(ad);
                 } catch (Exception e) {
                     log.error("delete ad error", e);
