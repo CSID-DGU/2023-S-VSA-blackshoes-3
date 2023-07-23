@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/upload-service")
 public class VideoDeleteController {
@@ -30,21 +32,26 @@ public class VideoDeleteController {
 
         try {
             s3key = videoDeleteService.deleteVideo(userId, videoId);
-        } catch (RuntimeException e) {
+        }
+        catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
+        catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
         try {
             awsS3Service.deleteVideo(s3key);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
         denormalizeDbService.deleteDenormalizeData(videoId);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

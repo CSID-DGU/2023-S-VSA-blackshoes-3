@@ -189,8 +189,8 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                     .bodyToMono(Void.class)
                     .block();
         } catch (Exception e) {
-            log.error("deleteDenormalizeData error", e);
-            throw new RuntimeException("deleteDenormalizeData error");
+            log.error("delete denormalized Data error", e);
+            throw new RuntimeException("delete denormalized Data error");
         }
     }
 }

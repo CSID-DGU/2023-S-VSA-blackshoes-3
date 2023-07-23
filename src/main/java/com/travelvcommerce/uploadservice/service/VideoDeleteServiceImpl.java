@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @Slf4j
 public class VideoDeleteServiceImpl implements VideoDeleteService {
@@ -17,13 +19,8 @@ public class VideoDeleteServiceImpl implements VideoDeleteService {
 
     @Override
     public String deleteVideo(String userId, String videoId) {
-        Video video;
-        try {
-            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
-        } catch (Exception e) {
-            log.error("video not found", e);
-            throw new RuntimeException("video not found");
-        }
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("video not found"));
+
         String s3Url = video.getVideoUrl().getVideoS3Url();
 
         String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
