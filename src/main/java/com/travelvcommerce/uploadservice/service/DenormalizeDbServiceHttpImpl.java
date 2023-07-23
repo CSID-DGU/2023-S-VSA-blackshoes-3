@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 
 import java.util.Base64;
 import java.util.List;
@@ -77,12 +78,14 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     }
 
     public DenormalizedVideoDto denormalizeVideo(String videoId, UpdatedField updatedField) {
+
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
+        DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
+                .videoId(videoId)
+                .updatedAt(video.getUpdatedAt().toString())
+                .build();
+
         try {
-            Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
-            DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
-                    .videoId(videoId)
-                    .updatedAt(video.getUpdatedAt().toString())
-                    .build();
             switch (updatedField) {
                 case ADS:
                     List<Ad> ads = video.getAds();
@@ -115,11 +118,16 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                     denormalizedVideoDto.setVideoName(video.getVideoName());
                     return denormalizedVideoDto;
                 default:
-                    throw new RuntimeException("updateType error");
+                    throw new IllegalArgumentException("invalid update field");
             }
-        } catch (Exception e) {
-            log.error("denormalizeVideo error", e);
-            throw new RuntimeException("denormalizeVideo error");
+        }
+        catch (IllegalArgumentException e) {
+            log.error("invalid update field", e);
+            throw new IllegalArgumentException("invalid update field");
+        }
+        catch (Exception e) {
+            log.error("video denormalize error", e);
+            throw new RuntimeException("video denormalize error");
         }
     }
 
@@ -141,8 +149,8 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                     .bodyToMono(Void.class)
                     .block();
         } catch (Exception e) {
-            log.error("postDenormalizeData error", e);
-            throw new RuntimeException("postDenormalizeData error");
+            log.error("post denormalized data error", e);
+            throw new RuntimeException("post denormalized data error");
         }
     }
 

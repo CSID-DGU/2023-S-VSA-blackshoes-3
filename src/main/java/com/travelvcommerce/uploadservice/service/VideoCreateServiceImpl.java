@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Primary
@@ -120,12 +121,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
         Uploader uploader;
 
         if (uploaderRepository.existsBySellerId(sellerId)) {
-            try {
-                uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("uploader not found"));
-            } catch (Exception e) {
-                log.error("get video uploader error", e);
-                throw new RuntimeException("get video uploader error");
-            }
+            uploader = uploaderRepository.findBySellerId(sellerId).get();
         } else {
             UploaderDto.UploaderResponseDto uploaderResponseDto;
             try {
@@ -140,7 +136,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
                         .block();
             } catch (Exception e) {
                 log.error("get video uploader info error", e);
-                throw new RuntimeException("get video uploader info error");
+                throw new NoSuchElementException("uploader not found");
             }
             uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
             try {

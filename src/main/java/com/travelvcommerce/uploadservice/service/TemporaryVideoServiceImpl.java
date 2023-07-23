@@ -37,14 +37,9 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     public TemporaryVideoDto.TemporaryVideoResponseDto getTemporaryVideo(String userId) {
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
         TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerId(userId)
-                .orElseThrow(() -> new NoSuchElementException("video not found"));
+                .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
-        try {
-            temporaryVideoResponseDto = modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
-        } catch (Exception e) {
-            log.error("fail to get temporary video", e);
-            throw new RuntimeException("fail to get temporary video");
-        }
+        temporaryVideoResponseDto = modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
 
         return temporaryVideoResponseDto;
     }
@@ -78,7 +73,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     @Override
     public S3Video findTemporaryVideoUrls(String userId, String videoId) {
         TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
-                .orElseThrow(() -> new RuntimeException("video not found"));
+                .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
         S3Video s3Urls = S3Video.builder()
                 .s3Url(temporaryVideo.getVideoS3Url())
@@ -91,7 +86,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     @Override
     public void deleteTemporaryVideo(String userId, String videoId) {
         TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
-                .orElseThrow(() -> new RuntimeException("video not found"));
+                .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
         try {
             temporaryVideoRepository.delete(temporaryVideo);
@@ -114,7 +109,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         String s3Key;
 
         if (!videoRepository.existsByVideoId(videoId)) {
-            temporaryVideo = temporaryVideoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
+            temporaryVideo = temporaryVideoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
             String s3Url = temporaryVideo.getVideoS3Url();
             s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
