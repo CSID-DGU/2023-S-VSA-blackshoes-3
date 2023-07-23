@@ -11,6 +11,7 @@ import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,8 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     private UploaderRepository uploaderRepository;
     @Autowired
     private FFmpegWrapper ffmpegWrapper;
+    @Value("${api.user-service.url}")
+    private String USER_SERVICE_URL;
 
     @Override
     public String uploadVideo(String fileName, MultipartFile videoFile) {
@@ -126,7 +129,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             UploaderDto.UploaderResponseDto uploaderResponseDto;
             try {
                 WebClient webClient = WebClient.builder()
-                        .baseUrl("http://localhost:8021")
+                        .baseUrl(USER_SERVICE_URL)
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .build();
                 uploaderResponseDto = webClient.get()
