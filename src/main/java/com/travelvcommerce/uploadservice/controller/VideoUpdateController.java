@@ -15,8 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/upload-service")
@@ -34,47 +36,23 @@ public class VideoUpdateController {
     public ResponseEntity<ResponseDto> updateThumbnail(@PathVariable("userId") String userId,
                                                        @PathVariable("videoId") String videoId,
                                                        @RequestPart(value = "thumbnail") MultipartFile thumbnail) {
-        Video video;
-        VideoUrl videoUrl;
-        String s3Key;
-        S3Thumbnail newS3Thumbnail;
+
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto;
 
         try {
-            video = videoUpdateService.getVideo(userId, videoId);
-            videoUrl = video.getVideoUrl();
+            videoUpdateResponseDto = videoUpdateService.updateThumbnail(userId, videoId, thumbnail, awsS3Service);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        try {
-            s3Key = videoUpdateService.getThumbnailS3Key(video);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
-            newS3Thumbnail = awsS3Service.updateThumbnail(s3Key, thumbnail);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
-            videoUpdateResponseDto = videoUpdateService.updateThumbnail(video, videoUrl, newS3Thumbnail);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
-            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.THUMBNAIL);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        denormalizeDbService.putDenormalizeData(videoId, UpdatedField.THUMBNAIL);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -91,17 +69,18 @@ public class VideoUpdateController {
 
         try {
             videoUpdateResponseDto = videoUpdateService.updateTags(userId, videoId, tagIdList);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        try {
-            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.TAGS);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        denormalizeDbService.putDenormalizeData(videoId, UpdatedField.TAGS);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -118,17 +97,18 @@ public class VideoUpdateController {
 
         try {
             videoUpdateResponseDto = videoUpdateService.updateAds(userId, videoId, adModifyRequestDtoList);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        try {
-            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.ADS);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        denormalizeDbService.putDenormalizeData(videoId, UpdatedField.ADS);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -145,17 +125,18 @@ public class VideoUpdateController {
 
         try {
             videoUpdateResponseDto = videoUpdateService.updateVideoName(userId, videoId, videoName);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        try {
-            denormalizeDbService.putDenormalizeData(videoId, UpdatedField.VIDEO_NAME);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        denormalizeDbService.putDenormalizeData(videoId, UpdatedField.VIDEO_NAME);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -170,18 +151,18 @@ public class VideoUpdateController {
 
         try {
             updatedVideoIdList = videoUpdateService.updateUploader(userId, uploaderModifyRequestDto);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        try {
-            updatedVideoIdList.forEach(videoId -> denormalizeDbService.putDenormalizeData(videoId, UpdatedField.UPLOADER));
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        updatedVideoIdList.forEach(videoId -> denormalizeDbService.putDenormalizeData(videoId, UpdatedField.UPLOADER));
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("updatedVideos", updatedVideoIdList));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

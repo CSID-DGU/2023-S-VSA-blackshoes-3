@@ -78,6 +78,9 @@ public class AwsS3ServiceImpl implements AwsS3Service{
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
+
+        String key;
+
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(multipartFile.getContentType());
@@ -85,33 +88,32 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
             String fileExtension = multipartFile.getOriginalFilename().
                     substring(multipartFile.getOriginalFilename().lastIndexOf("."));
-            String key = DIRECTORY + "/" + fileName + "/" + fileName + fileExtension;
+            key = DIRECTORY + "/" + fileName + "/" + fileName + fileExtension;
 
             amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-
-            String s3url = amazonS3Client.getUrl(BUCKET, key).toString();
-            String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + key;
-
-            S3Thumbnail s3Thumbnail = S3Thumbnail.builder()
-                    .s3Url(s3url)
-                    .cloudfrontUrl(cloudFrontUrl)
-                    .build();
-
-            return s3Thumbnail;
-
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException("AWS thumbnail upload error");
         }
+
+        String s3url = amazonS3Client.getUrl(BUCKET, key).toString();
+        String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + key;
+
+        S3Thumbnail s3Thumbnail = S3Thumbnail.builder()
+                .s3Url(s3url)
+                .cloudfrontUrl(cloudFrontUrl)
+                .build();
+
+        return s3Thumbnail;
     }
 
     @Override
-    public S3Thumbnail updateThumbnail(String s3Key, MultipartFile multipartFile) {
+    public S3Thumbnail updateThumbnail(String s3Url, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
-
+        String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
         String newS3Key;
 
         try {
@@ -147,7 +149,10 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public void deleteVideo(String s3Key) {
+    public void deleteVideo(String s3Url) {
+
+        String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
+
         try {
             log.info("delete video : " + s3Key);
 

@@ -11,6 +11,7 @@ import com.travelvcommerce.uploadservice.vo.S3Video;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Primary
@@ -45,6 +47,8 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     private UploaderRepository uploaderRepository;
     @Autowired
     private FFmpegWrapper ffmpegWrapper;
+    @Value("${api.user-service.url}")
+    private String USER_SERVICE_URL;
 
     @Override
     public String uploadVideo(String fileName, MultipartFile videoFile) {
@@ -120,17 +124,12 @@ public class VideoCreateServiceImpl implements VideoCreateService {
         Uploader uploader;
 
         if (uploaderRepository.existsBySellerId(sellerId)) {
-            try {
-                uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("uploader not found"));
-            } catch (Exception e) {
-                log.error("get video uploader error", e);
-                throw new RuntimeException("get video uploader error");
-            }
+            uploader = uploaderRepository.findBySellerId(sellerId).get();
         } else {
             UploaderDto.UploaderResponseDto uploaderResponseDto;
             try {
                 WebClient webClient = WebClient.builder()
-                        .baseUrl("http://localhost:8021")
+                        .baseUrl(USER_SERVICE_URL)
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .build();
                 uploaderResponseDto = webClient.get()
@@ -140,7 +139,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
                         .block();
             } catch (Exception e) {
                 log.error("get video uploader info error", e);
-                throw new RuntimeException("get video uploader info error");
+                throw new NoSuchElementException("uploader not found");
             }
             uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
             try {

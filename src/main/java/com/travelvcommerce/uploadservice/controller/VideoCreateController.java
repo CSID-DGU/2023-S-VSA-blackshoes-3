@@ -34,6 +34,27 @@ public class VideoCreateController {
     @Autowired
     private TemporaryVideoService temporaryVideoService;
 
+    @GetMapping("/videos/temporary/{userId}")
+    public ResponseEntity<ResponseDto> checkTemporaryVideo(@PathVariable String userId) {
+        TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
+
+        try {
+            temporaryVideoResponseDto = temporaryVideoService.getTemporaryVideo(userId);
+        }
+        catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
+        catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(temporaryVideoResponseDto, Map.class));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
                                                    @RequestPart(value = "video") MultipartFile video) {
@@ -46,30 +67,13 @@ public class VideoCreateController {
 
         try {
             uploadedFilePath = videoCreateService.uploadVideo(fileName, video);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
             encodedFilePath = videoCreateService.encodeVideo(uploadedFilePath);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
             videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
             temporaryVideoResponseDto = temporaryVideoService.createTemporaryVideo(userId, videoId, videoUrls);
-        } catch (Exception e) {
+        }
+        catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
         temporaryVideoService.checkAndDeleteExpiredVideo(videoId);
@@ -92,38 +96,24 @@ public class VideoCreateController {
 
         try {
             videoUrls = temporaryVideoService.findTemporaryVideoUrls(userId, videoId);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
             thumbnailUrls = awsS3Service.uploadThumbnail(fileName, thumbnail);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
             videoCreateResponseDto = videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
-        } catch (RuntimeException e) {
+        }
+        catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
+        catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+        catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        try {
-            denormalizeDbService.postDenormalizeData(videoId);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        try {
-            temporaryVideoService.deleteTemporaryVideo(userId, videoId);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
+        denormalizeDbService.postDenormalizeData(videoId);
+        temporaryVideoService.deleteTemporaryVideo(userId, videoId);
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoCreateResponseDto, Map.class));
 
