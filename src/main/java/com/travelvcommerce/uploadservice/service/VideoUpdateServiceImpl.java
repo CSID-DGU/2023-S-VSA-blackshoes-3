@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,59 +37,40 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     private UploaderRepository uploaderRepository;
     @Autowired
     private ModelMapper modelMapper;
-    @Value("${video.directory}")
-    private String DIRECTORY;
 
     @Override
     public Video getVideo(String userId, String videoId) {
-        Video video;
-
-        try {
-            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
-        } catch (Exception e) {
-            log.error("Video not found", e);
-            throw new RuntimeException("video not found");
-        }
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video not found"));
 
         if (!video.getUploader().getSellerId().equals(userId)) {
             log.error("Invalid user");
-            throw new RuntimeException("Invalid user");
+            throw new IllegalArgumentException("Invalid user");
         }
 
         return video;
     }
 
     @Override
-    public String getThumbnailS3Key(Video video) {
-        try {
-        String s3Key = video.getVideoUrl().getThumbnailS3Url().substring(video.getVideoUrl().getThumbnailS3Url().indexOf(DIRECTORY));
+    @Transactional
+    public VideoDto.VideoUpdateResponseDto updateThumbnail(String userId, String videoId,
+                                                           MultipartFile thumbnail, AwsS3Service awsS3Service) {
+        Video video = getVideo(userId, videoId);
+        VideoUrl videoUrl = video.getVideoUrl();
 
-        return s3Key;
-        } catch (Exception e) {
-            log.error("get thumbnail s3 key error", e);
-            throw new RuntimeException("get thumbnail s3 key error");
-        }
-    }
+        S3Thumbnail s3Thumbnail = awsS3Service.updateThumbnail(videoUrl.getThumbnailS3Url(), thumbnail);
 
-    @Override
-    public VideoDto.VideoUpdateResponseDto updateThumbnail(Video video, VideoUrl videoUrl, S3Thumbnail s3Thumbnail) {
         videoUrl.setThumbnailS3Url(s3Thumbnail.getS3Url());
         videoUrl.setThumbnailCloudfrontUrl(s3Thumbnail.getCloudfrontUrl());
+
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Thumbnail");
+
         return videoUpdateResponseDto;
     }
 
     @Override
     @Transactional
     public VideoDto.VideoUpdateResponseDto updateTags(String userId, String videoId, List<String> tagIdList) {
-        Video video;
-
-        try {
-            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
-        } catch (Exception e) {
-            log.error("Video not found", e);
-            throw new RuntimeException("video not found");
-        }
+        Video video = getVideo(userId, videoId);
 
         List<VideoTag> videoTagList = video.getVideoTags();
 
@@ -125,14 +108,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     @Override
     @Transactional
     public VideoDto.VideoUpdateResponseDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
-        Video video;
+        Video video = getVideo(userId, videoId);
 
-        try {
-            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
-        } catch (Exception e) {
-            log.error("Video not found", e);
-            throw new RuntimeException("video not found");
-        }
         adModifyRequestDtoList.forEach(adModifyRequestDto -> {
             if (adModifyRequestDto.getModifyType().equals("create")) {
                 try {
@@ -181,14 +158,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     @Transactional
     @Override
     public VideoDto.VideoUpdateResponseDto updateVideoName(String userId, String videoId, String videoName) {
-        Video video;
-
-        try {
-            video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new Exception("Video not found"));
-        } catch (Exception e) {
-            log.error("Video not found", e);
-            throw new RuntimeException("video not found");
-        }
+        Video video = getVideo(userId, videoId);
 
         video.setVideoName(videoName);
 
@@ -200,13 +170,13 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     @Override
     @Transactional
     public List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
+        Uploader uploader = uploaderRepository.findBySellerId(userId)
+                .orElseThrow(() -> new NoSuchElementException("uploader not found"));
+
+        uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
+        uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
+
         try {
-            Uploader uploader = uploaderRepository.findBySellerId(userId)
-                    .orElseThrow(() -> new RuntimeException("uploader not found"));
-
-            uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
-            uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
-
             List<String> videoIdList = uploader.getVideos().stream().map(video -> video.getVideoId()).collect(Collectors.toList());
             return videoIdList;
         } catch (Exception e) {
@@ -221,8 +191,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
             videoRepository.save(video);
             return modelMapper.map(video, VideoDto.VideoUpdateResponseDto.class);
         } catch (Exception e) {
-            log.error("update video error :" + type, e);
-            throw new RuntimeException("update video error :" + type);
+            log.error("update video error on " + type, e);
+            throw new RuntimeException("update video error on " + type);
         }
     }
 }

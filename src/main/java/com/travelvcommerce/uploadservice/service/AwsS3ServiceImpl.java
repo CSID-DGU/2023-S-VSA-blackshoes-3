@@ -109,11 +109,11 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public S3Thumbnail updateThumbnail(String s3Key, MultipartFile multipartFile) {
+    public S3Thumbnail updateThumbnail(String s3Url, MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
-
+        String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
         String newS3Key;
 
         try {
@@ -149,7 +149,10 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public void deleteVideo(String s3Key) {
+    public void deleteVideo(String s3Url) {
+
+        String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
+
         try {
             log.info("delete video : " + s3Key);
 
