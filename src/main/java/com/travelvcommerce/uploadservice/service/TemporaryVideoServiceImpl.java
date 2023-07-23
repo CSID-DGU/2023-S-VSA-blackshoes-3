@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -33,29 +34,19 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     private String DIRECTORY;
 
     @Override
-    public S3Video findTemporaryVideoUrls(String userId, String videoId) {
-        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
-                .orElseThrow(() -> new RuntimeException("video not found"));
-
-        S3Video s3Urls = S3Video.builder()
-                .s3Url(temporaryVideo.getVideoS3Url())
-                .cloudfrontUrl(temporaryVideo.getVideoCloudfrontUrl())
-                .build();
-
-        return s3Urls;
-    }
-
-    @Override
-    public void deleteTemporaryVideo(String userId, String videoId) {
-        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
-                .orElseThrow(() -> new RuntimeException("video not found"));
+    public TemporaryVideoDto.TemporaryVideoResponseDto getTemporaryVideo(String userId) {
+        TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
+        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerId(userId)
+                .orElseThrow(() -> new NoSuchElementException("video not found"));
 
         try {
-            temporaryVideoRepository.delete(temporaryVideo);
+            temporaryVideoResponseDto = modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
         } catch (Exception e) {
-            log.error("fail to delete temporary video", e);
-            throw new RuntimeException("fail to delete temporary video");
+            log.error("fail to get temporary video", e);
+            throw new RuntimeException("fail to get temporary video");
         }
+
+        return temporaryVideoResponseDto;
     }
 
     @Override
@@ -82,6 +73,32 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         temporaryVideoResponseDto = modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
 
         return temporaryVideoResponseDto;
+    }
+
+    @Override
+    public S3Video findTemporaryVideoUrls(String userId, String videoId) {
+        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
+                .orElseThrow(() -> new RuntimeException("video not found"));
+
+        S3Video s3Urls = S3Video.builder()
+                .s3Url(temporaryVideo.getVideoS3Url())
+                .cloudfrontUrl(temporaryVideo.getVideoCloudfrontUrl())
+                .build();
+
+        return s3Urls;
+    }
+
+    @Override
+    public void deleteTemporaryVideo(String userId, String videoId) {
+        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
+                .orElseThrow(() -> new RuntimeException("video not found"));
+
+        try {
+            temporaryVideoRepository.delete(temporaryVideo);
+        } catch (Exception e) {
+            log.error("fail to delete temporary video", e);
+            throw new RuntimeException("fail to delete temporary video");
+        }
     }
 
     @Override

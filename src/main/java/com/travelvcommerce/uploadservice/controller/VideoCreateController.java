@@ -34,6 +34,26 @@ public class VideoCreateController {
     @Autowired
     private TemporaryVideoService temporaryVideoService;
 
+    @GetMapping("/videos/temporary/{userId}")
+    public ResponseEntity<ResponseDto> checkTemporaryVideo(@PathVariable String userId) {
+        TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
+
+        try {
+            temporaryVideoResponseDto = temporaryVideoService.getTemporaryVideo(userId);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
+        catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(temporaryVideoResponseDto, Map.class));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
                                                    @RequestPart(value = "video") MultipartFile video) {

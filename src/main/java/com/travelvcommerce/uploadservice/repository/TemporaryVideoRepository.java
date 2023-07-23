@@ -11,4 +11,6 @@ public interface TemporaryVideoRepository extends JpaRepository<TemporaryVideo, 
     Optional<TemporaryVideo> findByVideoId(String videoId);
 
     Optional<TemporaryVideo> findBySellerIdAndVideoId(String sellerId, String videoId);
+
+    Optional<TemporaryVideo> findBySellerId(String userId);
 }
