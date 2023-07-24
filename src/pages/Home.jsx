@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
-import { Body, GridWrapper } from "../components/Home/HomeStyle";
+import { AdSection, Body, GridWrapper, VideoSection } from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import axios from "axios";
@@ -40,7 +40,10 @@ const Home = () => {
     <GridWrapper>
       <Header />
       <Nav />
-      <Body></Body>
+      <Body>
+        <AdSection>Ad</AdSection>
+        <VideoSection>Video</VideoSection>
+      </Body>
     </GridWrapper>
   );
 };
