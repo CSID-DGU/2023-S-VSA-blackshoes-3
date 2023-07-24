@@ -37,6 +37,7 @@ export const HeaderSection = styled.div`
   align-items: center;
   background-color: ${(props) => props.theme.bgColor};
   padding: 0 30px;
+  z-index: 1;
   @media all and (max-width: 900px) {
     position: sticky;
     top: 0;
