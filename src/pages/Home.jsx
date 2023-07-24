@@ -1,20 +1,19 @@
 import { useContext, useEffect } from "react";
 import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
+import { Body, GridWrapper } from "../components/Home/HomeStyle";
 import {
   AdSection,
-  Body,
-  GridWrapper,
-  ResNavItem0,
-  ResNavItem1,
-  ResNavItem2,
-  ResNavSection,
+  MainSegment,
+  MainSubTitle,
+  MainTitle,
+  StatisticSection,
   VideoSection,
-} from "../components/Home/HomeStyle";
-import { useNavigate, useParams } from "react-router-dom";
+} from "../components/Home/MainStyle";
+import { useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
-import axios from "axios";
 import ResNav from "../components/Fragments/ResNav";
+import axios from "axios";
 
 // testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
 // testSeller2 e2d052e4-009b-44c4-963a-21996b29a779
@@ -22,7 +21,7 @@ import ResNav from "../components/Fragments/ResNav";
 
 const Home = () => {
   // Constant----------------------------------------------------
-  const navigate = useNavigate();
+
   const { userId } = useParams();
 
   // State-------------------------------------------------------
@@ -52,8 +51,29 @@ const Home = () => {
       <Nav />
       <Body>
         <ResNav userId={userId} />
-        <AdSection>Ad</AdSection>
-        <VideoSection>Video</VideoSection>
+        <MainSegment>
+          <MainTitle>광고 통계</MainTitle>
+          <AdSection>
+            <MainSubTitle>광고 클릭 동영상 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>광고 클릭 태그 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+          </AdSection>
+        </MainSegment>
+        <MainSegment>
+          <MainTitle>영상 통계</MainTitle>
+          <VideoSection>
+            <MainSubTitle>동영장 조회수 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>동영장 좋아요 수 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>동영장 태그 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+          </VideoSection>
+        </MainSegment>
       </Body>
     </GridWrapper>
   );
