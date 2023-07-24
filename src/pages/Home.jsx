@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ import axios from "axios";
 const Home = () => {
   // Constant----------------------------------------------------
   const navigate = useNavigate();
+  const { userId } = useParams();
 
   // State-------------------------------------------------------
   const { setPage } = useContext(Context);
@@ -21,7 +22,7 @@ const Home = () => {
   const fetchData = async () => {
     // try {
     //   const uploadData = await axios.get(
-    //     `http://13.125.69.94:8011/content-slave-service/videos/sort?q=recent&page=0&size=10`
+    //     `http://13.125.69.94:8011/content-slave-service/videos/${userId}/sort?q=recent&page=0&size=10`
     //   );
     //   console.log(uploadData);
     // } catch (err) {
