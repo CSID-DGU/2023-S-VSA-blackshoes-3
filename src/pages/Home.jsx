@@ -1,10 +1,20 @@
 import { useContext, useEffect } from "react";
 import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
-import { AdSection, Body, GridWrapper, VideoSection } from "../components/Home/HomeStyle";
+import {
+  AdSection,
+  Body,
+  GridWrapper,
+  ResNavItem0,
+  ResNavItem1,
+  ResNavItem2,
+  ResNavSection,
+  VideoSection,
+} from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import axios from "axios";
+import ResNav from "../components/Fragments/ResNav";
 
 // testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
 // testSeller2 e2d052e4-009b-44c4-963a-21996b29a779
@@ -16,7 +26,7 @@ const Home = () => {
   const { userId } = useParams();
 
   // State-------------------------------------------------------
-  const { setPage } = useContext(Context);
+  const { page, setPage } = useContext(Context);
 
   // Function----------------------------------------------------
   const fetchData = async () => {
@@ -41,6 +51,7 @@ const Home = () => {
       <Header />
       <Nav />
       <Body>
+        <ResNav userId={userId} />
         <AdSection>Ad</AdSection>
         <VideoSection>Video</VideoSection>
       </Body>

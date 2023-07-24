@@ -133,6 +133,45 @@ export const BorderButton = styled.button`
   }
 `;
 
+export const ResNavSection = styled.section`
+  width: 100%;
+  height: 50px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  @media all and (max-width: 900px) {
+    display: flex;
+  }
+`;
+
+export const ResNavItem0 = styled.section`
+  width: 33%;
+  min-width: 100px;
+  height: 40px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  color: ${(props) => props.theme.textColor};
+  border: none;
+  border-bottom: ${(props) =>
+    props.page === 0 ? `2px solid ${props.theme.primaryColor}` : "none"};
+  cursor: pointer;
+  @media all and (max-width: 900px) {
+    display: flex;
+  }
+`;
+
+export const ResNavItem1 = styled(ResNavItem0)`
+  border-bottom: ${(props) =>
+    props.page === 1 ? `2px solid ${props.theme.primaryColor}` : "none"};
+`;
+
+export const ResNavItem2 = styled(ResNavItem0)`
+  border-bottom: ${(props) =>
+    props.page === 2 ? `2px solid ${props.theme.primaryColor}` : "none"};
+`;
+
 // Body-------------------------------------------------------------
 export const Body = styled.div`
   width: calc(100vw - 336px);
