@@ -35,7 +35,7 @@ footer, header, hgroup, main, menu, nav, section {
 }
 /* HTML5 hidden-attribute fix for newer browsers */
 *[hidden] {
-    display: none;
+  display: none;
 }
 body {
   line-height: 1;
@@ -74,21 +74,18 @@ table {
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: "MontserratMedium";
   src: url(${MontserratMedium});
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: "MontserratRegular";
   src: url(${MontserratRegular});
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: "MontserratThin";
   src: url(${MontserratThin});
@@ -106,6 +103,8 @@ table {
 }
 
 *::-webkit-scrollbar-thumb {
+  width: 7px;
+  height: 7px;
   background: ${(props) => props.theme.primaryColor};
   border-radius: 10px;
 }

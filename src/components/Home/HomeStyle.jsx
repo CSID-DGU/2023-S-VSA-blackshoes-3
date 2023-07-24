@@ -3,6 +3,10 @@ import { styled } from "styled-components";
 export const Container = styled.div`
   width: 100vw;
   height: 100vh;
+  @media all and (max-width: 900px) {
+    height: auto;
+    min-height: 100vh;
+  }
 `;
 
 export const Wrapper = styled.div`
@@ -17,6 +21,9 @@ export const GridWrapper = styled.div`
   display: grid;
   grid-template-columns: 336px calc(100% - 336px);
   grid-template-rows: 100px calc(100% - 100px);
+  @media all and (max-width: 900px) {
+    grid-template-columns: 100%;
+  }
 `;
 
 // Header-------------------------------------------------------------
@@ -30,6 +37,11 @@ export const HeaderSection = styled.div`
   align-items: center;
   background-color: ${(props) => props.theme.bgColor};
   padding: 0 30px;
+  z-index: 1;
+  @media all and (max-width: 900px) {
+    position: sticky;
+    top: 0;
+  }
 `;
 
 export const HeaderRSection = styled.section`
@@ -66,7 +78,7 @@ export const LogoCircleBox = styled.section`
 // Nav-------------------------------------------------------------
 export const NavSection = styled.div`
   width: 336px;
-  height: 100%;
+  height: calc(100vh - 100px);
   grid-column: 1 / 2;
   grid-row: 2 / 3;
   display: flex;
@@ -75,6 +87,12 @@ export const NavSection = styled.div`
   align-items: center;
   background-color: ${(props) => props.theme.bgColor};
   padding: 50px 0;
+  transition: all 0.3s;
+  @media all and (max-width: 900px) {
+    grid-column: 0;
+    grid-row: 0;
+    transform: translate(-336px, 0);
+  }
 `;
 
 export const NavBox = styled.div`
@@ -124,11 +142,67 @@ export const BorderButton = styled.button`
   }
 `;
 
+export const ResNavSection = styled.section`
+  width: 100%;
+  height: 50px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  @media all and (max-width: 900px) {
+    display: flex;
+  }
+`;
+
+export const ResNavItem0 = styled.section`
+  width: 33%;
+  min-width: 100px;
+  height: 40px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  color: ${(props) => props.theme.textColor};
+  border: none;
+  border-bottom: ${(props) =>
+    props.page === 0 ? `2px solid ${props.theme.primaryColor}` : "none"};
+  cursor: pointer;
+  @media all and (max-width: 900px) {
+    display: flex;
+  }
+`;
+
+export const ResNavItem1 = styled(ResNavItem0)`
+  border-bottom: ${(props) =>
+    props.page === 1 ? `2px solid ${props.theme.primaryColor}` : "none"};
+`;
+
+export const ResNavItem2 = styled(ResNavItem0)`
+  border-bottom: ${(props) =>
+    props.page === 2 ? `2px solid ${props.theme.primaryColor}` : "none"};
+`;
+
 // Body-------------------------------------------------------------
 export const Body = styled.div`
   width: calc(100vw - 336px);
   height: 100%;
   grid-column: 2 / 3;
   grid-row: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
   background-color: #f6f7f9;
+  padding: 30px;
+  overflow-y: auto;
+  transition: all 0.3s;
+  @media all and (max-width: 1480px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  @media all and (max-width: 900px) {
+    grid-column: 1 / 3;
+    width: 100%;
+    max-width: 100%;
+  }
 `;
