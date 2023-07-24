@@ -12,6 +12,10 @@ import {
 } from "../components/Sign/SignStyle";
 import logo from "../assets/images/logo.svg";
 
+const SELLOR_1_ID = "21d40e1a-86fc-480e-a4bf-b084f8ac6c55";
+const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
+const SELLOR_3_ID = "badd288d-ea48-424c-9d1b-8e0fb4375094";
+
 const SignIn = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
@@ -27,7 +31,7 @@ const SignIn = () => {
           <SubText>판매자 로그인</SubText>
           <SignInput type="text" placeholder="ID" width="450px" />
           <SignInput type="text" placeholder="PW" width="450px" />
-          <ColorButton width="450px" onClick={() => navigate("/home/1")}>
+          <ColorButton width="450px" onClick={() => navigate(`/home/${SELLOR_1_ID}`)}>
             시작하기
           </ColorButton>
           <RightAlignSection>
