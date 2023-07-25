@@ -22,7 +22,7 @@ export const GridWrapper = styled.div`
   grid-template-columns: 336px calc(100% - 336px);
   grid-template-rows: 100px calc(100% - 100px);
   @media all and (max-width: 900px) {
-    grid-template-columns: 100%;
+    grid-template-columns: 1fr;
   }
 `;
 

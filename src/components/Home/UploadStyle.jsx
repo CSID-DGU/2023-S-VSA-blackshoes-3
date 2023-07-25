@@ -14,18 +14,6 @@ export const VideoUploadSection = styled.div`
   }
 `;
 
-export const AdUploadSection = styled(VideoUploadSection)`
-  width: 30%;
-  background-color: ${(props) => props.theme.bgColor};
-  border-radius: 24px;
-  padding: 30px;
-  @media all and (max-width: 1480px) {
-    width: 100%;
-  }
-  @media all and (max-width: 900px) {
-  }
-`;
-
 export const TitleBetweenBox = styled.section`
   width: 100%;
   height: 50px;
@@ -135,6 +123,8 @@ export const VideoThumbnailSection = styled(VideoInputSection)`
   }
 `;
 
+export const VideoThumbnailUploadInput = styled(VideoInput)``;
+
 export const VideoThumbnailUploadButton = styled(VideoUploadButton)`
   width: 50px;
   height: 50px;
@@ -160,6 +150,38 @@ export const TagCheckSection = styled.section`
 `;
 
 // Ad Upload---------------------------------------------
+export const AdUploadSection = styled(VideoUploadSection)`
+  width: 30%;
+  background-color: ${(props) => props.theme.bgColor};
+  border-radius: 24px;
+  padding: 30px;
+  overflow-y: auto;
+  @media all and (max-width: 1480px) {
+    width: 100%;
+    overflow-y: visible;
+  }
+  @media all and (max-width: 900px) {
+  }
+`;
+
+export const AdUploadGridBox = styled.section`
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: repeat(auto-fit, 1fr);
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+  @media all and (max-width: 1480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media all and (max-width: 900px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+`;
+
 export const AdUploadButton = styled.button`
   width: 35px;
   height: 35px;
@@ -171,4 +193,17 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
   justify-content: flex-start;
   gap: 15px;
   border-bottom: 1px solid #c4c4c4;
+`;
+
+export const AdInputSection = styled.section`
+  width: 100%;
+  height: 300px;
+  border: 1px solid green;
+
+  @media all and (max-width: 1030px) {
+    width: 100%;
+  }
+  @media all and (max-width: 900px) {
+    width: 100%;
+  }
 `;

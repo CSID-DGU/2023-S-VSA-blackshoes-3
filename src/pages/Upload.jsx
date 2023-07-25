@@ -6,7 +6,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import ResNav from "../components/Fragments/ResNav";
 import {
+  AdInputSection,
   AdUploadButton,
+  AdUploadGridBox,
   AdUploadSection,
   FullIcon,
   InfoInputSection,
@@ -25,6 +27,7 @@ import {
   VideoInputSection,
   VideoThumbnailSection,
   VideoThumbnailUploadButton,
+  VideoThumbnailUploadInput,
   VideoUploadButton,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
@@ -87,7 +90,8 @@ const Upload = () => {
               <TitleThumbnailWrapper>
                 <SmallTitle>썸네일</SmallTitle>
                 <VideoThumbnailSection>
-                  <VideoThumbnailUploadButton>
+                  <VideoThumbnailUploadInput type="file" id="thumbnail-input" />
+                  <VideoThumbnailUploadButton htmlFor="thumbnail-input">
                     <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
                   </VideoThumbnailUploadButton>
                 </VideoThumbnailSection>
@@ -109,6 +113,11 @@ const Upload = () => {
               <FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
             </AdUploadButton>
           </TitleLeftBox>
+          <AdUploadGridBox>
+            <AdInputSection></AdInputSection>
+            <AdInputSection></AdInputSection>
+            <AdInputSection></AdInputSection>
+          </AdUploadGridBox>
         </AdUploadSection>
       </Body>
     </GridWrapper>
