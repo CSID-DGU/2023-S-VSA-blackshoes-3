@@ -16,6 +16,7 @@ import {
   InfoTitleBox,
   SmallTitle,
   SpanTitle,
+  SpinnerBox,
   TagCheckSection,
   TagWrapper,
   TitleBetweenBox,
@@ -35,6 +36,7 @@ import { ColorButton } from "../components/Sign/SignStyle";
 import Plus from "../assets/images/plus.svg";
 import PlusButton from "../assets/images/plus-button.svg";
 import axios from "axios";
+import HashLoader from "react-spinners/HashLoader";
 
 // Upload EC2
 // 13.125.69.94:8021
@@ -48,7 +50,7 @@ const Upload = () => {
 
   // State-------------------------------------------------------
   const { setPage } = useContext(Context);
-  const [videoFile, setVideoFile] = useState({});
+  const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
 
   // Function----------------------------------------------------
@@ -69,21 +71,27 @@ const Upload = () => {
   const handleVideoUpload = async () => {
     if (preview) {
       try {
+        setLoading(true);
         const formData = new FormData();
         formData.append("video", preview);
-
-        const response = await axios.post(
-          `http://13.125.69.94:8021/upload-service/videos/${userId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log(response);
+        await axios
+          .post(
+            `http://13.125.69.94:8021/upload-service/videos/${userId}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res);
+            setLoading(false);
+          });
       } catch (err) {
         console.log(err);
+        setLoading(false);
+        alert("업로드에 실패했습니다.");
       }
     }
   };
@@ -120,6 +128,11 @@ const Upload = () => {
             <VideoUploadButton htmlFor="video-input" preview={preview}>
               <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
             </VideoUploadButton>
+            {loading && (
+              <SpinnerBox>
+                <HashLoader color="#1DAE86" />
+              </SpinnerBox>
+            )}
             {preview && (
               <video controls width="100%">
                 <source src={preview} type="video/mp4" />

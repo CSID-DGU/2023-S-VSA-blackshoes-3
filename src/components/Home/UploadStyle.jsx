@@ -55,6 +55,22 @@ export const VideoUploadButton = styled.label`
   cursor: pointer;
 `;
 
+export const SpinnerBox = styled.section`
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+export const UploadedState = styled.span`
+  color: ${(props) => props.theme.textColor};
+`;
+
 export const FullIcon = styled.img`
   width: 100%;
   height: auto;
