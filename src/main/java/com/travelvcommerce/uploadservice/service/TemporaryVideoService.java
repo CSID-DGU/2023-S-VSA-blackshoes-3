@@ -12,4 +12,5 @@ public interface TemporaryVideoService {
     void deleteTemporaryVideo(String userId, String videoId);
     CompletableFuture checkAndDeleteExpiredVideo(String videoId);
     TemporaryVideoDto.TemporaryVideoResponseDto extendTemporaryVideoExpiredAt(String userId, String videoId);
+    void findAllExpiredVideoAndDelete();
 }

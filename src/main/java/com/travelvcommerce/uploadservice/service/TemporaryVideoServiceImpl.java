@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
@@ -51,7 +52,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
         Timestamp uploadedAt = new Timestamp(System.currentTimeMillis());
-        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL * 1000 * 60);
+        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL);
 
         TemporaryVideoDto temporaryVideoDto = TemporaryVideoDto.builder()
                 .videoId(videoId)
@@ -106,7 +107,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     @Async
     public CompletableFuture checkAndDeleteExpiredVideo(String videoId) {
         try {
-            Thread.sleep(VIDEO_TTL * 1000 * 60);
+            Thread.sleep(VIDEO_TTL);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -131,12 +132,25 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
                 .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
-        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL * 1000 * 60);
+        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL);
         temporaryVideo.setExpiredAt(expiredAt);
 
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto =
                 modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
 
         return temporaryVideoResponseDto;
+    }
+
+    @Override
+    @Transactional
+    public void findAllExpiredVideoAndDelete() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        List<TemporaryVideo> expiredTemporaryVideos = temporaryVideoRepository.findAllByExpiredVideo(now);
+        expiredTemporaryVideos.stream().forEach(temporaryVideo -> {
+            String s3Url = temporaryVideo.getVideoS3Url();
+            String s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
+            temporaryVideoRepository.delete(temporaryVideo);
+            awsS3Service.deleteVideo(s3Key);
+        });
     }
 }
