@@ -52,6 +52,7 @@ const Upload = () => {
   const { setPage } = useContext(Context);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [fileName, setFileName] = useState(null);
 
   // Function----------------------------------------------------
   const handleVideoChange = (e) => {
@@ -62,6 +63,7 @@ const Upload = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
+      setFileName(file.name);
     } else {
       setPreview(null);
       alert("파일을 등록하는데 실패했습니다.");
@@ -72,6 +74,8 @@ const Upload = () => {
     if (preview) {
       try {
         setLoading(true);
+        const videoBlob = new Blob([preview], { type: preview.type });
+
         const formData = new FormData();
         formData.append("video", preview);
         await axios
