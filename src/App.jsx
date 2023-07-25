@@ -4,7 +4,7 @@ import Router from "./Router";
 import { useState } from "react";
 import { ThemeProvider } from "styled-components";
 import { dark, light } from "./Theme";
-import { Context } from "./Context/Context";
+import { GlobalContext } from "./context/GlobalContext";
 
 function App() {
   // User Theme----------------------------------------
@@ -17,12 +17,12 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Context.Provider value={{ page, setPage }}>
+      <GlobalContext.Provider value={{ page, setPage }}>
         <GlobalStyle />
         <Container>
           <Router />
         </Container>
-      </Context.Provider>
+      </GlobalContext.Provider>
     </ThemeProvider>
   );
 }
