@@ -51,36 +51,30 @@ const Upload = () => {
   // State-------------------------------------------------------
   const { setPage } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const [fileName, setFileName] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [regionTag, setRegionTag] = useState([]);
+  const [themeTag, setThemeTag] = useState([]);
 
   // Function----------------------------------------------------
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setFileName(file.name);
+      setVideoFile(file);
     } else {
-      setPreview(null);
+      setVideoFile(null);
       alert("파일을 등록하는데 실패했습니다.");
     }
   };
 
   const handleVideoUpload = async () => {
-    if (preview) {
+    if (videoFile) {
       try {
         setLoading(true);
-        const videoBlob = new Blob([preview], { type: preview.type });
-
         const formData = new FormData();
-        formData.append("video", videoBlob, fileName);
+        formData.append("video", videoFile);
         await axios
           .post(
-            `http://localhost:8021/upload-service/videos/${userId}`,
+            `http://13.125.69.94:8021/upload-service/videos/${userId}`,
             formData,
             {
               headers: {
@@ -103,6 +97,7 @@ const Upload = () => {
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(1);
+    // await axios.get(`http://13.125.69.94:8021/upload-service/tags/${type}`);
   }, []);
 
   return (
@@ -129,7 +124,7 @@ const Upload = () => {
             onChange={handleVideoChange}
           />
           <VideoInputSection>
-            <VideoUploadButton htmlFor="video-input" preview={preview}>
+            <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
               <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
             </VideoUploadButton>
             {loading && (
@@ -137,9 +132,9 @@ const Upload = () => {
                 <HashLoader color="#1DAE86" />
               </SpinnerBox>
             )}
-            {preview && (
+            {videoFile && (
               <video controls width="100%">
-                <source src={preview} type="video/mp4" />
+                <source src={videoFile} type="video/mp4" />
               </video>
             )}
           </VideoInputSection>
