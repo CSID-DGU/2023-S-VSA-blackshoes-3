@@ -14,6 +14,7 @@ import {
   InfoInputSection,
   InfoTagBox,
   InfoTitleBox,
+  Shadow,
   SmallTitle,
   SpanTitle,
   SpinnerBox,
@@ -54,6 +55,15 @@ const Upload = () => {
   const [loading, setLoading] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [preview, setPreview] = useState(null);
+
+  const [step, setStep] = useState({
+    first: true,
+    second: false,
+    third: false,
+  });
+
+  //
+  const [thumbnailfile, setThumbnailfile] = useState(null);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
 
@@ -89,6 +99,10 @@ const Upload = () => {
             console.log(res);
             setLoading(false);
             alert("영상이 업로드되었습니다.");
+            setStep({
+              ...step,
+              second: true,
+            });
           });
       } catch (err) {
         console.log(err);
@@ -135,6 +149,7 @@ const Upload = () => {
           </VideoInputSection>
           <br />
           <InfoInputSection>
+            {!step.second && <Shadow>STEP 2</Shadow>}
             <InfoTitleBox>
               <TitleWrapper>
                 <SmallTitle>제목</SmallTitle>
@@ -144,7 +159,10 @@ const Upload = () => {
                 <SmallTitle>썸네일</SmallTitle>
                 <VideoThumbnailSection>
                   <VideoThumbnailUploadInput type="file" id="thumbnail-input" />
-                  <VideoThumbnailUploadButton htmlFor="thumbnail-input">
+                  <VideoThumbnailUploadButton
+                    htmlFor="thumbnail-input"
+                    thumbnailfile={thumbnailfile}
+                  >
                     <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
                   </VideoThumbnailUploadButton>
                 </VideoThumbnailSection>
@@ -160,6 +178,7 @@ const Upload = () => {
           </InfoInputSection>
         </VideoUploadSection>
         <AdUploadSection>
+          {!step.third && <Shadow>STEP 3</Shadow>}
           <TitleLeftBox>
             <SpanTitle>광고등록</SpanTitle>
             <AdUploadButton>
@@ -167,8 +186,6 @@ const Upload = () => {
             </AdUploadButton>
           </TitleLeftBox>
           <AdUploadGridBox>
-            <AdInputSection></AdInputSection>
-            <AdInputSection></AdInputSection>
             <AdInputSection></AdInputSection>
           </AdUploadGridBox>
         </AdUploadSection>

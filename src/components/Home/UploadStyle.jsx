@@ -39,6 +39,25 @@ export const VideoInputSection = styled.section`
   background-color: ${(props) => props.theme.bgColor};
 `;
 
+export const Shadow = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 24px;
+  background-color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.primaryColor};
+  font-size: 36px;
+  font-weight: 900;
+  opacity: 0.7;
+  z-index: 2;
+`;
+
 export const VideoUploadButton = styled.label`
   width: 80px;
   height: 80px;
@@ -89,6 +108,7 @@ export const InfoInputSection = styled.section`
   height: 300px;
   display: flex;
   gap: 20px;
+  position: relative;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
   padding: 30px;
@@ -150,9 +170,11 @@ export const VideoThumbnailSection = styled(VideoInputSection)`
 export const VideoThumbnailUploadInput = styled(VideoInput)``;
 
 export const VideoThumbnailUploadButton = styled(VideoUploadButton)`
+  display: ${(props) => (props.thumbnailfile === null ? "flex" : "none")};
   width: 50px;
   height: 50px;
   border: none;
+  z-index: 1;
 `;
 
 export const TagWrapper = styled.section`
@@ -176,6 +198,7 @@ export const TagCheckSection = styled.section`
 // Ad Upload---------------------------------------------
 export const AdUploadSection = styled(VideoUploadSection)`
   width: 30%;
+  position: relative;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
   padding: 30px;
@@ -196,7 +219,6 @@ export const AdUploadGridBox = styled.section`
   grid-template-columns: repeat(1, 1fr);
   grid-template-rows: repeat(auto-fit, 1fr);
   justify-items: center;
-  align-items: center;
   gap: 10px;
   @media all and (max-width: 1480px) {
     grid-template-columns: repeat(2, 1fr);
