@@ -2,8 +2,17 @@ import { useContext, useEffect } from "react";
 import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  AdSection,
+  MainSegment,
+  MainSubTitle,
+  MainTitle,
+  StatisticSection,
+  VideoSection,
+} from "../components/Home/MainStyle";
+import { useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
+import ResNav from "../components/Fragments/ResNav";
 import axios from "axios";
 
 // testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
@@ -12,22 +21,22 @@ import axios from "axios";
 
 const Home = () => {
   // Constant----------------------------------------------------
-  const navigate = useNavigate();
+
   const { userId } = useParams();
 
   // State-------------------------------------------------------
-  const { setPage } = useContext(Context);
+  const { page, setPage } = useContext(Context);
 
   // Function----------------------------------------------------
   const fetchData = async () => {
-    // try {
-    //   const uploadData = await axios.get(
-    //     `http://13.125.69.94:8011/content-slave-service/videos/${userId}/sort?q=recent&page=0&size=10`
-    //   );
-    //   console.log(uploadData);
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      const uploadData = await axios.get(
+        `http://13.125.69.94:8011/content-slave-service/videos/${userId}/sort?q=recent&page=0&size=10`
+      );
+      // console.log(uploadData);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // ComponentDidMount-------------------------------------------
@@ -40,7 +49,32 @@ const Home = () => {
     <GridWrapper>
       <Header />
       <Nav />
-      <Body></Body>
+      <Body>
+        <ResNav userId={userId} />
+        <MainSegment>
+          <MainTitle>광고 통계</MainTitle>
+          <AdSection>
+            <MainSubTitle>광고 클릭 동영상 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>광고 클릭 태그 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+          </AdSection>
+        </MainSegment>
+        <MainSegment>
+          <MainTitle>영상 통계</MainTitle>
+          <VideoSection>
+            <MainSubTitle>동영장 조회수 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>동영장 좋아요 수 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+            <br />
+            <MainSubTitle>동영장 태그 랭킹</MainSubTitle>
+            <StatisticSection></StatisticSection>
+          </VideoSection>
+        </MainSegment>
+      </Body>
     </GridWrapper>
   );
 };
