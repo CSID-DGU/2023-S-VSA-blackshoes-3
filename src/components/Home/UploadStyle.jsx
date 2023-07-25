@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Video Upload--------------------------------------------
 export const VideoUploadSection = styled.div`
@@ -50,7 +51,7 @@ export const Shadow = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 24px;
-  background-color: ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.lightGray};
   color: ${(props) => props.theme.primaryColor};
   font-size: 36px;
   font-weight: 900;
@@ -93,8 +94,20 @@ export const VideoPreview = styled.video`
   object-fit: cover;
 `;
 
-export const UploadedState = styled.span`
-  color: ${(props) => props.theme.textColor};
+export const UploadedState = styled.p`
+  width: 100%;
+  position: absolute;
+  top: 5%;
+  font-size: 16px;
+  font-weight: 900;
+  text-align: center;
+  color: ${(props) => props.theme.bgColor};
+  z-index: 2;
+`;
+
+export const CheckIcon = styled(FontAwesomeIcon)`
+  font-size: 62px;
+  color: ${(props) => props.theme.primaryColor};
 `;
 
 export const FullIcon = styled.img`
@@ -120,6 +133,7 @@ export const InfoInputSection = styled.section`
 
 export const InfoTitleBox = styled.section`
   width: 33%;
+  height: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -149,7 +163,7 @@ export const SmallTitle = styled.h2`
 
 export const TitleInput = styled.input`
   min-width: 100%;
-  height: 40px;
+  height: 35px;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   border-radius: 16px;
   background-color: #f6f7f9;
@@ -159,7 +173,7 @@ export const TitleInput = styled.input`
 export const TitleThumbnailWrapper = styled(TitleWrapper)``;
 
 export const VideoThumbnailSection = styled(VideoInputSection)`
-  height: 100px;
+  height: 80px;
   min-height: auto;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   @media all and (max-width: 900px) {
@@ -177,6 +191,12 @@ export const VideoThumbnailUploadButton = styled(VideoUploadButton)`
   z-index: 1;
 `;
 
+export const ThumbnailImage = styled.img`
+  width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+`;
+
 export const TagWrapper = styled.section`
   width: 100%;
   height: 100%;
@@ -191,8 +211,37 @@ export const TagWrapper = styled.section`
 export const TagCheckSection = styled.section`
   width: 50%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   border-radius: 8px;
+`;
+
+export const TagTitle = styled.h2`
+  width: 100%;
+  min-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.secondBlack};
+  border-bottom: ${(props) => `1px solid ${props.theme.lightGray}`};
+`;
+
+export const TagScrollBox = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+`;
+
+export const TagItemBox = styled.section`
+  width: 100%;
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: ${(props) => `1px solid ${props.theme.lightGray}`};
 `;
 
 // Ad Upload---------------------------------------------

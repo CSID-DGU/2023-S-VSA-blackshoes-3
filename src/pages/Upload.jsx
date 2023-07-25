@@ -17,28 +17,25 @@ import {
   Shadow,
   SmallTitle,
   SpanTitle,
-  SpinnerBox,
   TagCheckSection,
+  TagItemBox,
+  TagScrollBox,
+  TagTitle,
   TagWrapper,
-  TitleBetweenBox,
+  ThumbnailImage,
   TitleInput,
   TitleLeftBox,
   TitleThumbnailWrapper,
   TitleWrapper,
-  VideoInput,
-  VideoInputSection,
-  VideoPreview,
   VideoThumbnailSection,
   VideoThumbnailUploadButton,
   VideoThumbnailUploadInput,
-  VideoUploadButton,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
-import { ColorButton } from "../components/Sign/SignStyle";
 import Plus from "../assets/images/plus.svg";
 import PlusButton from "../assets/images/plus-button.svg";
 import axios from "axios";
-import HashLoader from "react-spinners/HashLoader";
+import UploadComponent from "../components/Fragments/UploadComponent";
 
 // Upload EC2
 // 13.125.69.94:8021
@@ -52,70 +49,47 @@ const Upload = () => {
 
   // State-------------------------------------------------------
   const { setPage } = useContext(GlobalContext);
-  const [loading, setLoading] = useState(false);
-  const [videoFile, setVideoFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-
   const [step, setStep] = useState({
     first: true,
     second: false,
-    third: false,
   });
 
   //
-  const [thumbnailfile, setThumbnailfile] = useState(null);
+  const [videoTitle, setVideoTitle] = useState("");
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
 
-  // Function----------------------------------------------------
-  const handleVideoChange = (e) => {
+  const handleVideoTitle = (e) => setVideoTitle(e.target.value);
+  const handleThumbnailFile = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
+        setThumbnailPreview(reader.result);
       };
       reader.readAsDataURL(file);
-      setVideoFile(file);
+      setThumbnailFile(file);
     } else {
-      setVideoFile(null);
-      alert("파일을 등록하는데 실패했습니다.");
+      setThumbnailPreview(null);
     }
   };
 
-  const handleVideoUpload = async () => {
-    if (videoFile) {
-      try {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append("video", videoFile);
-        await axios
-          .post(`http://13.125.69.94:8021/upload-service/videos/${userId}`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((res) => {
-            console.log(res);
-            setLoading(false);
-            alert("영상이 업로드되었습니다.");
-            setStep({
-              ...step,
-              second: true,
-            });
-          });
-      } catch (err) {
-        console.log(err);
-        setLoading(false);
-        alert("업로드에 실패했습니다.");
-      }
-    }
+  // Function----------------------------------------------------
+  const fetchData = async () => {
+    const regionData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/region`);
+    const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
+    setRegionTag(regionData.data.payload.tags);
+    setThemeTag(themeData.data.payload.tags);
   };
+
+  const handleCheckBox = (e) => {};
 
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(1);
-    // await axios.get(`http://13.125.69.94:8021/upload-service/tags/${type}`);
+    fetchData();
   }, []);
 
   return (
@@ -125,60 +99,63 @@ const Upload = () => {
       <Body>
         <ResNav userId={userId} />
         <VideoUploadSection>
-          <TitleBetweenBox>
-            <SpanTitle>영상 등록</SpanTitle>
-            <ColorButton width="65px" style={{ height: "35px" }} onClick={handleVideoUpload}>
-              다음
-            </ColorButton>
-          </TitleBetweenBox>
-          <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
-          <VideoInputSection>
-            <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
-              <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
-            </VideoUploadButton>
-            {loading && (
-              <SpinnerBox>
-                <HashLoader color="#1DAE86" />
-              </SpinnerBox>
-            )}
-            {preview && (
-              <VideoPreview controls>
-                <source src={preview} type="video/mp4" />
-              </VideoPreview>
-            )}
-          </VideoInputSection>
+          {/* 영상 업로드 컴포넌트 조각 */}
+          <UploadComponent userId={userId} step={step} setStep={setStep} />
           <br />
+          {/* 영상 정보 등록 컴포넌트 조각 */}
           <InfoInputSection>
             {!step.second && <Shadow>STEP 2</Shadow>}
             <InfoTitleBox>
               <TitleWrapper>
                 <SmallTitle>제목</SmallTitle>
-                <TitleInput type="text" placeholder="제목을 입력해주세요." />
+                <TitleInput
+                  type="text"
+                  placeholder="제목을 입력해주세요."
+                  onChange={handleVideoTitle}
+                />
               </TitleWrapper>
               <TitleThumbnailWrapper>
                 <SmallTitle>썸네일</SmallTitle>
                 <VideoThumbnailSection>
-                  <VideoThumbnailUploadInput type="file" id="thumbnail-input" />
+                  <VideoThumbnailUploadInput
+                    type="file"
+                    accept="image/*"
+                    id="thumbnail-input"
+                    onChange={handleThumbnailFile}
+                  />
                   <VideoThumbnailUploadButton
                     htmlFor="thumbnail-input"
-                    thumbnailfile={thumbnailfile}
+                    thumbnailfile={thumbnailFile}
                   >
                     <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
                   </VideoThumbnailUploadButton>
+                  {thumbnailPreview && (
+                    <ThumbnailImage src={thumbnailPreview} alt="thumbnail-image" loading="lazy" />
+                  )}
                 </VideoThumbnailSection>
               </TitleThumbnailWrapper>
             </InfoTitleBox>
             <InfoTagBox>
               <SmallTitle>태그</SmallTitle>
               <TagWrapper>
-                <TagCheckSection></TagCheckSection>
-                <TagCheckSection></TagCheckSection>
+                <TagCheckSection>
+                  <TagTitle>지역 태그</TagTitle>
+                  <TagScrollBox>
+                    <TagItemBox>지역 태그1</TagItemBox>
+                  </TagScrollBox>
+                </TagCheckSection>
+                <TagCheckSection>
+                  <TagTitle>테마 태그</TagTitle>
+                  <TagScrollBox>
+                    <TagItemBox>테마 태그1</TagItemBox>
+                  </TagScrollBox>
+                </TagCheckSection>
               </TagWrapper>
             </InfoTagBox>
           </InfoInputSection>
         </VideoUploadSection>
         <AdUploadSection>
-          {!step.third && <Shadow>STEP 3</Shadow>}
+          {!step.second && <Shadow>STEP 2</Shadow>}
           <TitleLeftBox>
             <SpanTitle>광고등록</SpanTitle>
             <AdUploadButton>
