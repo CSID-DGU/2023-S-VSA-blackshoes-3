@@ -10,11 +10,14 @@ public class TemporaryVideoDto {
     private String sellerId;
     private String videoS3Url;
     private String videoCloudfrontUrl;
+    private String uploadedAt;
+    private String expiredAt;
 
     @Data
     public static class TemporaryVideoResponseDto {
         private String videoId;
         private String videoCloudfrontUrl;
         private String uploadedAt;
+        private String expiredAt;
     }
 }
