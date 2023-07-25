@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "temp_videos")
+@Table(name = "temporary_videos")
 public class TemporaryVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,8 @@ public class TemporaryVideo {
     @Column(name = "video_cloudfront_url", nullable = false)
     private String videoCloudfrontUrl;
     @Column(name = "uploaded_at", nullable = false)
-    @CreationTimestamp
     Timestamp uploadedAt;
+    @Column(name = "expired_at", nullable = false)
+    Timestamp expiredAt;
 
 }

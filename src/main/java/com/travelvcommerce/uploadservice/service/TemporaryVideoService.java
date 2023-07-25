@@ -11,4 +11,5 @@ public interface TemporaryVideoService {
     S3Video findTemporaryVideoUrls(String userId, String videoId);
     void deleteTemporaryVideo(String userId, String videoId);
     CompletableFuture checkAndDeleteExpiredVideo(String videoId);
+    TemporaryVideoDto.TemporaryVideoResponseDto extendTemporaryVideoExpiredAt(String userId, String videoId);
 }

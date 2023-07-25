@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
@@ -49,11 +50,16 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
     public TemporaryVideoDto.TemporaryVideoResponseDto createTemporaryVideo(String sellerId, String videoId, S3Video videoUrls) {
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
+        Timestamp uploadedAt = new Timestamp(System.currentTimeMillis());
+        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL * 1000 * 60);
+
         TemporaryVideoDto temporaryVideoDto = TemporaryVideoDto.builder()
                 .videoId(videoId)
                 .sellerId(sellerId)
                 .videoS3Url(videoUrls.getS3Url())
                 .videoCloudfrontUrl(videoUrls.getCloudfrontUrl())
+                .uploadedAt(uploadedAt.toString())
+                .expiredAt(expiredAt.toString())
                 .build();
 
         TemporaryVideo temporaryVideo = modelMapper.map(temporaryVideoDto, TemporaryVideo.class);
@@ -108,9 +114,8 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         TemporaryVideo temporaryVideo;
         String s3Key;
 
-        if (!videoRepository.existsByVideoId(videoId)) {
-            temporaryVideo = temporaryVideoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("temporary video not found"));
-
+        temporaryVideo = temporaryVideoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("temporary video not found"));
+        if (temporaryVideo.getExpiredAt().before(new Timestamp(System.currentTimeMillis()))) {
             String s3Url = temporaryVideo.getVideoS3Url();
             s3Key = s3Url.substring(s3Url.indexOf(DIRECTORY));
             temporaryVideoRepository.delete(temporaryVideo);
@@ -118,5 +123,20 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
         }
 
         return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    @Transactional
+    public TemporaryVideoDto.TemporaryVideoResponseDto extendTemporaryVideoExpiredAt(String userId, String videoId) {
+        TemporaryVideo temporaryVideo = temporaryVideoRepository.findBySellerIdAndVideoId(userId, videoId)
+                .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
+
+        Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL * 1000 * 60);
+        temporaryVideo.setExpiredAt(expiredAt);
+
+        TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto =
+                modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);
+
+        return temporaryVideoResponseDto;
     }
 }
