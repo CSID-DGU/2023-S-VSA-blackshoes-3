@@ -46,7 +46,7 @@ const Manage = () => {
       console.log(err);
     }
   };
-  console.log(videoList);
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(2);
@@ -67,7 +67,11 @@ const Manage = () => {
             <VideoListWrapper>
               {videoList.map((v) => (
                 <VideoListBox key={v.videoId}>
-                  <VideoListThumbnail src={v.thumbnailUrl} alt="video-thumbnail" loading="lazy" />
+                  <VideoListThumbnail
+                    src={v.thumbnailUrl}
+                    alt="video-thumbnail"
+                    loading="lazy"
+                  />
                   <VideoListInfo>{v.videoName}</VideoListInfo>
                 </VideoListBox>
               ))}

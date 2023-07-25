@@ -24,18 +24,25 @@ const SignIn = () => {
 
   return (
     <Wrapper>
-      <HalfSection style={{ backgroundColor: "#eaeaea" }}>Image Swiper</HalfSection>
+      <HalfSection style={{ backgroundColor: "#eaeaea" }}>
+        Image Swiper
+      </HalfSection>
       <HalfSection>
         <SignForm>
           <Logo src={logo} alt="logo" loading="lazy" />
           <SubText>판매자 로그인</SubText>
           <SignInput type="text" placeholder="ID" width="450px" />
           <SignInput type="text" placeholder="PW" width="450px" />
-          <ColorButton width="450px" onClick={() => navigate(`/home/${SELLOR_1_ID}`)}>
+          <ColorButton
+            width="450px"
+            onClick={() => navigate(`/home/${SELLOR_3_ID}`)}
+          >
             시작하기
           </ColorButton>
           <RightAlignSection>
-            <SignUpText onClick={() => navigate("/signup")}>회원가입</SignUpText>
+            <SignUpText onClick={() => navigate("/signup")}>
+              회원가입
+            </SignUpText>
           </RightAlignSection>
         </SignForm>
       </HalfSection>

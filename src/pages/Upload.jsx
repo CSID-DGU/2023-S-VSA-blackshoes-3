@@ -16,6 +16,7 @@ import {
   InfoTitleBox,
   SmallTitle,
   SpanTitle,
+  SpinnerBox,
   TagCheckSection,
   TagWrapper,
   TitleBetweenBox,
@@ -34,6 +35,13 @@ import {
 import { ColorButton } from "../components/Sign/SignStyle";
 import Plus from "../assets/images/plus.svg";
 import PlusButton from "../assets/images/plus-button.svg";
+import axios from "axios";
+import HashLoader from "react-spinners/HashLoader";
+
+// Upload EC2
+// 13.125.69.94:8021
+// Content-Slave
+// 13.125.69.94:8011
 
 const Upload = () => {
   // Constant----------------------------------------------------
@@ -42,17 +50,54 @@ const Upload = () => {
 
   // State-------------------------------------------------------
   const { setPage } = useContext(Context);
-  const [videoFile, setVideoFile] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [fileName, setFileName] = useState(null);
 
   // Function----------------------------------------------------
-  const videoUpload = (e) => {
-    const videoType = e.target.files[0].type.includes("video");
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setFileName(file.name);
+    } else {
+      setPreview(null);
+      alert("파일을 등록하는데 실패했습니다.");
+    }
+  };
 
-    setVideoFile({
-      url: URL.createObjectURL(e.target.files[0]),
-      video: videoType,
-    });
-    console.log(videoType);
+  const handleVideoUpload = async () => {
+    if (preview) {
+      try {
+        setLoading(true);
+        const videoBlob = new Blob([preview], { type: preview.type });
+
+        const formData = new FormData();
+        formData.append("video", preview);
+        await axios
+          .post(
+            `http://13.125.69.94:8021/upload-service/videos/${userId}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res);
+            setLoading(false);
+          });
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+        alert("업로드에 실패했습니다.");
+      }
+    }
   };
 
   // ComponentDidMount-------------------------------------------
@@ -69,17 +114,35 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <ColorButton width="65px" style={{ height: "35px" }} onClick={videoUpload}>
+            <ColorButton
+              width="65px"
+              style={{ height: "35px" }}
+              onClick={handleVideoUpload}
+            >
               등록
             </ColorButton>
           </TitleBetweenBox>
-          <VideoInput type="file" id="video-input" />
+          <VideoInput
+            type="file"
+            accept="video/*"
+            id="video-input"
+            onChange={handleVideoChange}
+          />
           <VideoInputSection>
-            <VideoUploadButton htmlFor="video-input">
+            <VideoUploadButton htmlFor="video-input" preview={preview}>
               <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
             </VideoUploadButton>
+            {loading && (
+              <SpinnerBox>
+                <HashLoader color="#1DAE86" />
+              </SpinnerBox>
+            )}
+            {preview && (
+              <video controls width="100%">
+                <source src={preview} type="video/mp4" />
+              </video>
+            )}
           </VideoInputSection>
-          {videoFile.video && <video src={videoFile.url} controls width="100%" />}
           <br />
           <InfoInputSection>
             <InfoTitleBox>
