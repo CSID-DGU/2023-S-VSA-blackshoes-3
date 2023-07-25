@@ -40,12 +40,6 @@ export const SpanTitle = styled.h1`
   color: ${(props) => props.theme.secondBlack};
 `;
 
-export const SmallTitle = styled.h2`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${(props) => props.theme.secondBlack};
-`;
-
 export const VideoInput = styled.input`
   display: none;
 `;
@@ -81,18 +75,89 @@ export const FullIcon = styled.img`
 // Info Upload--------------------------------------------
 export const InfoInputSection = styled.section`
   width: 100%;
-  height: 400px;
+  height: 300px;
   display: flex;
+  gap: 20px;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
-  /* padding: 30px; */
+  padding: 30px;
   @media all and (max-width: 1480px) {
   }
   @media all and (max-width: 900px) {
   }
 `;
 
-export const InfoTitleBox = styled.section``;
+export const InfoTitleBox = styled.section`
+  width: 33%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const InfoTagBox = styled.section`
+  width: 66%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const TitleWrapper = styled.section`
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const SmallTitle = styled.h2`
+  font-size: 16px;
+  font-weight: bold;
+  color: ${(props) => props.theme.secondBlack};
+`;
+
+export const TitleInput = styled.input`
+  min-width: 100%;
+  height: 40px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 16px;
+  background-color: #f6f7f9;
+  padding: 15px;
+`;
+
+export const TitleThumbnailWrapper = styled(TitleWrapper)``;
+
+export const VideoThumbnailSection = styled(VideoInputSection)`
+  height: 100px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  @media all and (max-width: 900px) {
+    height: 120px;
+  }
+`;
+
+export const VideoThumbnailUploadButton = styled(VideoUploadButton)`
+  width: 50px;
+  height: 50px;
+  border: none;
+`;
+
+export const TagWrapper = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 10px;
+  @media all and (max-width: 1480px) {
+  }
+  @media all and (max-width: 900px) {
+  }
+`;
+
+export const TagCheckSection = styled.section`
+  width: 50%;
+  height: 100%;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 8px;
+`;
 
 // Ad Upload---------------------------------------------
 export const AdUploadButton = styled.button`
