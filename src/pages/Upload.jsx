@@ -77,10 +77,10 @@ const Upload = () => {
         const videoBlob = new Blob([preview], { type: preview.type });
 
         const formData = new FormData();
-        formData.append("video", preview);
+        formData.append("video", videoBlob, fileName);
         await axios
           .post(
-            `http://13.125.69.94:8021/upload-service/videos/${userId}`,
+            `http://localhost:8021/upload-service/videos/${userId}`,
             formData,
             {
               headers: {
