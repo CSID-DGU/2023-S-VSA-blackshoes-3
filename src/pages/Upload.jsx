@@ -6,15 +6,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Context/Context";
 import ResNav from "../components/Fragments/ResNav";
 import {
+  AdInputSection,
   AdUploadButton,
+  AdUploadGridBox,
   AdUploadSection,
   FullIcon,
   InfoInputSection,
+  InfoTagBox,
+  InfoTitleBox,
+  SmallTitle,
   SpanTitle,
+  TagCheckSection,
+  TagWrapper,
   TitleBetweenBox,
+  TitleInput,
   TitleLeftBox,
+  TitleThumbnailWrapper,
+  TitleWrapper,
   VideoInput,
   VideoInputSection,
+  VideoThumbnailSection,
+  VideoThumbnailUploadButton,
+  VideoThumbnailUploadInput,
   VideoUploadButton,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
@@ -56,7 +69,7 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <ColorButton width="65px" style={{ height: "35px" }}>
+            <ColorButton width="65px" style={{ height: "35px" }} onClick={videoUpload}>
               등록
             </ColorButton>
           </TitleBetweenBox>
@@ -68,7 +81,30 @@ const Upload = () => {
           </VideoInputSection>
           {videoFile.video && <video src={videoFile.url} controls width="100%" />}
           <br />
-          <InfoInputSection>Info Section</InfoInputSection>
+          <InfoInputSection>
+            <InfoTitleBox>
+              <TitleWrapper>
+                <SmallTitle>제목</SmallTitle>
+                <TitleInput type="text" placeholder="제목을 입력해주세요." />
+              </TitleWrapper>
+              <TitleThumbnailWrapper>
+                <SmallTitle>썸네일</SmallTitle>
+                <VideoThumbnailSection>
+                  <VideoThumbnailUploadInput type="file" id="thumbnail-input" />
+                  <VideoThumbnailUploadButton htmlFor="thumbnail-input">
+                    <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
+                  </VideoThumbnailUploadButton>
+                </VideoThumbnailSection>
+              </TitleThumbnailWrapper>
+            </InfoTitleBox>
+            <InfoTagBox>
+              <SmallTitle>태그</SmallTitle>
+              <TagWrapper>
+                <TagCheckSection></TagCheckSection>
+                <TagCheckSection></TagCheckSection>
+              </TagWrapper>
+            </InfoTagBox>
+          </InfoInputSection>
         </VideoUploadSection>
         <AdUploadSection>
           <TitleLeftBox>
@@ -77,6 +113,11 @@ const Upload = () => {
               <FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
             </AdUploadButton>
           </TitleLeftBox>
+          <AdUploadGridBox>
+            <AdInputSection></AdInputSection>
+            <AdInputSection></AdInputSection>
+            <AdInputSection></AdInputSection>
+          </AdUploadGridBox>
         </AdUploadSection>
       </Body>
     </GridWrapper>
