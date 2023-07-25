@@ -42,7 +42,7 @@ export const VideoInputSection = styled.section`
 export const VideoUploadButton = styled.label`
   width: 80px;
   height: 80px;
-  display: flex;
+  display: ${(props) => (props.preview === null ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -53,6 +53,22 @@ export const VideoUploadButton = styled.label`
   border-radius: 16px;
   background-color: transparent;
   cursor: pointer;
+`;
+
+export const SpinnerBox = styled.section`
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+export const UploadedState = styled.span`
+  color: ${(props) => props.theme.textColor};
 `;
 
 export const FullIcon = styled.img`
