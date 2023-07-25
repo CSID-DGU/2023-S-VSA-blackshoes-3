@@ -26,6 +26,7 @@ import {
   TitleWrapper,
   VideoInput,
   VideoInputSection,
+  VideoPreview,
   VideoThumbnailSection,
   VideoThumbnailUploadButton,
   VideoThumbnailUploadInput,
@@ -52,6 +53,7 @@ const Upload = () => {
   const { setPage } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
 
@@ -59,6 +61,11 @@ const Upload = () => {
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
       setVideoFile(file);
     } else {
       setVideoFile(null);
@@ -73,18 +80,15 @@ const Upload = () => {
         const formData = new FormData();
         formData.append("video", videoFile);
         await axios
-          .post(
-            `http://13.125.69.94:8021/upload-service/videos/${userId}`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          )
+          .post(`http://13.125.69.94:8021/upload-service/videos/${userId}`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
           .then((res) => {
             console.log(res);
             setLoading(false);
+            alert("영상이 업로드되었습니다.");
           });
       } catch (err) {
         console.log(err);
@@ -109,20 +113,11 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <ColorButton
-              width="65px"
-              style={{ height: "35px" }}
-              onClick={handleVideoUpload}
-            >
-              등록
+            <ColorButton width="65px" style={{ height: "35px" }} onClick={handleVideoUpload}>
+              다음
             </ColorButton>
           </TitleBetweenBox>
-          <VideoInput
-            type="file"
-            accept="video/*"
-            id="video-input"
-            onChange={handleVideoChange}
-          />
+          <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
           <VideoInputSection>
             <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
               <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
@@ -132,10 +127,10 @@ const Upload = () => {
                 <HashLoader color="#1DAE86" />
               </SpinnerBox>
             )}
-            {videoFile && (
-              <video controls width="100%">
-                <source src={videoFile} type="video/mp4" />
-              </video>
+            {preview && (
+              <VideoPreview controls>
+                <source src={preview} type="video/mp4" />
+              </VideoPreview>
             )}
           </VideoInputSection>
           <br />

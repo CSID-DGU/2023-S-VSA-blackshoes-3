@@ -34,7 +34,7 @@ export const VideoInput = styled.input`
 
 export const VideoInputSection = styled.section`
   width: 100%;
-  height: 500px;
+  min-height: 500px;
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
 `;
@@ -65,6 +65,13 @@ export const SpinnerBox = styled.section`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
+`;
+
+export const VideoPreview = styled.video`
+  width: 100%;
+  max-height: 100%;
+  object-fit: cover;
 `;
 
 export const UploadedState = styled.span`
@@ -133,6 +140,7 @@ export const TitleThumbnailWrapper = styled(TitleWrapper)``;
 
 export const VideoThumbnailSection = styled(VideoInputSection)`
   height: 100px;
+  min-height: auto;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   @media all and (max-width: 900px) {
     height: 120px;
