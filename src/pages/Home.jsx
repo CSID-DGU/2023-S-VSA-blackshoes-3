@@ -11,7 +11,7 @@ import {
   VideoSection,
 } from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
-import { Context } from "../Context/Context";
+import { GlobalContext } from "../context/GlobalContext";
 import ResNav from "../components/Fragments/ResNav";
 import axios from "axios";
 
@@ -25,7 +25,7 @@ const Home = () => {
   const { userId } = useParams();
 
   // State-------------------------------------------------------
-  const { page, setPage } = useContext(Context);
+  const { page, setPage } = useContext(GlobalContext);
 
   // Function----------------------------------------------------
   const fetchData = async () => {

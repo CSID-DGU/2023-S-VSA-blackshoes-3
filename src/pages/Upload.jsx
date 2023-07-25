@@ -3,7 +3,7 @@ import Header from "../components/Fragments/Header";
 import Nav from "../components/Fragments/Nav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
-import { Context } from "../Context/Context";
+import { GlobalContext } from "../context/GlobalContext";
 import ResNav from "../components/Fragments/ResNav";
 import {
   AdInputSection,
@@ -49,7 +49,7 @@ const Upload = () => {
   const { userId } = useParams();
 
   // State-------------------------------------------------------
-  const { setPage } = useContext(Context);
+  const { setPage } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState(null);
