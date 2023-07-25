@@ -42,7 +42,7 @@ export const VideoInputSection = styled.section`
 export const VideoUploadButton = styled.label`
   width: 80px;
   height: 80px;
-  display: flex;
+  display: ${(props) => (props.preview === null ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   position: absolute;
