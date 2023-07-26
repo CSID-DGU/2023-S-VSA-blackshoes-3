@@ -10,6 +10,9 @@ import {
   AdUploadButton,
   AdUploadGridBox,
   AdUploadSection,
+  CheckBoxInput,
+  CheckBoxLabel,
+  CheckBoxSpan,
   FullIcon,
   InfoInputSection,
   InfoTagBox,
@@ -58,6 +61,7 @@ const Upload = () => {
   const [videoTitle, setVideoTitle] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [tagIdList, setTagIdList] = useState([]);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
 
@@ -84,7 +88,30 @@ const Upload = () => {
     setThemeTag(themeData.data.payload.tags);
   };
 
-  const handleCheckBox = (e) => {};
+  const handleCheckBox = (e) => {
+    const { checked } = e.target;
+    console.log(checked);
+  };
+
+  const handleSubmit = async (e) => {
+    const requestData = {
+      thumbnail: null,
+      requestUpload: {
+        videoName: "",
+        tagIdList: [],
+        adList: [{ adUrl: "", adContent: "", startTime: "", endTime: "" }],
+      },
+    };
+    try {
+      await axios
+        .post(`http://13.125.69.94:8021/upload-service/videos/${userId}/{videoId}`, requestData)
+        .then((res) => {
+          console.log(res);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
@@ -104,7 +131,7 @@ const Upload = () => {
           <br />
           {/* 영상 정보 등록 컴포넌트 조각 */}
           <InfoInputSection>
-            {!step.second && <Shadow>STEP 2</Shadow>}
+            {/* {!step.second && <Shadow>STEP 2</Shadow>} */}
             <InfoTitleBox>
               <TitleWrapper>
                 <SmallTitle>제목</SmallTitle>
@@ -141,13 +168,35 @@ const Upload = () => {
                 <TagCheckSection>
                   <TagTitle>지역 태그</TagTitle>
                   <TagScrollBox>
-                    <TagItemBox>지역 태그1</TagItemBox>
+                    {regionTag.map((region) => (
+                      <TagItemBox key={region.tagId}>
+                        <CheckBoxSpan>{region.content}</CheckBoxSpan>
+                        <CheckBoxInput
+                          type="checkbox"
+                          id="checkbox"
+                          onChange={() => {
+                            setTagIdList([...tagIdList, region.tagId]);
+                          }}
+                        />
+                      </TagItemBox>
+                    ))}
                   </TagScrollBox>
                 </TagCheckSection>
                 <TagCheckSection>
                   <TagTitle>테마 태그</TagTitle>
                   <TagScrollBox>
-                    <TagItemBox>테마 태그1</TagItemBox>
+                    {themeTag.map((theme) => (
+                      <TagItemBox key={theme.tagId}>
+                        <CheckBoxSpan>{theme.content}</CheckBoxSpan>
+                        <CheckBoxInput
+                          type="checkbox"
+                          id="checkbox"
+                          onChange={() => {
+                            setTagIdList([...tagIdList, theme.tagId]);
+                          }}
+                        />
+                      </TagItemBox>
+                    ))}
                   </TagScrollBox>
                 </TagCheckSection>
               </TagWrapper>
@@ -155,7 +204,7 @@ const Upload = () => {
           </InfoInputSection>
         </VideoUploadSection>
         <AdUploadSection>
-          {!step.second && <Shadow>STEP 2</Shadow>}
+          {/* {!step.second && <Shadow>STEP 2</Shadow>} */}
           <TitleLeftBox>
             <SpanTitle>광고등록</SpanTitle>
             <AdUploadButton>

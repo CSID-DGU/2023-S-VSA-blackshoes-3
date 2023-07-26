@@ -156,6 +156,7 @@ export const TitleWrapper = styled.section`
 `;
 
 export const SmallTitle = styled.h2`
+  height: 30px;
   font-size: 16px;
   font-weight: bold;
   color: ${(props) => props.theme.secondBlack};
@@ -199,9 +200,10 @@ export const ThumbnailImage = styled.img`
 
 export const TagWrapper = styled.section`
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   display: flex;
   gap: 10px;
+
   @media all and (max-width: 1480px) {
   }
   @media all and (max-width: 900px) {
@@ -237,11 +239,40 @@ export const TagScrollBox = styled.section`
 
 export const TagItemBox = styled.section`
   width: 100%;
-  height: 30px;
+  min-height: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: ${(props) => `1px solid ${props.theme.lightGray}`};
+  padding: 0 15px;
+`;
+
+export const CheckBoxSpan = styled.span`
+  color: ${(props) => props.theme.textColor};
+`;
+
+export const CheckBoxInput = styled.input`
+  width: 20px;
+  height: 20px;
+  border: ${(props) => `1.5px solid ${props.theme.lightGray}`};
+  user-select: none;
+  cursor: pointer;
+  &:checked {
+    background-color: ${(props) => props.theme.primaryColor};
+    color: white;
+  }
+`;
+
+export const CheckBoxLabel = styled.label`
+  width: 20px;
+  height: 20px;
+  border: ${(props) => `1.5px solid ${props.theme.lightGray}`};
+  user-select: none;
+  cursor: pointer;
+  &:checked {
+    background-color: ${(props) => props.theme.primaryColor};
+    color: white;
+  }
 `;
 
 // Ad Upload---------------------------------------------
