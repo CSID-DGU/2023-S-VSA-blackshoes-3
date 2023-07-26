@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
 import ResNav from "../components/Fragments/ResNav";
 import {
+  AdInput,
   AdInputSection,
   AdUploadButton,
   AdUploadGridBox,
@@ -20,6 +21,7 @@ import {
   NormalSpan,
   RemoveButton,
   Shadow,
+  SmallImage,
   SmallTitle,
   SpanTitle,
   TagCheckSection,
@@ -29,6 +31,7 @@ import {
   TagWrapper,
   ThumbnailImage,
   TimeBox,
+  TimeInput,
   TitleInput,
   TitleLeftBox,
   TitleThumbnailWrapper,
@@ -39,6 +42,7 @@ import {
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
 import Plus from "../assets/images/plus.svg";
+import Minus from "../assets/images/minus.svg";
 import PlusButton from "../assets/images/plus-button.svg";
 import axios from "axios";
 import UploadComponent from "../components/Fragments/UploadComponent";
@@ -68,6 +72,13 @@ const Upload = () => {
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
   const [adList, setAdList] = useState([{ adUrl: "", adContent: "", startTime: "", endTime: "" }]);
+  const [startTime, setStartTime] = useState("00:00:00");
+  const [endTime, setEndTime] = useState("00:00:00");
+
+  const handleTimeChange = (e) => {
+    const timeValue = e.target.value;
+    setStartTime(timeValue);
+  };
 
   const handleVideoTitle = (e) => setVideoTitle(e.target.value);
   const handleThumbnailFile = (e) => {
@@ -214,14 +225,32 @@ const Upload = () => {
             <AdInputSection>
               <TimeBox>
                 <NormalSpan>시작</NormalSpan>
+                <TimeInput type="time" value={startTime} onChange={handleTimeChange} />
+                <NormalSpan>종료</NormalSpan>
+                <TimeInput type="time" defaultValue="00:00:00" />
               </TimeBox>
               <ContentBox>
                 <NormalSpan>내용</NormalSpan>
+                <AdInput
+                  type="text"
+                  placeholder="광고로 등록할 내용을 입력해주세요."
+                  width="250px"
+                  height="100px"
+                />
               </ContentBox>
               <LinkBox>
                 <NormalSpan>링크</NormalSpan>
+                <AdInput
+                  type="text"
+                  placeholder="광고 링크를 첨부해주세요."
+                  width="250px"
+                  height="35px"
+                />
               </LinkBox>
-              <RemoveButton>-</RemoveButton>
+              <RemoveButton>
+                <SmallImage src={Minus} alt="minus" />
+              </RemoveButton>
+              <br />
             </AdInputSection>
           </AdUploadGridBox>
         </AdUploadSection>

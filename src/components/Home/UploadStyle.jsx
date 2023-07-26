@@ -248,7 +248,7 @@ export const TagItemBox = styled.section`
 `;
 
 export const NormalSpan = styled.span`
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.secondBlack};
 `;
 
 export const CheckBoxInput = styled.input`
@@ -323,27 +323,28 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
 
 export const AdInputSection = styled.section`
   width: 100%;
-  max-height: 250px;
+  max-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  border: 1px solid green;
+  gap: 15px;
+  border-bottom: ${(props) => `1px solid ${props.theme.lightGray}`};
 `;
 
 export const TimeBox = styled.section`
   width: 100%;
   height: 40px;
   display: flex;
-  border: 1px solid green;
+  align-items: center;
+  gap: 10px;
 `;
 
 export const ContentBox = styled.section`
   width: 100%;
   height: 100px;
   display: flex;
-  border: 1px solid green;
+  gap: 10px;
 `;
 
 export const LinkBox = styled(TimeBox)``;
@@ -356,4 +357,28 @@ export const RemoveButton = styled.button`
   background-color: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.primaryColor};
   font-size: 20px;
+`;
+
+export const TimeInput = styled.input`
+  width: 160px;
+  height: 35px;
+  text-align: center;
+  letter-spacing: 2px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 16px;
+  background-color: #f6f7f9;
+  padding: 5px;
+`;
+
+export const AdInput = styled.input`
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 16px;
+  overflow-y: auto;
+`;
+
+export const SmallImage = styled.img`
+  width: 32px;
+  height: 32px;
 `;
