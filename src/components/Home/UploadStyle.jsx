@@ -1,7 +1,33 @@
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { TimeField, TimePicker } from "@mui/x-date-pickers";
 
 // Video Upload--------------------------------------------
+export const VideoForm = styled.form`
+  width: calc(100vw - 336px);
+  height: 100%;
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  background-color: #f6f7f9;
+  padding: 30px;
+  overflow-y: auto;
+  transition: all 0.3s;
+  @media all and (max-width: 1480px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  @media all and (max-width: 900px) {
+    grid-column: 1 / 3;
+    width: 100%;
+    max-width: 100%;
+  }
+`;
+
 export const VideoUploadSection = styled.div`
   width: 70%;
   height: 100%;
@@ -281,7 +307,7 @@ export const AdUploadSection = styled(VideoUploadSection)`
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
-  padding: 30px;
+  padding: 20px;
   overflow-y: auto;
   @media all and (max-width: 1480px) {
     width: 100%;
@@ -323,10 +349,9 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
 
 export const AdInputSection = styled.section`
   width: 100%;
-  max-height: 300px;
+  max-height: 450px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 15px;
   border-bottom: ${(props) => `1px solid ${props.theme.lightGray}`};
@@ -334,17 +359,17 @@ export const AdInputSection = styled.section`
 
 export const TimeBox = styled.section`
   width: 100%;
-  height: 40px;
+  height: 70px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 `;
 
 export const ContentBox = styled.section`
   width: 100%;
   height: 100px;
   display: flex;
-  gap: 10px;
+  gap: 15px;
 `;
 
 export const LinkBox = styled(TimeBox)``;
@@ -370,12 +395,15 @@ export const TimeInput = styled.input`
   padding: 5px;
 `;
 
-export const AdInput = styled.input`
+export const AdInput = styled.textarea`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
+  display: flex;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   border-radius: 16px;
   overflow-y: auto;
+  padding: 8px;
+  resize: none;
 `;
 
 export const SmallImage = styled.img`
