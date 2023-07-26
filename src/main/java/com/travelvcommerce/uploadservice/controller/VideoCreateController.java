@@ -38,16 +38,15 @@ public class VideoCreateController {
     public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
                                                    @RequestPart(value = "video") MultipartFile video) {
         String videoId = UUID.randomUUID().toString();
-        String fileName = userId + "_" + videoId;
         String uploadedFilePath;
         String encodedFilePath;
         S3Video videoUrls;
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
         try {
-            uploadedFilePath = videoCreateService.uploadVideo(fileName, video);
-            encodedFilePath = videoCreateService.encodeVideo(uploadedFilePath);
-            videoUrls = awsS3Service.uploadEncodedVideo(fileName, encodedFilePath);
+            uploadedFilePath = videoCreateService.uploadVideo(userId, videoId, video);
+            encodedFilePath = videoCreateService.encodeVideo(userId, videoId, uploadedFilePath);
+            videoUrls = awsS3Service.uploadEncodedVideo(userId, videoId, encodedFilePath);
             temporaryVideoResponseDto = temporaryVideoService.createTemporaryVideo(userId, videoId, videoUrls);
         }
         catch (RuntimeException e) {
@@ -68,14 +67,13 @@ public class VideoCreateController {
                                                    @RequestPart(value = "thumbnail") MultipartFile thumbnail,
                                                    @RequestPart(value = "requestUpload")
                                                    VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
-        String fileName = userId + "_" + videoId;
         S3Video videoUrls;
         S3Thumbnail thumbnailUrls;
         VideoDto.VideoCreateResponseDto videoCreateResponseDto;
 
         try {
             videoUrls = temporaryVideoService.findTemporaryVideoUrls(userId, videoId);
-            thumbnailUrls = awsS3Service.uploadThumbnail(fileName, thumbnail);
+            thumbnailUrls = awsS3Service.uploadThumbnail(userId, videoId, thumbnail);
             videoCreateResponseDto = videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
         }
         catch (NoSuchElementException e) {

@@ -35,7 +35,9 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     private String DIRECTORY;
 
     @Override
-    public S3Video uploadEncodedVideo(String fileName, String filePath) {
+    public S3Video uploadEncodedVideo(String userId, String videoId, String filePath) {
+        String fileName = userId + "_" + videoId;
+
         try {
             Files.walk(Path.of(filePath))
                     .filter(Files::isRegularFile)
@@ -74,7 +76,9 @@ public class AwsS3ServiceImpl implements AwsS3Service{
     }
 
     @Override
-    public S3Thumbnail uploadThumbnail(String fileName, MultipartFile multipartFile) {
+    public S3Thumbnail uploadThumbnail(String userId, String videoId, MultipartFile multipartFile) {
+        String fileName = userId + "_" + videoId;
+
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
         }
