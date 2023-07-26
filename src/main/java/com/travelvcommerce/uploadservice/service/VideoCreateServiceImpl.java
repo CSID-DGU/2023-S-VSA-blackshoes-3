@@ -51,7 +51,9 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     private String USER_SERVICE_URL;
 
     @Override
-    public String uploadVideo(String fileName, MultipartFile videoFile) {
+    public String uploadVideo(String userId, String videoId, MultipartFile videoFile) {
+        String fileName = userId + "_" + videoId;
+
         try {
             String originalFileName = videoFile.getOriginalFilename();
             String uploadFileName = fileName + originalFileName.substring(originalFileName.lastIndexOf("."));
@@ -76,11 +78,10 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     }
 
     @Override
-    public String encodeVideo(String filePath) {
+    public String encodeVideo(String userId, String videoId, String filePath) {
         String inputPath = filePath;
 
-        String fileName = new File(filePath).getName();
-        fileName = fileName.substring(0, fileName.lastIndexOf("."));
+        String fileName = userId + "_" + videoId;
 
         Path encodingPath = Path.of("src/main/resources/static/videos/encoded/" + fileName);
 
@@ -90,7 +91,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             }
 
             String outputPath = encodingPath + "/" + fileName + ".m3u8";
-            ffmpegWrapper.encodeToHls(inputPath, outputPath);
+            ffmpegWrapper.encodeToHls(userId, inputPath, outputPath);
 
             File file = new File(inputPath);
             file.delete();
@@ -120,35 +121,62 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     public VideoDto.VideoCreateResponseDto createVideo(String sellerId, String videoId,
                           VideoDto.VideoUploadRequestDto videoUploadRequestDto,
                           S3Video videoUrls, S3Thumbnail thumbnailUrls) {
-        Video video;
         Uploader uploader;
 
         if (uploaderRepository.existsBySellerId(sellerId)) {
             uploader = uploaderRepository.findBySellerId(sellerId).get();
         } else {
-            UploaderDto.UploaderResponseDto uploaderResponseDto;
-            try {
-                WebClient webClient = WebClient.builder()
-                        .baseUrl(USER_SERVICE_URL)
-                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .build();
-                uploaderResponseDto = webClient.get()
-                        .uri("/user-service/sellers/" + sellerId + "/uploader-info")
-                        .retrieve()
-                        .bodyToMono(UploaderDto.UploaderResponseDto.class)
-                        .block();
-            } catch (Exception e) {
-                log.error("get video uploader info error", e);
-                throw new NoSuchElementException("uploader not found");
-            }
-            uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
-            try {
-                uploaderRepository.save(uploader);
-            } catch (Exception e) {
-                log.error("save video uploader error", e);
-                throw new RuntimeException("save video uploader error");
-            }
+            uploader = getUploaderFromUserService(sellerId);
         }
+
+        Video savedVideo = saveAndGetVideo(videoId, videoUploadRequestDto, uploader);
+
+        saveVideoUrl(videoUrls, thumbnailUrls, savedVideo);
+
+        saveAds(videoUploadRequestDto, savedVideo);
+
+        saveVideoTags(videoUploadRequestDto, savedVideo);
+
+        try {
+            return modelMapper.map(savedVideo, VideoDto.VideoCreateResponseDto.class);
+        } catch (Exception e) {
+            log.error("map video to videoDto error", e);
+            throw new RuntimeException("map video to videoDto error");
+        }
+    }
+
+    private Uploader getUploaderFromUserService(String sellerId) {
+        Uploader uploader;
+        UploaderDto.UploaderResponseDto uploaderResponseDto;
+
+        try {
+            WebClient webClient = WebClient.builder()
+                    .baseUrl(USER_SERVICE_URL)
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+            uploaderResponseDto = webClient.get()
+                    .uri("/user-service/sellers/" + sellerId + "/uploader-info")
+                    .retrieve()
+                    .bodyToMono(UploaderDto.UploaderResponseDto.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("get video uploader info error", e);
+            throw new NoSuchElementException("uploader not found");
+        }
+
+        try {
+            uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
+            uploaderRepository.save(uploader);
+        } catch (Exception e) {
+            log.error("save video uploader error", e);
+            throw new RuntimeException("save video uploader error");
+        }
+
+        return uploader;
+    }
+
+    private Video saveAndGetVideo(String videoId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, Uploader uploader) {
+        Video video;
 
         try {
             VideoDto videoDto = VideoDto.builder().
@@ -164,8 +192,10 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             throw new RuntimeException("save video error");
         }
 
-        Video savedVideo = video;
+        return video;
+    }
 
+    private void saveVideoUrl(S3Video videoUrls, S3Thumbnail thumbnailUrls, Video savedVideo) {
         try {
             VideoUrlDto videoUrlDto = VideoUrlDto.builder().
                     videoS3Url(videoUrls.getS3Url()).
@@ -182,7 +212,9 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             log.error("save video url error", e);
             throw new RuntimeException("save video url error");
         }
+    }
 
+    private void saveAds(VideoDto.VideoUploadRequestDto videoUploadRequestDto, Video savedVideo) {
         try {
             videoUploadRequestDto.getAdList().forEach(
                     requestAd -> {
@@ -196,7 +228,9 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             log.error("save ad error", e);
             throw new RuntimeException("save ad error");
         }
+    }
 
+    private void saveVideoTags(VideoDto.VideoUploadRequestDto videoUploadRequestDto, Video savedVideo) {
         try {
             videoUploadRequestDto.getTagIdList().forEach(
                     tagId -> {
@@ -217,13 +251,6 @@ public class VideoCreateServiceImpl implements VideoCreateService {
         } catch (Exception e) {
             log.error("save video tag error", e);
             throw new RuntimeException("save video tag error");
-        }
-
-        try {
-            return modelMapper.map(savedVideo, VideoDto.VideoCreateResponseDto.class);
-        } catch (Exception e) {
-            log.error("map video to videoDto error", e);
-            throw new RuntimeException("map video to videoDto error");
         }
     }
 }
