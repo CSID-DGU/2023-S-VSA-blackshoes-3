@@ -20,10 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -89,9 +91,17 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             if (!Files.exists(encodingPath)) {
                 Files.createDirectories(encodingPath);
             }
+            List<Integer> resolutionList = List.of(480, 720, 1080);
 
-            String outputPath = encodingPath + "/" + fileName + ".m3u8";
-            ffmpegWrapper.encodeToHls(userId, inputPath, outputPath);
+            resolutionList.stream().forEach(resolution -> {
+                try {
+                    log.info("encoding video to resolution: " + resolution);
+                    ffmpegWrapper.encodeToHls(userId, inputPath, encodingPath.toString(), resolutionList.indexOf(resolution), resolution);
+                } catch (IOException e) {
+                    log.error("encode video error", e);
+                    throw new RuntimeException(e);
+                }
+            });
 
             File file = new File(inputPath);
             file.delete();
