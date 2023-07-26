@@ -54,7 +54,7 @@ public class FFmpegWrapper {
             public void progress(Progress progress) {
                 float percentage = progress.out_time_ns / (float) total_time_ns * 100;
                 EncodingProgressDto encodingProgressDto = EncodingProgressDto.builder()
-                        .percentage(percentage)
+                        .encodedPercentage(percentage)
                         .build();
                 messagingTemplate.convertAndSend("/topic/encoding/" + userId, encodingProgressDto);
             }

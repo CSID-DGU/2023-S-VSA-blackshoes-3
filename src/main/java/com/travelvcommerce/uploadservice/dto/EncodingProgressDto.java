@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @Builder
 public class EncodingProgressDto {
-    private float percentage;
+    private float encodedPercentage;
 }
