@@ -247,7 +247,7 @@ export const TagItemBox = styled.section`
   padding: 0 15px;
 `;
 
-export const CheckBoxSpan = styled.span`
+export const NormalSpan = styled.span`
   color: ${(props) => props.theme.textColor};
 `;
 
@@ -323,13 +323,37 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
 
 export const AdInputSection = styled.section`
   width: 100%;
-  height: 300px;
+  max-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
   border: 1px solid green;
+`;
 
-  @media all and (max-width: 1030px) {
-    width: 100%;
-  }
-  @media all and (max-width: 900px) {
-    width: 100%;
-  }
+export const TimeBox = styled.section`
+  width: 100%;
+  height: 40px;
+  display: flex;
+  border: 1px solid green;
+`;
+
+export const ContentBox = styled.section`
+  width: 100%;
+  height: 100px;
+  display: flex;
+  border: 1px solid green;
+`;
+
+export const LinkBox = styled(TimeBox)``;
+
+export const RemoveButton = styled.button`
+  width: 100%;
+  height: 40px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 8px;
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.primaryColor};
+  font-size: 20px;
 `;

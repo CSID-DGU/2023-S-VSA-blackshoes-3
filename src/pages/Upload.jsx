@@ -11,12 +11,14 @@ import {
   AdUploadGridBox,
   AdUploadSection,
   CheckBoxInput,
-  CheckBoxLabel,
-  CheckBoxSpan,
+  ContentBox,
   FullIcon,
   InfoInputSection,
   InfoTagBox,
   InfoTitleBox,
+  LinkBox,
+  NormalSpan,
+  RemoveButton,
   Shadow,
   SmallTitle,
   SpanTitle,
@@ -26,6 +28,7 @@ import {
   TagTitle,
   TagWrapper,
   ThumbnailImage,
+  TimeBox,
   TitleInput,
   TitleLeftBox,
   TitleThumbnailWrapper,
@@ -64,6 +67,7 @@ const Upload = () => {
   const [tagIdList, setTagIdList] = useState([]);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
+  const [adList, setAdList] = useState([{ adUrl: "", adContent: "", startTime: "", endTime: "" }]);
 
   const handleVideoTitle = (e) => setVideoTitle(e.target.value);
   const handleThumbnailFile = (e) => {
@@ -86,11 +90,6 @@ const Upload = () => {
     const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
     setThemeTag(themeData.data.payload.tags);
-  };
-
-  const handleCheckBox = (e) => {
-    const { checked } = e.target;
-    console.log(checked);
   };
 
   const handleSubmit = async (e) => {
@@ -170,7 +169,7 @@ const Upload = () => {
                   <TagScrollBox>
                     {regionTag.map((region) => (
                       <TagItemBox key={region.tagId}>
-                        <CheckBoxSpan>{region.content}</CheckBoxSpan>
+                        <NormalSpan>{region.content}</NormalSpan>
                         <CheckBoxInput
                           type="checkbox"
                           id="checkbox"
@@ -187,7 +186,7 @@ const Upload = () => {
                   <TagScrollBox>
                     {themeTag.map((theme) => (
                       <TagItemBox key={theme.tagId}>
-                        <CheckBoxSpan>{theme.content}</CheckBoxSpan>
+                        <NormalSpan>{theme.content}</NormalSpan>
                         <CheckBoxInput
                           type="checkbox"
                           id="checkbox"
@@ -212,7 +211,18 @@ const Upload = () => {
             </AdUploadButton>
           </TitleLeftBox>
           <AdUploadGridBox>
-            <AdInputSection></AdInputSection>
+            <AdInputSection>
+              <TimeBox>
+                <NormalSpan>시작</NormalSpan>
+              </TimeBox>
+              <ContentBox>
+                <NormalSpan>내용</NormalSpan>
+              </ContentBox>
+              <LinkBox>
+                <NormalSpan>링크</NormalSpan>
+              </LinkBox>
+              <RemoveButton>-</RemoveButton>
+            </AdInputSection>
           </AdUploadGridBox>
         </AdUploadSection>
       </Body>
