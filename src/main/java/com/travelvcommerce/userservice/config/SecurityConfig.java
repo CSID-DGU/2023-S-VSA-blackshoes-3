@@ -36,9 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user-service/users/{userId}").authenticated()
+                .antMatchers("/user-service/users/join").permitAll()
+                .antMatchers("/user-service/users/login").permitAll()
                 .antMatchers("/oauth2/authorization/google", "/oauth2/authorization/naver", "/oauth2/authorization/kakao").permitAll()
-                .anyRequest().permitAll()
+                .antMatchers("/user-service/users/{userId}").authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .redirectionEndpoint()
