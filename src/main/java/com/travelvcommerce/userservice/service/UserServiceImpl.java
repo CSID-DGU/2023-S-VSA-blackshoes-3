@@ -7,14 +7,12 @@ import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -30,14 +28,16 @@ public class UserServiceImpl implements UserService {
 
     private final UsersRepository usersRepository;
 
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
-    public void registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
+    public Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
         if(usersRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
 
         Users user = new Users();
+        user.setUserId(UUID.randomUUID().toString());
         user.setEmail(registerRequestDto.getEmail());
         user.setNickname(registerRequestDto.getNickname());
         user.setBirthdate(registerRequestDto.getBirthdate());
@@ -46,9 +46,20 @@ public class UserServiceImpl implements UserService {
         user.setProviderId(registerRequestDto.getProviderId());
         user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));  // 비밀번호 암호화
         usersRepository.save(user);
+
+        UserDto.UserRegisterResponseDto userRegisterResponseDto = new UserDto.UserRegisterResponseDto();
+
+        userRegisterResponseDto.setUserId(user.getUserId());
+        userRegisterResponseDto.setCreatedAt(user.getCreatedAt());
+        Map<String, String> responseBody = new HashMap<>();
+
+        responseBody.put("userId", userRegisterResponseDto.getUserId());
+        responseBody.put("createdAt", userRegisterResponseDto.getFormattedCreatedAt());
+
+        return responseBody;
     }
     @Override
-    public void updateUser(String userId, UserDto userDto){
+    public Map<String, String> updateUser(String userId, UserDto userDto){
         Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
             existingUser.get().setNickname(userDto.getNickname());
@@ -56,6 +67,16 @@ public class UserServiceImpl implements UserService {
             existingUser.get().setBirthdate(userDto.getBirthdate());
             usersRepository.save(existingUser.get());
         }
+
+        UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
+
+        Map<String, String> responseBody = new HashMap<>();
+
+
+        responseBody.put("userId", responseDto.getUserId());
+        responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
+
+        return responseBody;
     }
 
 
@@ -65,6 +86,11 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        if (!loginRequestDto.getEmail().matches(emailRegex)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "올바른 이메일 형식이 아닙니다.");
+        }
+
         // 사용자 검색
         Users user = usersRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginRequestDto.getEmail()));
@@ -75,11 +101,6 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("Invalid password.");
         }
 
-        // UUID 생성 및 저장
-        String uuid = UUID.randomUUID().toString();
-        user.setUserId(uuid);
-        usersRepository.save(user);
-
         // JWT 토큰 생성
         TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), user.getRole().getRoleName());
 
@@ -87,7 +108,6 @@ public class UserServiceImpl implements UserService {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", tokenDto.getAccessToken());
         responseBody.put("refreshToken", tokenDto.getRefreshToken());
-        responseBody.put("userId", uuid);
 
         return responseBody;
     }
@@ -96,30 +116,36 @@ public class UserServiceImpl implements UserService {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        // UUID 생성 및 저장
-        String uuid = UUID.randomUUID().toString();
-        user.setUserId(uuid);
-        usersRepository.save(user);
+        if(user.getPassword().equals("")) {
+            throw new BadCredentialsException("Invalid password.");
+        }
 
         // JWT 토큰 생성
         TokenDto tokenDto = jwtTokenProvider.createTokens(email, user.getRole().getRoleName());
 
-        // 토큰과 UUID 반환
+        // 토큰만 반환
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", tokenDto.getAccessToken());
         responseBody.put("refreshToken", tokenDto.getRefreshToken());
-        responseBody.put("userId", uuid);
 
         return responseBody;
     }
 
     @Override
-    public void updatePassword(String userId, String password) {
+    public Map<String, String> updatePassword(String userId, String password) {
         Optional<Users> existingUser = usersRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
             existingUser.get().setPassword(passwordEncoder.encode(password));
             usersRepository.save(existingUser.get());
         }
+
+        UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
+        responseBody.put("userId", responseDto.getUserId());
+
+        return responseBody;
     }
 
     @Override
