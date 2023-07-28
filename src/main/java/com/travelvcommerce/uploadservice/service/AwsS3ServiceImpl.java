@@ -45,7 +45,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
                         String key = DIRECTORY + "/" + fileName + "/" + file.getFileName().toString();
                         amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, file.toFile()).withCannedAcl(CannedAccessControlList.PublicRead));
                     });
-            String hlsKey = DIRECTORY + "/" + fileName + "/" + fileName + ".m3u8";
+            String hlsKey = DIRECTORY + "/" + fileName;
             String directoryKey = DIRECTORY + "/" + fileName;
             String s3Url = amazonS3Client.getUrl(BUCKET, directoryKey).toString();
             String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + hlsKey;

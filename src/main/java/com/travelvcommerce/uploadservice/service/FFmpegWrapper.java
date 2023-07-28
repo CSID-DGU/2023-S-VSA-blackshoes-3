@@ -31,28 +31,35 @@ public class FFmpegWrapper {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public void encodeToHls(String userId, String inputPath, String outputPath) throws IOException {
+    public void encodeToHls(String userId, String inputPath, String encodingPath, int idx, int resolution) throws IOException {
         FFmpeg ffmpeg = new FFmpeg(FFMPEG_PATH);
         FFprobe ffprobe = new FFprobe(FFPROBE_PATH);
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
+        int height = resolution;
+        int width = resolution * 16 / 9;
+        if (width % 2 != 0) {
+            width--;
+        }
+
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(inputPath)
-                .addOutput(outputPath)
+                .addOutput(encodingPath + "/" + resolution + "p.m3u8")
                 .setFormat("hls")
                 .setAudioCodec("aac")
                 .setVideoCodec("libx264")
-                .setVideoResolution(1280, 720)
+                .setVideoResolution(width, height)
                 .setVideoFrameRate(30)
                 .done();
 
         FFmpegProbeResult probeResult = ffprobe.probe(inputPath);
-        long total_time_ns = (long) (probeResult.getFormat().duration * 1000000000L);
+        long time_ns = (long) (probeResult.getFormat().duration * 1000000000L);
+        long total_time_ns = time_ns * 3;
 
         executor.createJob(builder, new ProgressListener() {
             @Override
             public void progress(Progress progress) {
-                float percentage = progress.out_time_ns / (float) total_time_ns * 100;
+                float percentage = (progress.out_time_ns + time_ns * idx) / (float) total_time_ns * 100;
                 EncodingProgressDto encodingProgressDto = EncodingProgressDto.builder()
                         .encodedPercentage(percentage)
                         .build();
