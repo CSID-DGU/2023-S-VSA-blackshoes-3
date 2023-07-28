@@ -1,17 +1,15 @@
 package com.travelvcommerce.userservice.controller;
 
-import com.travelvcommerce.userservice.dto.EmailDto;
 import com.travelvcommerce.userservice.dto.ResponseDto;
-import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.dto.UserDto;
 import com.travelvcommerce.userservice.entity.Users;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UsersRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.CustomUserDetailsService;
-import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,7 +30,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final CustomUserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -40,8 +37,10 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
         try {
-            userService.registerUser(registerRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            Map<String, String> userRegisterResponse = userService.registerUser(registerRequestDto);
+            ResponseDto responseDto = ResponseDto.builder().payload(userRegisterResponse).build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -70,8 +69,14 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
 
-            userService.updateUser(userId, userDto);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+            Map<String, String> userUpdateResponse = userService.updateUser(userId, userDto);
+
+            ResponseDto responseDto = ResponseDto.builder()
+                    .payload(userUpdateResponse)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -119,7 +124,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> login(@RequestBody UserDto.UserLoginRequestDto userLoginRequestDto) {
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginRequestDto.getEmail());
             Map<String, String> loginResponse = userService.login(userLoginRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder()
@@ -144,7 +148,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    public ResponseEntity<ResponseDto> changePassword(@RequestHeader("Authorization") String token,
+    public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
                                                     @PathVariable String userId,
                                                     @RequestBody String password) {
         try {
@@ -153,8 +157,11 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            userService.updatePassword(userId, password);
-            return ResponseEntity.ok().build();
+            Map<String, String> updatePasswordResponse = userService.updatePassword(userId, password);
+
+            ResponseDto responseDto = ResponseDto.builder().payload(updatePasswordResponse).build();
+
+            return ResponseEntity.ok().body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

@@ -1,5 +1,6 @@
 package com.travelvcommerce.userservice.service;
 
+import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.SellerDto;
 import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.entity.Role;
@@ -11,8 +12,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,33 +33,53 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
 
     @Override
-    public void registerSeller(SellerDto.SellerRegisterRequestDto registerRequestDto) {
+    public Map<String, String> registerSeller(SellerDto.SellerRegisterRequestDto registerRequestDto) {
         if(sellerRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
 
         Seller seller = new Seller();
+        seller.setSellerId(UUID.randomUUID().toString());
         seller.setEmail(registerRequestDto.getEmail());
-        seller.setCompanyName(registerRequestDto.getCompanyName());
-        seller.setIcon(registerRequestDto.getIcon());
+        seller.setSellerName(registerRequestDto.getSellerName());
+        seller.setSellerLogo(registerRequestDto.getSellerLogo());
         seller.setRole(Role.valueOf("SELLER"));
         seller.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));  // 비밀번호 암호화
 
         sellerRepository.save(seller);
+
+        SellerDto.SellerRegisterResponseDto sellerRegisterResponseDto = new SellerDto.SellerRegisterResponseDto();
+        sellerRegisterResponseDto.setSellerId(seller.getSellerId());
+        sellerRegisterResponseDto.setCreatedAt(seller.getCreatedAt());
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("sellerId", sellerRegisterResponseDto.getSellerId());
+        responseBody.put("createdAt", sellerRegisterResponseDto.getFormattedCreatedAt());
+        return responseBody;
     }
 
     @Override
-    public void updateSeller(String sellerId, SellerDto sellerDto) {
+    public Map<String, String> updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo){
         Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
         if(existingSeller.isPresent()) {
-            existingSeller.get().setCompanyName(sellerDto.getCompanyName());
-            existingSeller.get().setIcon(sellerDto.getIcon());
-            existingSeller.get().setPassword(passwordEncoder.encode(sellerDto.getPassword()));
+            existingSeller.get().setSellerName(sellerUpdateRequestDto.getSellerName());
+            try {
+                existingSeller.get().setSellerLogo(sellerLogo.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
+            }
+            existingSeller.get().setPassword(passwordEncoder.encode(sellerUpdateRequestDto.getPassword()));
             sellerRepository.save(existingSeller.get());
         } else {
             throw new RuntimeException("존재하지 않는 판매자입니다.");
         }
+
+        SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = new SellerDto.SellerUpdateResponseDto();
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("sellerId", sellerId);
+        responseBody.put("updatedAt", sellerUpdateResponseDto.getFormattedUpdatedAt());
+        return responseBody;
     }
+
 
     @Override
     public void deleteSeller(String sellerId) {
@@ -73,8 +96,6 @@ public class SellerServiceImpl implements SellerService {
             throw new BadCredentialsException("Invalid password.");
         }
 
-        String uuid = UUID.randomUUID().toString();
-        seller.setSellerId(uuid);
         sellerRepository.save(seller);
 
         TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), seller.getRole().getRoleName());
@@ -82,20 +103,25 @@ public class SellerServiceImpl implements SellerService {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", tokenDto.getAccessToken());
         responseBody.put("refreshToken", tokenDto.getRefreshToken());
-        responseBody.put("sellerId", uuid);
 
         return responseBody;
     }
 
     @Override
-    public void updatePassword(String sellerId, String password) {
+    public Map<String, String> updatePassword(String sellerId, String password) {
         Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
         if(existingSeller.isPresent()) {
             existingSeller.get().setPassword(passwordEncoder.encode(password));
             sellerRepository.save(existingSeller.get());
+
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("sellerId", existingSeller.get().getSellerId());
+            responseBody.put("updatedAt", existingSeller.get().getUpdatedAt().toString());
+            return responseBody;
         } else {
             throw new RuntimeException("존재하지 않는 판매자입니다.");
         }
+
     }
 
     @Override
@@ -109,8 +135,8 @@ public class SellerServiceImpl implements SellerService {
         SellerDto.SellerInfoDto sellerInfoDto = SellerDto.SellerInfoDto.builder()
                 .sellerId(seller.getSellerId())
                 .email(seller.getEmail())
-                .companyName(seller.getCompanyName())
-                .icon(seller.getIcon())
+                .sellerName(seller.getSellerName())
+                .sellerLogo(seller.getSellerLogo())
                 .build();
         return sellerInfoDto;
     }
@@ -125,8 +151,8 @@ public class SellerServiceImpl implements SellerService {
         }
         SellerDto.SellerInfoDto sellerUploaderInfoDto = SellerDto.SellerInfoDto.builder()
                 .sellerId(seller.getSellerId())
-                .companyName(seller.getCompanyName())
-                .icon(seller.getIcon())
+                .sellerName(seller.getSellerName())
+                .sellerLogo(seller.getSellerLogo())
                 .build();
         return sellerUploaderInfoDto;
     }

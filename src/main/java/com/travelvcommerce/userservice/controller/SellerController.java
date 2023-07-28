@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,17 +37,19 @@ public class SellerController {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/join")
-    public ResponseEntity<ResponseDto> registerSeller(@RequestBody SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
-                                                      @RequestParam("icon") MultipartFile icon) {
+    public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
+                                                      @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
             // MultipartFile를 byte 배열로 변환
-            byte[] iconBytes = icon.getBytes();
-            sellerRegisterRequestDto.setIcon(iconBytes);
+            byte[] sellerLogoBytes = sellerLogo.getBytes();
+            sellerRegisterRequestDto.setSellerLogo(sellerLogoBytes);
 
             // SellerService를 이용하여 저장
-            sellerService.registerSeller(sellerRegisterRequestDto);
+            Map<String, String> sellerRegisterResponse = sellerService.registerSeller(sellerRegisterRequestDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            ResponseDto responseDto = ResponseDto.builder().payload(sellerRegisterResponse).build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         } catch (RuntimeException | IOException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -89,21 +92,21 @@ public class SellerController {
     @PutMapping("/{sellerId}")
     public ResponseEntity<ResponseDto> updateSeller(@RequestHeader("Authorization") String token,
                                                     @PathVariable String sellerId,
-                                                    @RequestBody SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto,
-                                                    @RequestPart("icon") MultipartFile icon) {
+                                                    @RequestPart(name = "updateRequest") SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto,
+                                                    @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            SellerDto sellerDto = new SellerDto();
-            sellerDto.setPassword(sellerUpdateRequestDto.getPassword());
-            sellerDto.setCompanyName(sellerUpdateRequestDto.getCompanyName());
-            sellerDto.setIcon(icon.getBytes());
+            // SellerService를 이용하여 저장
+            Map<String, String> sellerUpdateResponse = sellerService.updateSeller(sellerId ,sellerUpdateRequestDto, sellerLogo);
 
-            sellerService.updateSeller(sellerId, sellerDto);
-            return ResponseEntity.ok().build();
+            ResponseDto responseDto = ResponseDto.builder().payload(sellerUpdateResponse).build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+
         } catch (EntityNotFoundException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -119,8 +122,7 @@ public class SellerController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> login(@RequestBody SellerDto.SellerLoginRequestDto sellerLoginRequestDto) {
         try {
-            UserDetails sellerDetails = sellerDetailsService.loadUserByUsername(sellerLoginRequestDto.getEmail());
-
+            //UserDetails sellerDetails = sellerDetailsService.loadUserByUsername(sellerLoginRequestDto.getEmail());
             Map<String, String> loginResponse = sellerService.login(sellerLoginRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder()
@@ -153,8 +155,15 @@ public class SellerController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            sellerService.updatePassword(sellerId, password);
-            return ResponseEntity.ok().build();
+            Map<String, String> updatePasswordResponse = sellerService.updatePassword(sellerId, password);
+
+
+            ResponseDto responseDto = ResponseDto.builder()
+                    .payload(updatePasswordResponse)
+                    .build();
+
+            return ResponseEntity.ok().body(responseDto);
+
         } catch (EntityNotFoundException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);

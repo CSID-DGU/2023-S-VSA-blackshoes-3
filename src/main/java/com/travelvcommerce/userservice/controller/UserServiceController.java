@@ -150,18 +150,12 @@ public class UserServiceController {
 
     @GetMapping("/social-login-success")
     public ResponseEntity<ResponseDto> handleLoginSuccess(@RequestParam String email) {
-        // 이메일을 이용해서 데이터베이스에서 사용자를 찾고,
-        // 해당 사용자가 패스워드를 가지고 있는지 확인할 수 있습니다.
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user == null) {
             // 사용자를 찾지 못했다면 에러를 던집니다.
             throw new RuntimeException("User not found");
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()){
-            //Response Error
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("회원가입이 필요합니다").build());
         }
 
         // 패스워드가 있다면 토큰을 생성하고 발급합니다.
