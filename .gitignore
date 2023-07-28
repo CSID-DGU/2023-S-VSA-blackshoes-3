@@ -39,3 +39,4 @@ application.yml
 
 
 my-debug-key.keystore
+.env
