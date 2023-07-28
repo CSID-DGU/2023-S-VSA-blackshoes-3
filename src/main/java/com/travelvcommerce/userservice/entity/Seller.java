@@ -23,7 +23,7 @@ public class Seller {
     private String password;
 
     @Column
-    private String companyName;
+    private String sellerName;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -33,7 +33,7 @@ public class Seller {
 
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")
-    private byte[] icon;
+    private byte[] sellerLogo;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
