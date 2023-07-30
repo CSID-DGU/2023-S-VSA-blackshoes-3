@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -67,6 +68,8 @@ public class SellerServiceImpl implements SellerService {
             } catch (IOException e) {
                 throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
             }
+            existingSeller.get().setUpdatedAt(LocalDateTime.now());
+            existingSeller.get().setEmail(sellerUpdateRequestDto.getEmail());
             existingSeller.get().setPassword(passwordEncoder.encode(sellerUpdateRequestDto.getPassword()));
             sellerRepository.save(existingSeller.get());
         } else {
@@ -74,8 +77,11 @@ public class SellerServiceImpl implements SellerService {
         }
 
         SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = new SellerDto.SellerUpdateResponseDto();
+        sellerUpdateResponseDto.setSellerId(sellerId);
+        sellerUpdateResponseDto.setUpdatedAt(LocalDateTime.now());
+
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("sellerId", sellerId);
+        responseBody.put("sellerId", sellerUpdateResponseDto.getSellerId());
         responseBody.put("updatedAt", sellerUpdateResponseDto.getFormattedUpdatedAt());
         return responseBody;
     }

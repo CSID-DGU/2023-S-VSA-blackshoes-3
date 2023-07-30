@@ -114,6 +114,7 @@ public class SellerController {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         } catch (Exception e) {
+            System.out.println(e);
             ResponseDto responseDto = ResponseDto.builder().error("서버 내부 오류").build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
