@@ -17,4 +17,5 @@ public interface VideoService {
     // 비디오 검색
     Page<VideoDto.VideoListResponseDto> searchVideos(String type, String q, int page, int size);
 
+    Page<VideoDto.VideoListResponseDto> getVideosByTag(String q, int page, int size);
 }

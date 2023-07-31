@@ -67,6 +67,36 @@ public class VideoPageUserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    // tagId로 영상 조회
+    @GetMapping("/videos/tag")
+    public ResponseEntity<ResponseDto> getVideosByTag(@RequestParam("q") String q,
+                                                      @RequestParam("page") int page,
+                                                      @RequestParam("size") int size) {
+
+        Map<String, Object> videoPagePayload;
+
+        // 비디오 조회 로직 호출
+        try {
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTag(q, page, size);
+
+            videoPagePayload = new LinkedHashMap<>() {{
+                put("totalPages", videoPage.getTotalPages());
+                put("currentPage", videoPage.getNumber());
+                put("hasNext", videoPage.hasNext());
+                put("pageSize", videoPage.getSize());
+                put("totalElements", videoPage.getTotalElements());
+                put("videos", videoPage.getContent());
+            }};
+
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
     // 사용자 개인화된 영상 조회
     @GetMapping("/videos/{userId}/personalized")
     public ResponseEntity<ResponseDto> getPersonalizedVideos(@PathVariable(name = "userId") String userId,
