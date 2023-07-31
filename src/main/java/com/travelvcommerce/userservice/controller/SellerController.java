@@ -1,6 +1,7 @@
 package com.travelvcommerce.userservice.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.SellerDto;
 import com.travelvcommerce.userservice.entity.Seller;
@@ -35,6 +36,7 @@ public class SellerController {
     private final SellerRepository sellerRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
@@ -189,7 +191,7 @@ public class SellerController {
         }
 
         ResponseDto responseDto = ResponseDto.builder()
-                .payload(Collections.singletonMap("sellerInfo", sellerInfoDto)).build();
+                .payload(objectMapper.convertValue(sellerInfoDto, Map.class)).build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -205,7 +207,7 @@ public class SellerController {
         }
 
         ResponseDto responseDto = ResponseDto.builder()
-                .payload(Collections.singletonMap("sellerInfo", sellerUploaderInfoDto)).build();
+                .payload(objectMapper.convertValue(sellerUploaderInfoDto, Map.class)).build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

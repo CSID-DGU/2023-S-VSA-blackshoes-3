@@ -1,25 +1,20 @@
 package com.travelvcommerce.userservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.UserDto;
-import com.travelvcommerce.userservice.entity.Users;
+import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
-import com.travelvcommerce.userservice.repository.UsersRepository;
+import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
-import com.travelvcommerce.userservice.service.CustomUserDetailsService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,8 +26,9 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
@@ -59,7 +55,7 @@ public class UserController {
 
             String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
 
-            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
@@ -96,7 +92,7 @@ public class UserController {
             String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
             String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
-            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
@@ -184,7 +180,7 @@ public class UserController {
             String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
             String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
-            Optional<Users> userOptional = usersRepository.findByUserId(userId);
+            Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
@@ -198,7 +194,7 @@ public class UserController {
             UserDto.UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(userId);
 
             ResponseDto responseDto = ResponseDto.builder()
-                    .payload(Collections.singletonMap("user", userInfoResponseDto))
+                    .payload(objectMapper.convertValue(userInfoResponseDto, Map.class))
                     .build();
 
             return ResponseEntity.ok().body(responseDto);

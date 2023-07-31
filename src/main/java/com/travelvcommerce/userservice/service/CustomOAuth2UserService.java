@@ -1,8 +1,8 @@
 package com.travelvcommerce.userservice.service;
 
 import com.travelvcommerce.userservice.dto.TokenDto;
-import com.travelvcommerce.userservice.entity.Users;
-import com.travelvcommerce.userservice.repository.UsersRepository;
+import com.travelvcommerce.userservice.entity.User;
+import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.*;
 import com.travelvcommerce.userservice.userinfo.GoogleUserInfo;
 import com.travelvcommerce.userservice.userinfo.KakaoUserInfo;
@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
@@ -26,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
 
     @Transactional
@@ -71,19 +70,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String providerId = oAuth2UserInfo.getProviderId();
         String email = oAuth2UserInfo.getEmail();
 
-        Optional<Users> userOptional = usersRepository.findByEmail(email);
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (!userOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 사용자 정보가 없습니다. 회원가입을 진행해주세요.", null);
         }
-        Users user = userOptional.get();
+        User user = userOptional.get();
         if(user.getPassword() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 사용자 정보가 없습니다. 회원가입을 진행해주세요.", null);
         }
         TokenDto tokenDto = tokenProvider.createTokens(email, user.getRole().getRoleName());
 
-        usersRepository.updateProviderId(providerId, email);
-        usersRepository.updateProvider(provider, email);
+        userRepository.updateProviderId(providerId, email);
+        userRepository.updateProvider(provider, email);
 
         return new CustomUser(attributes, user, tokenDto, provider);
     }

@@ -1,7 +1,7 @@
 package com.travelvcommerce.userservice.security;
 
 import com.travelvcommerce.userservice.dto.TokenDto;
-import com.travelvcommerce.userservice.entity.Users;
+import com.travelvcommerce.userservice.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,11 +17,11 @@ import java.util.Map;
 @Setter
 public class CustomUser implements OAuth2User {
     private final OAuth2User oAuth2User;
-    private Users user;
+    private User user;
 
     private TokenDto tokenDto;  // 수정: tokenDto 필드 추가
 
-    public CustomUser(Map<String, Object> attributes, Users user, TokenDto tokenDto, String provider) { // 수정: 생성자 매개변수 수정
+    public CustomUser(Map<String, Object> attributes, User user, TokenDto tokenDto, String provider) { // 수정: 생성자 매개변수 수정
         Map<String, Object> attributesWithEmail;
 
         // provider에 따라 email의 위치가 다를 수 있음
@@ -60,7 +60,7 @@ public class CustomUser implements OAuth2User {
         return oAuth2User.getName();
     }
 
-    public Users getUser() {
+    public User getUser() {
         return user;
     }
 }

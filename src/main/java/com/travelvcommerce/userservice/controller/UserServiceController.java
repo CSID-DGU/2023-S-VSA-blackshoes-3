@@ -3,9 +3,9 @@ package com.travelvcommerce.userservice.controller;
 import com.travelvcommerce.userservice.dto.EmailDto;
 import com.travelvcommerce.userservice.dto.ResponseDto;
 import com.travelvcommerce.userservice.dto.TokenDto;
-import com.travelvcommerce.userservice.entity.Users;
+import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
-import com.travelvcommerce.userservice.repository.UsersRepository;
+import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.CustomUserDetailsService;
 import com.travelvcommerce.userservice.service.EmailService;
@@ -29,7 +29,7 @@ public class UserServiceController {
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
     private final SocialLoginService naverLoginService;
@@ -150,7 +150,7 @@ public class UserServiceController {
 
     @GetMapping("/social-login-success")
     public ResponseEntity<ResponseDto> handleLoginSuccess(@RequestParam String email) {
-        Users user = usersRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user == null) {

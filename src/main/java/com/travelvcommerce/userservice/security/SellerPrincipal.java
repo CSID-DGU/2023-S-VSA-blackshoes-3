@@ -3,7 +3,6 @@ import com.travelvcommerce.userservice.entity.Seller;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.travelvcommerce.userservice.entity.Users;
 
 import java.util.Collection;
 import java.util.Collections;

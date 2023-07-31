@@ -3,8 +3,8 @@ package com.travelvcommerce.userservice.service;
 import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.dto.UserDto;
 import com.travelvcommerce.userservice.entity.Role;
-import com.travelvcommerce.userservice.entity.Users;
-import com.travelvcommerce.userservice.repository.UsersRepository;
+import com.travelvcommerce.userservice.entity.User;
+import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,17 +26,17 @@ public class UserServiceImpl implements UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
 
     private final CustomUserDetailsService userDetailsService;
 
     @Override
     public Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
-        if(usersRepository.existsByEmail(registerRequestDto.getEmail())) {
+        if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
 
-        Users user = new Users();
+        User user = new User();
         user.setUserId(UUID.randomUUID().toString());
         user.setEmail(registerRequestDto.getEmail());
         user.setNickname(registerRequestDto.getNickname());
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         user.setProvider(registerRequestDto.getProvider());
         user.setProviderId(registerRequestDto.getProviderId());
         user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));  // 비밀번호 암호화
-        usersRepository.save(user);
+        userRepository.save(user);
 
         UserDto.UserRegisterResponseDto userRegisterResponseDto = new UserDto.UserRegisterResponseDto();
 
@@ -60,12 +60,12 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public Map<String, String> updateUser(String userId, UserDto userDto){
-        Optional<Users> existingUser = usersRepository.findByUserId(userId);
+        Optional<User> existingUser = userRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
             existingUser.get().setNickname(userDto.getNickname());
             existingUser.get().setPassword(passwordEncoder.encode(userDto.getPassword()));
             existingUser.get().setBirthdate(userDto.getBirthdate());
-            usersRepository.save(existingUser.get());
+            userRepository.save(existingUser.get());
         }
 
         UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String userId) {
-        usersRepository.deleteByUserId(userId);
+        userRepository.deleteByUserId(userId);
     }
     @Override
     public Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto) {
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사용자 검색
-        Users user = usersRepository.findByEmail(loginRequestDto.getEmail())
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginRequestDto.getEmail()));
 
         // 비밀번호 검증
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     }
     public Map<String, String> socialLogin(String email) {
         // 사용자 검색
-        Users user = usersRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         if(user.getPassword().equals("")) {
@@ -133,10 +133,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> updatePassword(String userId, String password) {
-        Optional<Users> existingUser = usersRepository.findByUserId(userId);
+        Optional<User> existingUser = userRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
             existingUser.get().setPassword(passwordEncoder.encode(password));
-            usersRepository.save(existingUser.get());
+            userRepository.save(existingUser.get());
         }
 
         UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto.UserInfoResponseDto getUserInfo(String userId) {
-        Optional<Users> existingUser = usersRepository.findByUserId(userId);
+        Optional<User> existingUser = userRepository.findByUserId(userId);
 
         UserDto.UserInfoResponseDto userInfoResponseDto = new UserDto.UserInfoResponseDto();
         if(existingUser.isPresent()) {

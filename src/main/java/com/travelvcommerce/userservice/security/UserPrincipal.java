@@ -1,18 +1,17 @@
 package com.travelvcommerce.userservice.security;
-import com.travelvcommerce.userservice.entity.Seller;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.travelvcommerce.userservice.entity.Users;
+import com.travelvcommerce.userservice.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
 //user 객체 생성
 public class UserPrincipal implements UserDetails {
-    private Users user;
+    private User user;
 
-    public UserPrincipal(Users user) {
+    public UserPrincipal(User user) {
         super();
         this.user = user;
     }
@@ -53,7 +52,7 @@ public class UserPrincipal implements UserDetails {
         return true;
     }
 
-    public static UserPrincipal create(Users user) {
+    public static UserPrincipal create(User user) {
         return new UserPrincipal(user);
     }
 }
