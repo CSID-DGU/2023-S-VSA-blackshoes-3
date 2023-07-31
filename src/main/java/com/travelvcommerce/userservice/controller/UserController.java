@@ -7,6 +7,7 @@ import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
+import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 
 @RestController
@@ -29,11 +31,26 @@ public class UserController {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
         try {
+            // 이메일 검증
+            if (!EMAIL_PATTERN.matcher(registerRequestDto.getEmail()).matches()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이메일 형식이 올바르지 않습니다.").build());
+            }
+
+            if(emailService.isEmptyVerificationCode(registerRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
+            }
+            if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
+                throw new RuntimeException("이미 사용 중인 이메일입니다.");
+            }
             Map<String, String> userRegisterResponse = userService.registerUser(registerRequestDto);
+            emailService.deleteVerificationCode(registerRequestDto.getEmail());
+
             ResponseDto responseDto = ResponseDto.builder().payload(userRegisterResponse).build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -145,8 +162,8 @@ public class UserController {
 
     @PutMapping("/{userId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
-                                                    @PathVariable String userId,
-                                                    @RequestBody String password) {
+                                                      @PathVariable String userId,
+                                                      @RequestBody String password) {
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {

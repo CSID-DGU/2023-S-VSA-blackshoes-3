@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/user-service/sellers")
@@ -38,10 +39,18 @@ public class SellerController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
+
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
+
+            // 이메일 형식 검사
+            if (!EMAIL_PATTERN.matcher(sellerRegisterRequestDto.getEmail()).matches()) {
+                throw new RuntimeException("Invalid email format");
+            }
+
             // MultipartFile를 byte 배열로 변환
             byte[] sellerLogoBytes = sellerLogo.getBytes();
             sellerRegisterRequestDto.setSellerLogo(sellerLogoBytes);
