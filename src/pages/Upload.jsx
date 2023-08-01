@@ -41,7 +41,7 @@ import {
   VideoThumbnailSection,
   VideoThumbnailUploadButton,
   VideoThumbnailUploadInput,
-  VideoUploadSection,
+  VideoUploadSection
 } from "../components/Home/UploadStyle";
 import Plus from "../assets/images/plus.svg";
 import Minus from "../assets/images/minus.svg";
@@ -53,6 +53,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { ColorButton } from "../components/Sign/SignStyle";
+import SockJS from "sockjs-client/dist/sockjs.min.js";
+import Stomp from "stompjs";
 
 // Upload EC2
 // 13.125.69.94:8021
@@ -68,7 +70,7 @@ const Upload = () => {
   const { setPage } = useContext(GlobalContext);
   const [step, setStep] = useState({
     first: true,
-    second: false,
+    second: false
   });
   const [loading, setLoading] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
@@ -86,6 +88,8 @@ const Upload = () => {
   const [adContent, setAdContent] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [isSocketOpen, setIsSocketOpen] = useState(false);
+  const [percentage, setPercentage] = useState(0);
 
   const handleThumbnailFile = (e) => {
     const file = e.target.files[0];
@@ -102,9 +106,47 @@ const Upload = () => {
   };
 
   // Function----------------------------------------------------
+  useEffect(() => {
+    let stompClient;
+
+    const openSocket = () => {
+      const socket = new SockJS("http://13.125.69.94:8021/ws");
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, () => {
+        console.log("WebSocket connection opened!");
+        stompClient.subscribe(`/topic/encoding/${userId}`, (message) => {
+          const messageBody = JSON.parse(message.body);
+          setPercentage(Math.floor(messageBody.encodedPercentage));
+        });
+      });
+    };
+
+    const closeSocket = () => {
+      if (stompClient) {
+        stompClient.disconnect(() => {
+          console.log("WebSocket connection closed!");
+        });
+      }
+    };
+
+    if (isSocketOpen) {
+      openSocket();
+    } else {
+      closeSocket();
+    }
+
+    return () => {
+      closeSocket();
+    };
+  }, [isSocketOpen]);
+
   const fetchData = async () => {
-    const regionData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/region`);
-    const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
+    const regionData = await axios.get(
+      `http://13.125.69.94:8021/upload-service/tags/region`
+    );
+    const themeData = await axios.get(
+      `http://13.125.69.94:8021/upload-service/tags/theme`
+    );
     setRegionTag(regionData.data.payload.tags);
     setThemeTag(themeData.data.payload.tags);
   };
@@ -118,28 +160,35 @@ const Upload = () => {
         if (videoFile) {
           try {
             setLoading(true);
+            setIsSocketOpen(true);
             const formData = new FormData();
             formData.append("video", videoFile);
             await axios
-              .post(`http://13.125.69.94:8021/upload-service/videos/${userId}`, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              })
+              .post(
+                `http://13.125.69.94:8021/upload-service/videos/${userId}`,
+                formData,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data"
+                  }
+                }
+              )
               .then((res) => {
                 console.log(res);
                 setLoading(false);
+                setIsSocketOpen(true);
                 alert("영상이 업로드되었습니다.");
                 setPreview(res.data.payload.videoCloudfrontUrl);
                 setVideoId(res.data.payload.videoId);
                 setStep({
                   ...step,
-                  second: true,
+                  second: true
                 });
               });
           } catch (err) {
             console.log(err);
             setLoading(false);
+            setIsSocketOpen(true);
             alert("업로드에 실패했습니다.");
           }
         }
@@ -156,10 +205,10 @@ const Upload = () => {
                 adUrl: adUrl,
                 adContent: adContent,
                 startTime: startTime,
-                endTime: endTime,
-              },
-            ],
-          },
+                endTime: endTime
+              }
+            ]
+          }
         };
         const jsonData = JSON.stringify(requestData.requestUpload);
         const blob = new Blob([jsonData], { type: "application/json" });
@@ -169,11 +218,15 @@ const Upload = () => {
 
         try {
           await axios
-            .post(`http://13.125.69.94:8021/upload-service/videos/${userId}/${videoId}`, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            })
+            .post(
+              `http://13.125.69.94:8021/upload-service/videos/${userId}/${videoId}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data"
+                }
+              }
+            )
             .then((res) => {
               console.log(res);
               alert("동영상 최종 업로드가 완료되었습니다.");
@@ -201,7 +254,11 @@ const Upload = () => {
           {/* 영상 업로드 컴포넌트 조각 */}
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
+            <ColorButton
+              width="65px"
+              style={{ height: "35px" }}
+              onClick={handleNextStep}
+            >
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
           </TitleBetweenBox>
@@ -210,6 +267,7 @@ const Upload = () => {
             step={step}
             setStep={setStep}
             loading={loading}
+            percentage={percentage}
             videoFile={videoFile}
             setVideoFile={setVideoFile}
             preview={preview}
@@ -244,7 +302,11 @@ const Upload = () => {
                     <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
                   </VideoThumbnailUploadButton>
                   {thumbnailPreview && (
-                    <ThumbnailImage src={thumbnailPreview} alt="thumbnail-image" loading="lazy" />
+                    <ThumbnailImage
+                      src={thumbnailPreview}
+                      alt="thumbnail-image"
+                      loading="lazy"
+                    />
                   )}
                 </VideoThumbnailSection>
               </TitleThumbnailWrapper>
