@@ -83,4 +83,9 @@ public class UserDto {
         }
     }
 
+    @Data
+    public static class UserUpdatePasswordRequestDto{
+        private String email;
+        private String password;
+    }
 }

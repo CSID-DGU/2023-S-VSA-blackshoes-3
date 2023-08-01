@@ -38,7 +38,6 @@ public class SellerDto {
     @Data
     public static class SellerUpdateRequestDto{
         private String email;
-        private String password;
         private String sellerName;
     }
 
@@ -77,5 +76,10 @@ public class SellerDto {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
             return updatedAt.format(formatter);
         }
+    }
+    @Data
+    public static class SellerUpdatePasswordRequestDto{
+        private String email;
+        private String password;
     }
 }
