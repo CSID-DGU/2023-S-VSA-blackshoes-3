@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -32,10 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
-        if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
-            throw new RuntimeException("이미 사용 중인 이메일입니다.");
-        }
-
         User user = new User();
         user.setUserId(UUID.randomUUID().toString());
         user.setEmail(registerRequestDto.getEmail());
@@ -134,12 +132,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, String> updatePassword(String userId, String password) {
         Optional<User> existingUser = userRepository.findByUserId(userId);
+
         if(existingUser.isPresent()) {
             existingUser.get().setPassword(passwordEncoder.encode(password));
             userRepository.save(existingUser.get());
         }
 
         UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
+        responseDto.setUpdatedAt(LocalDateTime.now());
+        responseDto.setUserId(userId);
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
