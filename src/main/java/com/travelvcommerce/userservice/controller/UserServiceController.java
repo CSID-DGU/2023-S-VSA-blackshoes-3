@@ -7,7 +7,6 @@ import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
-import com.travelvcommerce.userservice.service.CustomUserDetailsService;
 import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.social.SocialLoginService;
 import com.travelvcommerce.userservice.service.UserService;
@@ -20,14 +19,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/user-service")
 @RequiredArgsConstructor
 public class UserServiceController {
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
 
     private final UserService userService;
-    private final CustomUserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -119,11 +119,17 @@ public class UserServiceController {
     @PostMapping("/mail/send-verification-code")
     public ResponseEntity<ResponseDto> generateVerificationCode(@RequestBody EmailDto.EmailRequestDto emailRequestDto) {
         try {
+            if (!EMAIL_PATTERN.matcher(emailRequestDto.getEmail()).matches()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이메일 형식이 올바르지 않습니다.").build());
+            }
+
+            if(userRepository.existsByEmail(emailRequestDto.getEmail())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
+            }
             String verificationCode = emailService.generateVerificationCode();
 
             // 이메일로 인증 코드 전송
-            emailService.sendMail(emailRequestDto.getEmail(), "[Wander] 인증 코드가 도착했습니다.", "Your verification code is " + verificationCode);
-
+            emailService.sendMail(emailRequestDto.getEmail(), "[Wanderlust] 인증 코드가 도착했습니다.", "인증코드 : " + verificationCode);
             //redis에 인증 코드 저장
             emailService.saveVerificationCode(emailRequestDto.getEmail(), verificationCode);
 
@@ -138,9 +144,11 @@ public class UserServiceController {
     public ResponseEntity<ResponseDto> verifyCode(@RequestBody EmailDto.EmailVerificationRequestDto emailVerificationDto) {
         try {
             if(emailService.checkVerificationCode(emailVerificationDto.getEmail(), emailVerificationDto.getVerificationCode())) {
+                emailService.extendTTL(emailVerificationDto.getEmail(), 30 * 60); // 30분
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증 코드가 일치하지 않습니다.").build());
+                emailService.deleteVerificationCode(emailVerificationDto.getEmail());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증 코드가 일치하지 않습니다. 인증 코드를 재요청해주세요.").build());
             }
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
