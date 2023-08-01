@@ -11,48 +11,33 @@ import {
   AdUploadButton,
   AdUploadGridBox,
   AdUploadSection,
-  CheckBoxInput,
   ContentBox,
   FullIcon,
-  InfoInputSection,
-  InfoTagBox,
-  InfoTitleBox,
   LinkBox,
   NormalSpan,
   RemoveButton,
   Shadow,
   SmallImage,
-  SmallTitle,
   SpanTitle,
-  TagCheckSection,
-  TagItemBox,
-  TagScrollBox,
-  TagTitle,
-  TagWrapper,
-  ThumbnailImage,
   TimeBox,
-  TimeInput,
   TitleBetweenBox,
-  TitleInput,
   TitleLeftBox,
-  TitleThumbnailWrapper,
-  TitleWrapper,
   VideoForm,
-  VideoThumbnailSection,
-  VideoThumbnailUploadButton,
-  VideoThumbnailUploadInput,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
-import Plus from "../assets/images/plus.svg";
 import Minus from "../assets/images/minus.svg";
 import PlusButton from "../assets/images/plus-button.svg";
 import axios from "axios";
-import UploadComponent from "../components/Fragments/UploadComponent";
+import Vupload from "../components/Fragments/Vupload";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { ColorButton } from "../components/Sign/SignStyle";
+import SockJS from "sockjs-client/dist/sockjs.min.js";
+import Stomp from "stompjs";
+import Vinfo from "../components/Fragments/Vinfo";
+import Vad from "../components/Fragments/Vad";
 
 // Upload EC2
 // 13.125.69.94:8021
@@ -78,7 +63,6 @@ const Upload = () => {
   //
   const [videoName, setVideoName] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [tagIdList, setTagIdList] = useState([]);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
@@ -86,23 +70,40 @@ const Upload = () => {
   const [adContent, setAdContent] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-
-  const handleThumbnailFile = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setThumbnailPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setThumbnailFile(file);
-    } else {
-      setThumbnailPreview(null);
-    }
-  };
+  const [isSocketOpen, setIsSocketOpen] = useState(false);
+  const [percentage, setPercentage] = useState(0);
 
   // Function----------------------------------------------------
   const fetchData = async () => {
+    try {
+      await axios
+        .get(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}`)
+        .then(async (res) => {
+          if (res.status === 200) {
+            if (window.confirm("이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?")) {
+              setVideoId(res.data.payload.videoId);
+              setVideoName(res.data.payload.videoName);
+              setStep({
+                first: false,
+                second: true,
+              });
+            } else {
+              await axios.delete(
+                `http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
+              );
+            }
+          }
+        });
+    } catch (err) {
+      console.log(err);
+      if (err.response.status === 404) {
+        console.log("이전에 작성하던 영상이 없습니다.");
+        return;
+      } else if (err.response.status === 500) {
+        console.log("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    }
+
     const regionData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/region`);
     const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
@@ -118,6 +119,7 @@ const Upload = () => {
         if (videoFile) {
           try {
             setLoading(true);
+            setIsSocketOpen(true);
             const formData = new FormData();
             formData.append("video", videoFile);
             await axios
@@ -129,6 +131,7 @@ const Upload = () => {
               .then((res) => {
                 console.log(res);
                 setLoading(false);
+                setIsSocketOpen(true);
                 alert("영상이 업로드되었습니다.");
                 setPreview(res.data.payload.videoCloudfrontUrl);
                 setVideoId(res.data.payload.videoId);
@@ -140,6 +143,7 @@ const Upload = () => {
           } catch (err) {
             console.log(err);
             setLoading(false);
+            setIsSocketOpen(true);
             alert("업로드에 실패했습니다.");
           }
         }
@@ -191,6 +195,37 @@ const Upload = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    let stompClient;
+
+    const openSocket = () => {
+      const socket = new SockJS("http://13.125.69.94:8021/ws");
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, () => {
+        stompClient.subscribe(`/topic/encoding/${userId}`, (message) => {
+          const messageBody = JSON.parse(message.body);
+          setPercentage(Math.floor(messageBody.encodedPercentage));
+        });
+      });
+    };
+
+    const closeSocket = () => {
+      if (stompClient) {
+        stompClient.disconnect(() => {});
+      }
+    };
+
+    if (isSocketOpen) {
+      openSocket();
+    } else {
+      closeSocket();
+    }
+
+    return () => {
+      closeSocket();
+    };
+  }, [isSocketOpen]);
+
   return (
     <GridWrapper>
       <Header />
@@ -198,18 +233,19 @@ const Upload = () => {
       <VideoForm encType="multipart/form-data">
         <ResNav userId={userId} />
         <VideoUploadSection>
-          {/* 영상 업로드 컴포넌트 조각 */}
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
             <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
           </TitleBetweenBox>
-          <UploadComponent
+          {/* 영상 업로드 컴포넌트 조각 */}
+          <Vupload
             userId={userId}
             step={step}
             setStep={setStep}
             loading={loading}
+            percentage={percentage}
             videoFile={videoFile}
             setVideoFile={setVideoFile}
             preview={preview}
@@ -217,151 +253,25 @@ const Upload = () => {
           />
           <br />
           {/* 영상 정보 등록 컴포넌트 조각 */}
-          <InfoInputSection>
-            {!step.second && <Shadow>STEP 2</Shadow>}
-            <InfoTitleBox>
-              <TitleWrapper>
-                <SmallTitle>제목</SmallTitle>
-                <TitleInput
-                  type="text"
-                  placeholder="제목을 입력해주세요."
-                  onChange={(e) => setVideoName(e.target.value)}
-                />
-              </TitleWrapper>
-              <TitleThumbnailWrapper>
-                <SmallTitle>썸네일</SmallTitle>
-                <VideoThumbnailSection>
-                  <VideoThumbnailUploadInput
-                    type="file"
-                    accept="image/*"
-                    id="thumbnail-input"
-                    onChange={handleThumbnailFile}
-                  />
-                  <VideoThumbnailUploadButton
-                    htmlFor="thumbnail-input"
-                    thumbnailfile={thumbnailFile}
-                  >
-                    <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
-                  </VideoThumbnailUploadButton>
-                  {thumbnailPreview && (
-                    <ThumbnailImage src={thumbnailPreview} alt="thumbnail-image" loading="lazy" />
-                  )}
-                </VideoThumbnailSection>
-              </TitleThumbnailWrapper>
-            </InfoTitleBox>
-            <InfoTagBox>
-              <SmallTitle>태그</SmallTitle>
-              <TagWrapper>
-                <TagCheckSection>
-                  <TagTitle>지역 태그</TagTitle>
-                  <TagScrollBox>
-                    {regionTag.map((region) => (
-                      <TagItemBox key={region.tagId}>
-                        <NormalSpan>{region.content}</NormalSpan>
-                        <CheckBoxInput
-                          type="checkbox"
-                          id="checkbox"
-                          onChange={() => {
-                            setTagIdList([...tagIdList, region.tagId]);
-                          }}
-                        />
-                      </TagItemBox>
-                    ))}
-                  </TagScrollBox>
-                </TagCheckSection>
-                <TagCheckSection>
-                  <TagTitle>테마 태그</TagTitle>
-                  <TagScrollBox>
-                    {themeTag.map((theme) => (
-                      <TagItemBox key={theme.tagId}>
-                        <NormalSpan>{theme.content}</NormalSpan>
-                        <CheckBoxInput
-                          type="checkbox"
-                          id="checkbox"
-                          onChange={() => {
-                            setTagIdList([...tagIdList, theme.tagId]);
-                          }}
-                        />
-                      </TagItemBox>
-                    ))}
-                  </TagScrollBox>
-                </TagCheckSection>
-              </TagWrapper>
-            </InfoTagBox>
-          </InfoInputSection>
+          <Vinfo
+            step={step}
+            regionTag={regionTag}
+            themeTag={themeTag}
+            setVideoName={setVideoName}
+            thumbnailFile={thumbnailFile}
+            setThumbnailFile={setThumbnailFile}
+            tagIdList={tagIdList}
+            setTagIdList={setTagIdList}
+          />
         </VideoUploadSection>
-        <AdUploadSection>
-          {!step.second && <Shadow>STEP 2</Shadow>}
-          <TitleLeftBox>
-            <SpanTitle>광고등록</SpanTitle>
-            <AdUploadButton>
-              <FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
-            </AdUploadButton>
-          </TitleLeftBox>
-          <AdUploadGridBox>
-            <AdInputSection>
-              <TimeBox>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["TimeField"]}>
-                    <TimeField
-                      label="시작 시간"
-                      onChange={(e) => {
-                        const receivedTime = new Date(e.$d);
-                        const hours = receivedTime.getHours();
-                        const minutes = receivedTime.getMinutes();
-                        const seconds = receivedTime.getSeconds();
-                        setStartTime(`${hours}:${minutes}:${seconds}`);
-                      }}
-                      format="HH:mm:ss"
-                      color="success"
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </TimeBox>
-              <TimeBox>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["TimeField"]}>
-                    <TimeField
-                      label="종료 시간"
-                      onChange={(e) => {
-                        const receivedTime = new Date(e.$d);
-                        const hours = receivedTime.getHours();
-                        const minutes = receivedTime.getMinutes();
-                        const seconds = receivedTime.getSeconds();
-                        setEndTime(`${hours}:${minutes}:${seconds}`);
-                      }}
-                      format="HH:mm:ss"
-                      color="success"
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </TimeBox>
-              <ContentBox>
-                <NormalSpan>내용</NormalSpan>
-                <AdInput
-                  type="text"
-                  placeholder="광고로 등록할 내용을 입력해주세요."
-                  width="250px"
-                  height="100px"
-                  onChange={(e) => setAdContent(e.target.value)}
-                />
-              </ContentBox>
-              <LinkBox>
-                <NormalSpan>링크</NormalSpan>
-                <AdInput
-                  type="text"
-                  placeholder="광고 링크를 첨부해주세요."
-                  width="250px"
-                  height="35px"
-                  onChange={(e) => setAdUrl(e.target.value)}
-                />
-              </LinkBox>
-              <RemoveButton>
-                <SmallImage src={Minus} alt="minus" />
-              </RemoveButton>
-            </AdInputSection>
-          </AdUploadGridBox>
-        </AdUploadSection>
+        {/* 영상 광고 등록 컴포넌트 조각 */}
+        <Vad
+          step={step}
+          setStartTime={setStartTime}
+          setEndTime={setEndTime}
+          setAdContent={setAdContent}
+          setAdUrl={setAdUrl}
+        />
       </VideoForm>
     </GridWrapper>
   );
