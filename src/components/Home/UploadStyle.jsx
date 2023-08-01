@@ -61,9 +61,15 @@ export const VideoInput = styled.input`
 
 export const VideoInputSection = styled.section`
   width: 100%;
-  min-height: 500px;
+  min-height: ${(props) => (props.videofile === null ? "500px" : "auto")};
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
+  @media all and (max-width: 1480px) {
+    min-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
+  }
+  @media all and (max-width: 900px) {
+    min-height: ${(props) => (props.videofile === null ? "300px" : "auto")};
+  }
 `;
 
 export const Shadow = styled.div`
@@ -144,13 +150,13 @@ export const FullIcon = styled.img`
 // Info Upload--------------------------------------------
 export const InfoInputSection = styled.section`
   width: 100%;
-  height: 300px;
+  height: 250px;
   display: flex;
   gap: 20px;
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
-  padding: 30px;
+  padding: 20px;
   @media all and (max-width: 1480px) {
   }
   @media all and (max-width: 900px) {
@@ -159,7 +165,6 @@ export const InfoInputSection = styled.section`
 
 export const InfoTitleBox = styled.section`
   width: 33%;
-  height: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -204,7 +209,6 @@ export const VideoThumbnailSection = styled(VideoInputSection)`
   min-height: auto;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   @media all and (max-width: 900px) {
-    height: 120px;
   }
 `;
 

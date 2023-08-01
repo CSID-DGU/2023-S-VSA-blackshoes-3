@@ -25,7 +25,7 @@ import PropTypes from "prop-types";
 const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
   return (
     <AdUploadSection>
-      {!step.second && <Shadow>STEP 2</Shadow>}
+      {step.second && <Shadow>STEP 2</Shadow>}
       <TitleLeftBox>
         <SpanTitle>광고등록</SpanTitle>
         <AdUploadButton>

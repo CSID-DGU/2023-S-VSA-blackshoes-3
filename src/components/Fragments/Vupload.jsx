@@ -43,7 +43,7 @@ const Vupload = ({
   return (
     <>
       <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
-      <VideoInputSection>
+      <VideoInputSection videofile={videoFile}>
         <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
           <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </VideoUploadButton>
