@@ -17,6 +17,8 @@ import java.util.List;
 public class VideoServiceImpl implements VideoService {
     @Autowired
     private VideoRepository videoRepository;
+    @Autowired
+    private GptRecommendationService gptRecommendationService;
 
     // 전체 영상 목록 조회, 정렬 정보 q로 받아서 정렬, 페이징 처리
     @Override
@@ -77,6 +79,9 @@ public class VideoServiceImpl implements VideoService {
                 return videoRepository.findVideosByTagName(query, pageable);
             case "sellerName":
                 return videoRepository.findVideosBySellerName(query, pageable);
+            case "gpt":
+                List<String> tagNameList = gptRecommendationService.getFiveRecommendedTag(query);
+                return videoRepository.findVideosWithIdListAndSelectedFields("videoTags.tagName", tagNameList, pageable);
             default:
                 throw new IllegalArgumentException("Invalid search type: " + type);
         }
