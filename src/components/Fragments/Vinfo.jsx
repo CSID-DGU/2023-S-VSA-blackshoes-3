@@ -132,7 +132,7 @@ Vinfo.propTypes = {
   regionTag: PropTypes.array,
   themeTag: PropTypes.array,
   setVideoName: PropTypes.func,
-  thumbnailFile: PropTypes.node,
+  thumbnailFile: PropTypes.object,
   setThumbnailFile: PropTypes.func,
   tagIdList: PropTypes.array,
   setTagIdList: PropTypes.func,

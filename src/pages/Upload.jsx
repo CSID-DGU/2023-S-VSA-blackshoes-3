@@ -75,6 +75,35 @@ const Upload = () => {
 
   // Function----------------------------------------------------
   const fetchData = async () => {
+    try {
+      await axios
+        .get(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}`)
+        .then(async (res) => {
+          if (res.status === 200) {
+            if (window.confirm("이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?")) {
+              setVideoId(res.data.payload.videoId);
+              setVideoName(res.data.payload.videoName);
+              setStep({
+                first: false,
+                second: true,
+              });
+            } else {
+              await axios.delete(
+                `http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
+              );
+            }
+          }
+        });
+    } catch (err) {
+      console.log(err);
+      if (err.response.status === 404) {
+        console.log("이전에 작성하던 영상이 없습니다.");
+        return;
+      } else if (err.response.status === 500) {
+        console.log("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
+    }
+
     const regionData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/region`);
     const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
@@ -173,7 +202,6 @@ const Upload = () => {
       const socket = new SockJS("http://13.125.69.94:8021/ws");
       stompClient = Stomp.over(socket);
       stompClient.connect({}, () => {
-        console.log("WebSocket connection opened!");
         stompClient.subscribe(`/topic/encoding/${userId}`, (message) => {
           const messageBody = JSON.parse(message.body);
           setPercentage(Math.floor(messageBody.encodedPercentage));
@@ -183,9 +211,7 @@ const Upload = () => {
 
     const closeSocket = () => {
       if (stompClient) {
-        stompClient.disconnect(() => {
-          console.log("WebSocket connection closed!");
-        });
+        stompClient.disconnect(() => {});
       }
     };
 

@@ -61,14 +61,14 @@ export const VideoInput = styled.input`
 
 export const VideoInputSection = styled.section`
   width: 100%;
-  min-height: ${(props) => (props.videofile === null ? "500px" : "auto")};
+  height: ${(props) => (props.videofile === null ? "400px" : "auto")};
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
   @media all and (max-width: 1480px) {
-    min-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
+    height: ${(props) => (props.videofile === null ? "300px" : "auto")};
   }
   @media all and (max-width: 900px) {
-    min-height: ${(props) => (props.videofile === null ? "300px" : "auto")};
+    height: ${(props) => (props.videofile === null ? "200px" : "auto")};
   }
 `;
 
@@ -150,7 +150,7 @@ export const FullIcon = styled.img`
 // Info Upload--------------------------------------------
 export const InfoInputSection = styled.section`
   width: 100%;
-  height: 250px;
+  height: 350px;
   display: flex;
   gap: 20px;
   position: relative;
@@ -205,7 +205,7 @@ export const TitleInput = styled.input`
 export const TitleThumbnailWrapper = styled(TitleWrapper)``;
 
 export const VideoThumbnailSection = styled(VideoInputSection)`
-  height: 80px;
+  height: 160px;
   min-height: auto;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   @media all and (max-width: 900px) {
