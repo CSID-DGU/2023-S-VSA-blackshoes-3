@@ -22,6 +22,7 @@ import {
   VideoThumbnailUploadInput,
 } from "../Home/UploadStyle";
 import Plus from "../../assets/images/plus.svg";
+import PropTypes from "prop-types";
 
 const Vinfo = ({
   step,
@@ -53,7 +54,7 @@ const Vinfo = ({
 
   return (
     <InfoInputSection>
-      {!step.second && <Shadow>STEP 2</Shadow>}
+      {step.second && <Shadow>STEP 2</Shadow>}
       <InfoTitleBox>
         <TitleWrapper>
           <SmallTitle>제목</SmallTitle>
@@ -125,3 +126,14 @@ const Vinfo = ({
 };
 
 export default Vinfo;
+
+Vinfo.propTypes = {
+  step: PropTypes.object,
+  regionTag: PropTypes.array,
+  themeTag: PropTypes.array,
+  setVideoName: PropTypes.func,
+  thumbnailFile: PropTypes.node,
+  setThumbnailFile: PropTypes.func,
+  tagIdList: PropTypes.array,
+  setTagIdList: PropTypes.func,
+};

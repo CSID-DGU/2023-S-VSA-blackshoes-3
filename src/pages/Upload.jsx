@@ -37,6 +37,7 @@ import { ColorButton } from "../components/Sign/SignStyle";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
 import Vinfo from "../components/Fragments/Vinfo";
+import Vad from "../components/Fragments/Vad";
 
 // Upload EC2
 // 13.125.69.94:8021
@@ -237,78 +238,14 @@ const Upload = () => {
             setTagIdList={setTagIdList}
           />
         </VideoUploadSection>
-        <AdUploadSection>
-          {!step.second && <Shadow>STEP 2</Shadow>}
-          <TitleLeftBox>
-            <SpanTitle>광고등록</SpanTitle>
-            <AdUploadButton>
-              <FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
-            </AdUploadButton>
-          </TitleLeftBox>
-          <AdUploadGridBox>
-            <AdInputSection>
-              <TimeBox>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["TimeField"]}>
-                    <TimeField
-                      label="시작 시간"
-                      onChange={(e) => {
-                        const receivedTime = new Date(e.$d);
-                        const hours = receivedTime.getHours();
-                        const minutes = receivedTime.getMinutes();
-                        const seconds = receivedTime.getSeconds();
-                        setStartTime(`${hours}:${minutes}:${seconds}`);
-                      }}
-                      format="HH:mm:ss"
-                      color="success"
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </TimeBox>
-              <TimeBox>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["TimeField"]}>
-                    <TimeField
-                      label="종료 시간"
-                      onChange={(e) => {
-                        const receivedTime = new Date(e.$d);
-                        const hours = receivedTime.getHours();
-                        const minutes = receivedTime.getMinutes();
-                        const seconds = receivedTime.getSeconds();
-                        setEndTime(`${hours}:${minutes}:${seconds}`);
-                      }}
-                      format="HH:mm:ss"
-                      color="success"
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-              </TimeBox>
-              <ContentBox>
-                <NormalSpan>내용</NormalSpan>
-                <AdInput
-                  type="text"
-                  placeholder="광고로 등록할 내용을 입력해주세요."
-                  width="250px"
-                  height="100px"
-                  onChange={(e) => setAdContent(e.target.value)}
-                />
-              </ContentBox>
-              <LinkBox>
-                <NormalSpan>링크</NormalSpan>
-                <AdInput
-                  type="text"
-                  placeholder="광고 링크를 첨부해주세요."
-                  width="250px"
-                  height="35px"
-                  onChange={(e) => setAdUrl(e.target.value)}
-                />
-              </LinkBox>
-              <RemoveButton>
-                <SmallImage src={Minus} alt="minus" />
-              </RemoveButton>
-            </AdInputSection>
-          </AdUploadGridBox>
-        </AdUploadSection>
+        {/* 영상 광고 등록 컴포넌트 조각 */}
+        <Vad
+          step={step}
+          setStartTime={setStartTime}
+          setEndTime={setEndTime}
+          setAdContent={setAdContent}
+          setAdUrl={setAdUrl}
+        />
       </VideoForm>
     </GridWrapper>
   );

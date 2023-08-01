@@ -11,6 +11,7 @@ import {
 import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
+import PropTypes from "prop-types";
 
 const Vupload = ({
   userId,
@@ -79,3 +80,15 @@ const Vupload = ({
 };
 
 export default Vupload;
+
+Vupload.propTypes = {
+  userId: PropTypes.string,
+  step: PropTypes.object,
+  setStep: PropTypes.func,
+  loading: PropTypes.bool,
+  percentage: PropTypes.number,
+  videoFile: PropTypes.object,
+  setVideoFile: PropTypes.func,
+  preview: PropTypes.string,
+  setPreview: PropTypes.func,
+};
