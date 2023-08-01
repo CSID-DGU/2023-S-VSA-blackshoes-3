@@ -22,24 +22,24 @@ public class VideoPageSellerController {
     // 판매자별 전체 영상 조회
     @GetMapping("/videos/{sellerId}/sort")
     public ResponseEntity<ResponseDto> getVideosBySellerId(@PathVariable(name = "sellerId") String sellerId,
-                                                           @RequestParam("q") String q,
+                                                           @RequestParam("s") String s,
                                                            @RequestParam("page") int page,
                                                            @RequestParam("size") int size) {
         // q로 받은 정렬 타입 검증
-        if (!SellerSortTypes.contains(q.toUpperCase())) {
+        if (!SellerSortTypes.contains(s.toUpperCase())) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
         // q로 받은 정렬타입 recent -> createdAt, 도큐먼트 key 매칭
-        if (q.equals("recent")) {
-            q = "createdAt";
+        if (s.equals("recent")) {
+            s = "createdAt";
         }
 
         Map<String, Object> videoPagePayload;
 
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosBySellerId(sellerId, q, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosBySellerId(sellerId, s, page, size);
 
             videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());

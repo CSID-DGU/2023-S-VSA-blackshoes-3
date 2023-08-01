@@ -20,8 +20,8 @@ public class VideoServiceImpl implements VideoService {
 
     // 전체 영상 목록 조회, 정렬 정보 q로 받아서 정렬, 페이징 처리
     @Override
-    public Page<VideoDto.VideoListResponseDto> getVideos(String q, int page, int size) {
-        Sort sortBy = Sort.by(Sort.Direction.DESC, q);
+    public Page<VideoDto.VideoListResponseDto> getVideos(String sortType, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, sortType);
         Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<VideoDto.VideoListResponseDto> videoPage = videoRepository.findVideosWithSelectedFields(pageable);
         return videoPage;
@@ -39,8 +39,8 @@ public class VideoServiceImpl implements VideoService {
 
     // idType을 key로 갖는 value가 idData에 포함되는 영상 목록 조회, 정렬 정보 q로 받아서 정렬, 페이징 처리
     @Override
-    public Page<VideoDto.VideoListResponseDto> getVideosByIdList(String idType, List<String> idData, int page, int size) {
-        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+    public Page<VideoDto.VideoListResponseDto> getVideosByIdList(String idType, List<String> idData, String sortType, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, sortType);
         Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<VideoDto.VideoListResponseDto> videoPage =
                 videoRepository.findVideosWithIdListAndSelectedFields(idType, idData, pageable);
@@ -66,17 +66,17 @@ public class VideoServiceImpl implements VideoService {
 
     // 비디오 검색, 타입에 따라 쿼리 호출
     @Override
-    public Page<VideoDto.VideoListResponseDto> searchVideos(String type, String q, int page, int size) {
-        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+    public Page<VideoDto.VideoListResponseDto> searchVideos(String type, String query, String sortType, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, sortType);
         Pageable pageable = PageRequest.of(page, size, sortBy);
 
         switch(type) {
             case "videoName":
-                return videoRepository.findVideosByVideoName(q, pageable);
+                return videoRepository.findVideosByVideoName(query, pageable);
             case "tagName":
-                return videoRepository.findVideosByTagName(q, pageable);
+                return videoRepository.findVideosByTagName(query, pageable);
             case "sellerName":
-                return videoRepository.findVideosBySellerName(q, pageable);
+                return videoRepository.findVideosBySellerName(query, pageable);
             default:
                 throw new IllegalArgumentException("Invalid search type: " + type);
         }
@@ -84,8 +84,8 @@ public class VideoServiceImpl implements VideoService {
 
     // tagId에 해당하는 영상 목록 조회, q로 tagId 받아서 최신순 정렬, 페이징 처리
     @Override
-    public Page<VideoDto.VideoListResponseDto> getVideosByTag(String q, int page, int size) {
-        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+    public Page<VideoDto.VideoListResponseDto> getVideosByTag(String q, String sortType, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, sortType);
         Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<VideoDto.VideoListResponseDto> videoPage = videoRepository.findVideosByTagId(q, pageable);
 

@@ -28,18 +28,16 @@ public class VideoPageUserController {
 
     // 전체 영상 조회
     @GetMapping("/videos/sort")
-    public ResponseEntity<ResponseDto> getVideos(@RequestParam("q") String q,
+    public ResponseEntity<ResponseDto> getVideos(@RequestParam("s") String s,
                                                  @RequestParam("page") int page,
                                                  @RequestParam("size") int size) {
-        // q로 받은 정렬 타입 검증
-        if (!UserSortTypes.contains(q.toUpperCase())) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid sort type");
+        // q로 받은 정렬 타입 검증하고 sortType 변수에 저장
+        String sortType;
+        try {
+            sortType = validateAndReturnSortType(s);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        // q로 받은 정렬타입 recent -> createdAt, 도큐먼트 key 매칭
-        if (q.equals("recent")) {
-            q = "createdAt";
         }
 
         Map<String, Object> videoPagePayload;
@@ -47,7 +45,7 @@ public class VideoPageUserController {
 
         // 비디오 조회 로직 호출
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(q, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(sortType, page, size);
 
             videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
@@ -70,14 +68,25 @@ public class VideoPageUserController {
     // tagId로 영상 조회
     @GetMapping("/videos/tag")
     public ResponseEntity<ResponseDto> getVideosByTag(@RequestParam("q") String q,
+                                                      @RequestParam("s") String s,
                                                       @RequestParam("page") int page,
                                                       @RequestParam("size") int size) {
 
         Map<String, Object> videoPagePayload;
 
+        // s로 받은 정렬 타입 검증하고 sortType 변수에 저장
+        String sortType;
+        try {
+            sortType = validateAndReturnSortType(s);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+
         // 비디오 조회 로직 호출
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTag(q, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTag(q, sortType, page, size);
 
             videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
@@ -101,6 +110,7 @@ public class VideoPageUserController {
     @GetMapping("/videos/{userId}/personalized")
     public ResponseEntity<ResponseDto> getPersonalizedVideos(@PathVariable(name = "userId") String userId,
                                                              @RequestParam("q") String q,
+                                                             @RequestParam("s") String s,
                                                              @RequestParam("page") int page,
                                                              @RequestParam("size") int size) {
         String personalizedType = q.toUpperCase();
@@ -122,11 +132,21 @@ public class VideoPageUserController {
         String idType = userPersonalizedData.getIdType();
         List<String> idList = userPersonalizedData.getIdList();
 
+        // s로 받은 정렬 타입 검증하고 sortType 변수에 저장
+        String sortType;
+        try {
+            sortType = validateAndReturnSortType(s);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
         Map<String, Object> videoPagePayload;
 
         // 비디오 조회 로직 호출
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByIdList(idType, idList, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage
+                    = videoService.getVideosByIdList(idType, idList, sortType, page, size);
 
             videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
@@ -149,10 +169,20 @@ public class VideoPageUserController {
     @GetMapping("/videos/search")
     public ResponseEntity<ResponseDto> searchVideos(@RequestParam("type") String type,
                                                     @RequestParam("q") String q,
+                                                    @RequestParam("s") String s,
                                                     @RequestParam("page") int page,
                                                     @RequestParam("size") int size) {
+        // s로 받은 정렬 타입 검증하고 sortType 변수에 저장
+        String sortType;
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.searchVideos(type, q, page, size);
+            sortType = validateAndReturnSortType(s);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        try {
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.searchVideos(type, q, sortType, page, size);
 
             Map<String, Object> videoPagePayload = new LinkedHashMap<>() {{
                 put("totalPages", videoPage.getTotalPages());
@@ -171,4 +201,16 @@ public class VideoPageUserController {
         }
     }
 
+    private static String validateAndReturnSortType(String s) {
+        // s로 받은 정렬 타입 검증
+        if (!UserSortTypes.contains(s.toUpperCase())) {
+            throw new IllegalArgumentException("Invalid sort type");
+        }
+        // s로 받은 정렬타입 recent -> createdAt, 도큐먼트 key 매칭
+        if (s.equals("recent")) {
+            s = "createdAt";
+        }
+
+        return s;
+    }
 }
