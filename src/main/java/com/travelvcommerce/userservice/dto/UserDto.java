@@ -13,8 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.bytebuddy.asm.Advice;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-//클라이언트와 통신할 때 Dto 사용
 @Data
 public class UserDto {
     private int id;
@@ -72,11 +72,16 @@ public class UserDto {
     }
 
     @Data
+    public static class UserUpdateRequestDto{
+        private String email;
+        private String nickname;
+        private LocalDate birthdate;
+    }
+
+    @Data
     public static class UserUpdateResponseDto{
         private String userId;
         private LocalDateTime updatedAt;
-
-        // updatedAt 필드를 원하는 형식으로 포맷하여 반환하는 메소드
         public String getFormattedUpdatedAt() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
             return updatedAt.format(formatter);
@@ -86,6 +91,21 @@ public class UserDto {
     @Data
     public static class UserUpdatePasswordRequestDto{
         private String email;
+        private String password;
+    }
+    @Data
+    public static class UserUpdatePasswordResponseDto{
+        private String userId;
+        private LocalDateTime updatedAt;
+
+        public String getFormattedUpdatedAt() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            return updatedAt.format(formatter);
+        }
+    }
+
+    @Data
+    public static class UserDeleteRequestDto{
         private String password;
     }
 }

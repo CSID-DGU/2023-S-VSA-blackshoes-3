@@ -123,9 +123,6 @@ public class UserServiceController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이메일 형식이 올바르지 않습니다.").build());
             }
 
-            if(userRepository.existsByEmail(emailRequestDto.getEmail())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
-            }
             String verificationCode = emailService.generateVerificationCode();
 
             // 이메일로 인증 코드 전송

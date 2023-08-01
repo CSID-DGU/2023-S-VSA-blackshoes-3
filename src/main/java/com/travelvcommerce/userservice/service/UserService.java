@@ -10,7 +10,7 @@ import java.util.Map;
 @Transactional
 @Service
 public interface UserService {
-    Map<String, String> updateUser(String userId, UserDto userDto);
+    Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto);
     void deleteUser(String userId);
     Map<String, String> updatePassword(String userId, String password);
 

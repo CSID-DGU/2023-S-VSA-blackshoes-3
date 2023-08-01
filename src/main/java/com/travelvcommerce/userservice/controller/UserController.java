@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -32,22 +33,20 @@ public class UserController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
-
+    private final PasswordEncoder passwordEncoder;
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
         try {
-            // 이메일 검증
-            if (!EMAIL_PATTERN.matcher(registerRequestDto.getEmail()).matches()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이메일 형식이 올바르지 않습니다.").build());
-            }
+
 
             if(emailService.isEmptyVerificationCode(registerRequestDto.getEmail())){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
             }
+
             if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
                 throw new RuntimeException("이미 사용 중인 이메일입니다.");
             }
+
             Map<String, String> userRegisterResponse = userService.registerUser(registerRequestDto);
             emailService.deleteVerificationCode(registerRequestDto.getEmail());
 
@@ -60,10 +59,11 @@ public class UserController {
         }
     }
 
+    //이메일, 닉네임, 생일
     @PutMapping("/{userId}")
     public ResponseEntity<ResponseDto> updateUser(@RequestHeader("Authorization") String accessToken,
                                                   @PathVariable String userId,
-                                                  @RequestBody UserDto userDto) {
+                                                  @RequestBody UserDto.UserUpdateRequestDto userUpdateRequestDto) {
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
@@ -82,7 +82,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
 
-            Map<String, String> userUpdateResponse = userService.updateUser(userId, userDto);
+            Map<String, String> userUpdateResponse = userService.updateUser(userId, userUpdateRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder()
                     .payload(userUpdateResponse)
@@ -90,7 +90,7 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
@@ -98,7 +98,7 @@ public class UserController {
 
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable String userId) {
+    public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable String userId, @RequestBody UserDto.UserDeleteRequestDto userDeleteRequestDto){
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
 
@@ -117,6 +117,10 @@ public class UserController {
 
             if (!userEmail.equals(tokenUserEmail)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+
+            if(!passwordEncoder.matches(userDeleteRequestDto.getPassword(), userOptional.get().getPassword())){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid Password").build());
             }
 
             userService.deleteUser(userId);
@@ -163,17 +167,19 @@ public class UserController {
     @PutMapping("/{userId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
                                                       @PathVariable String userId,
-                                                      @RequestBody String password) {
+                                                      @RequestBody UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto){
         try {
+            if(emailService.isEmptyVerificationCode(userUpdatePasswordRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
+            }
+
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            Map<String, String> updatePasswordResponse = userService.updatePassword(userId, password);
-
-            ResponseDto responseDto = ResponseDto.builder().payload(updatePasswordResponse).build();
-
+            Map<String, String> updateResponse = userService.updatePassword(userId, userUpdatePasswordRequestDto.getPassword());
+            ResponseDto responseDto = ResponseDto.builder().payload(updateResponse).build();
             return ResponseEntity.ok().body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();

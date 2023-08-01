@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final CustomUserDetailsService userDetailsService;
 
     @Override
     public Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
@@ -56,17 +55,21 @@ public class UserServiceImpl implements UserService {
 
         return responseBody;
     }
+
+    //이메일, 닉네임, 생일 수정
     @Override
-    public Map<String, String> updateUser(String userId, UserDto userDto){
+    public Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto){
         Optional<User> existingUser = userRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
-            existingUser.get().setNickname(userDto.getNickname());
-            existingUser.get().setPassword(passwordEncoder.encode(userDto.getPassword()));
-            existingUser.get().setBirthdate(userDto.getBirthdate());
+            existingUser.get().setEmail(userUpdateRequestDto.getEmail());
+            existingUser.get().setNickname(userUpdateRequestDto.getNickname());
+            existingUser.get().setBirthdate(userUpdateRequestDto.getBirthdate());
             userRepository.save(existingUser.get());
         }
 
         UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
+        responseDto.setUserId(existingUser.get().getUserId());
+        responseDto.setUpdatedAt(LocalDateTime.now());
 
         Map<String, String> responseBody = new HashMap<>();
 
@@ -82,6 +85,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId) {
         userRepository.deleteByUserId(userId);
     }
+
     @Override
     public Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto) {
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
@@ -138,7 +142,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(existingUser.get());
         }
 
-        UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
+        UserDto.UserUpdatePasswordResponseDto responseDto = new UserDto.UserUpdatePasswordResponseDto();
         responseDto.setUpdatedAt(LocalDateTime.now());
         responseDto.setUserId(userId);
 
