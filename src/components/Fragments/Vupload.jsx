@@ -1,23 +1,19 @@
-import axios from "axios";
-import { useState } from "react";
 import {
   CheckIcon,
   FullIcon,
-  SpanTitle,
   SpinnerBox,
-  TitleBetweenBox,
   UploadedState,
   VideoInput,
   VideoInputSection,
   VideoPreview,
-  VideoUploadButton
+  VideoUploadButton,
 } from "../Home/UploadStyle";
-import { ColorButton } from "../Sign/SignStyle";
 import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
+import PropTypes from "prop-types";
 
-const UploadComponent = ({
+const Vupload = ({
   userId,
   step,
   setStep,
@@ -26,7 +22,7 @@ const UploadComponent = ({
   videoFile,
   setVideoFile,
   preview,
-  setPreview
+  setPreview,
 }) => {
   // Function----------------------------------------------------
   const handleVideoChange = (e) => {
@@ -46,23 +42,14 @@ const UploadComponent = ({
 
   return (
     <>
-      <VideoInput
-        type="file"
-        accept="video/*"
-        id="video-input"
-        onChange={handleVideoChange}
-      />
-      <VideoInputSection>
+      <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
+      <VideoInputSection videofile={videoFile}>
         <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
           <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </VideoUploadButton>
         {preview && (
           <VideoPreview controls>
-            <source
-              src={preview}
-              type="video/m3u8"
-              style={{ position: "relative" }}
-            />
+            <source src={preview} type="video/m3u8" style={{ position: "relative" }} />
           </VideoPreview>
         )}
         {loading && (
@@ -72,8 +59,7 @@ const UploadComponent = ({
                 ? "잠시만 기다려주세요"
                 : percentage === 0
                 ? "영상이 업로드 중입니다"
-                : percentage > 0 &&
-                  `영상이 인코딩 중입니다, ${percentage}% 완료`}
+                : percentage > 0 && `영상이 인코딩 중입니다, ${percentage}% 완료`}
             </UploadedState>
             <SpinnerBox>
               <HashLoader color="#1DAE86" />
@@ -93,4 +79,16 @@ const UploadComponent = ({
   );
 };
 
-export default UploadComponent;
+export default Vupload;
+
+Vupload.propTypes = {
+  userId: PropTypes.string,
+  step: PropTypes.object,
+  setStep: PropTypes.func,
+  loading: PropTypes.bool,
+  percentage: PropTypes.number,
+  videoFile: PropTypes.object,
+  setVideoFile: PropTypes.func,
+  preview: PropTypes.string,
+  setPreview: PropTypes.func,
+};

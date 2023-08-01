@@ -112,9 +112,6 @@ export const HoverButton0 = styled.button`
   color: ${(props) => (props.page === 0 ? props.theme.bgColor : props.theme.textColor)};
   font-size: 14px;
   cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 export const HoverButton1 = styled(HoverButton0)`
