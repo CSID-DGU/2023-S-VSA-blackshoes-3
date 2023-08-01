@@ -8,24 +8,20 @@ import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
-import com.travelvcommerce.userservice.service.SellerDetailsService;
+import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.SellerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/user-service/sellers")
@@ -33,22 +29,22 @@ import java.util.regex.Pattern;
 public class SellerController {
 
     private final SellerServiceImpl sellerService;
-    private final SellerDetailsService sellerDetailsService;
     private final SellerRepository sellerRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
-
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
+    private final EmailService emailService;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
+            if(sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
+                throw new RuntimeException("이미 사용 중인 이메일입니다.");
+            }
 
-            // 이메일 형식 검사
-            if (!EMAIL_PATTERN.matcher(sellerRegisterRequestDto.getEmail()).matches()) {
-                throw new RuntimeException("Invalid email format");
+            if(sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
             }
 
             // MultipartFile를 byte 배열로 변환
@@ -134,7 +130,6 @@ public class SellerController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> login(@RequestBody SellerDto.SellerLoginRequestDto sellerLoginRequestDto) {
         try {
-            //UserDetails sellerDetails = sellerDetailsService.loadUserByUsername(sellerLoginRequestDto.getEmail());
             Map<String, String> loginResponse = sellerService.login(sellerLoginRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder()
@@ -160,14 +155,18 @@ public class SellerController {
     @PutMapping("/{sellerId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
                                                       @RequestHeader("Authorization") String token,
-                                                      @RequestParam("password") String password) {
+                                                      @RequestBody SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto){
         try {
+            if(emailService.isEmptyVerificationCode(sellerUpdatePasswordRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 확인해주세요.").build());
+            }
+
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            Map<String, String> updatePasswordResponse = sellerService.updatePassword(sellerId, password);
+            Map<String, String> updatePasswordResponse = sellerService.updatePassword(sellerId, sellerUpdatePasswordRequestDto.getPassword());
 
 
             ResponseDto responseDto = ResponseDto.builder()

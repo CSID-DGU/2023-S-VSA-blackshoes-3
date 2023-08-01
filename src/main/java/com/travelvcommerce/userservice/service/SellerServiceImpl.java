@@ -70,7 +70,6 @@ public class SellerServiceImpl implements SellerService {
             }
             existingSeller.get().setUpdatedAt(LocalDateTime.now());
             existingSeller.get().setEmail(sellerUpdateRequestDto.getEmail());
-            existingSeller.get().setPassword(passwordEncoder.encode(sellerUpdateRequestDto.getPassword()));
             sellerRepository.save(existingSeller.get());
         } else {
             throw new RuntimeException("존재하지 않는 판매자입니다.");
