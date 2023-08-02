@@ -44,7 +44,7 @@ public class UserController {
             }
 
             if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 사용 중인 이메일입니다.").build());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
             }
 
             String password = registerRequestDto.getPassword();
@@ -76,7 +76,7 @@ public class UserController {
                                                   @RequestBody UserDto.UserUpdateRequestDto userUpdateRequestDto) {
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
@@ -118,7 +118,7 @@ public class UserController {
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
 
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
@@ -190,7 +190,7 @@ public class UserController {
                                                       @RequestBody UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto){
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
@@ -252,7 +252,7 @@ public class UserController {
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
 
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 

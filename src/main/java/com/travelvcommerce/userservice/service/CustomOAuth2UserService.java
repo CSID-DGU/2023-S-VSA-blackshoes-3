@@ -79,7 +79,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(user.getPassword() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 사용자 정보가 없습니다. 회원가입을 진행해주세요.", null);
         }
-        TokenDto tokenDto = tokenProvider.createTokens(email, user.getRole().getRoleName());
+
+        TokenDto tokenDto = tokenProvider.createTokens(email, user.getRole().getRoleName(), user.getUserId());
 
         userRepository.updateProviderId(providerId, email);
         userRepository.updateProvider(provider, email);

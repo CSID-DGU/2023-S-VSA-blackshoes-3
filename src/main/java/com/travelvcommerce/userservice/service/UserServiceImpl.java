@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // JWT 토큰 생성
-        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), user.getRole().getRoleName());
+        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), user.getRole().getRoleName(), user.getUserId());
 
         // 토큰과 UUID 반환
         Map<String, String> responseBody = new HashMap<>();
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // JWT 토큰 생성
-        TokenDto tokenDto = jwtTokenProvider.createTokens(email, user.getRole().getRoleName());
+        TokenDto tokenDto = jwtTokenProvider.createTokens(email, user.getRole().getRoleName(), user.getUserId());
 
         // 토큰만 반환
         Map<String, String> responseBody = new HashMap<>();

@@ -103,7 +103,7 @@ public class SellerServiceImpl implements SellerService {
 
         sellerRepository.save(seller);
 
-        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), seller.getRole().getRoleName());
+        TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), seller.getRole().getRoleName(), seller.getSellerId());
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("accessToken", tokenDto.getAccessToken());

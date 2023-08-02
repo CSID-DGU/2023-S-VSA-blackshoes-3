@@ -23,7 +23,7 @@ public class JwtTokenProvider {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public TokenDto createTokens(String email, String userType) {
+    public TokenDto createTokens(String email, String userType, String id) {
         Date now = new Date();
         Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
         Date refreshTokenExpiryDate = new Date(now.getTime() + jwtRefreshTokenExpiry);
@@ -31,6 +31,7 @@ public class JwtTokenProvider {
         String token = Jwts.builder()
                 .setSubject(email)
                 .claim("userType", userType)  // userType claim 추가
+                .claim("Id", id)
                 .setIssuedAt(now)
                 .setExpiration(tokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -39,6 +40,7 @@ public class JwtTokenProvider {
         String refreshToken = Jwts.builder()
                 .setSubject(email)
                 .claim("userType", userType)  // userType claim 추가
+                .claim("Id", id)
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -70,10 +72,15 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, String id) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+            String tokenId = claims.get("Id", String.class);
+            if (tokenId.equals(id)) {
+                return true;
+            } else {
+                System.out.println("토큰의 사용자 ID가 일치하지 않습니다");
+            }
         } catch (SignatureException ex) {
             System.out.println("유효하지 않은 JWT 서명입니다");
         } catch (MalformedJwtException ex) {
@@ -87,6 +94,7 @@ public class JwtTokenProvider {
         }
         return false;
     }
+
     public String getUserTypeFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
