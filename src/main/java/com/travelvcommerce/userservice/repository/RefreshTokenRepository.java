@@ -14,17 +14,17 @@ public class RefreshTokenRepository {
     }
 
     public void save(String userType, String email, String refreshToken, long expiryTime) {
-        String key = userType + ":" + email;
+        String key = "refreshToken:" + userType + ":" + email;
         redisTemplate.opsForValue().set(key, refreshToken, expiryTime, TimeUnit.MILLISECONDS);
     }
 
     public String find(String userType, String email) {
-        String key = userType + ":" + email;
+        String key = "refreshToken:" + userType + ":" + email;
         return redisTemplate.opsForValue().get(key);
     }
 
     public void deleteRefreshTokenByUserEmail(String userType, String email) {
-        String key = userType + ":" + email;
+        String key = "refreshToken:" + userType + ":" + email;
         redisTemplate.delete(key);
     }
 }

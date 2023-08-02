@@ -8,6 +8,7 @@ import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +62,6 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto){
         Optional<User> existingUser = userRepository.findByUserId(userId);
         if(existingUser.isPresent()) {
-            existingUser.get().setEmail(userUpdateRequestDto.getEmail());
             existingUser.get().setNickname(userUpdateRequestDto.getNickname());
             existingUser.get().setBirthdate(userUpdateRequestDto.getBirthdate());
             userRepository.save(existingUser.get());
@@ -88,11 +88,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto) {
-        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        if (!loginRequestDto.getEmail().matches(emailRegex)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "올바른 이메일 형식이 아닙니다.");
-        }
-
         // 사용자 검색
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginRequestDto.getEmail()));
@@ -153,6 +148,23 @@ public class UserServiceImpl implements UserService {
         return responseBody;
     }
 
+    @Override
+    public Map<String, String> findPassword(String email, String password) {
+        Optional<User> existingUser = userRepository.findByEmail(email);
+
+        if(existingUser.isPresent()) {
+            existingUser.get().setPassword(passwordEncoder.encode(password));
+            userRepository.save(existingUser.get());
+        }
+
+        UserDto.UserFindPasswordResponseDto responseDto = new UserDto.UserFindPasswordResponseDto();
+        responseDto.setUpdatedAt(LocalDateTime.now());
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
+
+        return responseBody;
+    }
     @Override
     public UserDto.UserInfoResponseDto getUserInfo(String userId) {
         Optional<User> existingUser = userRepository.findByUserId(userId);

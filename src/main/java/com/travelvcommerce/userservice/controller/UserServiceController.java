@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -129,7 +130,6 @@ public class UserServiceController {
             emailService.sendMail(emailRequestDto.getEmail(), "[Wanderlust] 인증 코드가 도착했습니다.", "인증코드 : " + verificationCode);
             //redis에 인증 코드 저장
             emailService.saveVerificationCode(emailRequestDto.getEmail(), verificationCode);
-
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
@@ -141,11 +141,11 @@ public class UserServiceController {
     public ResponseEntity<ResponseDto> verifyCode(@RequestBody EmailDto.EmailVerificationRequestDto emailVerificationDto) {
         try {
             if(emailService.checkVerificationCode(emailVerificationDto.getEmail(), emailVerificationDto.getVerificationCode())) {
-                emailService.extendTTL(emailVerificationDto.getEmail(), 30 * 60); // 30분
+                emailService.deleteVerificationCode(emailVerificationDto.getEmail());
+                emailService.saveCompletionCode(emailVerificationDto.getEmail());
                 return ResponseEntity.ok().build();
             } else {
-                emailService.deleteVerificationCode(emailVerificationDto.getEmail());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증 코드가 일치하지 않습니다. 인증 코드를 재요청해주세요.").build());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증 코드가 일치하지 않습니다.").build());
             }
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
@@ -192,5 +192,14 @@ public class UserServiceController {
         Map<String, String> userInfo = kakaoLoginService.getSocialUserInfo(accessToken);
 
         return "redirect:/social-login-success?email=" + userInfo.get("email");
+    }
+
+    @GetMapping("/authentication-failure")
+    public ResponseEntity<ResponseDto> handleAuthenticationFailure(AuthenticationException e) {
+        ResponseDto responseDto = ResponseDto.builder()
+                .error(e.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
     }
 }

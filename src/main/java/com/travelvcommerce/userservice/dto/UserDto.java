@@ -73,7 +73,6 @@ public class UserDto {
 
     @Data
     public static class UserUpdateRequestDto{
-        private String email;
         private String nickname;
         private LocalDate birthdate;
     }
@@ -105,7 +104,22 @@ public class UserDto {
     }
 
     @Data
+    public static class UserFindPasswordResponseDto{
+        private LocalDateTime updatedAt;
+        public String getFormattedUpdatedAt() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            return updatedAt.format(formatter);
+        }
+    }
+
+    @Data
     public static class UserDeleteRequestDto{
+        private String password;
+    }
+
+    @Data
+    public static class UserFindPasswordRequestDto{
+        private String email;
         private String password;
     }
 }

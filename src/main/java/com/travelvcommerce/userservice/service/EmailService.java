@@ -14,9 +14,13 @@ public interface EmailService {
 
     boolean checkVerificationCode(String email, String code);
 
-    void extendTTL(String email, int seconds);
-
     void deleteVerificationCode(String email);
 
-    boolean isEmptyVerificationCode(String email);
+    void deleteCompletionCode(String email);
+
+    void saveCompletionCode(String email);
+
+    boolean isExistVerificationCode(String email);
+
+    boolean isExistCompletionCode(String email);
 }

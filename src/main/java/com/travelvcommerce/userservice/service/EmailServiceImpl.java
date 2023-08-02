@@ -50,35 +50,41 @@ public class EmailServiceImpl implements EmailService {
     //5분 후 만료, email을 key로 하여 code를 value로 저장
     @Override
     public void saveVerificationCode(String email, String code) {
-        redisTemplate.opsForValue().set(email, code);
+        redisTemplate.opsForValue().set("verificationCode:"+email, code);
         redisTemplate.expire(email, 60 * 5, java.util.concurrent.TimeUnit.SECONDS);
     }
-
     @Override
     public boolean checkVerificationCode(String email, String code) {
-        String verificationCode = redisTemplate.opsForValue().get(email);
+        String verificationCode = redisTemplate.opsForValue().get("verificationCode:"+email);
         boolean result = code.equals(verificationCode);
 
-        // 인증 코드가 일치하지 않을 경우, 해당 이메일에 대한 Redis 항목 삭제
-        if (!result) {
-            redisTemplate.delete(email);
-        }
         return result;
     }
 
     @Override
-    public void extendTTL(String email, int seconds) {
-        redisTemplate.expire(email, seconds, java.util.concurrent.TimeUnit.SECONDS);
-    }
-
-    @Override
     public void deleteVerificationCode(String email) {
-        redisTemplate.delete(email);
+        redisTemplate.delete("verificationCode:"+email);
     }
 
     @Override
-    public boolean isEmptyVerificationCode(String email) {
-        String code = redisTemplate.opsForValue().get(email);
-        return code == null || code.isEmpty();
+    public boolean isExistVerificationCode(String email) {
+        String code = redisTemplate.opsForValue().get("verificationCode:"+email);
+        return code != null && !code.isEmpty();
+    }
+
+    @Override
+    public void saveCompletionCode(String email){
+        redisTemplate.opsForValue().set("completionCode:"+email, "true");
+        redisTemplate.expire(email, 60 * 10, java.util.concurrent.TimeUnit.SECONDS);
+    }
+    @Override
+    public void deleteCompletionCode(String email){
+        redisTemplate.delete("completionCode:"+email);
+    }
+
+    @Override
+    public boolean isExistCompletionCode(String email){
+        String code = redisTemplate.opsForValue().get("completionCode:"+email);
+        return code != null && !code.isEmpty();
     }
 }

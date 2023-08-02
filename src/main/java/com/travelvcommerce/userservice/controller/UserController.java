@@ -19,14 +19,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 
 @RestController
 @RequestMapping("/user-service/users")
 @RequiredArgsConstructor
 public class UserController {
+    private final String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    private final String passwordRegex = "^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,16}$";
 
+    private final String nicknameRegex = "^[가-힣A-Za-z0-9]{1,10}$";
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
@@ -37,18 +39,26 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
         try {
-
-
-            if(emailService.isEmptyVerificationCode(registerRequestDto.getEmail())){
+            if(!emailService.isExistCompletionCode(registerRequestDto.getEmail())){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
             }
 
             if(userRepository.existsByEmail(registerRequestDto.getEmail())) {
-                throw new RuntimeException("이미 사용 중인 이메일입니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 사용 중인 이메일입니다.").build());
+            }
+
+            String password = registerRequestDto.getPassword();
+            if(!password.matches(passwordRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8~16자리의 영문, 숫자, 특수문자 조합이어야 합니다.").build());
+            }
+
+            String nickname = registerRequestDto.getNickname();
+            if(!nickname.matches(nicknameRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("닉네임은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
             }
 
             Map<String, String> userRegisterResponse = userService.registerUser(registerRequestDto);
-            emailService.deleteVerificationCode(registerRequestDto.getEmail());
+            emailService.deleteCompletionCode(registerRequestDto.getEmail());
 
             ResponseDto responseDto = ResponseDto.builder().payload(userRegisterResponse).build();
 
@@ -80,6 +90,12 @@ public class UserController {
 
             if (!userEmail.equals(tokenUserEmail)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+
+
+            String nickname = userUpdateRequestDto.getNickname();
+            if(!nickname.matches(nicknameRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("닉네임은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
             }
 
             Map<String, String> userUpdateResponse = userService.updateUser(userId, userUpdateRequestDto);
@@ -141,6 +157,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> login(@RequestBody UserDto.UserLoginRequestDto userLoginRequestDto) {
         try {
+            if (!userLoginRequestDto.getEmail().matches(emailRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("올바른 이메일 형식이 아닙니다.").build());
+            }
+
             Map<String, String> loginResponse = userService.login(userLoginRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder()
@@ -164,21 +184,29 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/password")
+    @PutMapping("/{userId}/password/update")
     public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
                                                       @PathVariable String userId,
                                                       @RequestBody UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto){
         try {
-            if(emailService.isEmptyVerificationCode(userUpdatePasswordRequestDto.getEmail())){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
-            }
-
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
             if (!jwtTokenProvider.validateToken(bearerToken)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
+            String email = userUpdatePasswordRequestDto.getEmail();
+            if(!emailService.isExistCompletionCode(email)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
+            }
+
+            String password = userUpdatePasswordRequestDto.getPassword();
+            if(!password.matches(passwordRegex)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8자 이상 16자 이하의 영문, 숫자, 특수문자를 포함해야 합니다.").build());
+            }
+
             Map<String, String> updateResponse = userService.updatePassword(userId, userUpdatePasswordRequestDto.getPassword());
+            emailService.deleteCompletionCode(email);
+
             ResponseDto responseDto = ResponseDto.builder().payload(updateResponse).build();
             return ResponseEntity.ok().body(responseDto);
         } catch (RuntimeException e) {
@@ -190,7 +218,35 @@ public class UserController {
         }
     }
 
-    //getUserInfo (Request with Json, Response with Json, use Dto)
+    @PutMapping("/password/find")
+    public ResponseEntity<ResponseDto> findPassword(@RequestBody UserDto.UserFindPasswordRequestDto userFindPasswordRequestDto){
+        try {
+
+            String email = userFindPasswordRequestDto.getEmail();
+
+            if(!emailService.isExistCompletionCode(email)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
+            }
+
+            String password = userFindPasswordRequestDto.getPassword();
+            if(!password.matches(passwordRegex)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8자 이상 16자 이하의 영문, 숫자, 특수문자를 포함해야 합니다.").build());
+            }
+
+            Map<String, String> updateResponse = userService.findPassword(email, userFindPasswordRequestDto.getPassword());
+            emailService.deleteCompletionCode(email);
+
+            ResponseDto responseDto = ResponseDto.builder().payload(updateResponse).build();
+            return ResponseEntity.ok().body(responseDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto> getUserInfo(@RequestHeader("Authorization") String accessToken, @PathVariable String userId) {
         try {
@@ -201,7 +257,6 @@ public class UserController {
             }
 
             String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
-            String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
