@@ -1,26 +1,5 @@
 import { useState } from "react";
-import {
-  CheckBoxInput,
-  FullIcon,
-  InfoInputSection,
-  InfoTagBox,
-  InfoTitleBox,
-  NormalSpan,
-  Shadow,
-  SmallTitle,
-  TagCheckSection,
-  TagItemBox,
-  TagScrollBox,
-  TagTitle,
-  TagWrapper,
-  ThumbnailImage,
-  TitleInput,
-  TitleThumbnailWrapper,
-  TitleWrapper,
-  VideoThumbnailSection,
-  VideoThumbnailUploadButton,
-  VideoThumbnailUploadInput,
-} from "../Home/UploadStyle";
+import * as I from "../Home/UploadStyle";
 import Plus from "../../assets/images/plus.svg";
 import PropTypes from "prop-types";
 
@@ -53,75 +32,75 @@ const Vinfo = ({
   };
 
   return (
-    <InfoInputSection>
+    <I.InfoInputSection>
       {/* {step.second && <Shadow>STEP 2</Shadow>} */}
-      <InfoTitleBox>
-        <TitleWrapper>
-          <SmallTitle>제목</SmallTitle>
-          <TitleInput
+      <I.InfoTitleBox>
+        <I.TitleWrapper>
+          <I.SmallTitle>제목</I.SmallTitle>
+          <I.TitleInput
             type="text"
             placeholder="제목을 입력해주세요."
             onChange={(e) => setVideoName(e.target.value)}
           />
-        </TitleWrapper>
-        <TitleThumbnailWrapper>
-          <SmallTitle>썸네일</SmallTitle>
-          <VideoThumbnailSection>
-            <VideoThumbnailUploadInput
+        </I.TitleWrapper>
+        <I.TitleThumbnailWrapper>
+          <I.SmallTitle>썸네일</I.SmallTitle>
+          <I.VideoThumbnailSection>
+            <I.VideoThumbnailUploadInput
               type="file"
               accept="image/*"
               id="thumbnail-input"
               onChange={handleThumbnailFile}
             />
-            <VideoThumbnailUploadButton htmlFor="thumbnail-input" thumbnailfile={thumbnailFile}>
-              <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
-            </VideoThumbnailUploadButton>
+            <I.VideoThumbnailUploadButton htmlFor="thumbnail-input" thumbnailfile={thumbnailFile}>
+              <I.FullIcon src={Plus} alt="plus-icon" loading="lazy" />
+            </I.VideoThumbnailUploadButton>
             {thumbnailPreview && (
-              <ThumbnailImage src={thumbnailPreview} alt="thumbnail-image" loading="lazy" />
+              <I.ThumbnailImage src={thumbnailPreview} alt="thumbnail-image" loading="lazy" />
             )}
-          </VideoThumbnailSection>
-        </TitleThumbnailWrapper>
-      </InfoTitleBox>
-      <InfoTagBox>
-        <SmallTitle>태그</SmallTitle>
-        <TagWrapper>
-          <TagCheckSection>
-            <TagTitle>지역 태그</TagTitle>
-            <TagScrollBox>
+          </I.VideoThumbnailSection>
+        </I.TitleThumbnailWrapper>
+      </I.InfoTitleBox>
+      <I.InfoTagBox>
+        <I.SmallTitle>태그</I.SmallTitle>
+        <I.TagWrapper>
+          <I.TagCheckSection>
+            <I.TagTitle>지역 태그</I.TagTitle>
+            <I.TagScrollBox>
               {regionTag.map((region) => (
-                <TagItemBox key={region.tagId}>
-                  <NormalSpan>{region.content}</NormalSpan>
-                  <CheckBoxInput
+                <I.TagItemBox key={region.tagId}>
+                  <I.NormalSpan>{region.content}</I.NormalSpan>
+                  <I.CheckBoxInput
                     type="checkbox"
                     id="checkbox"
                     onChange={() => {
                       setTagIdList([...tagIdList, region.tagId]);
                     }}
                   />
-                </TagItemBox>
+                </I.TagItemBox>
               ))}
-            </TagScrollBox>
-          </TagCheckSection>
-          <TagCheckSection>
-            <TagTitle>테마 태그</TagTitle>
-            <TagScrollBox>
+            </I.TagScrollBox>
+          </I.TagCheckSection>
+          <I.TagCheckSection>
+            <I.TagTitle>테마 태그</I.TagTitle>
+            <I.TagScrollBox>
               {themeTag.map((theme) => (
-                <TagItemBox key={theme.tagId}>
-                  <NormalSpan>{theme.content}</NormalSpan>
-                  <CheckBoxInput
+                <I.TagItemBox key={theme.tagId}>
+                  <I.NormalSpan>{theme.content}</I.NormalSpan>
+                  <I.CheckBoxInput
                     type="checkbox"
                     id="checkbox"
                     onChange={() => {
                       setTagIdList([...tagIdList, theme.tagId]);
                     }}
                   />
-                </TagItemBox>
+                </I.TagItemBox>
               ))}
-            </TagScrollBox>
-          </TagCheckSection>
-        </TagWrapper>
-      </InfoTagBox>
-    </InfoInputSection>
+            </I.TagScrollBox>
+          </I.TagCheckSection>
+        </I.TagWrapper>
+      </I.InfoTagBox>
+    </I.InfoInputSection>
   );
 };
 
