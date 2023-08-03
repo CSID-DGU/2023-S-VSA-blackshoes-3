@@ -47,6 +47,24 @@ export const TitleBetweenBox = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+`;
+
+export const MiddleSpan = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: bold;
+  color: ${(props) => props.theme.secondBlack};
+`;
+
+export const ExtendSpan = styled.span`
+  font-size: 12px;
+  font-weight: bold;
+  color: ${(props) => props.theme.secondBlack};
+  cursor: pointer;
 `;
 
 export const SpanTitle = styled.h1`

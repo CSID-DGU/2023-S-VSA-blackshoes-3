@@ -12,6 +12,9 @@ import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
 import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 
 const Vupload = ({
   userId,
@@ -23,7 +26,16 @@ const Vupload = ({
   setVideoFile,
   preview,
   setPreview,
+  preview2,
 }) => {
+  // Constant----------------------------------------------------
+  const baseUrl = preview2;
+  const qualities = ["1080p", "720p", "480p"];
+
+  // State-------------------------------------------------------
+  const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
+  const videoRef = useRef(null);
+
   // Function----------------------------------------------------
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
@@ -40,6 +52,32 @@ const Vupload = ({
     }
   };
 
+  // ComponentDidMount-------------------------------------------
+  useEffect(() => {
+    // video.js 옵션 설정
+    const options = {
+      techOrder: ["html5"],
+      controls: true,
+      autoplay: true,
+      sources: [
+        {
+          src: `${baseUrl}/${selectedQuality}.m3u8`,
+          type: "application/x-mpegURL",
+        },
+      ],
+    };
+
+    // video.js 생성 및 초기화
+    const player = videojs(videoRef.current, options);
+
+    // video.js 소멸
+    return () => {
+      if (player) {
+        player.dispose();
+      }
+    };
+  }, [baseUrl]);
+
   return (
     <>
       <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
@@ -47,10 +85,25 @@ const Vupload = ({
         <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
           <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </VideoUploadButton>
-        {preview && (
+        {preview && !preview2 ? (
           <VideoPreview controls>
-            <source src={preview} type="video/m3u8" style={{ position: "relative" }} />
+            <source src={preview} type="video/mp4" style={{ position: "relative" }} />
           </VideoPreview>
+        ) : preview2 ? (
+          <>
+            <VideoPreview
+              ref={videoRef}
+              className="video-js vjs-default-skin"
+              style={{ position: "relative" }}
+            />
+            {/* <source
+                src={`${baseUrl}/${selectedQuality}.m3u8`}
+                type="application/x-mpegURL"
+              /> */}
+            {/* </VideoPreview> */}
+          </>
+        ) : (
+          ""
         )}
         {loading && (
           <>
@@ -91,4 +144,5 @@ Vupload.propTypes = {
   setVideoFile: PropTypes.func,
   preview: PropTypes.string,
   setPreview: PropTypes.func,
+  preview2: PropTypes.string,
 };
