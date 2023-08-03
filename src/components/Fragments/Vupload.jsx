@@ -1,13 +1,4 @@
-import {
-  CheckIcon,
-  FullIcon,
-  SpinnerBox,
-  UploadedState,
-  VideoInput,
-  VideoInputSection,
-  VideoPreview,
-  VideoUploadButton,
-} from "../Home/UploadStyle";
+import * as U from "../Home/UploadStyle";
 import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
@@ -35,13 +26,8 @@ const Vupload = ({
   // State-------------------------------------------------------
   const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
   const videoRef = useRef(null);
-  const playerRef = useRef(null);
 
   // Function----------------------------------------------------
-  const handleQualityChange = (e) => {
-    setSelectedQuality(e.target.value);
-  };
-
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,73 +42,81 @@ const Vupload = ({
       alert("파일을 등록하는데 실패했습니다.");
     }
   };
-  console.log(`${baseUrl}/${selectedQuality}.m3u8`);
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
-    const player = playerRef.current;
+    if (videoRef.current !== null) {
+      // video.js 옵션 설정
+      const options = {
+        techOrder: ["html5"],
+        controls: true,
+        autoplay: true,
+        sources: [
+          {
+            src: `${baseUrl}/${selectedQuality}.m3u8`,
+            type: "application/x-mpegURL",
+          },
+        ],
+      };
 
-    return () => {
-      if (player && !player.isDisposed()) {
-        player.dispose();
-        playerRef.current = null;
-      }
-    };
-  }, [playerRef]);
+      // video.js 생성 및 초기화
+      const player = videojs(videoRef.current, options);
+      // video.js 소멸
+      return () => {
+        if (player) {
+          player.dispose();
+        }
+      };
+    }
+  }, [baseUrl]);
 
   return (
     <>
-      <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
-      <VideoInputSection videofile={videoFile}>
-        <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
-          <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
-        </VideoUploadButton>
-        {preview && !preview2 ? (
-          <VideoPreview controls>
+      <U.VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
+      <U.VideoInputSection videofile={videoFile}>
+        <U.VideoUploadButton htmlFor="video-input" videofile={videoFile}>
+          <U.FullIcon src={Plus} alt="plus-icon" loading="lazy" />
+        </U.VideoUploadButton>
+        {preview !== null && preview2 === null ? (
+          <U.VideoPreview controls ref={videoRef}>
             <source src={preview} type="video/mp4" style={{ position: "relative" }} />
-          </VideoPreview>
-        ) : preview2 ? (
-          <>
-            {/* <select id="qualitySelect" value={selectedQuality} onChange={handleQualityChange}>
-              {qualities.map((quality) => (
-                <option key={quality} value={quality}>
-                  {quality}
-                </option>
-              ))}
-            </select> */}
-            <VideoPreview controls>
-              <source
-                src={`${baseUrl}/${selectedQuality}.m3u8`}
-                type="application/x-mpegURL"
-                style={{ position: "relative" }}
-              />
-            </VideoPreview>
-          </>
+          </U.VideoPreview>
+        ) : preview2 !== null ? (
+          <U.VideoPreview
+            ref={videoRef}
+            controls
+            className="video-js vjs-default-skin"
+            style={{ position: "relative" }}
+          >
+            <source src={`${baseUrl}/${selectedQuality}.m3u8`} type="application/x-mpegURL" />
+          </U.VideoPreview>
         ) : (
           ""
         )}
+
         {loading && (
           <>
-            <UploadedState>
+            <U.UploadedState>
               {percentage === 100
                 ? "잠시만 기다려주세요"
                 : percentage === 0
                 ? "영상이 업로드 중입니다"
                 : percentage > 0 && `영상이 인코딩 중입니다, ${percentage}% 완료`}
-            </UploadedState>
-            <SpinnerBox>
+            </U.UploadedState>
+            <U.SpinnerBox>
               <HashLoader color="#1DAE86" />
-            </SpinnerBox>
+            </U.SpinnerBox>
           </>
         )}
         {step.second && (
           <>
-            <UploadedState>영상 업로드 완료</UploadedState>
-            <SpinnerBox>
-              <CheckIcon icon={faSquareCheck} />
-            </SpinnerBox>
+            <U.UploadedState>영상 업로드 완료</U.UploadedState>
+            <U.SpinnerBox>
+              <U.CheckIcon icon={faSquareCheck} />
+            </U.SpinnerBox>
           </>
         )}
-      </VideoInputSection>
+      </U.VideoInputSection>
     </>
   );
 };
