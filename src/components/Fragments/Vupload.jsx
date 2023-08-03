@@ -35,13 +35,8 @@ const Vupload = ({
   // State-------------------------------------------------------
   const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
   const videoRef = useRef(null);
-  const playerRef = useRef(null);
 
   // Function----------------------------------------------------
-  const handleQualityChange = (e) => {
-    setSelectedQuality(e.target.value);
-  };
-
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,18 +51,32 @@ const Vupload = ({
       alert("파일을 등록하는데 실패했습니다.");
     }
   };
-  console.log(`${baseUrl}/${selectedQuality}.m3u8`);
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
-    const player = playerRef.current;
+    // video.js 옵션 설정
+    const options = {
+      techOrder: ["html5"],
+      controls: true,
+      autoplay: true,
+      sources: [
+        {
+          src: `${baseUrl}/${selectedQuality}.m3u8`,
+          type: "application/x-mpegURL",
+        },
+      ],
+    };
 
+    // video.js 생성 및 초기화
+    const player = videojs(videoRef.current, options);
+
+    // video.js 소멸
     return () => {
-      if (player && !player.isDisposed()) {
+      if (player) {
         player.dispose();
-        playerRef.current = null;
       }
     };
-  }, [playerRef]);
+  }, [baseUrl]);
 
   return (
     <>
@@ -82,20 +91,16 @@ const Vupload = ({
           </VideoPreview>
         ) : preview2 ? (
           <>
-            {/* <select id="qualitySelect" value={selectedQuality} onChange={handleQualityChange}>
-              {qualities.map((quality) => (
-                <option key={quality} value={quality}>
-                  {quality}
-                </option>
-              ))}
-            </select> */}
-            <VideoPreview controls>
-              <source
+            <VideoPreview
+              ref={videoRef}
+              className="video-js vjs-default-skin"
+              style={{ position: "relative" }}
+            />
+            {/* <source
                 src={`${baseUrl}/${selectedQuality}.m3u8`}
                 type="application/x-mpegURL"
-                style={{ position: "relative" }}
-              />
-            </VideoPreview>
+              /> */}
+            {/* </VideoPreview> */}
           </>
         ) : (
           ""

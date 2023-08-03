@@ -13,7 +13,6 @@ import {
   VideoForm,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
-
 import axios from "axios";
 import Vupload from "../components/Fragments/Vupload";
 import { ColorButton } from "../components/Sign/SignStyle";
@@ -44,7 +43,6 @@ const Upload = () => {
   const [preview, setPreview] = useState(null);
   const [preview2, setPreview2] = useState(null);
   const [videoExpireState, setVideoExpireState] = useState("");
-
   //
   const [videoName, setVideoName] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState(null);
@@ -55,6 +53,7 @@ const Upload = () => {
   const [adContent, setAdContent] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  //
   const [isSocketOpen, setIsSocketOpen] = useState(false);
   const [percentage, setPercentage] = useState(0);
 
@@ -87,7 +86,6 @@ const Upload = () => {
                 })
                 .catch((err) => {
                   console.log(err);
-                  return;
                 });
             }
           }
