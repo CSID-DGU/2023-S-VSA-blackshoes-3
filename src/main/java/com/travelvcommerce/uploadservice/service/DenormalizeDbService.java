@@ -1,5 +1,6 @@
 package com.travelvcommerce.uploadservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.travelvcommerce.uploadservice.vo.UpdatedField;
 
 public interface DenormalizeDbService {

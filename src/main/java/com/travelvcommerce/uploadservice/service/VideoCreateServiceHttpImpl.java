@@ -29,10 +29,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-@Primary
 @Service
 @Slf4j
-public class VideoCreateServiceImpl implements VideoCreateService {
+public class VideoCreateServiceHttpImpl implements VideoCreateService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired

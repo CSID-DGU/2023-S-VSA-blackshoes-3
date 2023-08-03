@@ -1,5 +1,7 @@
 package com.travelvcommerce.uploadservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 import com.travelvcommerce.uploadservice.dto.DenormalizedAdDto;
 import com.travelvcommerce.uploadservice.dto.DenormalizedTagDto;
@@ -10,12 +12,11 @@ import com.travelvcommerce.uploadservice.vo.UpdatedField;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 
 import java.util.Base64;
 import java.util.List;
@@ -23,14 +24,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
-    @Value("${api.content-slave-service.url}")
-    private String CONTENT_SLAVE_SERVICE_URL;
-
+@Primary
+public class DenormalizeDbServiceKafkaImpl implements DenormalizeDbService {
     @Autowired
     private VideoRepository videoRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
     public DenormalizedVideoDto denormalizeVideo(String videoId) {
         try {
@@ -75,7 +78,6 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     }
 
     public DenormalizedVideoDto denormalizeVideo(String videoId, UpdatedField updatedField) {
-
         Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("video not found"));
         DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
                 .videoId(videoId)
@@ -131,63 +133,41 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
     @Transactional
     @Override
     public void postDenormalizeData(String videoId) {
+        String topic = "video-create";
 
         DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(videoId);
-
+        String videoJsonString;
         try {
-            WebClient webClient = WebClient.builder()
-                    .baseUrl(CONTENT_SLAVE_SERVICE_URL)
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .build();
-            webClient.post()
-                    .uri("/content-slave-service/create")
-                    .bodyValue(denormalizedVideoDto)
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        } catch (Exception e) {
-            log.error("post denormalized data error", e);
-            throw new RuntimeException("post denormalized data error");
+            videoJsonString = objectMapper.writeValueAsString(denormalizedVideoDto);
+        } catch (JsonProcessingException e) {
+            log.error("Post denormalize data error", e);
+            throw new RuntimeException("Post denormalize data error");
         }
+
+        kafkaProducer.send(topic, videoJsonString);
     }
 
     @Transactional
     @Override
     public void putDenormalizeData(String videoId, UpdatedField updatedField) {
-        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(videoId, updatedField);
+        String topic = "video-update";
 
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(videoId, updatedField);
+        String videoJsonString;
         try {
-            WebClient webClient = WebClient.builder()
-                    .baseUrl(CONTENT_SLAVE_SERVICE_URL)
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .build();
-            webClient.put()
-                    .uri("/content-slave-service/update/" + videoId)
-                    .bodyValue(denormalizedVideoDto)
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        } catch (Exception e) {
-            log.error("putDenormalizeData error", e);
-            throw new RuntimeException("putDenormalizeData error");
+            videoJsonString = objectMapper.writeValueAsString(denormalizedVideoDto);
+        } catch (JsonProcessingException e) {
+            log.error("Post denormalize data error", e);
+            throw new RuntimeException("Post denormalize data error");
         }
+
+        kafkaProducer.send(topic, videoJsonString);
     }
 
     @Override
     public void deleteDenormalizeData(String videoId) {
-        try {
-            WebClient webClient = WebClient.builder()
-                    .baseUrl(CONTENT_SLAVE_SERVICE_URL)
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .build();
-            webClient.delete()
-                    .uri("/content-slave-service/delete/" + videoId)
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        } catch (Exception e) {
-            log.error("delete denormalized Data error", e);
-            throw new RuntimeException("delete denormalized Data error");
-        }
+        String topic = "video-delete";
+
+        kafkaProducer.send(topic, videoId);
     }
 }
