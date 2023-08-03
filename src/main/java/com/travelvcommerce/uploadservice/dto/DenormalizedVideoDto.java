@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class DenormalizedVideoDto implements Serializable {
     private String videoId;
     private String videoName;
@@ -22,7 +22,4 @@ public class DenormalizedVideoDto implements Serializable {
     private String updatedAt;
     private List<DenormalizedTagDto> videoTags;
     private List<DenormalizedAdDto> videoAds;
-    private int likes;
-    private int views;
-    private int adClicks;
 }

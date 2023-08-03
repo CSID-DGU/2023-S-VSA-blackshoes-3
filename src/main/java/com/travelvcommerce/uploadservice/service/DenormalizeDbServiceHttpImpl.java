@@ -65,9 +65,6 @@ public class DenormalizeDbServiceHttpImpl implements DenormalizeDbService {
                     .updatedAt(video.getUpdatedAt().toString())
                     .videoTags(videoTags)
                     .videoAds(videoAds)
-                    .likes((int) (Math.random() * 100))
-                    .views((int) (Math.random() * 100))
-                    .adClicks((int) (Math.random() * 100))
                     .build();
 
             return denormalizedVideoDto;
