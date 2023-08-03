@@ -14,6 +14,7 @@ import {
   ContentBox,
   FullIcon,
   LinkBox,
+  MiddleSpan,
   NormalSpan,
   RemoveButton,
   Shadow,
@@ -59,6 +60,8 @@ const Upload = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [videoId, setVideoId] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [preview2, setPreview2] = useState(null);
+  const [videoExpireState, setVideoExpireState] = useState("");
 
   //
   const [videoName, setVideoName] = useState("");
@@ -80,26 +83,38 @@ const Upload = () => {
         .get(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}`)
         .then(async (res) => {
           if (res.status === 200) {
-            if (window.confirm("이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?")) {
+            console.log(res);
+            if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
+              const expiredAt = new Date(res.data.payload.expiredAt);
+              setVideoExpireState(
+                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다.`
+              );
               setVideoId(res.data.payload.videoId);
-              setVideoName(res.data.payload.videoName);
+              setPreview2(res.data.payload.videoCloudfrontUrl);
               setStep({
                 first: false,
                 second: true,
               });
             } else {
-              await axios.delete(
-                `http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
-              );
+              await axios
+                .delete(
+                  `http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
+                )
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((err) => {
+                  console.log(err);
+                  return;
+                });
             }
           }
         });
     } catch (err) {
-      console.log(err);
-      if (err.response.status === 404) {
+      if (err.status === 404) {
         console.log("이전에 작성하던 영상이 없습니다.");
         return;
-      } else if (err.response.status === 500) {
+      } else if (err.status === 500) {
         console.log("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
       }
     }
@@ -133,7 +148,7 @@ const Upload = () => {
                 setLoading(false);
                 setIsSocketOpen(true);
                 alert("영상이 업로드되었습니다.");
-                setPreview(res.data.payload.videoCloudfrontUrl);
+                setPreview2(res.data.payload.videoCloudfrontUrl);
                 setVideoId(res.data.payload.videoId);
                 setStep({
                   ...step,
@@ -235,6 +250,7 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
+            <MiddleSpan>{videoExpireState}</MiddleSpan>
             <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
@@ -250,6 +266,7 @@ const Upload = () => {
             setVideoFile={setVideoFile}
             preview={preview}
             setPreview={setPreview}
+            preview2={preview2}
           />
           <br />
           {/* 영상 정보 등록 컴포넌트 조각 */}
