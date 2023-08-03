@@ -12,7 +12,9 @@ import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 
 const Vupload = ({
   userId,
@@ -32,6 +34,8 @@ const Vupload = ({
 
   // State-------------------------------------------------------
   const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
+  const videoRef = useRef(null);
+  const playerRef = useRef(null);
 
   // Function----------------------------------------------------
   const handleQualityChange = (e) => {
@@ -53,6 +57,18 @@ const Vupload = ({
     }
   };
   console.log(`${baseUrl}/${selectedQuality}.m3u8`);
+  // ComponentDidMount-------------------------------------------
+  useEffect(() => {
+    const player = playerRef.current;
+
+    return () => {
+      if (player && !player.isDisposed()) {
+        player.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [playerRef]);
+
   return (
     <>
       <VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
@@ -66,13 +82,13 @@ const Vupload = ({
           </VideoPreview>
         ) : preview2 ? (
           <>
-            <select id="qualitySelect" value={selectedQuality} onChange={handleQualityChange}>
+            {/* <select id="qualitySelect" value={selectedQuality} onChange={handleQualityChange}>
               {qualities.map((quality) => (
                 <option key={quality} value={quality}>
                   {quality}
                 </option>
               ))}
-            </select>
+            </select> */}
             <VideoPreview controls>
               <source
                 src={`${baseUrl}/${selectedQuality}.m3u8`}
