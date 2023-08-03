@@ -54,7 +54,7 @@ const Vinfo = ({
 
   return (
     <InfoInputSection>
-      {step.second && <Shadow>STEP 2</Shadow>}
+      {/* {step.second && <Shadow>STEP 2</Shadow>} */}
       <InfoTitleBox>
         <TitleWrapper>
           <SmallTitle>제목</SmallTitle>

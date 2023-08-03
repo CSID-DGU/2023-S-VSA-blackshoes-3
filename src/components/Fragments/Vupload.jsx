@@ -12,6 +12,9 @@ import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import Plus from "../../assets/images/plus.svg";
 import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 
 const Vupload = ({
   userId,
@@ -23,8 +26,22 @@ const Vupload = ({
   setVideoFile,
   preview,
   setPreview,
+  preview2,
 }) => {
+  // Constant----------------------------------------------------
+  const baseUrl = preview2;
+  const qualities = ["1080p", "720p", "480p"];
+
+  // State-------------------------------------------------------
+  const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
+  const videoRef = useRef(null);
+  const playerRef = useRef(null);
+
   // Function----------------------------------------------------
+  const handleQualityChange = (e) => {
+    setSelectedQuality(e.target.value);
+  };
+
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -39,6 +56,18 @@ const Vupload = ({
       alert("파일을 등록하는데 실패했습니다.");
     }
   };
+  console.log(`${baseUrl}/${selectedQuality}.m3u8`);
+  // ComponentDidMount-------------------------------------------
+  useEffect(() => {
+    const player = playerRef.current;
+
+    return () => {
+      if (player && !player.isDisposed()) {
+        player.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [playerRef]);
 
   return (
     <>
@@ -47,10 +76,29 @@ const Vupload = ({
         <VideoUploadButton htmlFor="video-input" videofile={videoFile}>
           <FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </VideoUploadButton>
-        {preview && (
+        {preview && !preview2 ? (
           <VideoPreview controls>
-            <source src={preview} type="video/m3u8" style={{ position: "relative" }} />
+            <source src={preview} type="video/mp4" style={{ position: "relative" }} />
           </VideoPreview>
+        ) : preview2 ? (
+          <>
+            {/* <select id="qualitySelect" value={selectedQuality} onChange={handleQualityChange}>
+              {qualities.map((quality) => (
+                <option key={quality} value={quality}>
+                  {quality}
+                </option>
+              ))}
+            </select> */}
+            <VideoPreview controls>
+              <source
+                src={`${baseUrl}/${selectedQuality}.m3u8`}
+                type="application/x-mpegURL"
+                style={{ position: "relative" }}
+              />
+            </VideoPreview>
+          </>
+        ) : (
+          ""
         )}
         {loading && (
           <>
@@ -91,4 +139,5 @@ Vupload.propTypes = {
   setVideoFile: PropTypes.func,
   preview: PropTypes.string,
   setPreview: PropTypes.func,
+  preview2: PropTypes.string,
 };
