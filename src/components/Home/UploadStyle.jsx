@@ -60,6 +60,13 @@ export const MiddleSpan = styled.span`
   color: ${(props) => props.theme.secondBlack};
 `;
 
+export const ExtendSpan = styled.span`
+  font-size: 12px;
+  font-weight: bold;
+  color: ${(props) => props.theme.secondBlack};
+  cursor: pointer;
+`;
+
 export const SpanTitle = styled.h1`
   font-size: 20px;
   font-weight: bold;

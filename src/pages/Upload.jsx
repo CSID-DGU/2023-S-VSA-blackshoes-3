@@ -6,34 +6,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
 import ResNav from "../components/Fragments/ResNav";
 import {
-  AdInput,
-  AdInputSection,
-  AdUploadButton,
-  AdUploadGridBox,
-  AdUploadSection,
-  ContentBox,
-  FullIcon,
-  LinkBox,
+  ExtendSpan,
   MiddleSpan,
-  NormalSpan,
-  RemoveButton,
-  Shadow,
-  SmallImage,
   SpanTitle,
-  TimeBox,
   TitleBetweenBox,
-  TitleLeftBox,
   VideoForm,
   VideoUploadSection,
 } from "../components/Home/UploadStyle";
-import Minus from "../assets/images/minus.svg";
-import PlusButton from "../assets/images/plus-button.svg";
+
 import axios from "axios";
 import Vupload from "../components/Fragments/Vupload";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { ColorButton } from "../components/Sign/SignStyle";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
@@ -87,7 +69,7 @@ const Upload = () => {
             if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
               const expiredAt = new Date(res.data.payload.expiredAt);
               setVideoExpireState(
-                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다.`
+                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
               );
               setVideoId(res.data.payload.videoId);
               setPreview2(res.data.payload.videoCloudfrontUrl);
@@ -204,6 +186,26 @@ const Upload = () => {
     }
   };
 
+  const handleVideoExtend = async () => {
+    if (window.confirm("영상 만료 시간이 지금으로부터 30분 연장됩니다.")) {
+      try {
+        await axios
+          .put(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${videoId}`)
+          .then((res) => {
+            const expiredAt = new Date(res.data.payload.expiredAt);
+            setVideoExpireState(
+              `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+            );
+          });
+      } catch (err) {
+        console.log(err);
+        alert("연장에 실패했습니다.");
+      }
+    } else {
+      return;
+    }
+  };
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(1);
@@ -250,7 +252,9 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <MiddleSpan>{videoExpireState}</MiddleSpan>
+            <MiddleSpan>
+              {videoExpireState} <ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</ExtendSpan>
+            </MiddleSpan>
             <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
