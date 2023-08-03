@@ -51,6 +51,7 @@ export const TitleBetweenBox = styled.section`
 `;
 
 export const MiddleSpan = styled.span`
+  display: ${(props) => (props.preview2 === null ? "none" : "block")};
   position: absolute;
   top: 50%;
   left: 50%;

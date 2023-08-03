@@ -5,14 +5,7 @@ import { GridWrapper } from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
 import ResNav from "../components/Fragments/ResNav";
-import {
-  ExtendSpan,
-  MiddleSpan,
-  SpanTitle,
-  TitleBetweenBox,
-  VideoForm,
-  VideoUploadSection,
-} from "../components/Home/UploadStyle";
+import * as V from "../components/Home/UploadStyle";
 import axios from "axios";
 import Vupload from "../components/Fragments/Vupload";
 import { ColorButton } from "../components/Sign/SignStyle";
@@ -107,7 +100,7 @@ const Upload = () => {
 
   const handleNextStep = async (e) => {
     e.preventDefault();
-    if (!videoFile) {
+    if (!videoFile && !preview2) {
       alert("동영상을 첨부해주세요");
     } else if (!step.second) {
       if (window.confirm("동영상을 등록하고 다음 단계로 넘어가시겠습니까?")) {
@@ -179,13 +172,15 @@ const Upload = () => {
             });
         } catch (err) {
           console.log(err);
+          alert(`${err.response.data.error}`);
+          return;
         }
       }
     }
   };
 
   const handleVideoExtend = async () => {
-    if (window.confirm("영상 만료 시간이 지금으로부터 30분 연장됩니다.")) {
+    if (window.confirm("영상이 지금으로부터 30분 후 만료됩니다.")) {
       try {
         await axios
           .put(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${videoId}`)
@@ -245,18 +240,19 @@ const Upload = () => {
     <GridWrapper>
       <Header />
       <Nav />
-      <VideoForm encType="multipart/form-data">
+      <V.VideoForm encType="multipart/form-data">
         <ResNav userId={userId} />
-        <VideoUploadSection>
-          <TitleBetweenBox>
-            <SpanTitle>영상 등록</SpanTitle>
-            <MiddleSpan>
-              {videoExpireState} <ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</ExtendSpan>
-            </MiddleSpan>
+        <V.VideoUploadSection>
+          <V.TitleBetweenBox>
+            <V.SpanTitle>영상 등록</V.SpanTitle>
+            <V.MiddleSpan preview2={preview2}>
+              {videoExpireState}{" "}
+              <V.ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</V.ExtendSpan>
+            </V.MiddleSpan>
             <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
-          </TitleBetweenBox>
+          </V.TitleBetweenBox>
           {/* 영상 업로드 컴포넌트 조각 */}
           <Vupload
             userId={userId}
@@ -282,7 +278,7 @@ const Upload = () => {
             tagIdList={tagIdList}
             setTagIdList={setTagIdList}
           />
-        </VideoUploadSection>
+        </V.VideoUploadSection>
         {/* 영상 광고 등록 컴포넌트 조각 */}
         <Vad
           step={step}
@@ -291,7 +287,7 @@ const Upload = () => {
           setAdContent={setAdContent}
           setAdUrl={setAdUrl}
         />
-      </VideoForm>
+      </V.VideoForm>
     </GridWrapper>
   );
 };
