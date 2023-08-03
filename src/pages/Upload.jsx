@@ -107,7 +107,7 @@ const Upload = () => {
 
   const handleNextStep = async (e) => {
     e.preventDefault();
-    if (!videoFile) {
+    if (!videoFile && !preview2) {
       alert("동영상을 첨부해주세요");
     } else if (!step.second) {
       if (window.confirm("동영상을 등록하고 다음 단계로 넘어가시겠습니까?")) {
@@ -179,13 +179,15 @@ const Upload = () => {
             });
         } catch (err) {
           console.log(err);
+          alert(`${err.response.data.error}`);
+          return;
         }
       }
     }
   };
 
   const handleVideoExtend = async () => {
-    if (window.confirm("영상 만료 시간이 지금으로부터 30분 연장됩니다.")) {
+    if (window.confirm("영상이 지금으로부터 30분 후 만료됩니다.")) {
       try {
         await axios
           .put(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${videoId}`)
@@ -250,7 +252,7 @@ const Upload = () => {
         <VideoUploadSection>
           <TitleBetweenBox>
             <SpanTitle>영상 등록</SpanTitle>
-            <MiddleSpan>
+            <MiddleSpan preview2={preview2}>
               {videoExpireState} <ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</ExtendSpan>
             </MiddleSpan>
             <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
