@@ -5,6 +5,7 @@ export const LeftMiddleBox = styled.div`
   min-width: 70%;
   height: 100%;
   display: flex;
+  gap: 20px;
   transition: all 0.3s;
   @media all and (max-width: 1480px) {
     width: 100%;
@@ -25,7 +26,7 @@ export const LeftBox = styled.div`
   flex-direction: column;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
-  padding: 30px;
+  padding: 20px;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
     width: 100%;
@@ -37,7 +38,10 @@ export const LeftBox = styled.div`
 export const MiddelBox = styled.div`
   width: 60%;
   height: 100%;
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
   border: 1px solid green;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
@@ -55,18 +59,20 @@ export const RightBox = styled.div`
   gap: 15px;
   background-color: ${(props) => props.theme.bgColor};
   border-radius: 24px;
-  padding: 30px;
+  padding: 20px;
   overflow-y: auto;
   @media all and (max-width: 1480px) {
     width: 100%;
     min-height: 50%;
     overflow-y: visible;
   }
+  @media all and (max-width: 1280px) {
+  }
   @media all and (max-width: 900px) {
   }
 `;
 
-// Video Modifiy-----------------------------------------------
+// Video List-----------------------------------------------
 export const VideoListWrapper = styled.section`
   width: 100%;
   height: calc(100% - 50px);
@@ -75,15 +81,23 @@ export const VideoListWrapper = styled.section`
   flex-direction: column;
   gap: 10px;
   overflow-y: auto;
+  padding-right: 10px;
+  @media all and (max-width: 1280px) {
+    align-items: center;
+  }
 `;
 
 export const VideoListBox = styled.section`
   width: 100%;
-  max-width: 400px;
   height: 275px;
   display: flex;
   flex-direction: column;
   padding: 10px;
+  border: ${(props) =>
+    props.videoid === props.clickedid ? `3px solid ${props.theme.secondBlack}` : ``};
+  @media all and (max-width: 1280px) {
+    max-width: 600px;
+  }
 `;
 
 export const VideoListThumbnail = styled.img`
@@ -136,8 +150,30 @@ export const LogoImage = styled.img`
 `;
 
 export const Select = styled.select`
-  width: 100px;
+  width: 90px;
   height: 30px;
   border: 1px solid ${(props) => props.theme.middleGray};
   border-radius: 5px;
+  color: ${(props) => props.theme.secondBlack};
+  padding: 0 10px;
+`;
+
+// Video Modify-----------------------------------------------
+export const VideoModify = styled.video`
+  width: 100%;
+  min-width: 350px;
+  height: 45%;
+  max-height: 300px;
+  object-fit: cover;
+  border: 1px solid ${(props) => props.theme.middleGray};
+`;
+
+export const InfoModify = styled.section`
+  width: 100%;
+  height: 55%;
+  min-height: 300px;
+  background-color: ${(props) => props.theme.bgColor};
+  border: none;
+  border-radius: 24px;
+  padding: 20px;
 `;
