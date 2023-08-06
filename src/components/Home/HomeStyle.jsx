@@ -187,7 +187,7 @@ export const Body = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 30px;
+  gap: 20px;
   background-color: #f6f7f9;
   padding: 30px;
   overflow-y: auto;
