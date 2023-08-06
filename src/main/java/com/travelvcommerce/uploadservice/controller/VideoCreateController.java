@@ -6,8 +6,7 @@ import com.travelvcommerce.uploadservice.dto.TemporaryVideoDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.service.*;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
-import com.travelvcommerce.uploadservice.service.KafkaVideoProducerService;
-import com.travelvcommerce.uploadservice.service.KafkaProducer;
+import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
 import org.modelmapper.ModelMapper;
@@ -32,7 +31,7 @@ public class VideoCreateController {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private KafkaVideoProducerService kafkaVideoProducerService;
+    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
     @Autowired
     private TemporaryVideoService temporaryVideoService;
 
@@ -92,7 +91,7 @@ public class VideoCreateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoProducerService.postDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.postDenormalizeData(denormalizedVideoDto);
         temporaryVideoService.deleteTemporaryVideo(userId, videoId);
 
         VideoDto.VideoCreateResponseDto videoCreateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoCreateResponseDto.class);

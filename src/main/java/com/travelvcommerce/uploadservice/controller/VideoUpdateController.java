@@ -3,7 +3,7 @@ package com.travelvcommerce.uploadservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.uploadservice.dto.*;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
-import com.travelvcommerce.uploadservice.service.KafkaVideoProducerService;
+import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.service.VideoUpdateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class VideoUpdateController {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private KafkaVideoProducerService kafkaVideoProducerService;
+    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @PutMapping("/videos/{userId}/{videoId}/thumbnail")
     public ResponseEntity<ResponseDto> updateThumbnail(@PathVariable("userId") String userId,
@@ -50,7 +50,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -78,7 +78,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -106,7 +106,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -134,7 +134,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 

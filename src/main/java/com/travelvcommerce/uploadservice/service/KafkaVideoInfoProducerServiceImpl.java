@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @Primary
-public class KafkaVideoProducerServiceImpl implements KafkaVideoProducerService {
+public class KafkaVideoInfoProducerServiceImpl implements KafkaVideoInfoProducerService {
     @Autowired
     private VideoRepository videoRepository;
     @Autowired
