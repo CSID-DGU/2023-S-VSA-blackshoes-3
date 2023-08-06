@@ -1,11 +1,10 @@
 package com.travelvcommerce.uploadservice.service;
 
-import com.travelvcommerce.uploadservice.dto.AdDto;
-import com.travelvcommerce.uploadservice.dto.UploaderDto;
-import com.travelvcommerce.uploadservice.dto.VideoDto;
+import com.travelvcommerce.uploadservice.dto.*;
 import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
+import com.travelvcommerce.uploadservice.vo.UpdatedField;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -52,8 +48,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
     @Override
     @Transactional
-    public VideoDto.VideoUpdateResponseDto updateThumbnail(String userId, String videoId,
-                                                           MultipartFile thumbnail, AwsS3Service awsS3Service) {
+    public DenormalizedVideoDto updateThumbnail(String userId, String videoId,
+                                                MultipartFile thumbnail, AwsS3Service awsS3Service) {
         Video video = getVideo(userId, videoId);
         VideoUrl videoUrl = video.getVideoUrl();
 
@@ -62,14 +58,16 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
         videoUrl.setThumbnailS3Url(s3Thumbnail.getS3Url());
         videoUrl.setThumbnailCloudfrontUrl(s3Thumbnail.getCloudfrontUrl());
 
-        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Thumbnail");
+        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
-        return videoUpdateResponseDto;
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.THUMBNAIL);
+
+        return denormalizedVideoDto;
     }
 
     @Override
     @Transactional
-    public VideoDto.VideoUpdateResponseDto updateTags(String userId, String videoId, List<String> tagIdList) {
+    public DenormalizedVideoDto updateTags(String userId, String videoId, List<String> tagIdList) {
         Video video = getVideo(userId, videoId);
 
         List<VideoTag> videoTagList = video.getVideoTags();
@@ -93,22 +91,28 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                 VideoTag videoTag = new VideoTag();
                 videoTag.setVideo(video);
                 videoTag.setTag(tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found")));
-                videoTagRepository.save(videoTag);
+                video.getVideoTags().add(videoTag);
             });
         } catch (Exception e) {
             log.error("add video tag error", e);
             throw new RuntimeException("add video tag error");
         }
 
-        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Tags");
+        video.setVideoTags(videoTagList);
 
-        return videoUpdateResponseDto;
+        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.TAGS);
+
+        return denormalizedVideoDto;
     }
 
     @Override
     @Transactional
-    public VideoDto.VideoUpdateResponseDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
+    public DenormalizedVideoDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList) {
         Video video = getVideo(userId, videoId);
+
+        List<Ad> adList = video.getAds();
 
         adModifyRequestDtoList.forEach(adModifyRequestDto -> {
             if (adModifyRequestDto.getModifyType().equals("create")) {
@@ -117,6 +121,8 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                     ad.setVideo(video);
                     ad.setAdId(UUID.randomUUID().toString());
                     adRepository.save(ad);
+
+                    adList.add(ad);
                 } catch (Exception e) {
                     log.error("create ad error", e);
                     throw new RuntimeException("create ad error");
@@ -124,12 +130,15 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
             }
             else if (adModifyRequestDto.getModifyType().equals("update")) {
                 Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new NoSuchElementException("ad not found"));
+                adList.remove(ad);
                 try {
                     ad.setAdUrl(adModifyRequestDto.getAdUrl());
                     ad.setAdContent(adModifyRequestDto.getAdContent());
                     ad.setStartTime(adModifyRequestDto.getStartTime());
                     ad.setEndTime(adModifyRequestDto.getEndTime());
                     adRepository.save(ad);
+
+                    adList.add(ad);
                 } catch (Exception e) {
                     log.error("update ad error", e);
                     throw new RuntimeException("update ad error");
@@ -139,6 +148,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                 Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new NoSuchElementException("ad not found"));
                 try {
                     adRepository.delete(ad);
+                    adList.remove(ad);
                 } catch (Exception e) {
                     log.error("delete ad error", e);
                     throw new RuntimeException("delete ad error");
@@ -150,21 +160,27 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
             }
         });
 
-        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "Ads");
+        video.setAds(adList);
 
-        return videoUpdateResponseDto;
+        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.ADS);
+
+        return denormalizedVideoDto;
     }
 
     @Transactional
     @Override
-    public VideoDto.VideoUpdateResponseDto updateVideoName(String userId, String videoId, String videoName) {
+    public DenormalizedVideoDto updateVideoName(String userId, String videoId, String videoName) {
         Video video = getVideo(userId, videoId);
 
         video.setVideoName(videoName);
 
-        VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = updateVideo(video, "VideoName");
+        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
-        return videoUpdateResponseDto;
+        DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.VIDEO_NAME);
+
+        return denormalizedVideoDto;
     }
 
     @Override
@@ -185,14 +201,55 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
         }
     }
 
-    private VideoDto.VideoUpdateResponseDto updateVideo(Video video, String type) {
+    public DenormalizedVideoDto denormalizeVideo(Video video, UpdatedField updatedField) {
+        DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
+                .videoId(video.getVideoId())
+                .updatedAt(video.getUpdatedAt().toString())
+                .build();
+
         try {
-            video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            videoRepository.save(video);
-            return modelMapper.map(video, VideoDto.VideoUpdateResponseDto.class);
-        } catch (Exception e) {
-            log.error("update video error on " + type, e);
-            throw new RuntimeException("update video error on " + type);
+            switch (updatedField) {
+                case ADS:
+                    List<Ad> ads = video.getAds();
+                    denormalizedVideoDto.setVideoAds(ads.stream().map(ad -> {
+                        return modelMapper.map(ad, DenormalizedAdDto.class);
+                    }).collect(Collectors.toList()));
+                    return denormalizedVideoDto;
+                case TAGS:
+                    List<Tag> tags = video.getVideoTags().stream().map(videoTag -> {
+                        return videoTag.getTag();
+                    }).collect(Collectors.toList());
+                    denormalizedVideoDto.setVideoTags(tags.stream().map(tag -> {
+                        return DenormalizedTagDto.builder()
+                                .tagId(tag.getTagId())
+                                .tagName(tag.getContent())
+                                .build();
+                    }).collect(Collectors.toList()));
+                    return denormalizedVideoDto;
+                case THUMBNAIL:
+                    VideoUrl videoUrl = video.getVideoUrl();
+                    denormalizedVideoDto.setThumbnailUrl(videoUrl.getThumbnailCloudfrontUrl());
+                    return denormalizedVideoDto;
+                case UPLOADER:
+                    Uploader uploader = video.getUploader();
+                    denormalizedVideoDto.setSellerId(uploader.getSellerId());
+                    denormalizedVideoDto.setSellerName(uploader.getSellerName());
+                    denormalizedVideoDto.setSellerLogo(Base64.getEncoder().encodeToString(uploader.getSellerLogo()));
+                    return denormalizedVideoDto;
+                case VIDEO_NAME:
+                    denormalizedVideoDto.setVideoName(video.getVideoName());
+                    return denormalizedVideoDto;
+                default:
+                    throw new IllegalArgumentException("invalid update field");
+            }
+        }
+        catch (IllegalArgumentException e) {
+            log.error("invalid update field", e);
+            throw new IllegalArgumentException("invalid update field");
+        }
+        catch (Exception e) {
+            log.error("video denormalize error", e);
+            throw new RuntimeException("video denormalize error");
         }
     }
 }

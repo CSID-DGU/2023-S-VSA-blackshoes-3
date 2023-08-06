@@ -1,9 +1,6 @@
 package com.travelvcommerce.uploadservice.service;
 
-import com.google.common.net.HttpHeaders;
-import com.travelvcommerce.uploadservice.dto.VideoDto;
-import com.travelvcommerce.uploadservice.dto.UploaderDto;
-import com.travelvcommerce.uploadservice.dto.VideoUrlDto;
+import com.travelvcommerce.uploadservice.dto.*;
 import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
@@ -13,11 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +20,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Primary
 @Service
 @Slf4j
-public class VideoCreateServiceHttpImpl implements VideoCreateService {
+public class VideoCreateServiceImpl implements VideoCreateService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -50,6 +45,8 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
     private FFmpegWrapper ffmpegWrapper;
     @Value("${api.user-service.url}")
     private String USER_SERVICE_URL;
+    @Value("${video.encoding-resolutions}")
+    private String ENCODING_RESOLUTIONS;
 
     @Override
     public String uploadVideo(String userId, String videoId, MultipartFile videoFile) {
@@ -90,7 +87,7 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
             if (!Files.exists(encodingPath)) {
                 Files.createDirectories(encodingPath);
             }
-            List<Integer> resolutionList = List.of(480, 720, 1080);
+            List<Integer> resolutionList = Arrays.stream(ENCODING_RESOLUTIONS.split(",")).map(Integer::parseInt).collect(Collectors.toList());
 
             resolutionList.stream().forEach(resolution -> {
                 try {
@@ -127,16 +124,12 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
 
     @Override
     @Transactional
-    public VideoDto.VideoCreateResponseDto createVideo(String sellerId, String videoId,
-                          VideoDto.VideoUploadRequestDto videoUploadRequestDto,
-                          S3Video videoUrls, S3Thumbnail thumbnailUrls) {
+    public DenormalizedVideoDto createVideo(String sellerId, String videoId,
+                                            VideoDto.VideoUploadRequestDto videoUploadRequestDto,
+                                            S3Video videoUrls, S3Thumbnail thumbnailUrls) {
         Uploader uploader;
 
-        if (uploaderRepository.existsBySellerId(sellerId)) {
-            uploader = uploaderRepository.findBySellerId(sellerId).get();
-        } else {
-            uploader = getUploaderFromUserService(sellerId);
-        }
+        uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
 
         Video savedVideo = saveAndGetVideo(videoId, videoUploadRequestDto, uploader);
 
@@ -147,41 +140,11 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
         saveVideoTags(videoUploadRequestDto, savedVideo);
 
         try {
-            return modelMapper.map(savedVideo, VideoDto.VideoCreateResponseDto.class);
+            return denormalizeVideo(savedVideo);
         } catch (Exception e) {
             log.error("map video to videoDto error", e);
             throw new RuntimeException("map video to videoDto error");
         }
-    }
-
-    private Uploader getUploaderFromUserService(String sellerId) {
-        Uploader uploader;
-        UploaderDto.UploaderResponseDto uploaderResponseDto;
-
-        try {
-            WebClient webClient = WebClient.builder()
-                    .baseUrl(USER_SERVICE_URL)
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .build();
-            uploaderResponseDto = webClient.get()
-                    .uri("/user-service/sellers/" + sellerId + "/uploader-info")
-                    .retrieve()
-                    .bodyToMono(UploaderDto.UploaderResponseDto.class)
-                    .block();
-        } catch (Exception e) {
-            log.error("get video uploader info error", e);
-            throw new NoSuchElementException("uploader not found");
-        }
-
-        try {
-            uploader = modelMapper.map(uploaderResponseDto, Uploader.class);
-            uploaderRepository.save(uploader);
-        } catch (Exception e) {
-            log.error("save video uploader error", e);
-            throw new RuntimeException("save video uploader error");
-        }
-
-        return uploader;
     }
 
     private Video saveAndGetVideo(String videoId, VideoDto.VideoUploadRequestDto videoUploadRequestDto, Uploader uploader) {
@@ -194,7 +157,11 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
                     build();
 
             video = modelMapper.map(videoDto, Video.class);
+
             video.setUploader(uploader);
+            video.setVideoTags(new ArrayList<>());
+            video.setAds(new ArrayList<>());
+
             videoRepository.save(video);
         } catch (Exception e) {
             log.error("save video error", e);
@@ -231,6 +198,8 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
                         ad.setAdId(UUID.randomUUID().toString());
                         ad.setVideo(savedVideo);
                         adRepository.save(ad);
+
+                        savedVideo.getAds().add(ad);
                     }
             );
         } catch (Exception e) {
@@ -253,13 +222,55 @@ public class VideoCreateServiceHttpImpl implements VideoCreateService {
                         VideoTag videoTag = new VideoTag();
                         videoTag.setVideo(savedVideo);
                         videoTag.setTag(tag);
-
                         videoTagRepository.save(videoTag);
+
+                        savedVideo.getVideoTags().add(videoTag);
                     }
             );
         } catch (Exception e) {
             log.error("save video tag error", e);
             throw new RuntimeException("save video tag error");
+        }
+    }
+
+    public DenormalizedVideoDto denormalizeVideo(Video video) {
+        try {
+            VideoUrl videoUrl = video.getVideoUrl();
+            Uploader uploader = video.getUploader();
+            List<Tag> tags = video.getVideoTags().stream().map(videoTag -> {
+                return videoTag.getTag();
+            }).collect(Collectors.toList());
+            List<Ad> ads = video.getAds();
+
+            List<DenormalizedTagDto> videoTags = tags.stream().map(tag -> {
+                return DenormalizedTagDto.builder()
+                        .tagId(tag.getTagId())
+                        .tagName(tag.getContent())
+                        .build();
+            }).collect(Collectors.toList());
+
+            List<DenormalizedAdDto> videoAds = ads.stream().map(ad -> {
+                return modelMapper.map(ad, DenormalizedAdDto.class);
+            }).collect(Collectors.toList());
+
+            DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
+                    .videoId(video.getVideoId())
+                    .videoName(video.getVideoName())
+                    .sellerId(uploader.getSellerId())
+                    .sellerName(uploader.getSellerName())
+                    .sellerLogo(Base64.getEncoder().encodeToString(uploader.getSellerLogo()))
+                    .videoUrl(videoUrl.getVideoCloudfrontUrl())
+                    .thumbnailUrl(videoUrl.getThumbnailCloudfrontUrl())
+                    .createdAt(video.getCreatedAt().toString())
+                    .updatedAt(video.getUpdatedAt().toString())
+                    .videoTags(videoTags)
+                    .videoAds(videoAds)
+                    .build();
+
+            return denormalizedVideoDto;
+        } catch (Exception e) {
+            log.error("denormalizeVideo error", e);
+            throw new RuntimeException("denormalizeVideo error");
         }
     }
 }

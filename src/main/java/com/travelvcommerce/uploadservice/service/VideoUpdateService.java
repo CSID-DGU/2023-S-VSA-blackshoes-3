@@ -1,6 +1,7 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.travelvcommerce.uploadservice.dto.AdDto;
+import com.travelvcommerce.uploadservice.dto.DenormalizedVideoDto;
 import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.dto.VideoDto;
 import com.travelvcommerce.uploadservice.entity.Video;
@@ -12,10 +13,10 @@ import java.util.List;
 
 public interface VideoUpdateService {
     Video getVideo(String userId, String videoId);
-    VideoDto.VideoUpdateResponseDto updateThumbnail(String userId, String videoId,
-                                                    MultipartFile thumbnail, AwsS3Service awsS3Service);
-    VideoDto.VideoUpdateResponseDto updateTags(String userId, String videoId, List<String> tagIdList);
-    VideoDto.VideoUpdateResponseDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList);
-    VideoDto.VideoUpdateResponseDto updateVideoName(String userId, String videoId, String videoName);
+    DenormalizedVideoDto updateThumbnail(String userId, String videoId,
+                                         MultipartFile thumbnail, AwsS3Service awsS3Service);
+    DenormalizedVideoDto updateTags(String userId, String videoId, List<String> tagIdList);
+    DenormalizedVideoDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList);
+    DenormalizedVideoDto updateVideoName(String userId, String videoId, String videoName);
     List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto);
 }
