@@ -2,7 +2,7 @@ package com.travelvcommerce.uploadservice.controller;
 
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
-import com.travelvcommerce.uploadservice.service.DenormalizeDbService;
+import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.service.VideoDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class VideoDeleteController {
     @Autowired
     VideoDeleteService videoDeleteService;
     @Autowired
-    DenormalizeDbService denormalizeDbService;
+    KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @DeleteMapping("/videos/{userId}/{videoId}")
     public ResponseEntity<ResponseDto> deleteVideo(@PathVariable(name = "userId") String userId,
@@ -49,7 +49,7 @@ public class VideoDeleteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        denormalizeDbService.deleteDenormalizeData(videoId);
+        kafkaVideoInfoProducerService.deleteDenormalizeData(videoId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

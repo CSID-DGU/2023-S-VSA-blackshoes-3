@@ -2,9 +2,7 @@ package com.travelvcommerce.uploadservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.uploadservice.entity.Uploader;
-import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.repository.UploaderRepository;
-import com.travelvcommerce.uploadservice.repository.VideoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,22 +10,20 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
-public class KafkaConsumer {
+public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoConsumerService {
     @Autowired
     private UploaderRepository uploaderRepository;
-    @Autowired
-    private VideoRepository videoRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private ModelMapper modelMapper;
 
+    @Override
     @KafkaListener(topics = "uploader-create")
     public void createUploader(String payload) {
         log.info("received payload='{}'", payload);
@@ -55,6 +51,7 @@ public class KafkaConsumer {
         }
     }
 
+    @Override
     @KafkaListener(topics = "uploader-update")
     public void updateUploader(String payload) {
         log.info("received payload='{}'", payload);
@@ -83,6 +80,7 @@ public class KafkaConsumer {
         }
     }
 
+    @Override
     @KafkaListener(topics = "uploader-delete")
     public void deleteUploader(String payload) {
         log.info("received payload='{}'", payload);
