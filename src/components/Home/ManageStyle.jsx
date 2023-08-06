@@ -151,7 +151,7 @@ export const LogoImage = styled.img`
 `;
 
 export const Select = styled.select`
-  width: 90px;
+  width: 100px;
   height: 30px;
   border: 1px solid ${(props) => props.theme.middleGray};
   border-radius: 5px;
@@ -188,6 +188,7 @@ export const VideoSource = styled.source`
   display: ${(props) => (props.videourl ? "block" : "none")};
 `;
 
+// Info Modify-----------------------------------------------
 export const InfoModify = styled.section`
   width: 100%;
   height: 55%;
@@ -196,4 +197,19 @@ export const InfoModify = styled.section`
   border: none;
   border-radius: 24px;
   padding: 20px;
+`;
+
+export const InfoFlexBox = styled.section`
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const InfoVerticalBox = styled.section`
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
