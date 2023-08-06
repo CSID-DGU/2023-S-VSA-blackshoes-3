@@ -41,6 +41,7 @@ export const MiddelBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
   padding: 20px;
   border: 1px solid green;
   transition: all 0.3s;
@@ -165,7 +166,26 @@ export const VideoModify = styled.video`
   height: 45%;
   max-height: 300px;
   object-fit: cover;
-  border: 1px solid ${(props) => props.theme.middleGray};
+  position: "relative";
+`;
+
+export const VideoModifyWrapper = styled.section`
+  width: 100%;
+  min-width: 350px;
+  height: 45%;
+  max-height: 300px;
+  display: ${(props) => (props.videourl ? "none" : "flex")};
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 900;
+  color: ${(props) => props.theme.secondBlack};
+  background-color: ${(props) => props.theme.bgColor};
+  border-radius: 24px;
+`;
+
+export const VideoSource = styled.source`
+  display: ${(props) => (props.videourl ? "block" : "none")};
 `;
 
 export const InfoModify = styled.section`

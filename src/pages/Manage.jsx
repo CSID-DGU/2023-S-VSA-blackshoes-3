@@ -19,7 +19,6 @@ const Manage = () => {
   // Constant----------------------------------------------------
   const navigate = useNavigate();
   const { userId } = useParams();
-  // const baseUrl = preview2;
   const qualities = ["1080p", "720p", "480p"];
 
   // State-------------------------------------------------------
@@ -105,32 +104,32 @@ const Manage = () => {
     fetchModifyData();
   }, [videoId]);
 
-  // useEffect(() => {
-  //   if (videoRef.current !== null) {
-  //     // video.js 옵션 설정
-  //     const options = {
-  //       techOrder: ["html5"],
-  //       controls: true,
-  //       autoplay: true,
-  //       sources: [
-  //         {
-  //           src: `${baseUrl}/${selectedQuality}.m3u8`,
-  //           type: "application/x-mpegURL",
-  //         },
-  //       ],
-  //     };
+  useEffect(() => {
+    if (videoRef.current !== null) {
+      // video.js 옵션 설정
+      const options = {
+        techOrder: ["html5"],
+        controls: true,
+        autoplay: true,
+        sources: [
+          {
+            src: `${videoUrl}/${selectedQuality}.m3u8`,
+            type: "application/x-mpegURL",
+          },
+        ],
+      };
 
-  //     // video.js 생성 및 초기화
-  //     const player = videojs(videoRef.current, options);
-  //     // video.js 소멸
-  //     return () => {
-  //       if (player) {
-  //         player.dispose();
-  //       }
-  //     };
-  //   }
-  // }, [baseUrl]);
-  console.log(videoList);
+      // video.js 생성 및 초기화
+      const player = videojs(videoRef.current, options);
+      // video.js 소멸
+      return () => {
+        if (player) {
+          player.dispose();
+        }
+      };
+    }
+  }, [videoUrl]);
+
   return (
     <GridWrapper>
       <Header />
@@ -182,20 +181,22 @@ const Manage = () => {
           </M.LeftBox>
           <M.MiddelBox>
             <U.TitleBetweenBox>
-              <U.SpanTitle>영상 수정</U.SpanTitle>
+              <U.SpanTitle>영상 정보 수정</U.SpanTitle>
               <ColorButton width="70px" style={{ height: "35px" }}>
                 수정
               </ColorButton>
             </U.TitleBetweenBox>
-            <M.VideoModify
-              controls
-              ref={videoRef}
-              className="video-js vjs-default-skin"
-              // videofile={videoFile}
-              // style={{ position: "relative" }}
-            >
-              {/* <source src={`${baseUrl}/${selectedQuality}.m3u8`} type="application/x-mpegURL" /> */}
-            </M.VideoModify>
+            <M.VideoModifyWrapper videourl={videoUrl}>
+              수정을 원하는 영상을 클릭해주세요.
+            </M.VideoModifyWrapper>
+            {videoUrl && (
+              <M.VideoModify controls ref={videoRef} className="video-js vjs-default-skin">
+                <M.VideoSource
+                  src={`${videoUrl}/${selectedQuality}.m3u8`}
+                  type="application/x-mpegURL"
+                />
+              </M.VideoModify>
+            )}
             <M.InfoModify></M.InfoModify>
           </M.MiddelBox>
         </M.LeftMiddleBox>
