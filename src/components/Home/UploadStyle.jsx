@@ -81,14 +81,15 @@ export const VideoInput = styled.input`
 export const VideoInputSection = styled.section`
   width: 100%;
   height: ${(props) => (props.videofile === null ? "400px" : "auto")};
+  max-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
-  @media all and (max-width: 1480px) {
+  /* @media all and (max-width: 1480px) {
     height: ${(props) => (props.videofile === null ? "300px" : "auto")};
-  }
-  @media all and (max-width: 900px) {
+  } */
+  /* @media all and (max-width: 900px) {
     height: ${(props) => (props.videofile === null ? "200px" : "auto")};
-  }
+  } */
 `;
 
 export const Shadow = styled.div`
@@ -141,7 +142,7 @@ export const SpinnerBox = styled.section`
 
 export const VideoPreview = styled.video`
   width: 100%;
-  max-height: 100%;
+  max-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
   object-fit: cover;
 `;
 
@@ -362,6 +363,7 @@ export const AdUploadButton = styled.button`
   height: 35px;
   border: none;
   background-color: transparent;
+  cursor: pointer;
 `;
 
 export const TitleLeftBox = styled(TitleBetweenBox)`
@@ -405,6 +407,7 @@ export const RemoveButton = styled.button`
   background-color: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.primaryColor};
   font-size: 20px;
+  cursor: pointer;
 `;
 
 export const TimeInput = styled.input`
