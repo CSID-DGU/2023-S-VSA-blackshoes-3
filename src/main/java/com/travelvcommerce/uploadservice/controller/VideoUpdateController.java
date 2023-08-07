@@ -50,7 +50,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.updateVideo(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -78,7 +78,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.updateVideo(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -106,7 +106,7 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.updateVideo(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
@@ -134,33 +134,10 @@ public class VideoUpdateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.putDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.updateVideo(denormalizedVideoDto);
         VideoDto.VideoUpdateResponseDto videoUpdateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoUpdateResponseDto.class);
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoUpdateResponseDto, Map.class));
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
-
-//    @PutMapping("/videos/uploaders/{userId}")
-//    public ResponseEntity<ResponseDto> updateUploader(@PathVariable("userId") String userId,
-//                                                      @RequestBody UploaderDto.UploaderModifyRequestDto
-//                                                              uploaderModifyRequestDto) {
-//        List<String> updatedVideoIdList;
-//
-//        try {
-//            updatedVideoIdList = videoUpdateService.updateUploader(userId, uploaderModifyRequestDto);
-//        } catch (NoSuchElementException e) {
-//            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-//        } catch (RuntimeException e) {
-//            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-//        }
-//
-//        updatedVideoIdList.forEach(videoId -> contentServiceDataSyncService.putDenormalizeData(videoId, UpdatedField.UPLOADER));
-//
-//        ResponseDto responseDto = ResponseDto.buildResponseDto(Collections.singletonMap("updatedVideos", updatedVideoIdList));
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-//    }
 }

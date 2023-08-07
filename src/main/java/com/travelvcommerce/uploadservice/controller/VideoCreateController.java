@@ -91,7 +91,7 @@ public class VideoCreateController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.postDenormalizeData(denormalizedVideoDto);
+        kafkaVideoInfoProducerService.createVideo(denormalizedVideoDto);
         temporaryVideoService.deleteTemporaryVideo(userId, videoId);
 
         VideoDto.VideoCreateResponseDto videoCreateResponseDto = modelMapper.map(denormalizedVideoDto, VideoDto.VideoCreateResponseDto.class);
