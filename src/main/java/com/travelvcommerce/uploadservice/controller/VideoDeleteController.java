@@ -49,7 +49,7 @@ public class VideoDeleteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        kafkaVideoInfoProducerService.deleteDenormalizeData(videoId);
+        kafkaVideoInfoProducerService.deleteVideo(videoId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

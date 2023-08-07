@@ -16,25 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 public class KafkaVideoInfoProducerServiceImpl implements KafkaVideoInfoProducerService {
     @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private KafkaProducer kafkaProducer;
 
     @Transactional
     @Override
-    public void postDenormalizeData(DenormalizedVideoDto denormalizedVideoDto) {
+    public void createVideo(DenormalizedVideoDto denormalizedVideoDto) {
         String topic = "video-create";
 
         String videoJsonString;
         try {
             videoJsonString = objectMapper.writeValueAsString(denormalizedVideoDto);
         } catch (JsonProcessingException e) {
-            log.error("Post denormalize data error", e);
-            throw new RuntimeException("Post denormalize data error");
+            log.error("Mapping dto to json string error", e);
+            throw new RuntimeException("Error publishing created video");
         }
 
         kafkaProducer.send(topic, videoJsonString);
@@ -42,22 +38,22 @@ public class KafkaVideoInfoProducerServiceImpl implements KafkaVideoInfoProducer
 
     @Transactional
     @Override
-    public void putDenormalizeData(DenormalizedVideoDto denormalizedVideoDto) {
+    public void updateVideo(DenormalizedVideoDto denormalizedVideoDto) {
         String topic = "video-update";
 
         String videoJsonString;
         try {
             videoJsonString = objectMapper.writeValueAsString(denormalizedVideoDto);
         } catch (JsonProcessingException e) {
-            log.error("Post denormalize data error", e);
-            throw new RuntimeException("Post denormalize data error");
+            log.error("Mapping dto to json string error", e);
+            throw new RuntimeException("Error publishing updated video");
         }
 
         kafkaProducer.send(topic, videoJsonString);
     }
 
     @Override
-    public void deleteDenormalizeData(String videoId) {
+    public void deleteVideo(String videoId) {
         String topic = "video-delete";
 
         kafkaProducer.send(topic, videoId);
