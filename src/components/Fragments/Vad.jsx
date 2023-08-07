@@ -41,12 +41,6 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
                 format="HH:mm:ss"
                 color="success"
               />
-            </DemoContainer>
-          </LocalizationProvider>
-        </A.TimeBox>
-        <A.TimeBox>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["TimeField"]}>
               <TimeField
                 label="종료 시간"
                 onChange={(e) => {
