@@ -16,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +37,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
 
 
     @Override
+    @Transactional
     @KafkaListener(topics = "video-create")
     public void createVideo(String payload) {
         log.info("received payload='{}'", payload);
@@ -57,7 +60,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
 
             videoLikeCountRepository.save(videoLikeCount);
         } catch (Exception e) {
-            log.error("Error saving video like count", e);
+            log.error("Error creating video like count", e);
         }
 
         try {
@@ -69,7 +72,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
 
             videoViewCountRepository.save(videoViewCount);
         } catch (Exception e) {
-            log.error("Error saving video view count", e);
+            log.error("Error creating video view count", e);
         }
 
         try {
@@ -86,7 +89,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
                 adClickCountRepository.save(adClickCount);
             }
         } catch (Exception e) {
-            log.error("Error saving ad click count", e);
+            log.error("Error creating ad click count", e);
         }
 
         try {
@@ -95,6 +98,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
             for (TagDto tagDto : tagDtoList) {
                 TagViewCount tagViewCount = TagViewCount.builder()
                         .tagId(tagDto.getTagId())
+                        .videoId(videoCreateDto.getVideoId())
                         .sellerId(videoCreateDto.getSellerId())
                         .viewCount(0)
                         .build();
@@ -102,14 +106,87 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
                 tagViewCountRepository.save(tagViewCount);
             }
         } catch (Exception e) {
-            log.error("Error saving tag view count", e);
+            log.error("Error creating tag view count", e);
         }
 
     }
 
     @Override
+    @Transactional
+    @KafkaListener(topics = "video-update")
     public void updateVideo(String payload) {
         log.info("received payload='{}'", payload);
+
+        VideoDto.VideoUpdateDto videoUpdateDto;
+
+        try {
+            videoUpdateDto = objectMapper.readValue(payload, VideoDto.VideoUpdateDto.class);
+        } catch (Exception e) {
+            log.error("Error converting payload to video", e);
+            return;
+        }
+
+        String videoId = videoUpdateDto.getVideoId();
+        String sellerId = videoUpdateDto.getSellerId();
+
+        if (videoUpdateDto.getVideoAds() != null) {
+            List<String> newAdIdList = videoUpdateDto.getVideoAds().stream()
+                    .map(AdDto::getAdId)
+                    .collect(Collectors.toList());
+
+            List<String> oldAdIdList = adClickCountRepository.findAllByVideoId(videoId).stream()
+                    .map(AdClickCount::getAdId)
+                    .collect(Collectors.toList());
+
+            oldAdIdList.stream().forEach(adId -> {
+                if (!newAdIdList.contains(adId)) {
+                    adClickCountRepository.deleteByVideoIdAndAdId(videoId, adId);
+                }
+            });
+
+            newAdIdList.stream().forEach(adId -> {
+                if (!oldAdIdList.contains(adId)) {
+                    AdClickCount adClickCount = AdClickCount.builder()
+                            .adId(adId)
+                            .videoId(videoId)
+                            .sellerId(sellerId)
+                            .clickCount(0)
+                            .build();
+
+                    adClickCountRepository.save(adClickCount);
+                }
+            });
+        }
+
+        if (videoUpdateDto.getVideoTags() != null) {
+            List<String> newTagIdList = videoUpdateDto.getVideoTags().stream()
+                    .map(TagDto::getTagId)
+                    .collect(Collectors.toList());
+
+            List<String> oldTagIdList = tagViewCountRepository.findAllByVideoIdAndSellerId(videoId, sellerId).stream()
+                    .map(TagViewCount::getTagId)
+                    .collect(Collectors.toList());
+
+
+            oldTagIdList.stream().forEach(tagId -> {
+                if (!newTagIdList.contains(tagId)) {
+                    tagViewCountRepository.deleteByVideoIdAndTagId(videoId, tagId);
+                }
+            });
+
+            newTagIdList.stream().forEach(tagId -> {
+                if (!oldTagIdList.contains(tagId)) {
+                    TagViewCount tagViewCount = TagViewCount.builder()
+                            .tagId(tagId)
+                            .videoId(videoId)
+                            .sellerId(sellerId)
+                            .viewCount(0)
+                            .build();
+
+                    tagViewCountRepository.save(tagViewCount);
+                }
+            });
+        }
     }
 
     @Override

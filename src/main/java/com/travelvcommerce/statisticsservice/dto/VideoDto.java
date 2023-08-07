@@ -33,6 +33,19 @@ public class VideoDto implements Serializable {
     }
 
     @Data
+    public static class VideoUpdateDto implements Serializable {
+        private String videoId;
+        private String videoName;
+        private String videoUrl;
+        private String thumbnailUrl;
+        private String sellerId;
+        private String sellerName;
+        private String sellerLogo;
+        private List<TagDto> videoTags;
+        private List<AdDto> videoAds;
+    }
+
+    @Data
     public static class VideoLikesDto {
         private String videoId;
         private int likes;

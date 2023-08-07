@@ -4,6 +4,11 @@ import com.travelvcommerce.statisticsservice.entity.AdClickCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
+
 @Repository
 public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long> {
+    Collection<AdClickCount> findAllByVideoId(String videoId);
+    void deleteByVideoIdAndAdId(String videoId, String adId);
 }
