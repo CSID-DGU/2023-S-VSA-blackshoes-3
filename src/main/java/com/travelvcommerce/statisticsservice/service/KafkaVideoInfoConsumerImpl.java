@@ -190,7 +190,34 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
     }
 
     @Override
+    @Transactional
+    @KafkaListener(topics = "video-delete")
     public void deleteVideo(String payload) {
         log.info("received payload='{}'", payload);
+        String videoId = payload;
+
+        try {
+            videoViewCountRepository.deleteAllByVideoId(videoId);
+        } catch (Exception e) {
+            log.error("Error deleting video view count", e);
+        }
+
+        try {
+            tagViewCountRepository.deleteAllByVideoId(videoId);
+        } catch (Exception e) {
+            log.error("Error deleting tag view count", e);
+        }
+
+        try {
+            videoLikeCountRepository.deleteAllByVideoId(videoId);
+        } catch (Exception e) {
+            log.error("Error deleting video like count", e);
+        }
+
+        try {
+            adClickCountRepository.deleteAllByVideoId(videoId);
+        } catch (Exception e) {
+            log.error("Error deleting ad click count", e);
+        }
     }
 }

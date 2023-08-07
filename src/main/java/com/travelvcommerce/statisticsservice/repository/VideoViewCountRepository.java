@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VideoViewCountRepository extends JpaRepository<VideoViewCount, String> {
+    void deleteAllByVideoId(String videoId);
 }
