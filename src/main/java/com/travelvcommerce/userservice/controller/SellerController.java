@@ -143,10 +143,6 @@ public class SellerController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-
-            if(!emailService.isExistCompletionCode(sellerUpdateRequestDto.getEmail())){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
-            }
             String sellerName = sellerUpdateRequestDto.getSellerName();
             if(!sellerName.matches(sellerNameRegex)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
