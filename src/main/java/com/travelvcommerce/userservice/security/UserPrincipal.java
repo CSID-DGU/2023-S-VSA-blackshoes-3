@@ -9,6 +9,8 @@ import java.util.Collections;
 
 //user 객체 생성
 public class UserPrincipal implements UserDetails {
+    private static final long serialVersionUID = 1L;
+
     private User user;
 
     public UserPrincipal(User user) {
