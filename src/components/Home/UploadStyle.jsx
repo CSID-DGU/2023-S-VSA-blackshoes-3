@@ -142,8 +142,9 @@ export const SpinnerBox = styled.section`
 
 export const VideoPreview = styled.video`
   width: 100%;
-  max-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
+  height: 400px;
   object-fit: cover;
+  position: relative;
 `;
 
 export const UploadedState = styled.p`
@@ -188,7 +189,8 @@ export const InfoTitleBox = styled.section`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
+  gap: 15px;
 `;
 
 export const InfoTagBox = styled.section`
@@ -203,7 +205,7 @@ export const TitleWrapper = styled.section`
   min-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 `;
 
 export const SmallTitle = styled.h2`
@@ -215,7 +217,7 @@ export const SmallTitle = styled.h2`
 
 export const TitleInput = styled.input`
   min-width: 100%;
-  height: 35px;
+  height: 30px;
   border: ${(props) => `1px solid ${props.theme.lightGray}`};
   border-radius: 16px;
   background-color: #f6f7f9;
@@ -374,7 +376,7 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
 
 export const AdInputSection = styled.section`
   width: 100%;
-  max-height: 450px;
+  max-height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -386,6 +388,7 @@ export const TimeBox = styled.section`
   width: 100%;
   height: 70px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 15px;
 `;
@@ -394,6 +397,7 @@ export const ContentBox = styled.section`
   width: 100%;
   height: 100px;
   display: flex;
+  justify-content: space-between;
   gap: 15px;
 `;
 
