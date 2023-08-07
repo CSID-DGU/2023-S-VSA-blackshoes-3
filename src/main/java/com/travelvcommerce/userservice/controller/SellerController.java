@@ -84,7 +84,7 @@ public class SellerController {
                     .sellerLogo(seller.getSellerLogo())
                     .build();
 
-            kafkaUploaderInfoProducerService.updateUploader(uploaderInfoDto);
+            kafkaUploaderInfoProducerService.createUploader(uploaderInfoDto);
 
             ResponseDto responseDto = ResponseDto.builder().payload(sellerRegisterResponse).build();
 
