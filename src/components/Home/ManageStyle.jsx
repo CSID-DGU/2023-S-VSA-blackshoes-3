@@ -1,5 +1,26 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
+
+export const wiggle = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px) rotateZ(-5deg);
+  }
+  40% {
+    transform: translateX(5px) rotateZ(5deg);
+  }
+  60% {
+    transform: translateX(-5px) rotateZ(-5deg);
+  }
+  80% {
+    transform: translateX(5px) rotateZ(5deg);
+  }
+  100% {
+    transform: translateX(0);
+  }
+`;
 
 export const LeftMiddleBox = styled.div`
   min-width: 70%;
@@ -43,7 +64,6 @@ export const MiddelBox = styled.div`
   align-items: center;
   gap: 20px;
   padding: 20px;
-  border: 1px solid green;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
     width: 100%;
@@ -120,6 +140,28 @@ export const VideoListInfo = styled.section`
   padding-left: 5px;
 `;
 
+export const VideoEmptySection = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+`;
+
+export const LargeFont = styled(FontAwesomeIcon)`
+  font-size: 75px;
+  color: ${(props) => props.theme.middleGray};
+  animation: ${wiggle} 3s ease infinite alternate;
+`;
+
+export const BoldSpan = styled.span`
+  font-weight: 900;
+  font-size: 14px;
+  color: ${(props) => props.theme.secondBlack};
+`;
+
 export const InfoRightWrapper = styled.section`
   width: calc(100% - 50px);
   height: 100%;
@@ -193,6 +235,9 @@ export const InfoModify = styled.section`
   width: 100%;
   height: 55%;
   min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   background-color: ${(props) => props.theme.bgColor};
   border: none;
   border-radius: 24px;
@@ -204,6 +249,7 @@ export const InfoFlexBox = styled.section`
   height: 80px;
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 `;
 
 export const InfoVerticalBox = styled.section`
@@ -211,5 +257,71 @@ export const InfoVerticalBox = styled.section`
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
+  gap: 10px;
+`;
+
+export const CenterBox = styled.section`
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+`;
+
+export const FileInput = styled.input`
+  display: none;
+`;
+
+export const FileTextInput = styled.input`
+  width: calc(100% - 85px);
+  height: 40px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 16px 0 0 16px;
+  background-color: #f6f7f9;
+  padding: 15px;
+`;
+
+export const ExchangeButton = styled.label`
+  width: 60px;
+  height: 40px;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  background-color: ${(props) => props.theme.primaryColor};
+  color: ${(props) => props.theme.bgColor};
+  border: none;
+  border-radius: 0 16px 16px 0;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+`;
+
+export const TagSection = styled.section`
+  width: 100%;
+  height: calc(100% - 90px);
+  display: flex;
+`;
+
+export const SecondBlackP = styled.p`
+  width: 100%;
+  color: ${(props) => props.theme.secondBlack};
+  font-size: 14px;
+`;
+
+// Ad Modify-----------------------------------------------
+export const AdModifySection = styled.section`
+  width: 100%;
+  height: 400px;
+  overflow: auto;
+  padding-right: 10px;
+  border: ${(props) => `1px solid ${props.theme.middleGray}`};
+`;
+
+export const AdCommentEmptySection = styled.section`
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: ${(props) => `1px solid ${props.theme.middleGray}`};
 `;

@@ -78,23 +78,16 @@ const Vupload = ({
           <U.FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </U.VideoUploadButton>
         {preview !== null && preview2 === null ? (
-          <U.VideoPreview controls videofile={videoFile} style={{ position: "relative" }}>
+          <U.VideoPreview controls autoPlay>
             <source src={preview} type="video/mp4" />
           </U.VideoPreview>
         ) : preview2 !== null ? (
-          <U.VideoPreview
-            controls
-            ref={videoRef}
-            className="video-js vjs-default-skin"
-            videofile={videoFile}
-            style={{ position: "relative" }}
-          >
+          <U.VideoPreview controls ref={videoRef} className="video-js vjs-default-skin">
             <source src={`${baseUrl}/${selectedQuality}.m3u8`} type="application/x-mpegURL" />
           </U.VideoPreview>
         ) : (
           ""
         )}
-
         {loading && (
           <>
             <U.UploadedState>
