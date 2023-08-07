@@ -43,8 +43,6 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     private UploaderRepository uploaderRepository;
     @Autowired
     private FFmpegWrapper ffmpegWrapper;
-    @Value("${api.user-service.url}")
-    private String USER_SERVICE_URL;
     @Value("${video.encoding-resolutions}")
     private String ENCODING_RESOLUTIONS;
 

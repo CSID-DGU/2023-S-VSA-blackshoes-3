@@ -1,6 +1,9 @@
 package com.travelvcommerce.uploadservice.entity;
 
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,15 +31,15 @@ public class Uploader implements Serializable {
     @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL)
     private List<Video> videos;
 
-    public static void update(Uploader uploader, Map<Object, Object> payloadMap) {
-        if (payloadMap.containsKey("sellerId")) {
-            uploader.setSellerId((String) payloadMap.get("sellerId"));
+    public static void update(Uploader uploader, UploaderDto uploaderDto) {
+        if (uploaderDto.getSellerName() != null) {
+            uploader.setSellerId(uploaderDto.getSellerId());
         }
-        if (payloadMap.containsKey("sellerName")) {
-            uploader.setSellerName((String) payloadMap.get("sellerName"));
+        if (uploaderDto.getSellerName() != null) {
+            uploader.setSellerName(uploaderDto.getSellerName());
         }
-        if (payloadMap.containsKey("sellerLogo")) {
-            uploader.setSellerLogo((byte[]) payloadMap.get("sellerLogo"));
+        if (uploaderDto.getSellerLogo() != null) {
+            uploader.setSellerLogo(uploaderDto.getSellerLogo());
         }
     }
 }

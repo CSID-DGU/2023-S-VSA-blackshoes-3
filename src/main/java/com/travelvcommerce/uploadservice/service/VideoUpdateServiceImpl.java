@@ -204,6 +204,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     public DenormalizedVideoDto denormalizeVideo(Video video, UpdatedField updatedField) {
         DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
                 .videoId(video.getVideoId())
+                .sellerId(video.getUploader().getSellerId())
                 .updatedAt(video.getUpdatedAt().toString())
                 .build();
 

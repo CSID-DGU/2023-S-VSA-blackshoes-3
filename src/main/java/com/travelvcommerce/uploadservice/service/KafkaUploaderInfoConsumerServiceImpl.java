@@ -1,6 +1,7 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.entity.Uploader;
 import com.travelvcommerce.uploadservice.repository.UploaderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,6 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
     @Autowired
     private UploaderRepository uploaderRepository;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private ModelMapper modelMapper;
 
     @Override
@@ -28,17 +27,9 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
     public void createUploader(String payload) {
         log.info("received payload='{}'", payload);
 
-        Map<Object, Object> payloadMap;
-        try {
-            payloadMap = objectMapper.convertValue(payload, HashMap.class);
-        } catch (Exception e) {
-            log.error("Error converting payload to map", e);
-            return;
-        }
-
         Uploader uploader;
         try {
-            uploader = modelMapper.map(payloadMap, Uploader.class);
+            uploader = modelMapper.map(payload, Uploader.class);
         } catch (Exception e) {
             log.error("Error mapping payload to uploader", e);
             return;
@@ -56,15 +47,15 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
     public void updateUploader(String payload) {
         log.info("received payload='{}'", payload);
 
-        Map<Object, Object> payloadMap;
+        UploaderDto uploaderDto;
         try {
-            payloadMap = objectMapper.convertValue(payload, HashMap.class);
+            uploaderDto = modelMapper.map(payload, UploaderDto.class);
         } catch (Exception e) {
             log.error("Error converting payload to map", e);
             return;
         }
 
-        String sellerId = (String) payloadMap.get("sellerId");
+        String sellerId = uploaderDto.getSellerId();
         Uploader uploader;
         try {
             uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
@@ -74,7 +65,7 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
         }
 
         try {
-            Uploader.update(uploader, payloadMap);
+            Uploader.update(uploader, uploaderDto);
         } catch (Exception e) {
             log.error("Error updating uploader", e);
         }
