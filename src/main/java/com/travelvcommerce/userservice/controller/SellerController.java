@@ -27,6 +27,9 @@ import java.util.Optional;
 @RequestMapping("/user-service/sellers")
 @RequiredArgsConstructor
 public class SellerController {
+    private final String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    private final String passwordRegex = "^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,16}$";
+    private final String sellerNameRegex = "^[가-힣A-Za-z0-9]{1,10}$";
 
     private final SellerServiceImpl sellerService;
     private final SellerRepository sellerRepository;
@@ -34,25 +37,38 @@ public class SellerController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
-
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
-            if(sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
-                throw new RuntimeException("이미 사용 중인 이메일입니다.");
+            if(!emailService.isExistCompletionCode(sellerRegisterRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
             }
 
             if(sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
             }
 
+            String password = sellerRegisterRequestDto.getPassword();
+            if(!password.matches(passwordRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8~16자리의 영문, 숫자, 특수문자 조합이어야 합니다.").build());
+            }
+
+            String sellerName = sellerRegisterRequestDto.getSellerName();
+            if(!sellerName.matches(sellerNameRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
+            }
+
             // MultipartFile를 byte 배열로 변환
             byte[] sellerLogoBytes = sellerLogo.getBytes();
+            if(sellerLogoBytes.length > 16777215){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자 로고는 16MB 이하의 파일만 업로드 가능합니다.").build());
+            }
             sellerRegisterRequestDto.setSellerLogo(sellerLogoBytes);
 
-            // SellerService를 이용하여 저장
+            // SellerService를 이용하여 저장된
             Map<String, String> sellerRegisterResponse = sellerService.registerSeller(sellerRegisterRequestDto);
+            emailService.deleteCompletionCode(sellerRegisterRequestDto.getEmail());
 
             ResponseDto responseDto = ResponseDto.builder().payload(sellerRegisterResponse).build();
 
@@ -64,11 +80,13 @@ public class SellerController {
     }
 
     @DeleteMapping("/{sellerId}")
-    public ResponseEntity<ResponseDto> deleteSeller(@RequestHeader("Authorization") String token,
-                                                    @PathVariable String sellerId) {
+    public ResponseEntity<ResponseDto> deleteSeller(@RequestHeader("Authorization") String accessToken,
+                                                    @PathVariable String sellerId
+                                                    //@RequestBody SellerDto.SellerDeleteRequestDto sellerDeleteRequestDto) {
+    ){
         try {
-            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
+            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
@@ -103,8 +121,23 @@ public class SellerController {
                                                     @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            }
+
+
+            if(!emailService.isExistCompletionCode(sellerUpdateRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
+            }
+            String sellerName = sellerUpdateRequestDto.getSellerName();
+            if(!sellerName.matches(sellerNameRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
+            }
+
+            // MultipartFile를 byte 배열로 변환
+            byte[] sellerLogoBytes = sellerLogo.getBytes();
+            if(sellerLogoBytes.length > 16777215){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자 로고는 16MB 이하의 파일만 업로드 가능합니다.").build());
             }
 
             // SellerService를 이용하여 저장
@@ -157,17 +190,21 @@ public class SellerController {
                                                       @RequestHeader("Authorization") String token,
                                                       @RequestBody SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto){
         try {
-            if(emailService.isEmptyVerificationCode(sellerUpdatePasswordRequestDto.getEmail())){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 확인해주세요.").build());
-            }
-
             String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
+            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            Map<String, String> updatePasswordResponse = sellerService.updatePassword(sellerId, sellerUpdatePasswordRequestDto.getPassword());
+            if(!emailService.isExistVerificationCode(sellerUpdatePasswordRequestDto.getEmail())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 확인해주세요.").build());
+            }
 
+            String password = sellerUpdatePasswordRequestDto.getPassword();
+            if(!password.matches(passwordRegex)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8~16자리의 영문, 숫자, 특수문자 조합이어야 합니다.").build());
+            }
+
+            Map<String, String> updatePasswordResponse = sellerService.updatePassword(sellerId, sellerUpdatePasswordRequestDto.getPassword());
 
             ResponseDto responseDto = ResponseDto.builder()
                     .payload(updatePasswordResponse)

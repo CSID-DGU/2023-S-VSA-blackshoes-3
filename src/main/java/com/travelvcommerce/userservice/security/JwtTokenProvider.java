@@ -94,7 +94,23 @@ public class JwtTokenProvider {
         }
         return false;
     }
-
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException ex) {
+            System.out.println("유효하지 않은 JWT 서명입니다");
+        } catch (MalformedJwtException ex) {
+            System.out.println("유효하지 않은 JWT 토큰입니다");
+        } catch (ExpiredJwtException ex) {
+            System.out.println("만료된 JWT 토큰입니다");
+        } catch (UnsupportedJwtException ex) {
+            System.out.println("지원하지 않는 JWT 토큰입니다");
+        } catch (IllegalArgumentException ex) {
+            System.out.println("JWT 토큰이 비어있습니다");
+        }
+        return false;
+    }
     public String getUserTypeFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
