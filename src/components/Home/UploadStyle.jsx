@@ -376,7 +376,7 @@ export const TitleLeftBox = styled(TitleBetweenBox)`
 
 export const AdInputSection = styled.section`
   width: 100%;
-  max-height: 450px;
+  max-height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -388,6 +388,7 @@ export const TimeBox = styled.section`
   width: 100%;
   height: 70px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 15px;
 `;
@@ -396,6 +397,7 @@ export const ContentBox = styled.section`
   width: 100%;
   height: 100px;
   display: flex;
+  justify-content: space-between;
   gap: 15px;
 `;
 

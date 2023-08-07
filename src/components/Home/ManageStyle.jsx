@@ -307,3 +307,21 @@ export const SecondBlackP = styled.p`
   color: ${(props) => props.theme.secondBlack};
   font-size: 14px;
 `;
+
+// Ad Modify-----------------------------------------------
+export const AdModifySection = styled.section`
+  width: 100%;
+  height: 400px;
+  overflow: auto;
+  padding-right: 10px;
+  border: ${(props) => `1px solid ${props.theme.middleGray}`};
+`;
+
+export const AdCommentEmptySection = styled.section`
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: ${(props) => `1px solid ${props.theme.middleGray}`};
+`;
