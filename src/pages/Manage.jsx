@@ -325,7 +325,7 @@ const Manage = () => {
                 <U.AdInput
                   type="text"
                   placeholder="수정할 광고 내용을 입력해주세요."
-                  width="88%"
+                  width="85%"
                   height="100px"
                   // onChange={(e) => setAdContent(e.target.value)}
                 />
@@ -335,7 +335,7 @@ const Manage = () => {
                 <U.AdInput
                   type="text"
                   placeholder="수정할 광고 링크를 첨부해주세요."
-                  width="88%"
+                  width="85%"
                   height="35px"
                   // onChange={(e) => setAdUrl(e.target.value)}
                 />
