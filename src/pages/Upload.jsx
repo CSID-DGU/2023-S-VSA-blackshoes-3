@@ -169,6 +169,7 @@ const Upload = () => {
             .then((res) => {
               console.log(res);
               alert("동영상 최종 업로드가 완료되었습니다.");
+              navigate(`/home/${userId}/manage`);
             });
         } catch (err) {
           console.log(err);

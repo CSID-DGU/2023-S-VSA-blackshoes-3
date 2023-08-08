@@ -106,6 +106,22 @@ const Manage = () => {
     setVideoId(videoId);
   };
 
+  const handleVideoDelete = async () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      await axios
+        .delete(`http://13.125.69.94:8021/upload-service/videos/${userId}/${videoId}`)
+        .then((res) => {
+          console.log(res);
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      return;
+    }
+  };
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(2);
@@ -205,9 +221,14 @@ const Manage = () => {
           <M.MiddelBox>
             <U.TitleBetweenBox>
               <U.SpanTitle>영상 정보 수정</U.SpanTitle>
-              <ColorButton width="70px" style={{ height: "35px" }}>
-                수정
-              </ColorButton>
+              <U.ButtonWrapper>
+                <ColorButton width="70px" style={{ height: "35px" }}>
+                  수정
+                </ColorButton>
+                <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
+                  삭제
+                </ColorButton>
+              </U.ButtonWrapper>
             </U.TitleBetweenBox>
             <M.VideoModifyWrapper videourl={videoUrl}>
               수정을 원하는 영상을 클릭해주세요.
