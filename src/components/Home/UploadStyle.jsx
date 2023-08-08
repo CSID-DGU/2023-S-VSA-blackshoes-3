@@ -388,7 +388,6 @@ export const TimeBox = styled.section`
   width: 100%;
   height: 70px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 15px;
 `;
@@ -397,7 +396,6 @@ export const ContentBox = styled.section`
   width: 100%;
   height: 100px;
   display: flex;
-  justify-content: space-between;
   gap: 15px;
 `;
 
