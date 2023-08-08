@@ -63,7 +63,7 @@ export const MiddelBox = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
     width: 100%;
@@ -234,7 +234,7 @@ export const VideoSource = styled.source`
 export const InfoModify = styled.section`
   width: 100%;
   height: 55%;
-  min-height: 300px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -298,8 +298,9 @@ export const ExchangeButton = styled.label`
 
 export const TagSection = styled.section`
   width: 100%;
-  height: calc(100% - 90px);
+  height: calc(100% - 120px);
   display: flex;
+  gap: 10px;
 `;
 
 export const SecondBlackP = styled.p`
@@ -314,7 +315,7 @@ export const AdModifySection = styled.section`
   height: 400px;
   overflow: auto;
   padding-right: 10px;
-  border: ${(props) => `1px solid ${props.theme.middleGray}`};
+  /* border: ${(props) => `1px solid ${props.theme.middleGray}`}; */
 `;
 
 export const AdCommentEmptySection = styled.section`
@@ -323,5 +324,5 @@ export const AdCommentEmptySection = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: ${(props) => `1px solid ${props.theme.middleGray}`};
+  /* border: ${(props) => `1px solid ${props.theme.middleGray}`}; */
 `;
