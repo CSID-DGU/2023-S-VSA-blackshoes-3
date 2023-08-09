@@ -48,6 +48,14 @@ public class VideoCreateServiceImpl implements VideoCreateService {
 
     @Override
     public String uploadVideo(String userId, String videoId, MultipartFile videoFile) {
+
+        try {
+            uploaderRepository.findBySellerId(userId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
+        } catch (NoSuchElementException e) {
+            log.error("uploader not found", e);
+            throw new NoSuchElementException("uploader not found");
+        }
+
         String fileName = userId + "_" + videoId;
 
         try {
