@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("personalize-service/tags")
+@RequestMapping("personalized-service/tags")
 public class TagController {
 
     private final TagService tagService;
@@ -48,6 +48,7 @@ public class TagController {
 
     @PostMapping("/{userId}/subscribe")
     public ResponseEntity<ResponseDto> subscribeTag(@PathVariable String userId, @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
+        //이미 구독한 태그 예외처리 추가해야함
         Map<String, String> subscribeTagResponse = tagService.subscribeTag(userId, subscribeTagRequestDto);
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -57,8 +58,10 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/{userId}/unsubscribe")
+    @DeleteMapping("/{userId}/subscribe")
     public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @RequestBody TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto){
+        //해당하는 유저 혹은 태그가 없는 경우 예외처리 추가해야함.
+
         Map<String, String> unsubscribeTagResponse = tagService.unsubscribeTag(userId, unsubscribeTagRequestDto);
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -68,10 +71,15 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    //조회한 태그 추가, 삭제는 없음
     @PostMapping("/{userId}/view")
-    public ResponseEntity<ResponseDto> viewTag(){
+    public ResponseEntity<ResponseDto> viewTag(@PathVariable String userId, @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
+        Map<String, String> viewTagResponse = tagService.viewTag(userId, viewTagRequestDto);
 
+        ResponseDto responseDto = ResponseDto.builder()
+                .payload(viewTagResponse)
+                .build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

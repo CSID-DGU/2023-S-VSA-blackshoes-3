@@ -2,9 +2,12 @@ package com.travelvcommerce.personalizedservice.service;
 
 import com.travelvcommerce.personalizedservice.dto.TagDto;
 import com.travelvcommerce.personalizedservice.entity.SubscribedTag;
+import com.travelvcommerce.personalizedservice.entity.ViewTag;
 import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepository;
+import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService{
 
     private final SubscribedTagRepository subscribedTagRepository;
-
+    private final ViewTagRepository viewTagRepository;
     @Override
     public List<String> getSubscribedTagList(String userId) {
         List<SubscribedTag> subscribedTagList = subscribedTagRepository.findByUserId(userId);
@@ -49,8 +52,13 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto) {
+
+        subscribedTagRepository.save(SubscribedTag.builder()
+                .userId(userId)
+                .tagId(subscribeTagRequestDto.getTagId())
+                .build());
+
         TagDto.SubscribeTagResponseDto subscribeTagResponseDto = new TagDto.SubscribeTagResponseDto();
-        subscribeTagResponseDto.setUserId(userId);
         subscribeTagResponseDto.setCreatedAt(LocalDateTime.now());
 
         Map<String, String> subscribeTagResponse = new HashMap<>();
@@ -64,15 +72,44 @@ public class TagServiceImpl implements TagService{
     public Map<String, String> unsubscribeTag(String userId, TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto) {
         subscribedTagRepository.deleteByUserIdAndTagId(userId, unsubscribeTagRequestDto.getTagId());
 
-        TagDto.UnsubscribeTagResponseDto unsubscribeTagResponseDto = new TagDto.UnsubscribeTagResponseDto();
-        unsubscribeTagResponseDto.setUserId(userId);
-        unsubscribeTagResponseDto.setCreatedAt(LocalDateTime.now());
-
         Map<String, String> unsubscribeTagResponse = new HashMap<>();
         unsubscribeTagResponse.put("userId", userId);
-        unsubscribeTagResponse.put("createdAt", unsubscribeTagResponseDto.getFormattedCreatedAt());
 
         return unsubscribeTagResponse;
     }
 
+    @Override
+    public Map<String, String> viewTag(String userId, TagDto.ViewTagRequestDto viewTagRequestDto) {
+        TagDto.ViewTagResponseDto viewTagResponseDto = new TagDto.ViewTagResponseDto();
+
+        if(viewTagRepository.existsByUserIdAndTagId(userId, viewTagRequestDto.getTagId())){
+            ViewTag viewTag = viewTagRepository.findByUserIdAndTagId(userId, viewTagRequestDto.getTagId());
+            viewTag.setCreatedAt(viewTag.getCreatedAt());
+            viewTag.setUpdatedAt(LocalDateTime.now());
+            viewTag.setTagViewCount(viewTag.getTagViewCount()+1);
+            viewTagRepository.save(viewTag);
+
+            viewTagResponseDto.setCreatedAt(viewTag.getCreatedAt());
+        }else{
+            ViewTag viewTag = ViewTag.builder()
+                    .userId(userId)
+                    .tagId(viewTagRequestDto.getTagId())
+                    .createdAt(LocalDateTime.now())
+                    .tagViewCount(1L)
+                    .build();
+            viewTagRepository.save(viewTag);
+
+            viewTagResponseDto.setCreatedAt(LocalDateTime.now());
+        }
+
+        viewTagResponseDto.setUserId(userId);
+        viewTagResponseDto.setUpdatedAt(LocalDateTime.now());
+
+        Map<String, String> viewTagResponse = new HashMap<>();
+        viewTagResponse.put("userId", userId);
+        viewTagResponse.put("createdAt", viewTagResponseDto.getFormattedCreatedAt());
+        viewTagResponse.put("updatedAt", viewTagResponseDto.getFormattedUpdatedAt());
+
+        return viewTagResponse;
+    }
 }

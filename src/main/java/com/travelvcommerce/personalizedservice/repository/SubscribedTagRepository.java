@@ -6,13 +6,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Repository
 public interface SubscribedTagRepository extends JpaRepository<SubscribedTag, String> {
     public List<SubscribedTag> findByUserId(String userId);
     public void deleteByUserIdAndTagId(String userId, String tagId);
     public boolean existsByUserId(String userId);
     public boolean existsByUserIdAndTagId(String userId, String tagId);
-
 }
