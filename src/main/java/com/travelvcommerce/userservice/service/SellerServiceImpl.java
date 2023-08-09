@@ -100,11 +100,10 @@ public class SellerServiceImpl implements SellerService {
             throw new BadCredentialsException("Invalid password.");
         }
 
-        sellerRepository.save(seller);
-
         TokenDto tokenDto = jwtTokenProvider.createTokens(loginRequestDto.getEmail(), seller.getRole().getRoleName(), seller.getSellerId());
 
         Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("sellerId", seller.getSellerId());
         responseBody.put("accessToken", tokenDto.getAccessToken());
         responseBody.put("refreshToken", tokenDto.getRefreshToken());
 
@@ -143,21 +142,5 @@ public class SellerServiceImpl implements SellerService {
                 .sellerLogo(seller.getSellerLogo())
                 .build();
         return sellerInfoDto;
-    }
-
-    @Override
-    public SellerDto.SellerInfoDto getSellerUploaderInfo(String sellerId) {
-        Seller seller;
-        try {
-            seller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new RuntimeException("존재하지 않는 판매자입니다."));
-        } catch (RuntimeException e) {
-            throw new RuntimeException("존재하지 않는 판매자입니다.");
-        }
-        SellerDto.SellerInfoDto sellerUploaderInfoDto = SellerDto.SellerInfoDto.builder()
-                .sellerId(seller.getSellerId())
-                .sellerName(seller.getSellerName())
-                .sellerLogo(seller.getSellerLogo())
-                .build();
-        return sellerUploaderInfoDto;
     }
 }
