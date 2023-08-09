@@ -81,4 +81,9 @@ public class SellerDto {
         private String email;
         private String password;
     }
+
+    @Data
+    public class SellerDeleteRequestDto {
+        private String password;
+    }
 }

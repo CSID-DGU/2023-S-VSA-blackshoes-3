@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,7 @@ public class SellerController {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
     private final KafkaUploaderInfoProducerService kafkaUploaderInfoProducerService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
@@ -97,9 +99,8 @@ public class SellerController {
 
     @DeleteMapping("/{sellerId}")
     public ResponseEntity<ResponseDto> deleteSeller(@RequestHeader("Authorization") String accessToken,
-                                                    @PathVariable String sellerId
-                                                    //@RequestBody SellerDto.SellerDeleteRequestDto sellerDeleteRequestDto) {
-    ){
+                                                    @PathVariable String sellerId,
+                                                    @RequestBody SellerDto.SellerDeleteRequestDto sellerDeleteRequestDto) {
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
             if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
@@ -117,6 +118,10 @@ public class SellerController {
 
             if (!sellerEmail.equals(tokenSellerEmail)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
+            }
+
+            if(!passwordEncoder.matches(sellerDeleteRequestDto.getPassword(), sellerOptional.get().getPassword())){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid Password").build());
             }
 
             sellerService.deleteSeller(sellerId);
