@@ -97,6 +97,7 @@ public class TagServiceImpl implements TagService{
             viewTag.setTagViewCount(viewTag.getTagViewCount()+1);
             viewTagRepository.save(viewTag);
 
+            viewTagResponseDto.setTagViewCount(viewTag.getTagViewCount());
             viewTagResponseDto.setCreatedAt(viewTag.getCreatedAt());
         }else{
             ViewTag viewTag = ViewTag.builder()
@@ -107,6 +108,7 @@ public class TagServiceImpl implements TagService{
                     .build();
             viewTagRepository.save(viewTag);
 
+            viewTagResponseDto.setTagViewCount(viewTag.getTagViewCount());
             viewTagResponseDto.setCreatedAt(LocalDateTime.now());
         }
 
@@ -117,7 +119,7 @@ public class TagServiceImpl implements TagService{
         viewTagResponse.put("userId", userId);
         viewTagResponse.put("createdAt", viewTagResponseDto.getFormattedCreatedAt());
         viewTagResponse.put("updatedAt", viewTagResponseDto.getFormattedUpdatedAt());
-
+        viewTagResponse.put("tagViewCount", viewTagResponseDto.getTagViewCount().toString());
         return viewTagResponse;
     }
 

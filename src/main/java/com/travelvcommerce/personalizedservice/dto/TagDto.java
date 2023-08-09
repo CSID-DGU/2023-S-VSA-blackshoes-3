@@ -46,6 +46,7 @@ public class TagDto {
         private String userId;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private Long tagViewCount;
 
         public String getFormattedUpdatedAt() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
