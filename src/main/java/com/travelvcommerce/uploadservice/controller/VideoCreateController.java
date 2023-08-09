@@ -50,6 +50,10 @@ public class VideoCreateController {
             videoUrls = awsS3Service.uploadEncodedVideo(userId, videoId, encodedFilePath);
             temporaryVideoResponseDto = temporaryVideoService.createTemporaryVideo(userId, videoId, videoUrls);
         }
+        catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
         catch (RuntimeException e) {
             temporaryVideoService.deleteTemporaryVideo(userId, videoId);
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
