@@ -120,4 +120,18 @@ public class TagServiceImpl implements TagService{
 
         return viewTagResponse;
     }
+
+    @Override
+    public Map<String, String> deleteSubscribedTagList(String userId) {
+        if(!subscribedTagRepository.existsByUserId(userId)){
+            throw new CustomBadRequestException("Invalid user id");
+        }
+
+        subscribedTagRepository.deleteByUserId(userId);
+
+        Map<String, String> deleteSubscribedTagListResponse = new HashMap<>();
+        deleteSubscribedTagListResponse.put("userId", userId);
+
+        return deleteSubscribedTagListResponse;
+    }
 }

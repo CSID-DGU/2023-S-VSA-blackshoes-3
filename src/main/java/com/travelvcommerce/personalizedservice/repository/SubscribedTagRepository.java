@@ -12,8 +12,10 @@ import java.util.List;
 @Transactional
 @Repository
 public interface SubscribedTagRepository extends JpaRepository<SubscribedTag, String> {
-    public List<SubscribedTag> findByUserId(String userId);
-    public void deleteByUserIdAndTagId(String userId, String tagId);
-    public boolean existsByUserId(String userId);
-    public boolean existsByUserIdAndTagId(String userId, String tagId);
+    List<SubscribedTag> findByUserId(String userId);
+    void deleteByUserIdAndTagId(String userId, String tagId);
+    boolean existsByUserId(String userId);
+    boolean existsByUserIdAndTagId(String userId, String tagId);
+
+    void deleteByUserId(String userId);
 }
