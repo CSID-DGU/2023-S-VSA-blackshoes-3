@@ -50,8 +50,9 @@ public class EmailServiceImpl implements EmailService {
     //5분 후 만료, email을 key로 하여 code를 value로 저장
     @Override
     public void saveVerificationCode(String email, String code) {
-        redisTemplate.opsForValue().set("verificationCode:"+email, code);
-        redisTemplate.expire(email, 60 * 5, java.util.concurrent.TimeUnit.SECONDS);
+        String verificationCodeKey = "verificationCode:"+email;
+        redisTemplate.opsForValue().set(verificationCodeKey, code);
+        redisTemplate.expire(verificationCodeKey, 60 * 5, java.util.concurrent.TimeUnit.SECONDS);
     }
     @Override
     public boolean checkVerificationCode(String email, String code) {
