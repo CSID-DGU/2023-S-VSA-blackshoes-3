@@ -17,5 +17,4 @@ public interface SellerService {
     Map<String, String> registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
     Map<String, String> login(SellerDto.SellerLoginRequestDto sellerLoginRequestDto);
     SellerDto.SellerInfoDto getSellerInfo(String sellerId);
-    SellerDto.SellerInfoDto getSellerUploaderInfo(String sellerId);
 }
