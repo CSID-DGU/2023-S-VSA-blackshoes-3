@@ -1,6 +1,7 @@
 package com.travelvcommerce.uploadservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.travelvcommerce.uploadservice.dto.DenormalizedVideoDto;
 import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.entity.Uploader;
 import com.travelvcommerce.uploadservice.entity.Video;
@@ -12,9 +13,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -86,6 +86,24 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
             Uploader.update(uploader, uploaderDto);
         } catch (Exception e) {
             log.error("Error updating uploader", e);
+        }
+
+        List<Video> uploaderVideos = uploader.getVideos();
+
+        try {
+            uploaderVideos.stream().forEach(
+                    video -> {
+                        DenormalizedVideoDto denormalizedVideoDto = DenormalizedVideoDto.builder()
+                                .videoId(video.getVideoId())
+                                .sellerId(uploader.getSellerId())
+                                .sellerLogo(Base64.getEncoder().encodeToString(uploader.getSellerLogo()))
+                                .sellerName(uploader.getSellerName())
+                                .build();
+                        kafkaVideoInfoProducerService.updateVideo(denormalizedVideoDto);
+                    }
+            );
+        } catch (Exception e) {
+            log.error("Error publishing updated video", e);
         }
     }
 
