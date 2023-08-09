@@ -7,7 +7,6 @@ import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepositor
 import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -53,6 +52,10 @@ public class TagServiceImpl implements TagService{
     @Override
     public Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto) {
 
+        if (!subscribedTagRepository.existsByUserId(userId)){
+            throw new CustomBadRequestException("Invalid user id");
+        }
+
         subscribedTagRepository.save(SubscribedTag.builder()
                 .userId(userId)
                 .tagId(subscribeTagRequestDto.getTagId())
@@ -70,6 +73,11 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public Map<String, String> unsubscribeTag(String userId, TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto) {
+
+        if(!subscribedTagRepository.existsByUserIdAndTagId(userId, unsubscribeTagRequestDto.getTagId())){
+            throw new CustomBadRequestException("Invalid tag id or user id");
+        }
+
         subscribedTagRepository.deleteByUserIdAndTagId(userId, unsubscribeTagRequestDto.getTagId());
 
         Map<String, String> unsubscribeTagResponse = new HashMap<>();

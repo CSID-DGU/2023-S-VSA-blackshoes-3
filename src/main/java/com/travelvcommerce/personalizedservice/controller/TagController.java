@@ -2,13 +2,16 @@ package com.travelvcommerce.personalizedservice.controller;
 
 import com.travelvcommerce.personalizedservice.dto.ResponseDto;
 import com.travelvcommerce.personalizedservice.dto.TagDto;
+import com.travelvcommerce.personalizedservice.entity.ViewTag;
+import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepository;
+import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
+import com.travelvcommerce.personalizedservice.service.CustomBadRequestException;
 import com.travelvcommerce.personalizedservice.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +22,10 @@ public class TagController {
 
     private final TagService tagService;
 
+
     //TagId가 유효한지 아닌지 예외처리 추가해야함
     @PostMapping("/{userId}/init")
     public ResponseEntity<ResponseDto> InitSubscribedTagList(@PathVariable String userId, @RequestBody TagDto.InitTagListRequestDto initTagListRequestDto){
-
         Map<String, String> initTagListResponse = tagService.initSubscribedTagList(userId, initTagListRequestDto);
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -43,25 +46,29 @@ public class TagController {
                 payload(subscribedTagListResponse).
                 build();
 
-        return ResponseEntity.ok().body(responseDto);
-    }
-
-    @PostMapping("/{userId}/subscribe")
-    public ResponseEntity<ResponseDto> subscribeTag(@PathVariable String userId, @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
-        //이미 구독한 태그 예외처리 추가해야함
-        Map<String, String> subscribeTagResponse = tagService.subscribeTag(userId, subscribeTagRequestDto);
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(subscribeTagResponse)
-                .build();
-
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    //해당하는 유저 없는 경우 서비스에서 예외처리 되어있음.
+    @PostMapping("/{userId}/subscribe")
+    public ResponseEntity<ResponseDto> subscribeTag(@PathVariable String userId, @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
+        try {
+            Map<String, String> subscribeTagResponse = tagService.subscribeTag(userId, subscribeTagRequestDto);
+
+            ResponseDto responseDto = ResponseDto.builder()
+                    .payload(subscribeTagResponse)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch(CustomBadRequestException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
+        }
+    }
     @DeleteMapping("/{userId}/subscribe")
     public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @RequestBody TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto){
-        //해당하는 유저 혹은 태그가 없는 경우 예외처리 추가해야함.
-
+        try{
         Map<String, String> unsubscribeTagResponse = tagService.unsubscribeTag(userId, unsubscribeTagRequestDto);
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -69,6 +76,11 @@ public class TagController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }catch(CustomBadRequestException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
+        }
     }
 
     //조회한 태그 추가, 삭제는 없음
