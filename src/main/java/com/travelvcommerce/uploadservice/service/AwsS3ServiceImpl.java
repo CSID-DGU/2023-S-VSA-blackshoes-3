@@ -36,17 +36,17 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
     @Override
     public S3Video uploadEncodedVideo(String userId, String videoId, String filePath) {
-        String fileName = userId + "_" + videoId;
+        String s3FilePath = userId + "/" + videoId;
 
         try {
             Files.walk(Path.of(filePath))
                     .filter(Files::isRegularFile)
                     .forEach(file -> {
-                        String key = DIRECTORY + "/" + fileName + "/" + file.getFileName().toString();
+                        String key = DIRECTORY + "/" + s3FilePath + "/" + file.getFileName().toString();
                         amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, file.toFile()).withCannedAcl(CannedAccessControlList.PublicRead));
                     });
-            String hlsKey = DIRECTORY + "/" + fileName;
-            String directoryKey = DIRECTORY + "/" + fileName;
+            String hlsKey = DIRECTORY + "/" + s3FilePath;
+            String directoryKey = DIRECTORY + "/" + s3FilePath;
             String s3Url = amazonS3Client.getUrl(BUCKET, directoryKey).toString();
             String cloudFrontUrl = DISTRIBUTION_DOMAIN + "/" + hlsKey;
 
@@ -77,7 +77,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
     @Override
     public S3Thumbnail uploadThumbnail(String userId, String videoId, MultipartFile multipartFile) {
-        String fileName = userId + "_" + videoId;
+        String s3FilePath = userId + "/" + videoId;
 
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("file must not be empty");
@@ -92,7 +92,7 @@ public class AwsS3ServiceImpl implements AwsS3Service{
 
             String fileExtension = multipartFile.getOriginalFilename().
                     substring(multipartFile.getOriginalFilename().lastIndexOf("."));
-            key = DIRECTORY + "/" + fileName + "/" + fileName + fileExtension;
+            key = DIRECTORY + "/" + s3FilePath + "/thumbnail" + fileExtension;
 
             amazonS3Client.putObject(new PutObjectRequest(BUCKET, key, multipartFile.getInputStream(), objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));

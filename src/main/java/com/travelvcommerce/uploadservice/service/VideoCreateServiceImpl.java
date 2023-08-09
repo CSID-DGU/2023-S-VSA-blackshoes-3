@@ -49,19 +49,14 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     @Override
     public String uploadVideo(String userId, String videoId, MultipartFile videoFile) {
 
-        try {
-            uploaderRepository.findBySellerId(userId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
-        } catch (NoSuchElementException e) {
-            log.error("uploader not found", e);
-            throw new NoSuchElementException("uploader not found");
-        }
+        uploaderRepository.findBySellerId(userId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
 
-        String fileName = userId + "_" + videoId;
+        String fileName = videoId;
 
         try {
             String originalFileName = videoFile.getOriginalFilename();
             String uploadFileName = fileName + originalFileName.substring(originalFileName.lastIndexOf("."));
-            Path uploadPath = Path.of("src/main/resources/static/videos/original");
+            Path uploadPath = Path.of("src/main/resources/static/videos/original/" + userId);
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -85,9 +80,7 @@ public class VideoCreateServiceImpl implements VideoCreateService {
     public String encodeVideo(String userId, String videoId, String filePath) {
         String inputPath = filePath;
 
-        String fileName = userId + "_" + videoId;
-
-        Path encodingPath = Path.of("src/main/resources/static/videos/encoded/" + fileName);
+        Path encodingPath = Path.of("src/main/resources/static/videos/encoded/" + userId + "/" + videoId);
 
         try {
             if (!Files.exists(encodingPath)) {
