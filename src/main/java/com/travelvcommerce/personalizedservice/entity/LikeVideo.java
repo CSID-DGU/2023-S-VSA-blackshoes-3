@@ -1,11 +1,13 @@
 package com.travelvcommerce.personalizedservice.entity;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @NoArgsConstructor
 @Table(name = "Like_Videos")

@@ -1,13 +1,16 @@
 package com.travelvcommerce.personalizedservice.entity;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 @Table(name = "View_Videos")
+@Data
 public class ViewVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +26,22 @@ public class ViewVideo {
     private Long videoViewCount;
 
     @Column(name = "created_at")
-    private String createdAt;
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @Column(name = "seller_id")
     private String sellerId;
 
     @Builder
-    public ViewVideo(String userId, String videoId, String createdAt, String sellerId) {
+    public ViewVideo(String userId, String videoId, LocalDateTime createdAt, LocalDateTime updatedAt, String sellerId, Long videoViewCount) {
         this.userId = userId;
         this.videoId = videoId;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.sellerId = sellerId;
+        this.videoViewCount = videoViewCount;
     }
 }
 /*

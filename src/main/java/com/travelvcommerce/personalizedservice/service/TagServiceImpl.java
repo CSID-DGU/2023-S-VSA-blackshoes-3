@@ -22,6 +22,10 @@ public class TagServiceImpl implements TagService{
     private final ViewTagRepository viewTagRepository;
     @Override
     public List<String> getSubscribedTagList(String userId) {
+        if(!subscribedTagRepository.existsByUserId(userId)){
+            throw new CustomBadRequestException("Invalid user id");
+        }
+
         List<SubscribedTag> subscribedTagList = subscribedTagRepository.findByUserId(userId);
         List<String> tagIdList = subscribedTagList.stream().map(SubscribedTag::getTagId).collect(Collectors.toList());
 
@@ -34,6 +38,7 @@ public class TagServiceImpl implements TagService{
                 SubscribedTag subscribedTag = SubscribedTag.builder()
                 .userId(userId)
                 .tagId(tagId)
+                .createdAt(LocalDateTime.now())
                 .build();
             subscribedTagRepository.save(subscribedTag);
         }
@@ -59,6 +64,7 @@ public class TagServiceImpl implements TagService{
         subscribedTagRepository.save(SubscribedTag.builder()
                 .userId(userId)
                 .tagId(subscribeTagRequestDto.getTagId())
+                .createdAt(LocalDateTime.now())
                 .build());
 
         TagDto.SubscribeTagResponseDto subscribeTagResponseDto = new TagDto.SubscribeTagResponseDto();
@@ -92,7 +98,6 @@ public class TagServiceImpl implements TagService{
 
         if(viewTagRepository.existsByUserIdAndTagId(userId, viewTagRequestDto.getTagId())){
             ViewTag viewTag = viewTagRepository.findByUserIdAndTagId(userId, viewTagRequestDto.getTagId());
-            viewTag.setCreatedAt(viewTag.getCreatedAt());
             viewTag.setUpdatedAt(LocalDateTime.now());
             viewTag.setTagViewCount(viewTag.getTagViewCount()+1);
             viewTagRepository.save(viewTag);

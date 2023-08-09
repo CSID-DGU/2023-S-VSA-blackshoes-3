@@ -1,10 +1,5 @@
 package com.travelvcommerce.personalizedservice.dto;
-
-
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
