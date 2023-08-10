@@ -10,8 +10,9 @@ import java.util.List;
 public interface ViewTagRepository extends JpaRepository<ViewTag, String> {
     boolean existsByUserIdAndTagId(String userId, String tagId);
     ViewTag findByUserIdAndTagId(String userId, String tagId);
-
     boolean existsByUserId(String userId);
 
     List<ViewTag> findByUserId(String userId);
+
+    void deleteByUserId(String userId);
 }

@@ -139,5 +139,4 @@ public class TagServiceImpl implements TagService{
         viewTagResponse.put("tagViewCount", viewTagResponseDto.getTagViewCount().toString());
         return viewTagResponse;
     }
-
 }
