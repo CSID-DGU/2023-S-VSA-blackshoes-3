@@ -134,8 +134,13 @@ const Manage = () => {
           <Mmiddle
             userId={userId}
             videoId={videoId}
+            videoName={videoName}
+            setVideoName={setVideoName}
             videoUrl={videoUrl}
             videoRef={videoRef}
+            videoThumbnail={videoThumbnail}
+            videoTags={videoTags}
+            videoAds={videoAds}
             selectedQuality={selectedQuality}
             regionTag={regionTag}
             themeTag={themeTag}

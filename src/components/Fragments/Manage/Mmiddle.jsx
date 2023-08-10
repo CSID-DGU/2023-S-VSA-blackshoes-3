@@ -5,7 +5,20 @@ import { ColorButton } from "../../Sign/SignStyle";
 import { UploadInstance } from "../../../api/axios";
 import PropTypes from "prop-types";
 
-const Mmiddle = ({ userId, videoId, videoUrl, videoRef, selectedQuality, regionTag, themeTag }) => {
+const Mmiddle = ({
+  userId,
+  videoId,
+  videoName,
+  setVideoName,
+  videoUrl,
+  videoRef,
+  videoThumbnail,
+  videoTags,
+  videoAds,
+  selectedQuality,
+  regionTag,
+  themeTag,
+}) => {
   // Constant----------------------------------------------------
 
   // State-------------------------------------------------------
@@ -27,18 +40,30 @@ const Mmiddle = ({ userId, videoId, videoUrl, videoRef, selectedQuality, regionT
     }
   };
 
+  const handleVideoName = (e) => {
+    setVideoName(e.target.value);
+  };
+
+  const submitVideoName = async () => {
+    try {
+      await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/title`, {
+        videoName,
+      }).then((res) => {
+        console.log(res);
+        alert("제목이 수정되었습니다.");
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <M.MiddelBox>
       <U.TitleBetweenBox>
         <U.SpanTitle>영상 정보 수정</U.SpanTitle>
-        <U.ButtonWrapper>
-          <ColorButton width="70px" style={{ height: "35px" }}>
-            수정
-          </ColorButton>
-          <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
-            삭제
-          </ColorButton>
-        </U.ButtonWrapper>
+        <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
+          삭제
+        </ColorButton>
       </U.TitleBetweenBox>
       <M.VideoModifyWrapper videourl={videoUrl}>
         수정을 원하는 영상을 클릭해주세요.
@@ -52,17 +77,16 @@ const Mmiddle = ({ userId, videoId, videoUrl, videoRef, selectedQuality, regionT
         <M.InfoFlexBox>
           <M.InfoVerticalBox>
             <M.SecondBlackP>제목</M.SecondBlackP>
-            <U.TitleInput
-              type="text"
-              placeholder="수정할 영상 제목을 입력하세요"
-              style={{ height: "40px" }}
-            />
+            <M.CenterBox>
+              <M.FileTextInput type="text" defaultValue={videoName} onChange={handleVideoName} />
+              <M.ExchangeButton onClick={submitVideoName}>변경</M.ExchangeButton>
+            </M.CenterBox>
           </M.InfoVerticalBox>
           <M.InfoVerticalBox>
             <M.SecondBlackP>썸네일</M.SecondBlackP>
             <M.CenterBox>
               <M.FileInput type="file" id="file-input" />
-              <M.FileTextInput type="text" />
+              <M.FileTextInput type="text" defaultValue={videoThumbnail} />
               <M.ExchangeButton htmlFor="file-input">변경</M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
@@ -78,6 +102,7 @@ const Mmiddle = ({ userId, videoId, videoUrl, videoRef, selectedQuality, regionT
                   <U.CheckBoxInput
                     type="checkbox"
                     id="checkbox"
+                    defaultChecked={videoTags.includes(region.tagId)}
                     onChange={() => {
                       setNewTagIdList([...newTagIdList, region.tagId]);
                     }}
@@ -114,8 +139,13 @@ export default Mmiddle;
 Mmiddle.propTypes = {
   userId: PropTypes.string,
   videoId: PropTypes.string,
+  videoName: PropTypes.string,
+  setVideoName: PropTypes.func,
   videoUrl: PropTypes.string,
   videoRef: PropTypes.object,
+  videoThumbnail: PropTypes.string,
+  videoTags: PropTypes.array,
+  videoAds: PropTypes.array,
   selectedQuality: PropTypes.string,
   regionTag: PropTypes.array,
   themeTag: PropTypes.array,

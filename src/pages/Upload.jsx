@@ -116,6 +116,10 @@ const Upload = () => {
               setLoading(false);
               setIsSocketOpen(true);
               alert("영상이 업로드되었습니다.");
+              const expiredAt = new Date(res.data.payload.expiredAt);
+              setVideoExpireState(
+                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+              );
               setPreview2(res.data.payload.videoCloudfrontUrl);
               setVideoId(res.data.payload.videoId);
               setStep({
@@ -203,7 +207,7 @@ const Upload = () => {
     let stompClient;
 
     const openSocket = () => {
-      const socket = new SockJS("http://13.125.69.94:8021/ws");
+      const socket = new SockJS("http://210.94.179.19:9127/ws");
       stompClient = Stomp.over(socket);
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/encoding/${userId}`, (message) => {
