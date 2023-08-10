@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { GlobalContext } from "../../context/GlobalContext";
-import { ResNavItem0, ResNavItem1, ResNavItem2, ResNavSection } from "../Home/HomeStyle";
+import { GlobalContext } from "../../../context/GlobalContext";
+import { ResNavItem0, ResNavItem1, ResNavItem2, ResNavSection } from "../../Home/HomeStyle";
 
 const ResNav = ({ userId }) => {
   const navigate = useNavigate();

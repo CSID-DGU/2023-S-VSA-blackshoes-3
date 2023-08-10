@@ -1,21 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import Header from "../components/Fragments/Header";
-import Nav from "../components/Fragments/Nav";
+import Header from "../components/Fragments/Nav/Header";
+import Nav from "../components/Fragments/Nav/Nav";
+import ResNav from "../components/Fragments/Nav/ResNav";
 import { GridWrapper } from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import ResNav from "../components/Fragments/ResNav";
-import * as V from "../components/Home/UploadStyle";
-import axios from "axios";
-import Vupload from "../components/Fragments/Vupload";
+import * as V from "../components/Fragments/Upload/UploadStyle";
+import Vupload from "../components/Fragments/Upload/Vupload";
+import Vinfo from "../components/Fragments/Upload/Vinfo";
+import Vad from "../components/Fragments/Upload/Vad";
 import { ColorButton } from "../components/Sign/SignStyle";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
-import Vinfo from "../components/Fragments/Vinfo";
-import Vad from "../components/Fragments/Vad";
+import { UploadInstance } from "../api/axios";
 
 // Upload EC2
-// 13.125.69.94:8021
+// 210.94.179.19:9127
 // Content-Slave
 // 13.125.69.94:8011
 
@@ -53,36 +53,33 @@ const Upload = () => {
   // Function----------------------------------------------------
   const fetchData = async () => {
     try {
-      await axios
-        .get(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}`)
-        .then(async (res) => {
-          if (res.status === 200) {
-            console.log(res);
-            if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
-              const expiredAt = new Date(res.data.payload.expiredAt);
-              setVideoExpireState(
-                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
-              );
-              setVideoId(res.data.payload.videoId);
-              setPreview2(res.data.payload.videoCloudfrontUrl);
-              setStep({
-                first: false,
-                second: true,
+      await UploadInstance.get(`/upload-service/videos/temporary/${userId}`).then(async (res) => {
+        if (res.status === 200) {
+          console.log(res);
+          if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
+            const expiredAt = new Date(res.data.payload.expiredAt);
+            setVideoExpireState(
+              `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+            );
+            setVideoId(res.data.payload.videoId);
+            setPreview2(res.data.payload.videoCloudfrontUrl);
+            setStep({
+              first: false,
+              second: true,
+            });
+          } else {
+            await UploadInstance.delete(
+              `/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
+            )
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
               });
-            } else {
-              await axios
-                .delete(
-                  `http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
-                )
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }
           }
-        });
+        }
+      });
     } catch (err) {
       if (err.status === 404) {
         console.log("이전에 작성하던 영상이 없습니다.");
@@ -92,8 +89,8 @@ const Upload = () => {
       }
     }
 
-    const regionData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/region`);
-    const themeData = await axios.get(`http://13.125.69.94:8021/upload-service/tags/theme`);
+    const regionData = await UploadInstance.get(`/upload-service/tags/region`);
+    const themeData = await UploadInstance.get(`/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
     setThemeTag(themeData.data.payload.tags);
   };
@@ -110,24 +107,26 @@ const Upload = () => {
             setIsSocketOpen(true);
             const formData = new FormData();
             formData.append("video", videoFile);
-            await axios
-              .post(`http://13.125.69.94:8021/upload-service/videos/${userId}`, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              })
-              .then((res) => {
-                console.log(res);
-                setLoading(false);
-                setIsSocketOpen(true);
-                alert("영상이 업로드되었습니다.");
-                setPreview2(res.data.payload.videoCloudfrontUrl);
-                setVideoId(res.data.payload.videoId);
-                setStep({
-                  ...step,
-                  second: true,
-                });
+            await UploadInstance.post(`/upload-service/videos/${userId}`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }).then((res) => {
+              console.log(res);
+              setLoading(false);
+              setIsSocketOpen(true);
+              alert("영상이 업로드되었습니다.");
+              const expiredAt = new Date(res.data.payload.expiredAt);
+              setVideoExpireState(
+                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+              );
+              setPreview2(res.data.payload.videoCloudfrontUrl);
+              setVideoId(res.data.payload.videoId);
+              setStep({
+                ...step,
+                second: true,
               });
+            });
           } catch (err) {
             console.log(err);
             setLoading(false);
@@ -160,16 +159,15 @@ const Upload = () => {
         formData.append("requestUpload", blob);
 
         try {
-          await axios
-            .post(`http://13.125.69.94:8021/upload-service/videos/${userId}/${videoId}`, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            })
-            .then((res) => {
-              console.log(res);
-              alert("동영상 최종 업로드가 완료되었습니다.");
-            });
+          await UploadInstance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((res) => {
+            console.log(res);
+            alert("동영상 최종 업로드가 완료되었습니다.");
+            navigate(`/home/${userId}/manage`);
+          });
         } catch (err) {
           console.log(err);
           alert(`${err.response.data.error}`);
@@ -182,14 +180,14 @@ const Upload = () => {
   const handleVideoExtend = async () => {
     if (window.confirm("영상이 지금으로부터 30분 후 만료됩니다.")) {
       try {
-        await axios
-          .put(`http://13.125.69.94:8021/upload-service/videos/temporary/${userId}/${videoId}`)
-          .then((res) => {
+        await UploadInstance.put(`/upload-service/videos/temporary/${userId}/${videoId}`).then(
+          (res) => {
             const expiredAt = new Date(res.data.payload.expiredAt);
             setVideoExpireState(
               `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
             );
-          });
+          }
+        );
       } catch (err) {
         console.log(err);
         alert("연장에 실패했습니다.");
@@ -209,7 +207,7 @@ const Upload = () => {
     let stompClient;
 
     const openSocket = () => {
-      const socket = new SockJS("http://13.125.69.94:8021/ws");
+      const socket = new SockJS("http://210.94.179.19:9127/ws");
       stompClient = Stomp.over(socket);
       stompClient.connect({}, () => {
         stompClient.subscribe(`/topic/encoding/${userId}`, (message) => {

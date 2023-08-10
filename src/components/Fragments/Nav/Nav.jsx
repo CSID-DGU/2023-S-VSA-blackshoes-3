@@ -6,9 +6,9 @@ import {
   HoverButton2,
   NavBox,
   NavSection,
-} from "../Home/HomeStyle";
+} from "../../Home/HomeStyle";
 import { useContext } from "react";
-import { GlobalContext } from "../../context/GlobalContext";
+import { GlobalContext } from "../../../context/GlobalContext";
 
 const Nav = () => {
   const navigate = useNavigate();
