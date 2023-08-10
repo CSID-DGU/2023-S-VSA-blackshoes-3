@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ViewTagRepository extends JpaRepository<ViewTag, String> {
-    public boolean existsByUserIdAndTagId(String userId, String tagId);
-    public ViewTag findByUserIdAndTagId(String userId, String tagId);
+    boolean existsByUserIdAndTagId(String userId, String tagId);
+    ViewTag findByUserIdAndTagId(String userId, String tagId);
+
+    void deleteByUserId(String userId);
 }

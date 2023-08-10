@@ -22,21 +22,6 @@ public class VideoServiceImpl implements VideoService {
     private final ViewVideoRepository viewVideoRepository;
     private final LikeVideoRepository likeVideoRepository;
 
-    @Override
-    public void deleteHistoryBySellerId(String sellerId) {
-        viewVideoRepository.deleteBySellerId(sellerId);
-    }
-
-    @Override
-    public void deleteHistoryByUserId(String userId) {
-        viewVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteHistoryByVideoId(String videoId) {
-        viewVideoRepository.deleteByVideoId(videoId);
-    }
-
     @Transactional
     @Override
     public Map<String, String> viewVideo(String userId, String videoId, String sellerId){
@@ -157,20 +142,5 @@ public class VideoServiceImpl implements VideoService {
 
         // 구현 필요
         return videoIdList;
-    }
-
-    @Override
-    public void deleteLikeVideoByUserId(String userId) {
-        likeVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteLikeVideoByVideoId(String videoId) {
-        likeVideoRepository.deleteByVideoId(videoId);
-    }
-
-    @Override
-    public void deleteLikeVideoBySellerId(String sellerId) {
-        likeVideoRepository.deleteBySellerId(sellerId);
     }
 }
