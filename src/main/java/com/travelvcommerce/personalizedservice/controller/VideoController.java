@@ -39,12 +39,9 @@ public class VideoController {
     @DeleteMapping("/history/{userId}")
     public ResponseEntity<ResponseDto> unviewVideo(@PathVariable String userId, @RequestBody VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
         try {
-            Map<String, String> unviewVideoResponse = videoService.unviewVideo(userId, unviewVideoRequestDto);
+            videoService.unviewVideo(userId, unviewVideoRequestDto);
 
-            ResponseDto responseDto = ResponseDto.builder().payload(unviewVideoResponse).build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
         } catch (Exception e) {
@@ -55,11 +52,11 @@ public class VideoController {
     @GetMapping("/history/{userId}")
     public ResponseEntity<ResponseDto> getViewedVideosByUserId(@PathVariable String userId) {
         try {
-            List<String> viewVideoIdList = videoService.getViewVideoIdList(userId);
+            List<Map<String, Object>> viewVideoListWithViewCount = videoService.getViewVideoIdListWithViewCount(userId);
 
             Map<String, Object> getViewedVideosIdResponse = new HashMap<>();
             getViewedVideosIdResponse.put("userId", userId);
-            getViewedVideosIdResponse.put("viewedVideos", viewVideoIdList);
+            getViewedVideosIdResponse.put("viewedVideos", viewVideoListWithViewCount);
 
             ResponseDto responseDto = ResponseDto.builder().payload(getViewedVideosIdResponse).build();
 
@@ -70,6 +67,7 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
+
 
     // 비디오 좋아요
     @PostMapping("/like/{userId}")

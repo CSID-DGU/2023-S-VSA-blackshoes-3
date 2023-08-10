@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -51,17 +52,24 @@ public class TagController {
     }
 
     @GetMapping("/{userId}/viewed")
-    public ResponseEntity<ResponseDto> getViewedTagList(@PathVariable String userId){
-        Map<String, Object> viewedTagListResponse = new HashMap<>();
-        viewedTagListResponse.put("userId", userId);
-        viewedTagListResponse.put("viewedTagList", tagService.getViewedTagList(userId));
+    public ResponseEntity<ResponseDto> getViewedTagList(@PathVariable String userId) {
+        try {
+            List<Map<String, Object>> viewedTagListWithDetails = tagService.getViewedTagList(userId);
 
-        ResponseDto responseDto = ResponseDto.builder().
-                payload(viewedTagListResponse).
-                build();
+            Map<String, Object> viewedTagListResponse = new HashMap<>();
+            viewedTagListResponse.put("userId", userId);
+            viewedTagListResponse.put("viewedTags", viewedTagListWithDetails);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            ResponseDto responseDto = ResponseDto.builder().payload(viewedTagListResponse).build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (CustomBadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
+        }
     }
+
 
     //해당하는 유저 없는 경우 서비스에서 예외처리 되어있음.
     @PostMapping("/{userId}/subscribe")

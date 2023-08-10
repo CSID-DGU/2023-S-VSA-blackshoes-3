@@ -9,7 +9,7 @@ import java.util.Map;
 @Service
 public interface TagService {
     List<String> getSubscribedTagList(String userId);
-    List<String> getViewedTagList(String userId);
+    List<Map<String, Object>> getViewedTagList(String userId);
     Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto);
     Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto);
     Map<String, String> unsubscribeTag(String userId, TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto);

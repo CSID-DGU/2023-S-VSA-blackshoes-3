@@ -9,9 +9,9 @@ import java.util.Map;
 public interface VideoService {
     Map<String, String> viewVideo(String userId, VideoDto.ViewVideoRequestDto viewVideoRequestDto);
 
-    Map<String, String> unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto);
+    void unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto);
 
-    List<String> getViewVideoIdList(String userId);
+    List<Map<String, Object>> getViewVideoIdListWithViewCount(String userId);
 
     Map<String, String> likeVideo(String userId, VideoDto.LikeVideoRequestDto likeVideoRequestDto);
 

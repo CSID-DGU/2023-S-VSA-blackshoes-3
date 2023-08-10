@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,6 +29,7 @@ public class VideoServiceImpl implements VideoService {
 
         if (viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             ViewVideo viewVideo = viewVideoRepository.findByUserIdAndVideoId(userId, videoId);
+
             viewVideo.setUpdatedAt(LocalDateTime.now());
             viewVideo.setVideoViewCount(viewVideo.getVideoViewCount() + 1);
             viewVideoRepository.save(viewVideo);
@@ -67,7 +66,7 @@ public class VideoServiceImpl implements VideoService {
     }
     @Transactional
     @Override
-    public Map<String, String> unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
+    public void unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
 
         String videoId = unviewVideoRequestDto.getVideoId();
 
@@ -76,24 +75,28 @@ public class VideoServiceImpl implements VideoService {
         }
         viewVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
 
-        Map<String, String> unviewVideoResponse = new HashMap<>();
-        unviewVideoResponse.put("userId", userId);
-
-        return unviewVideoResponse;
     }
 
     @Override
-    public List<String> getViewVideoIdList(String userId){
+    public List<Map<String, Object>> getViewVideoIdListWithViewCount(String userId) {
         if (!viewVideoRepository.existsByUserId(userId)) {
             throw new CustomBadRequestException("Invalid user id");
         }
 
         List<ViewVideo> viewVideos = viewVideoRepository.findByUserId(userId);
-        List<String> viewVideoIdList = viewVideos.stream().map(ViewVideo::getVideoId).collect(Collectors.toList());
 
-        return viewVideoIdList;
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (ViewVideo viewVideo : viewVideos) {
+            Map<String, Object> videoDetailMap = new HashMap<>();
+            videoDetailMap.put("videoId", viewVideo.getVideoId());
+            videoDetailMap.put("viewCount", Math.toIntExact(viewVideo.getVideoViewCount()));
+            videoDetailMap.put("createdAt", viewVideo.getCreatedAt());
+
+            resultList.add(videoDetailMap);
+        }
+
+        return resultList;
     }
-
 
     @Transactional
     @Override
