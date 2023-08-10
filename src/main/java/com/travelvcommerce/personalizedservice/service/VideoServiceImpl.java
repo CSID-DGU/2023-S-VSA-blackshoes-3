@@ -22,25 +22,12 @@ public class VideoServiceImpl implements VideoService {
     private final ViewVideoRepository viewVideoRepository;
     private final LikeVideoRepository likeVideoRepository;
 
-    @Override
-    public void deleteHistoryBySellerId(String sellerId) {
-        viewVideoRepository.deleteBySellerId(sellerId);
-    }
-
-    @Override
-    public void deleteHistoryByUserId(String userId) {
-        viewVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteHistoryByVideoId(String videoId) {
-        viewVideoRepository.deleteByVideoId(videoId);
-    }
-
     @Transactional
     @Override
-    public Map<String, String> viewVideo(String userId, String videoId, String sellerId){
+    public Map<String, String> viewVideo(String userId, VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
         VideoDto.ViewVideoResponseDto viewVideoResponseDto = new VideoDto.ViewVideoResponseDto();
+        String videoId = viewVideoRequestDto.getVideoId();
+        String sellerId = viewVideoRequestDto.getSellerId();
 
         if (viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             ViewVideo viewVideo = viewVideoRepository.findByUserIdAndVideoId(userId, videoId);
@@ -80,7 +67,10 @@ public class VideoServiceImpl implements VideoService {
     }
     @Transactional
     @Override
-    public Map<String, String> unviewVideo(String userId, String videoId) {
+    public Map<String, String> unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
+
+        String videoId = unviewVideoRequestDto.getVideoId();
+
         if (!viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }
@@ -107,7 +97,10 @@ public class VideoServiceImpl implements VideoService {
 
     @Transactional
     @Override
-    public Map<String, String> likeVideo(String userId, String videoId, String sellerId) {
+    public Map<String, String> likeVideo(String userId, VideoDto.LikeVideoRequestDto likeVideoRequestDto) {
+        String videoId = likeVideoRequestDto.getVideoId();
+        String sellerId = likeVideoRequestDto.getSellerId();
+
         if(likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)){
             throw new CustomBadRequestException("이미 좋아요를 누른 동영상입니다.");
         }
@@ -132,17 +125,14 @@ public class VideoServiceImpl implements VideoService {
 
     @Transactional
     @Override
-    public Map<String, String> unlikeVideo(String userId, String videoId) {
+    public void unlikeVideo(String userId, VideoDto.UnlikeVideoRequestDto unlikeVideoRequestDto) {
+
+        String videoId = unlikeVideoRequestDto.getVideoId();
+
         if (!likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }
-
         likeVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
-
-        Map<String, String> unlikeVideoResponse = new HashMap<>();
-        unlikeVideoResponse.put("userId", userId);
-
-        return unlikeVideoResponse;
     }
 
     @Override
@@ -157,20 +147,5 @@ public class VideoServiceImpl implements VideoService {
 
         // 구현 필요
         return videoIdList;
-    }
-
-    @Override
-    public void deleteLikeVideoByUserId(String userId) {
-        likeVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteLikeVideoByVideoId(String videoId) {
-        likeVideoRepository.deleteByVideoId(videoId);
-    }
-
-    @Override
-    public void deleteLikeVideoBySellerId(String sellerId) {
-        likeVideoRepository.deleteBySellerId(sellerId);
     }
 }

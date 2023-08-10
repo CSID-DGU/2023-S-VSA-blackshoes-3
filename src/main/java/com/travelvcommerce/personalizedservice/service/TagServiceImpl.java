@@ -33,6 +33,18 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
+    public List<String> getViewedTagList(String userId) {
+        if(!viewTagRepository.existsByUserId(userId)){
+            throw new CustomBadRequestException("Invalid user id");
+        }
+
+        List<ViewTag> viewTagList = viewTagRepository.findByUserId(userId);
+        List<String> tagIdList = viewTagList.stream().map(ViewTag::getTagId).collect(Collectors.toList());
+
+        return tagIdList;
+    }
+
+    @Override
     public Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto){
         for(String tagId : initTagListRequestDto.getTagIdList()){
                 SubscribedTag subscribedTag = SubscribedTag.builder()
@@ -128,17 +140,4 @@ public class TagServiceImpl implements TagService{
         return viewTagResponse;
     }
 
-    @Override
-    public Map<String, String> deleteSubscribedTagList(String userId) {
-        if(!subscribedTagRepository.existsByUserId(userId)){
-            throw new CustomBadRequestException("Invalid user id");
-        }
-
-        subscribedTagRepository.deleteByUserId(userId);
-
-        Map<String, String> deleteSubscribedTagListResponse = new HashMap<>();
-        deleteSubscribedTagListResponse.put("userId", userId);
-
-        return deleteSubscribedTagListResponse;
-    }
 }

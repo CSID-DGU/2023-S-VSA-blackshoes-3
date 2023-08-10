@@ -8,6 +8,7 @@ import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import com.travelvcommerce.personalizedservice.service.CustomBadRequestException;
 import com.travelvcommerce.personalizedservice.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/subscribed")
     public ResponseEntity<ResponseDto> getSubscribedTagList(@PathVariable String userId){
 
         Map<String, Object> subscribedTagListResponse = new HashMap<>();
@@ -44,6 +45,19 @@ public class TagController {
 
         ResponseDto responseDto = ResponseDto.builder().
                 payload(subscribedTagListResponse).
+                build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/{userId}/viewed")
+    public ResponseEntity<ResponseDto> getViewedTagList(@PathVariable String userId){
+        Map<String, Object> viewedTagListResponse = new HashMap<>();
+        viewedTagListResponse.put("userId", userId);
+        viewedTagListResponse.put("viewedTagList", tagService.getViewedTagList(userId));
+
+        ResponseDto responseDto = ResponseDto.builder().
+                payload(viewedTagListResponse).
                 build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -76,23 +90,6 @@ public class TagController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        }catch(CustomBadRequestException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ResponseDto> deleteSubscribedTagList(@PathVariable String userId){
-        try{
-            Map<String, String> deleteSubscribedTagListResponse = tagService.deleteSubscribedTagList(userId);
-
-            ResponseDto responseDto = ResponseDto.builder()
-                    .payload(deleteSubscribedTagListResponse)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }catch(CustomBadRequestException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
         } catch(Exception e){

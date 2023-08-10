@@ -16,8 +16,6 @@ public interface LikeVideoRepository extends JpaRepository<LikeVideo, String> {
     public void deleteByUserId(String userId);
     public void deleteByVideoId(String videoId);
     public boolean existsByUserIdAndVideoId(String userId, String videoId);
-
     boolean existsByUserId(String userId);
-
     List<LikeVideo> findByUserId(String userId);
 }
