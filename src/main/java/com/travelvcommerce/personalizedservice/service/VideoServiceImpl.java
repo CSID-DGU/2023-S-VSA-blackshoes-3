@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -22,28 +20,16 @@ public class VideoServiceImpl implements VideoService {
     private final ViewVideoRepository viewVideoRepository;
     private final LikeVideoRepository likeVideoRepository;
 
-    @Override
-    public void deleteHistoryBySellerId(String sellerId) {
-        viewVideoRepository.deleteBySellerId(sellerId);
-    }
-
-    @Override
-    public void deleteHistoryByUserId(String userId) {
-        viewVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteHistoryByVideoId(String videoId) {
-        viewVideoRepository.deleteByVideoId(videoId);
-    }
-
     @Transactional
     @Override
-    public Map<String, String> viewVideo(String userId, String videoId, String sellerId){
+    public Map<String, String> viewVideo(String userId, VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
         VideoDto.ViewVideoResponseDto viewVideoResponseDto = new VideoDto.ViewVideoResponseDto();
+        String videoId = viewVideoRequestDto.getVideoId();
+        String sellerId = viewVideoRequestDto.getSellerId();
 
         if (viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             ViewVideo viewVideo = viewVideoRepository.findByUserIdAndVideoId(userId, videoId);
+
             viewVideo.setUpdatedAt(LocalDateTime.now());
             viewVideo.setVideoViewCount(viewVideo.getVideoViewCount() + 1);
             viewVideoRepository.save(viewVideo);
@@ -80,34 +66,44 @@ public class VideoServiceImpl implements VideoService {
     }
     @Transactional
     @Override
-    public Map<String, String> unviewVideo(String userId, String videoId) {
+    public void unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
+
+        String videoId = unviewVideoRequestDto.getVideoId();
+
         if (!viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }
         viewVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
 
-        Map<String, String> unviewVideoResponse = new HashMap<>();
-        unviewVideoResponse.put("userId", userId);
-
-        return unviewVideoResponse;
     }
 
     @Override
-    public List<String> getViewVideoIdList(String userId){
+    public List<Map<String, Object>> getViewVideoIdListWithViewCount(String userId) {
         if (!viewVideoRepository.existsByUserId(userId)) {
             throw new CustomBadRequestException("Invalid user id");
         }
 
         List<ViewVideo> viewVideos = viewVideoRepository.findByUserId(userId);
-        List<String> viewVideoIdList = viewVideos.stream().map(ViewVideo::getVideoId).collect(Collectors.toList());
 
-        return viewVideoIdList;
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (ViewVideo viewVideo : viewVideos) {
+            Map<String, Object> videoDetailMap = new HashMap<>();
+            videoDetailMap.put("videoId", viewVideo.getVideoId());
+            videoDetailMap.put("viewCount", Math.toIntExact(viewVideo.getVideoViewCount()));
+            videoDetailMap.put("createdAt", viewVideo.getCreatedAt());
+
+            resultList.add(videoDetailMap);
+        }
+
+        return resultList;
     }
-
 
     @Transactional
     @Override
-    public Map<String, String> likeVideo(String userId, String videoId, String sellerId) {
+    public Map<String, String> likeVideo(String userId, VideoDto.LikeVideoRequestDto likeVideoRequestDto) {
+        String videoId = likeVideoRequestDto.getVideoId();
+        String sellerId = likeVideoRequestDto.getSellerId();
+
         if(likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)){
             throw new CustomBadRequestException("이미 좋아요를 누른 동영상입니다.");
         }
@@ -132,17 +128,14 @@ public class VideoServiceImpl implements VideoService {
 
     @Transactional
     @Override
-    public Map<String, String> unlikeVideo(String userId, String videoId) {
+    public void unlikeVideo(String userId, VideoDto.UnlikeVideoRequestDto unlikeVideoRequestDto) {
+
+        String videoId = unlikeVideoRequestDto.getVideoId();
+
         if (!likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }
-
         likeVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
-
-        Map<String, String> unlikeVideoResponse = new HashMap<>();
-        unlikeVideoResponse.put("userId", userId);
-
-        return unlikeVideoResponse;
     }
 
     @Override
@@ -157,20 +150,5 @@ public class VideoServiceImpl implements VideoService {
 
         // 구현 필요
         return videoIdList;
-    }
-
-    @Override
-    public void deleteLikeVideoByUserId(String userId) {
-        likeVideoRepository.deleteByUserId(userId);
-    }
-
-    @Override
-    public void deleteLikeVideoByVideoId(String videoId) {
-        likeVideoRepository.deleteByVideoId(videoId);
-    }
-
-    @Override
-    public void deleteLikeVideoBySellerId(String sellerId) {
-        likeVideoRepository.deleteBySellerId(sellerId);
     }
 }

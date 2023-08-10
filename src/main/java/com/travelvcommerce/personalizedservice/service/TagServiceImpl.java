@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,28 @@ public class TagServiceImpl implements TagService{
 
         return tagIdList;
     }
+
+    @Override
+    public List<Map<String, Object>> getViewedTagList(String userId) {
+        if (!viewTagRepository.existsByUserId(userId)) {
+            throw new CustomBadRequestException("Invalid user id");
+        }
+
+        List<ViewTag> viewTagList = viewTagRepository.findByUserId(userId);
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (ViewTag viewTag : viewTagList) {
+            Map<String, Object> tagDetailMap = new HashMap<>();
+            tagDetailMap.put("tagId", viewTag.getTagId());
+            tagDetailMap.put("viewCount", Math.toIntExact(viewTag.getTagViewCount()));
+            tagDetailMap.put("createdAt", viewTag.getCreatedAt());
+
+            resultList.add(tagDetailMap);
+        }
+
+        return resultList;
+    }
+
 
     @Override
     public Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto){
@@ -126,19 +149,5 @@ public class TagServiceImpl implements TagService{
         viewTagResponse.put("updatedAt", viewTagResponseDto.getFormattedUpdatedAt());
         viewTagResponse.put("tagViewCount", viewTagResponseDto.getTagViewCount().toString());
         return viewTagResponse;
-    }
-
-    @Override
-    public Map<String, String> deleteSubscribedTagList(String userId) {
-        if(!subscribedTagRepository.existsByUserId(userId)){
-            throw new CustomBadRequestException("Invalid user id");
-        }
-
-        subscribedTagRepository.deleteByUserId(userId);
-
-        Map<String, String> deleteSubscribedTagListResponse = new HashMap<>();
-        deleteSubscribedTagListResponse.put("userId", userId);
-
-        return deleteSubscribedTagListResponse;
     }
 }

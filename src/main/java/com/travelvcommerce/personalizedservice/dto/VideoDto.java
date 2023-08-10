@@ -19,6 +19,28 @@ public class VideoDto {
         private List<String> videoIdList;
     }
 
+    @Data
+    public static class ViewVideoRequestDto{
+        private String videoId;
+        private String sellerId;
+    }
+
+    @Data
+    public static class UnviewVideoRequestDto{
+        private String videoId;
+        private String sellerId;
+    }
+
+    @Data
+    public static class LikeVideoRequestDto{
+        private String videoId;
+        private String sellerId;
+    }
+
+    @Data
+    public static class UnlikeVideoRequestDto{
+        private String videoId;
+    }
 
     @Data
     public static class ViewVideoResponseDto implements FormattedCreatedAt {
