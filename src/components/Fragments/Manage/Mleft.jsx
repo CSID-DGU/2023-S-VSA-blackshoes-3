@@ -1,6 +1,6 @@
-import * as M from "../../components/Home/ManageStyle";
-import * as U from "../../components/Home/UploadStyle";
-import { LogoCircleBox } from "../../components/Home/HomeStyle";
+import * as M from "./ManageStyle";
+import * as U from "../Upload/UploadStyle";
+import { LogoCircleBox } from "../../Home/HomeStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen, faEye, faHeart } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";

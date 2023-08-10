@@ -1,6 +1,6 @@
-import { HeaderInfoBox, HeaderRSection, HeaderSection, LogoCircleBox } from "../Home/HomeStyle";
-import { ColorButton, Logo } from "../Sign/SignStyle";
-import logo from "../../assets/images/logo.svg";
+import { HeaderInfoBox, HeaderRSection, HeaderSection, LogoCircleBox } from "../../Home/HomeStyle";
+import { ColorButton, Logo } from "../../Sign/SignStyle";
+import logo from "../../../assets/images/logo.svg";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {

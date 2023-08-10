@@ -1,17 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import Header from "../components/Fragments/Header";
-import Nav from "../components/Fragments/Nav";
+import Header from "../components/Fragments/Nav/Header";
+import Nav from "../components/Fragments/Nav/Nav";
+import ResNav from "../components/Fragments/Nav/ResNav";
 import { GridWrapper } from "../components/Home/HomeStyle";
 import { useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import ResNav from "../components/Fragments/ResNav";
-import * as V from "../components/Home/UploadStyle";
-import Vupload from "../components/Fragments/Vupload";
+import * as V from "../components/Fragments/Upload/UploadStyle";
+import Vupload from "../components/Fragments/Upload/Vupload";
+import Vinfo from "../components/Fragments/Upload/Vinfo";
+import Vad from "../components/Fragments/Upload/Vad";
 import { ColorButton } from "../components/Sign/SignStyle";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
-import Vinfo from "../components/Fragments/Vinfo";
-import Vad from "../components/Fragments/Vad";
 import { UploadInstance } from "../api/axios";
 
 // Upload EC2

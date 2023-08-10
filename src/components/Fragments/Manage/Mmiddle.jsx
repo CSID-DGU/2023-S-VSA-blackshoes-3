@@ -1,8 +1,8 @@
 import { useState } from "react";
-import * as M from "../../components/Home/ManageStyle";
-import * as U from "../../components/Home/UploadStyle";
-import { ColorButton } from "../Sign/SignStyle";
-import { UploadInstance } from "../../api/axios";
+import * as M from "./ManageStyle";
+import * as U from "../Upload/UploadStyle";
+import { ColorButton } from "../../Sign/SignStyle";
+import { UploadInstance } from "../../../api/axios";
 import PropTypes from "prop-types";
 
 const Mmiddle = ({ userId, videoId, videoUrl, videoRef, selectedQuality, regionTag, themeTag }) => {

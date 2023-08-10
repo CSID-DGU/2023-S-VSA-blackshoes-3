@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Fragments/Header";
-import Nav from "../components/Fragments/Nav";
+import Header from "../components/Fragments/Nav/Header";
+import Nav from "../components/Fragments/Nav/Nav";
+import ResNav from "../components/Fragments/Nav/ResNav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
 import { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
-import ResNav from "../components/Fragments/ResNav";
-import * as M from "../components/Home/ManageStyle";
-import * as U from "../components/Home/UploadStyle";
+import * as M from "../components/Fragments/Manage/ManageStyle";
+import * as U from "../components/Fragments/Upload/UploadStyle";
 import PlusButton from "../assets/images/plus-button.svg";
 import Minus from "../assets/images/minus.svg";
 import videojs from "video.js";
@@ -15,8 +15,8 @@ import { LocalizationProvider, TimeField } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { SlaveInstance, UploadInstance } from "../api/axios";
-import Mleft from "../components/Fragments/Mleft";
-import Mmiddle from "../components/Fragments/Mmiddle";
+import Mleft from "../components/Fragments/Manage/Mleft";
+import Mmiddle from "../components/Fragments/Manage/Mmiddle";
 
 const Manage = () => {
   // Constant----------------------------------------------------
@@ -82,21 +82,6 @@ const Manage = () => {
           setVideoAds(res.data.payload.video.videoAds);
         }
       );
-    } else {
-      return;
-    }
-  };
-
-  const handleVideoDelete = async () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      await UploadInstance.delete(`/upload-service/videos/${userId}/${videoId}`)
-        .then((res) => {
-          console.log(res);
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     } else {
       return;
     }
