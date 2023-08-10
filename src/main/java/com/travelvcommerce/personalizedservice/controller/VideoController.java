@@ -19,45 +19,6 @@ public class VideoController {
 
     private final VideoService videoService;
 
-    // sellerId로 시청기록 삭제
-    @DeleteMapping("/history/seller/{sellerId}")
-    public ResponseEntity<ResponseDto> deleteHistoryBySellerId(@PathVariable String sellerId) {
-        try {
-            videoService.deleteHistoryBySellerId(sellerId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
-
-    // userId로 시청기록 삭제
-    @DeleteMapping("/history/user/{userId}")
-    public ResponseEntity<ResponseDto> deleteHistoryByUserId(@PathVariable String userId) {
-        try {
-            videoService.deleteHistoryByUserId(userId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
-
-    // videoId로 조회기록 삭제
-    @DeleteMapping("/history/video/{videoId}")
-    public ResponseEntity<ResponseDto> deleteHistoryByVideoId(@PathVariable String videoId) {
-        try {
-            videoService.deleteHistoryByVideoId(videoId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
-
     // 비디오 조회 컬럼 추가, 이미 있으면 count += 1
     @PostMapping("/history/{userId}/{videoId}/{sellerId}")
     public ResponseEntity<ResponseDto> viewVideo(@PathVariable String userId, @PathVariable String videoId, @PathVariable String sellerId) {
@@ -159,39 +120,5 @@ public class VideoController {
         }
     }
 
-    @DeleteMapping("/like/user/{userId}")
-    public ResponseEntity<ResponseDto> deleteLikeByUserId(@PathVariable String userId) {
-        try {
-            videoService.deleteLikeVideoByUserId(userId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
 
-    @DeleteMapping("/like/video/{videoId}")
-    public ResponseEntity<ResponseDto> deleteLikeByVideoId(@PathVariable String videoId) {
-        try {
-            videoService.deleteLikeVideoByVideoId(videoId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
-
-    @DeleteMapping("/like/seller/{sellerId}")
-    public ResponseEntity<ResponseDto> deleteLikeBySellerId(@PathVariable String sellerId) {
-        try {
-            videoService.deleteLikeVideoBySellerId(sellerId);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (CustomBadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
 }

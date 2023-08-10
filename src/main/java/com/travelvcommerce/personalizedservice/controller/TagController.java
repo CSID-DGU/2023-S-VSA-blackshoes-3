@@ -82,23 +82,7 @@ public class TagController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ResponseDto> deleteSubscribedTagList(@PathVariable String userId){
-        try{
-            Map<String, String> deleteSubscribedTagListResponse = tagService.deleteSubscribedTagList(userId);
-
-            ResponseDto responseDto = ResponseDto.builder()
-                    .payload(deleteSubscribedTagListResponse)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        }catch(CustomBadRequestException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
-        }
-    }
+    
 
     //조회한 태그 추가, 삭제는 없음
     @PostMapping("/{userId}/view")
