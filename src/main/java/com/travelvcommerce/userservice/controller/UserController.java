@@ -69,7 +69,7 @@ public class UserController {
         }
     }
 
-    //이메일, 닉네임, 생일
+    //닉네임, 생일
     @PutMapping("/{userId}")
     public ResponseEntity<ResponseDto> updateUser(@RequestHeader("Authorization") String accessToken,
                                                   @PathVariable String userId,

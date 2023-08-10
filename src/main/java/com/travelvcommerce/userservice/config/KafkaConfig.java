@@ -36,4 +36,25 @@ public class KafkaConfig {
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
+    // consumer configuration
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "user-service");
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+        return new DefaultKafkaConsumerFactory<>(configProps);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String>
+                kafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
+        kafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
+        return kafkaListenerContainerFactory;
+    }
 }

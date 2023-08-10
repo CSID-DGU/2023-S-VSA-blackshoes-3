@@ -103,6 +103,7 @@ public class UserServiceImpl implements UserService {
 
         // 토큰과 UUID 반환
         Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("userId", user.getUserId());
         responseBody.put("accessToken", tokenDto.getAccessToken());
         responseBody.put("refreshToken", tokenDto.getRefreshToken());
 
