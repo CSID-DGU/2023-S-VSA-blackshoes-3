@@ -1,7 +1,7 @@
-import * as U from "../Home/UploadStyle";
+import * as U from "./UploadStyle";
 import HashLoader from "react-spinners/HashLoader";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
-import Plus from "../../assets/images/plus.svg";
+import Plus from "../../../assets/images/plus.svg";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import videojs from "video.js";

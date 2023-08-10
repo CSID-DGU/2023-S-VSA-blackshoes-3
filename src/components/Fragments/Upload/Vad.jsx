@@ -1,8 +1,8 @@
 import { LocalizationProvider, TimeField } from "@mui/x-date-pickers";
-import * as A from "../Home/UploadStyle";
+import * as A from "./UploadStyle";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import Minus from "../../assets/images/minus.svg";
-import PlusButton from "../../assets/images/plus-button.svg";
+import Minus from "../../../assets/images/minus.svg";
+import PlusButton from "../../../assets/images/plus-button.svg";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PropTypes from "prop-types";
 import React, { useState } from "react";

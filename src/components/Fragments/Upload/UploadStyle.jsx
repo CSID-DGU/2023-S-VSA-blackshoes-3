@@ -50,14 +50,6 @@ export const TitleBetweenBox = styled.section`
   position: relative;
 `;
 
-export const ButtonWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-`;
-
 export const MiddleSpan = styled.span`
   display: ${(props) => (props.preview2 === null ? "none" : "block")};
   position: absolute;

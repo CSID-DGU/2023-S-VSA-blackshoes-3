@@ -1,6 +1,6 @@
 import { useState } from "react";
-import * as I from "../Home/UploadStyle";
-import Plus from "../../assets/images/plus.svg";
+import * as I from "../Upload/UploadStyle";
+import Plus from "../../../assets/images/plus.svg";
 import PropTypes from "prop-types";
 
 const Vinfo = ({

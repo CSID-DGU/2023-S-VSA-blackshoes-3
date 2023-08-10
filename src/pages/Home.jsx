@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
-import Header from "../components/Fragments/Header";
-import Nav from "../components/Fragments/Nav";
+import Header from "../components/Fragments/Nav/Header";
+import Nav from "../components/Fragments/Nav/Nav";
+import ResNav from "../components/Fragments/Nav/ResNav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
 import {
   AdSection,
@@ -12,7 +13,7 @@ import {
 } from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import ResNav from "../components/Fragments/ResNav";
+
 import axios from "axios";
 
 // testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
