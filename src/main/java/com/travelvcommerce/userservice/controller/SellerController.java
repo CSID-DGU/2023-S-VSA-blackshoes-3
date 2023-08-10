@@ -9,6 +9,7 @@ import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.EmailService;
+import com.travelvcommerce.userservice.service.KafkaUploaderInfoProducerService;
 import com.travelvcommerce.userservice.service.SellerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,8 @@ public class SellerController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final KafkaUploaderInfoProducerService kafkaUploaderInfoProducerService;
+
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
@@ -69,6 +72,19 @@ public class SellerController {
             // SellerService를 이용하여 저장된
             Map<String, String> sellerRegisterResponse = sellerService.registerSeller(sellerRegisterRequestDto);
             emailService.deleteCompletionCode(sellerRegisterRequestDto.getEmail());
+
+            // 생성된 uploader 정보를 kafka topic에 publish
+            String sellerId = sellerRegisterResponse.get("sellerId");
+
+            Seller seller = sellerRepository.findBySellerId(sellerId).get();
+
+            SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
+                    .sellerId(sellerId)
+                    .sellerName(seller.getSellerName())
+                    .sellerLogo(seller.getSellerLogo())
+                    .build();
+
+            kafkaUploaderInfoProducerService.createUploader(uploaderInfoDto);
 
             ResponseDto responseDto = ResponseDto.builder().payload(sellerRegisterResponse).build();
 
@@ -106,6 +122,8 @@ public class SellerController {
             sellerService.deleteSeller(sellerId);
             refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenSellerType, sellerEmail);
 
+            // 삭제된 판매자의 정보를 kafka topic에 publish
+            kafkaUploaderInfoProducerService.deleteUploader(sellerId);
 
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (RuntimeException e) {
@@ -125,10 +143,6 @@ public class SellerController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-
-            if(!emailService.isExistCompletionCode(sellerUpdateRequestDto.getEmail())){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
-            }
             String sellerName = sellerUpdateRequestDto.getSellerName();
             if(!sellerName.matches(sellerNameRegex)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
@@ -142,6 +156,18 @@ public class SellerController {
 
             // SellerService를 이용하여 저장
             Map<String, String> sellerUpdateResponse = sellerService.updateSeller(sellerId ,sellerUpdateRequestDto, sellerLogo);
+
+            // 변경된 정보를 kafka topic에 publish
+            Seller seller = sellerRepository.findBySellerId(sellerId).get();
+
+            SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
+                    .sellerId(sellerId)
+                    .sellerName(seller.getSellerName())
+                    .sellerLogo(seller.getSellerLogo())
+                    .build();
+
+            kafkaUploaderInfoProducerService.updateUploader(uploaderInfoDto);
+
 
             ResponseDto responseDto = ResponseDto.builder().payload(sellerUpdateResponse).build();
 
@@ -237,22 +263,6 @@ public class SellerController {
 
         ResponseDto responseDto = ResponseDto.builder()
                 .payload(objectMapper.convertValue(sellerInfoDto, Map.class)).build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
-    @GetMapping("/{sellerId}/uploader-info")
-    public ResponseEntity<ResponseDto> getSellerUploaderInfo(@PathVariable String sellerId) {
-        SellerDto.SellerInfoDto sellerUploaderInfoDto;
-
-        try {
-            sellerUploaderInfoDto = sellerService.getSellerUploaderInfo(sellerId);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(objectMapper.convertValue(sellerUploaderInfoDto, Map.class)).build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

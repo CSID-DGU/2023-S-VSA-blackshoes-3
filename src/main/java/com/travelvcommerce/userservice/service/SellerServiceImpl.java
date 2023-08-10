@@ -69,7 +69,6 @@ public class SellerServiceImpl implements SellerService {
                 throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
             }
             existingSeller.get().setUpdatedAt(LocalDateTime.now());
-            existingSeller.get().setEmail(sellerUpdateRequestDto.getEmail());
             sellerRepository.save(existingSeller.get());
         } else {
             throw new RuntimeException("존재하지 않는 판매자입니다.");

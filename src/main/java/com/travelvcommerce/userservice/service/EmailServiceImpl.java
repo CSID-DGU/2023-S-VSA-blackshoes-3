@@ -74,8 +74,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void saveCompletionCode(String email){
-        redisTemplate.opsForValue().set("completionCode:"+email, "true");
-        redisTemplate.expire(email, 60 * 10, java.util.concurrent.TimeUnit.SECONDS);
+        String completionCodeKey = "completionCode:"+email;
+        redisTemplate.opsForValue().set(completionCodeKey, "true");
+        redisTemplate.expire(completionCodeKey, 60 * 10, java.util.concurrent.TimeUnit.SECONDS);
     }
     @Override
     public void deleteCompletionCode(String email){

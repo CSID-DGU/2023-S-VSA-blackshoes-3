@@ -37,7 +37,6 @@ public class SellerDto {
 
     @Data
     public static class SellerUpdateRequestDto{
-        private String email;
         private String sellerName;
     }
 
