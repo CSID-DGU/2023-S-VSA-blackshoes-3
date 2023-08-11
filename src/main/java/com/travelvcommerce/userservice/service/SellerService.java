@@ -13,7 +13,7 @@ import java.util.Map;
 public interface SellerService {
     Map<String, String> updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo);
     void deleteSeller(String sellerId);
-    Map<String, String> updatePassword(String sellerId, String password);
+    Map<String, String> updatePassword(String sellerId, SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto);
     Map<String, String> registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
     Map<String, String> login(SellerDto.SellerLoginRequestDto sellerLoginRequestDto);
     SellerDto.SellerInfoDto getSellerInfo(String sellerId);

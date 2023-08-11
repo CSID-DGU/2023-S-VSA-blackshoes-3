@@ -17,11 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
+import java.util.*;
 
 
 @Transactional
@@ -60,18 +56,18 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public Map<String, String> updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo){
-        Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
-        if(existingSeller.isPresent()) {
+        Optional<Seller> existingSeller = Optional.ofNullable(sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다.")));
+
+        if (sellerUpdateRequestDto != null) {
             existingSeller.get().setSellerName(sellerUpdateRequestDto.getSellerName());
+        }
+
+        if (sellerLogo != null) {
             try {
                 existingSeller.get().setSellerLogo(sellerLogo.getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
             }
-            existingSeller.get().setUpdatedAt(LocalDateTime.now());
-            sellerRepository.save(existingSeller.get());
-        } else {
-            throw new RuntimeException("존재하지 않는 판매자입니다.");
         }
 
         SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = new SellerDto.SellerUpdateResponseDto();
@@ -83,7 +79,6 @@ public class SellerServiceImpl implements SellerService {
         responseBody.put("updatedAt", sellerUpdateResponseDto.getFormattedUpdatedAt());
         return responseBody;
     }
-
 
     @Override
     public void deleteSeller(String sellerId) {
@@ -111,20 +106,23 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Map<String, String> updatePassword(String sellerId, String password) {
-        Optional<Seller> existingSeller = sellerRepository.findBySellerId(sellerId);
-        if(existingSeller.isPresent()) {
-            existingSeller.get().setPassword(passwordEncoder.encode(password));
-            sellerRepository.save(existingSeller.get());
+    public Map<String, String> updatePassword(String sellerId, SellerDto.SellerUpdatePasswordRequestDto updatePasswordRequestDto) {
+        Seller existingSeller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다."));
 
-            Map<String, String> responseBody = new HashMap<>();
-            responseBody.put("sellerId", existingSeller.get().getSellerId());
-            responseBody.put("updatedAt", existingSeller.get().getUpdatedAt().toString());
-            return responseBody;
-        } else {
-            throw new RuntimeException("존재하지 않는 판매자입니다.");
+        String oldPassword = updatePasswordRequestDto.getOldPassword();
+        String newPassword = updatePasswordRequestDto.getNewPassword();
+        String password = existingSeller.getPassword();
+
+        if (!passwordEncoder.matches(oldPassword, password)) {
+            throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
         }
+        existingSeller.setPassword(passwordEncoder.encode(newPassword));
+        existingSeller.setUpdatedAt(LocalDateTime.now());
 
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("sellerId", existingSeller.getSellerId());
+        responseBody.put("updatedAt", existingSeller.getUpdatedAt().toString());
+        return responseBody;
     }
 
     @Override
@@ -142,5 +140,18 @@ public class SellerServiceImpl implements SellerService {
                 .sellerLogo(seller.getSellerLogo())
                 .build();
         return sellerInfoDto;
+    }
+
+    public Map<String, String> findPassword(String email, String password) {
+        Seller seller = sellerRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Seller not found with email: " + email));
+
+        seller.setPassword(passwordEncoder.encode(password));
+        seller.setUpdatedAt(LocalDateTime.now());
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("sellerId", seller.getSellerId());
+        responseBody.put("updatedAt", seller.getUpdatedAt().toString());
+        return responseBody;
     }
 }
