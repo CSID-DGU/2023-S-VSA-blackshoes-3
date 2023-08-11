@@ -79,11 +79,18 @@ public class SellerDto {
     @Data
     public static class SellerUpdatePasswordRequestDto{
         private String email;
+        private String oldPassword;
+        private String newPassword;
+    }
+
+    @Data
+    public static class SellerFindPasswordRequestDto{
+        private String email;
         private String password;
     }
 
     @Data
-    public class SellerDeleteRequestDto {
+    public static class SellerDeleteRequestDto {
         private String password;
     }
 }
