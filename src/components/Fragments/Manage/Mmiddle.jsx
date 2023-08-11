@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
 import { ColorButton } from "../../Sign/SignStyle";
@@ -112,6 +112,12 @@ const Mmiddle = ({
     }
   };
 
+  // ComponentDidMount--------------------------------------------
+  useEffect(() => {
+    setNewTagIdList(videoTags.map((v) => v.tagId));
+  }, [videoTags]);
+
+  console.log(newTagIdList);
   return (
     <M.MiddleBox>
       <M.PreviewSection thumbnail_preview={thumbnailPreview}>
@@ -165,14 +171,18 @@ const Mmiddle = ({
               {regionTag.map((region) => (
                 <U.TagItemBox key={region.tagId}>
                   <U.NormalSpan>{region.content}</U.NormalSpan>
-                  <U.CheckBoxInput
-                    type="checkbox"
-                    id="checkbox"
-                    defaultChecked={videoTags.includes(region.tagId)}
-                    onChange={() => {
-                      setNewTagIdList([...newTagIdList, region.tagId]);
-                    }}
-                  />
+                  {videoTags.length !== 0 ? (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      id="checkbox"
+                      defaultChecked={videoTags.some((video) => video.tagId === region.tagId)}
+                      onChange={() => {
+                        setNewTagIdList([...newTagIdList, region.tagId]);
+                      }}
+                    />
+                  ) : (
+                    <U.CheckBoxInput type="checkbox" />
+                  )}
                 </U.TagItemBox>
               ))}
             </U.TagScrollBox>
@@ -183,13 +193,18 @@ const Mmiddle = ({
               {themeTag.map((theme) => (
                 <U.TagItemBox key={theme.tagId}>
                   <U.NormalSpan>{theme.content}</U.NormalSpan>
-                  <U.CheckBoxInput
-                    type="checkbox"
-                    id="checkbox"
-                    onChange={() => {
-                      setNewTagIdList([...newTagIdList, theme.tagId]);
-                    }}
-                  />
+                  {videoTags.length !== 0 ? (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      id="checkbox"
+                      defaultChecked={videoTags.some((video) => video.tagId === theme.tagId)}
+                      onChange={() => {
+                        setNewTagIdList([...newTagIdList, theme.tagId]);
+                      }}
+                    />
+                  ) : (
+                    <U.CheckBoxInput type="checkbox" />
+                  )}
                 </U.TagItemBox>
               ))}
             </U.TagScrollBox>
