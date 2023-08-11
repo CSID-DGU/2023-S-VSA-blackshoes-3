@@ -78,13 +78,8 @@ public class UserServiceController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ResponseDto> logout(@RequestHeader("Authorization") String accessToken, @RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
+    public ResponseEntity<ResponseDto> logout(@RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
         try {
-            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-
-            if (!jwtTokenProvider.validateToken(bearerToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
-            }
             String refreshToken = refreshTokenDto.getRefreshToken();
             if (refreshToken == null || refreshToken.isEmpty()) {
                 return ResponseEntity.badRequest().body(ResponseDto.builder()
