@@ -116,38 +116,32 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public Map<String, String> viewTag(String userId, TagDto.ViewTagRequestDto viewTagRequestDto) {
-        TagDto.ViewTagResponseDto viewTagResponseDto = new TagDto.ViewTagResponseDto();
+    public Map<String, String> viewTag(String userId, String tagId) {
+        Map<String, String> viewTagResponse = new HashMap<>();
 
-        if(viewTagRepository.existsByUserIdAndTagId(userId, viewTagRequestDto.getTagId())){
-            ViewTag viewTag = viewTagRepository.findByUserIdAndTagId(userId, viewTagRequestDto.getTagId());
+        if(viewTagRepository.existsByUserIdAndTagId(userId, tagId)){
+            ViewTag viewTag = viewTagRepository.findByUserIdAndTagId(userId, tagId);
             viewTag.setUpdatedAt(LocalDateTime.now());
             viewTag.setTagViewCount(viewTag.getTagViewCount()+1);
-            viewTagRepository.save(viewTag);
 
-            viewTagResponseDto.setTagViewCount(viewTag.getTagViewCount());
-            viewTagResponseDto.setCreatedAt(viewTag.getCreatedAt());
+            viewTagResponse.put("userId", userId);
+            viewTagResponse.put("createdAt", viewTag.getCreatedAt().toString());
+            viewTagResponse.put("updatedAt", viewTag.getUpdatedAt().toString());
+            viewTagResponse.put("tagViewCount", viewTag.getTagViewCount().toString());
         }else{
             ViewTag viewTag = ViewTag.builder()
                     .userId(userId)
-                    .tagId(viewTagRequestDto.getTagId())
+                    .tagId(tagId)
                     .createdAt(LocalDateTime.now())
                     .tagViewCount(1L)
                     .build();
             viewTagRepository.save(viewTag);
 
-            viewTagResponseDto.setTagViewCount(viewTag.getTagViewCount());
-            viewTagResponseDto.setCreatedAt(LocalDateTime.now());
+            viewTagResponse.put("userId", userId);
+            viewTagResponse.put("createdAt", viewTag.getCreatedAt().toString());
+            viewTagResponse.put("updatedAt", viewTag.getUpdatedAt().toString());
+            viewTagResponse.put("tagViewCount", viewTag.getTagViewCount().toString());
         }
-
-        viewTagResponseDto.setUserId(userId);
-        viewTagResponseDto.setUpdatedAt(LocalDateTime.now());
-
-        Map<String, String> viewTagResponse = new HashMap<>();
-        viewTagResponse.put("userId", userId);
-        viewTagResponse.put("createdAt", viewTagResponseDto.getFormattedCreatedAt());
-        viewTagResponse.put("updatedAt", viewTagResponseDto.getFormattedUpdatedAt());
-        viewTagResponse.put("tagViewCount", viewTagResponseDto.getTagViewCount().toString());
         return viewTagResponse;
     }
 }

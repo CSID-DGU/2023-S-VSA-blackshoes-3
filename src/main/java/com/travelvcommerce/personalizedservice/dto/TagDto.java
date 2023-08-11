@@ -1,9 +1,11 @@
 package com.travelvcommerce.personalizedservice.dto;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class TagDto {
 
@@ -34,18 +36,6 @@ public class TagDto {
 
     @Data
     public static class ViewTagRequestDto {
-        private String tagId;
-    }
-    @Data
-    public static class ViewTagResponseDto implements FormattedCreatedAt {
-        private String userId;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-        private Long tagViewCount;
-
-        public String getFormattedUpdatedAt() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            return getUpdatedAt().format(formatter);
-        }
+        private List<String> tagIdList;
     }
 }

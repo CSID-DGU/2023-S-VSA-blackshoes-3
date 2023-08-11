@@ -13,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -103,10 +101,15 @@ public class TagController {
     //조회한 태그 추가, 삭제는 없음
     @PostMapping("/{userId}/tags/viewed")
     public ResponseEntity<ResponseDto> viewTag(@PathVariable String userId, @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
-        Map<String, String> viewTagResponse = tagService.viewTag(userId, viewTagRequestDto);
+        List<String> tagIdList = viewTagRequestDto.getTagIdList();
+
+        List<Map<String, String>> viewTagResponseList = new ArrayList<>();
+        for(String tagId : tagIdList){
+            viewTagResponseList.add(tagService.viewTag(userId, tagId));
+        }
 
         ResponseDto responseDto = ResponseDto.builder()
-                .payload(viewTagResponse)
+                .payload(Collections.singletonMap("viewTagResponseList", viewTagResponseList))
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
