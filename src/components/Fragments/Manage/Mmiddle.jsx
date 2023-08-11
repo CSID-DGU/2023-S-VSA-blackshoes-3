@@ -177,7 +177,11 @@ const Mmiddle = ({
                       id="checkbox"
                       defaultChecked={videoTags.some((video) => video.tagId === region.tagId)}
                       onChange={() => {
-                        setNewTagIdList([...newTagIdList, region.tagId]);
+                        if (newTagIdList.includes(region.tagId)) {
+                          setNewTagIdList(newTagIdList.filter((n) => n !== region.tagId));
+                        } else if (!newTagIdList.includes(region.tagId)) {
+                          setNewTagIdList([...newTagIdList, region.tagId]);
+                        }
                       }}
                     />
                   ) : (
