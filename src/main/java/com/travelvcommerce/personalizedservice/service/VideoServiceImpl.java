@@ -66,10 +66,7 @@ public class VideoServiceImpl implements VideoService {
     }
     @Transactional
     @Override
-    public void unviewVideo(String userId, VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
-
-        String videoId = unviewVideoRequestDto.getVideoId();
-
+    public void unviewVideo(String userId, String videoId) {
         if (!viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }
@@ -128,10 +125,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Transactional
     @Override
-    public void unlikeVideo(String userId, VideoDto.UnlikeVideoRequestDto unlikeVideoRequestDto) {
-
-        String videoId = unlikeVideoRequestDto.getVideoId();
-
+    public void unlikeVideo(String userId, String videoId) {
         if (!likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             throw new CustomBadRequestException("Invalid video id or user id");
         }

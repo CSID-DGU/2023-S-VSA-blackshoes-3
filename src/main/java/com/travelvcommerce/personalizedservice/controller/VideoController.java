@@ -15,13 +15,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/personalized-service/videos")
+@RequestMapping("/personalized-service")
 public class VideoController {
 
     private final VideoService videoService;
 
     // 비디오 조회 컬럼 추가, 이미 있으면 count += 1
-    @PostMapping("/history/{userId}")
+    @PostMapping("/{userId}/videos/history")
     public ResponseEntity<ResponseDto> viewVideo(@PathVariable String userId, @RequestBody VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
         try {
             Map<String, String> viewVideoResponse = videoService.viewVideo(userId, viewVideoRequestDto);
@@ -36,12 +36,12 @@ public class VideoController {
         }
     }
 
-    @DeleteMapping("/history/{userId}")
-    public ResponseEntity<ResponseDto> unviewVideo(@PathVariable String userId, @RequestBody VideoDto.UnviewVideoRequestDto unviewVideoRequestDto) {
+    @DeleteMapping("/{userId}/videos/history/{videoId}")
+    public ResponseEntity<ResponseDto> deleteViewVideo(@PathVariable String userId, @PathVariable String videoId) {
         try {
-            videoService.unviewVideo(userId, unviewVideoRequestDto);
+            videoService.unviewVideo(userId, videoId);
 
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class VideoController {
         }
     }
 
-    @GetMapping("/history/{userId}")
+    @GetMapping("/{userId}/videos/history")
     public ResponseEntity<ResponseDto> getViewedVideosByUserId(@PathVariable String userId) {
         try {
             List<Map<String, Object>> viewVideoListWithViewCount = videoService.getViewVideoIdListWithViewCount(userId);
@@ -70,7 +70,7 @@ public class VideoController {
 
 
     // 비디오 좋아요
-    @PostMapping("/like/{userId}")
+    @PostMapping("/{userId}/videos/liked")
     public ResponseEntity<ResponseDto> likeVideo(@PathVariable String userId, @RequestBody VideoDto.LikeVideoRequestDto likeVideoRequestDto) {
         try {
             Map<String, String> likeVideoResponse = videoService.likeVideo(userId, likeVideoRequestDto);
@@ -85,10 +85,10 @@ public class VideoController {
     }
 
     // 비디오 좋아요 해제
-    @DeleteMapping("/like/{userId}")
-    public ResponseEntity<ResponseDto> unlikeVideo(@PathVariable String userId, @RequestBody VideoDto.UnlikeVideoRequestDto unlikeVideoRequestDto) {
+    @DeleteMapping("/{userId}/videos/liked/{videoId}")
+    public ResponseEntity<ResponseDto> unlikeVideo(@PathVariable String userId, @PathVariable String videoId) {
         try {
-            videoService.unlikeVideo(userId, unlikeVideoRequestDto);
+            videoService.unlikeVideo(userId, videoId);
 
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (CustomBadRequestException e) {
@@ -99,7 +99,7 @@ public class VideoController {
     }
 
     // 좋아요한 비디오 리스트
-    @GetMapping("/like/{userId}")
+    @GetMapping("/{userId}/videos/liked")
     public ResponseEntity<ResponseDto> getLikedVideosByUserId(@PathVariable String userId) {
         try {
             List<String> likedVideosId = videoService.getLikedVideoIdList(userId);

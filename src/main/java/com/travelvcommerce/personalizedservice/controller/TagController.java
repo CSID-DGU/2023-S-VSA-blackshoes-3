@@ -19,14 +19,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("personalized-service/tags")
+@RequestMapping("personalized-service")
 public class TagController {
 
     private final TagService tagService;
 
 
     //TagId가 유효한지 아닌지 예외처리 추가해야함
-    @PostMapping("/{userId}/init")
+    @PostMapping("/{userId}/tags/subscribed/init")
     public ResponseEntity<ResponseDto> InitSubscribedTagList(@PathVariable String userId, @RequestBody TagDto.InitTagListRequestDto initTagListRequestDto){
         Map<String, String> initTagListResponse = tagService.initSubscribedTagList(userId, initTagListRequestDto);
 
@@ -37,7 +37,7 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/{userId}/subscribed")
+    @GetMapping("/{userId}/tags/subscribed")
     public ResponseEntity<ResponseDto> getSubscribedTagList(@PathVariable String userId){
 
         Map<String, Object> subscribedTagListResponse = new HashMap<>();
@@ -51,7 +51,7 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/{userId}/viewed")
+    @GetMapping("/{userId}/tags/viewed")
     public ResponseEntity<ResponseDto> getViewedTagList(@PathVariable String userId) {
         try {
             List<Map<String, Object>> viewedTagListWithDetails = tagService.getViewedTagList(userId);
@@ -72,7 +72,7 @@ public class TagController {
 
 
     //해당하는 유저 없는 경우 서비스에서 예외처리 되어있음.
-    @PostMapping("/{userId}/subscribe")
+    @PostMapping("/{userId}/tags/subscribed")
     public ResponseEntity<ResponseDto> subscribeTag(@PathVariable String userId, @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
         try {
             Map<String, String> subscribeTagResponse = tagService.subscribeTag(userId, subscribeTagRequestDto);
@@ -88,25 +88,20 @@ public class TagController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
-    @DeleteMapping("/{userId}/subscribe")
-    public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @RequestBody TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto){
+    @DeleteMapping("/{userId}/tags/subscribed/{tagId}")
+    public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @PathVariable String tagId) {
         try{
-        Map<String, String> unsubscribeTagResponse = tagService.unsubscribeTag(userId, unsubscribeTagRequestDto);
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(unsubscribeTagResponse)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            tagService.unsubscribeTag(userId, tagId);
         }catch(CustomBadRequestException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     //조회한 태그 추가, 삭제는 없음
-    @PostMapping("/{userId}/view")
+    @PostMapping("/{userId}/tags/viewed")
     public ResponseEntity<ResponseDto> viewTag(@PathVariable String userId, @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
         Map<String, String> viewTagResponse = tagService.viewTag(userId, viewTagRequestDto);
 

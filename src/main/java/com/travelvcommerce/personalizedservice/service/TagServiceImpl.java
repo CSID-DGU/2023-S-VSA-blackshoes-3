@@ -101,13 +101,13 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public Map<String, String> unsubscribeTag(String userId, TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto) {
+    public Map<String, String> unsubscribeTag(String userId, String tagId) {
 
-        if(!subscribedTagRepository.existsByUserIdAndTagId(userId, unsubscribeTagRequestDto.getTagId())){
+        if(!subscribedTagRepository.existsByUserIdAndTagId(userId, tagId)) {
             throw new CustomBadRequestException("Invalid tag id or user id");
         }
 
-        subscribedTagRepository.deleteByUserIdAndTagId(userId, unsubscribeTagRequestDto.getTagId());
+        subscribedTagRepository.deleteByUserIdAndTagId(userId, tagId);
 
         Map<String, String> unsubscribeTagResponse = new HashMap<>();
         unsubscribeTagResponse.put("userId", userId);

@@ -12,6 +12,6 @@ public interface TagService {
     List<Map<String, Object>> getViewedTagList(String userId);
     Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto);
     Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto);
-    Map<String, String> unsubscribeTag(String userId, TagDto.UnsubscribeTagRequestDto unsubscribeTagRequestDto);
+    Map<String, String> unsubscribeTag(String userId, String tagId);
     Map<String, String> viewTag(String userId, TagDto.ViewTagRequestDto viewTagRequestDto);
 }
