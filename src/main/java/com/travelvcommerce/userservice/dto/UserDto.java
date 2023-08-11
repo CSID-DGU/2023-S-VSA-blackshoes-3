@@ -90,7 +90,8 @@ public class UserDto {
     @Data
     public static class UserUpdatePasswordRequestDto{
         private String email;
-        private String password;
+        private String oldPassword;
+        private String newPassword;
     }
     @Data
     public static class UserUpdatePasswordResponseDto{

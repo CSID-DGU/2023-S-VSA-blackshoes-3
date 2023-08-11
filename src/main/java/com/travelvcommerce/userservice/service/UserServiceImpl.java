@@ -1,8 +1,10 @@
 package com.travelvcommerce.userservice.service;
 
+import com.travelvcommerce.userservice.dto.SellerDto;
 import com.travelvcommerce.userservice.dto.TokenDto;
 import com.travelvcommerce.userservice.dto.UserDto;
 import com.travelvcommerce.userservice.entity.Role;
+import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
@@ -130,22 +132,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, String> updatePassword(String userId, String password) {
-        Optional<User> existingUser = userRepository.findByUserId(userId);
+    public Map<String, String> updatePassword(String userId, UserDto.UserUpdatePasswordRequestDto updatePasswordRequestDto) {
+        User existingUser = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
-        if(existingUser.isPresent()) {
-            existingUser.get().setPassword(passwordEncoder.encode(password));
-            userRepository.save(existingUser.get());
+        String oldPassword = updatePasswordRequestDto.getOldPassword();
+        String newPassword = updatePasswordRequestDto.getNewPassword();
+        String password = existingUser.getPassword();
+
+        if (!passwordEncoder.matches(oldPassword, password)) {
+            throw new RuntimeException("기존 비밀번호가 일치하지 않습니다.");
         }
-
-        UserDto.UserUpdatePasswordResponseDto responseDto = new UserDto.UserUpdatePasswordResponseDto();
-        responseDto.setUpdatedAt(LocalDateTime.now());
-        responseDto.setUserId(userId);
+        existingUser.setPassword(passwordEncoder.encode(newPassword));
+        existingUser.setUpdatedAt(LocalDateTime.now());
 
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
-        responseBody.put("userId", responseDto.getUserId());
-
+        responseBody.put("sellerId", existingUser.getUserId());
+        responseBody.put("updatedAt", existingUser.getUpdatedAt().toString());
         return responseBody;
     }
 

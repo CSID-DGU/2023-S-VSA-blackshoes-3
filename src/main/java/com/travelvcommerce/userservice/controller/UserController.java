@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -113,7 +114,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{userId}")
+    @PostMapping("/{userId}/withdrawal")
     public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable String userId, @RequestBody UserDto.UserDeleteRequestDto userDeleteRequestDto){
         try {
             String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
@@ -142,7 +143,7 @@ public class UserController {
             userService.deleteUser(userId);
             refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenUserType, userEmail);
 
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } catch (UsernameNotFoundException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -184,7 +185,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/password/update")
+    @PutMapping("/{userId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
                                                       @PathVariable String userId,
                                                       @RequestBody UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto){
@@ -194,21 +195,22 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
             }
 
-            String email = userUpdatePasswordRequestDto.getEmail();
-            if(!emailService.isExistCompletionCode(email)){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
-            }
 
-            String password = userUpdatePasswordRequestDto.getPassword();
-            if(!password.matches(passwordRegex)){
+            String newPassword = userUpdatePasswordRequestDto.getNewPassword();
+            if (!newPassword.matches(passwordRegex)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8자 이상 16자 이하의 영문, 숫자, 특수문자를 포함해야 합니다.").build());
             }
 
-            Map<String, String> updateResponse = userService.updatePassword(userId, userUpdatePasswordRequestDto.getPassword());
-            emailService.deleteCompletionCode(email);
+            Map<String, String> updateResponse = userService.updatePassword(userId, userUpdatePasswordRequestDto);
 
             ResponseDto responseDto = ResponseDto.builder().payload(updateResponse).build();
             return ResponseEntity.ok().body(responseDto);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -218,7 +220,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/password/find")
+    @PutMapping("/password")
     public ResponseEntity<ResponseDto> findPassword(@RequestBody UserDto.UserFindPasswordRequestDto userFindPasswordRequestDto){
         try {
 

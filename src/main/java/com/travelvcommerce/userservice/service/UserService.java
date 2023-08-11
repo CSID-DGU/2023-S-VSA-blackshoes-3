@@ -12,7 +12,7 @@ import java.util.Map;
 public interface UserService {
     Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto);
     void deleteUser(String userId);
-    Map<String, String> updatePassword(String userId, String password);
+    Map<String, String> updatePassword(String userId, UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto);
 
     Map<String, String> findPassword(String email, String password);
 
