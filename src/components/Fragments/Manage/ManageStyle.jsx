@@ -56,13 +56,14 @@ export const LeftBox = styled.div`
   }
 `;
 
-export const MiddelBox = styled.div`
+export const MiddleBox = styled.div`
   width: 60%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  position: relative;
   padding: 20px 20px 0 20px;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
@@ -202,6 +203,23 @@ export const Select = styled.select`
 `;
 
 // Video Modify-----------------------------------------------
+export const PreviewSection = styled.section`
+  width: 100%;
+  height: 100%;
+  display: ${(props) => (props.thumbnail_preview === null ? "none" : "flex")};
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: ${(props) => (props.thumbnail_preview === null ? "-1" : "1")};
+`;
+
+export const ThumbnailPreview = styled.img`
+  width: 400px;
+  height: auto;
+  display: ${(props) => (props.thumbnail_preview === null ? "none" : "")};
+  object-fit: cover;
+`;
+
 export const VideoModify = styled.video`
   width: 100%;
   min-width: 350px;
@@ -281,6 +299,15 @@ export const FileTextInput = styled.input`
   padding: 15px;
 `;
 
+export const FileTextLabel = styled.label`
+  width: calc(100% - 85px);
+  height: 40px;
+  border: ${(props) => `1px solid ${props.theme.lightGray}`};
+  border-radius: 16px 0 0 16px;
+  background-color: #f6f7f9;
+  padding: 15px;
+`;
+
 export const ExchangeButton = styled.label`
   width: 60px;
   height: 40px;
@@ -305,8 +332,26 @@ export const TagSection = styled.section`
 
 export const SecondBlackP = styled.p`
   width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: ${(props) => props.theme.secondBlack};
   font-size: 14px;
+`;
+
+export const InputButton = styled.label`
+  width: 40px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.primaryColor};
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
 `;
 
 // Ad Modify-----------------------------------------------

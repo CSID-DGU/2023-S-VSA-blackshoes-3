@@ -13,6 +13,7 @@ const Mmiddle = ({
   videoUrl,
   videoRef,
   videoThumbnail,
+  setVideoThumbnail,
   videoTags,
   videoAds,
   selectedQuality,
@@ -23,6 +24,8 @@ const Mmiddle = ({
 
   // State-------------------------------------------------------
   const [newTagIdList, setNewTagIdList] = useState([]);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [thumbnailModifiedFile, setThumbnailModifiedFile] = useState(null);
 
   // Function----------------------------------------------------
   const handleVideoDelete = async () => {
@@ -57,8 +60,63 @@ const Mmiddle = ({
     }
   };
 
+  const previewTimer = () => {
+    setTimeout(() => {
+      setThumbnailPreview(null);
+    }, 3000);
+  };
+
+  const handleVideoThumbnail = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setThumbnailModifiedFile(file);
+      if (typeof file === "object") {
+        setVideoThumbnail(file.name);
+      } else {
+        setVideoThumbnail(file);
+      }
+      previewTimer();
+    } else {
+      setVideoThumbnail(null);
+      alert("파일을 등록하는데 실패했습니다.");
+    }
+  };
+
+  const submitVideoThumbnail = async () => {
+    if (window.confirm("썸네일을 수정하시겠습니까?")) {
+      try {
+        const formData = new FormData();
+        formData.append("thumbnail", thumbnailModifiedFile);
+        await UploadInstance.put(
+          `/upload-service/videos/${userId}/${videoId}/thumbnail`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        ).then((res) => {
+          console.log(res);
+          alert("썸네일이 수정되었습니다.");
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return;
+    }
+  };
+
   return (
-    <M.MiddelBox>
+    <M.MiddleBox>
+      <M.PreviewSection thumbnail_preview={thumbnailPreview}>
+        <M.ThumbnailPreview src={thumbnailPreview} alt="thumbnail_preview" loading="lazy" />
+      </M.PreviewSection>
       <U.TitleBetweenBox>
         <U.SpanTitle>영상 정보 수정</U.SpanTitle>
         <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
@@ -83,11 +141,19 @@ const Mmiddle = ({
             </M.CenterBox>
           </M.InfoVerticalBox>
           <M.InfoVerticalBox>
-            <M.SecondBlackP>썸네일</M.SecondBlackP>
+            <M.SecondBlackP>
+              썸네일
+              <M.InputButton htmlFor="file-input">File</M.InputButton>
+            </M.SecondBlackP>
             <M.CenterBox>
-              <M.FileInput type="file" id="file-input" />
               <M.FileTextInput type="text" defaultValue={videoThumbnail} />
-              <M.ExchangeButton htmlFor="file-input">변경</M.ExchangeButton>
+              <M.FileInput
+                type="file"
+                id="file-input"
+                accept="image/*"
+                onChange={handleVideoThumbnail}
+              />
+              <M.ExchangeButton onClick={submitVideoThumbnail}>변경</M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
         </M.InfoFlexBox>
@@ -130,7 +196,7 @@ const Mmiddle = ({
           </U.TagCheckSection>
         </M.TagSection>
       </M.InfoModify>
-    </M.MiddelBox>
+    </M.MiddleBox>
   );
 };
 
@@ -144,6 +210,7 @@ Mmiddle.propTypes = {
   videoUrl: PropTypes.string,
   videoRef: PropTypes.object,
   videoThumbnail: PropTypes.string,
+  setVideoThumbnail: PropTypes.func,
   videoTags: PropTypes.array,
   videoAds: PropTypes.array,
   selectedQuality: PropTypes.string,

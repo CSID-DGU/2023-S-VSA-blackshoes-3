@@ -25,6 +25,7 @@ const Manage = () => {
   const [sortOption, setSortOption] = useState("최신순");
   const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
   const videoRef = useRef(null);
+  const [initialized, setInitialized] = useState(false);
   const [videoId, setVideoId] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [videoName, setVideoName] = useState("");
@@ -93,7 +94,7 @@ const Manage = () => {
   }, [videoId]);
 
   useEffect(() => {
-    if (videoRef.current !== null) {
+    if (!initialized && videoRef.current !== null) {
       // video.js 옵션 설정
       const options = {
         techOrder: ["html5"],
@@ -106,9 +107,9 @@ const Manage = () => {
           },
         ],
       };
-
       // video.js 생성 및 초기화
       const player = videojs(videoRef.current, options);
+      setInitialized(true);
       // video.js 소멸
       return () => {
         if (player) {
@@ -116,7 +117,7 @@ const Manage = () => {
         }
       };
     }
-  }, [videoUrl]);
+  }, [videoUrl, selectedQuality]);
 
   return (
     <GridWrapper>
@@ -139,6 +140,7 @@ const Manage = () => {
             videoUrl={videoUrl}
             videoRef={videoRef}
             videoThumbnail={videoThumbnail}
+            setVideoThumbnail={setVideoThumbnail}
             videoTags={videoTags}
             videoAds={videoAds}
             selectedQuality={selectedQuality}
