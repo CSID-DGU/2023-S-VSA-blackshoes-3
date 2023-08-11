@@ -90,7 +90,7 @@ public class VideoController {
         try {
             videoService.unlikeVideo(userId, videoId);
 
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
         } catch (Exception e) {

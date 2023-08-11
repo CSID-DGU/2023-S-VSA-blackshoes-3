@@ -32,6 +32,10 @@ public class ViewTag {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public void increaseViewCount() {
+        this.tagViewCount++;
+    }
+
     @Builder
     public ViewTag(String tagId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt, Long tagViewCount) {
         this.tagId = tagId;

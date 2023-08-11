@@ -34,6 +34,10 @@ public class ViewVideo {
     @Column(name = "seller_id")
     private String sellerId;
 
+    public void increaseViewCount() {
+        this.videoViewCount++;
+    }
+
     @Builder
     public ViewVideo(String userId, String videoId, LocalDateTime createdAt, LocalDateTime updatedAt, String sellerId, Long videoViewCount) {
         this.userId = userId;

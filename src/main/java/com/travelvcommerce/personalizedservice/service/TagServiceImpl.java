@@ -7,6 +7,7 @@ import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepositor
 import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class TagServiceImpl implements TagService{
 
 
     @Override
+    @Transactional
     public Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto){
         for(String tagId : initTagListRequestDto.getTagIdList()){
                 SubscribedTag subscribedTag = SubscribedTag.builder()
@@ -72,12 +74,14 @@ public class TagServiceImpl implements TagService{
 
         Map<String, String> initTagListResponse = new HashMap<>();
         initTagListResponse.put("userId", userId);
+        initTagListResponse.put("tagIdList", initTagListRequestDto.getTagIdList().toString());
         initTagListResponse.put("createdAt", initTagListResponseDto.getFormattedCreatedAt());
 
         return initTagListResponse;
     }
 
     @Override
+    @Transactional
     public Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto) {
 
         if (!subscribedTagRepository.existsByUserId(userId)){
@@ -95,12 +99,14 @@ public class TagServiceImpl implements TagService{
 
         Map<String, String> subscribeTagResponse = new HashMap<>();
         subscribeTagResponse.put("userId", userId);
+        subscribeTagResponse.put("tagId", subscribeTagRequestDto.getTagId());
         subscribeTagResponse.put("createdAt", subscribeTagResponseDto.getFormattedCreatedAt());
 
         return subscribeTagResponse;
     }
 
     @Override
+    @Transactional
     public Map<String, String> unsubscribeTag(String userId, String tagId) {
 
         if(!subscribedTagRepository.existsByUserIdAndTagId(userId, tagId)) {
@@ -116,31 +122,33 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
+    @Transactional
     public Map<String, String> viewTag(String userId, String tagId) {
         Map<String, String> viewTagResponse = new HashMap<>();
 
         if(viewTagRepository.existsByUserIdAndTagId(userId, tagId)){
             ViewTag viewTag = viewTagRepository.findByUserIdAndTagId(userId, tagId);
+            viewTag.increaseViewCount();
             viewTag.setUpdatedAt(LocalDateTime.now());
-            viewTag.setTagViewCount(viewTag.getTagViewCount()+1);
 
             viewTagResponse.put("userId", userId);
+            viewTagResponse.put("tagId", tagId);
             viewTagResponse.put("createdAt", viewTag.getCreatedAt().toString());
             viewTagResponse.put("updatedAt", viewTag.getUpdatedAt().toString());
-            viewTagResponse.put("tagViewCount", viewTag.getTagViewCount().toString());
-        }else{
+        } else {
             ViewTag viewTag = ViewTag.builder()
                     .userId(userId)
                     .tagId(tagId)
                     .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
                     .tagViewCount(1L)
                     .build();
             viewTagRepository.save(viewTag);
 
             viewTagResponse.put("userId", userId);
+            viewTagResponse.put("tagId", tagId);
             viewTagResponse.put("createdAt", viewTag.getCreatedAt().toString());
             viewTagResponse.put("updatedAt", viewTag.getUpdatedAt().toString());
-            viewTagResponse.put("tagViewCount", viewTag.getTagViewCount().toString());
         }
         return viewTagResponse;
     }

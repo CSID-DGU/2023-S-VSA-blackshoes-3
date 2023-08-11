@@ -30,9 +30,8 @@ public class VideoServiceImpl implements VideoService {
         if (viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
             ViewVideo viewVideo = viewVideoRepository.findByUserIdAndVideoId(userId, videoId);
 
+            viewVideo.increaseViewCount();
             viewVideo.setUpdatedAt(LocalDateTime.now());
-            viewVideo.setVideoViewCount(viewVideo.getVideoViewCount() + 1);
-            viewVideoRepository.save(viewVideo);
 
             viewVideoResponseDto.setVideoViewCount(viewVideo.getVideoViewCount());
             viewVideoResponseDto.setCreatedAt(viewVideo.getCreatedAt());
@@ -60,7 +59,6 @@ public class VideoServiceImpl implements VideoService {
         viewVideoResponse.put("videoId", videoId);
         viewVideoResponse.put("createdAt", viewVideoResponseDto.getFormattedCreatedAt());
         viewVideoResponse.put("updatedAt", viewVideoResponseDto.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
-        viewVideoResponse.put("videoViewCount", String.valueOf(viewVideoResponseDto.getVideoViewCount()));
 
         return viewVideoResponse;
     }
@@ -118,6 +116,7 @@ public class VideoServiceImpl implements VideoService {
         Map<String, String> likeVideoResponse = new HashMap<>();
 
         likeVideoResponse.put("userId", userId);
+        likeVideoResponse.put("videoId", videoId);
         likeVideoResponse.put("createdAt",likeVideoResponseDto.getFormattedCreatedAt());
 
         return likeVideoResponse;
