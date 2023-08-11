@@ -1,4 +1,4 @@
-package com.travelvcommerce.userservice.service;
+package com.travelvcommerce.userservice.service.kafka;
 
 import com.travelvcommerce.userservice.dto.SellerDto;
 

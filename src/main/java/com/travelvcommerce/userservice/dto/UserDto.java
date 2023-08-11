@@ -1,10 +1,12 @@
 package com.travelvcommerce.userservice.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.travelvcommerce.userservice.entity.Role;
 import com.travelvcommerce.userservice.security.CustomUser;
 import lombok.Builder;
@@ -16,7 +18,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
-public class UserDto {
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserDto implements Serializable {
     private int id;
     private String userId;
     private String email;
@@ -33,6 +37,16 @@ public class UserDto {
     private String formattedUpdatedAt;
 
     private Collection<? extends GrantedAuthority> authorities;
+
+    @Data
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class UserInfoDto {
+        private String email;
+        private String nickname;
+        private String userId;
+        private LocalDate birthdate;
+    }
 
     @Data
     public static class UserLoginRequestDto {

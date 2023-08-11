@@ -9,7 +9,7 @@ import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.EmailService;
-import com.travelvcommerce.userservice.service.KafkaUploaderInfoProducerService;
+import com.travelvcommerce.userservice.service.kafka.KafkaUploaderInfoProducerService;
 import com.travelvcommerce.userservice.service.SellerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
