@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@Builder
 public class SellerDto {
     private String email;
     private String password;
@@ -58,6 +59,7 @@ public class SellerDto {
     }
 
     @Data
+    @Builder
     public static class SellerRegisterResponseDto{
         private String sellerId;
         private LocalDateTime createdAt;
@@ -68,6 +70,7 @@ public class SellerDto {
     }
 
     @Data
+    @Builder
     public static class SellerUpdateResponseDto{
         private String sellerId;
         private LocalDateTime updatedAt;

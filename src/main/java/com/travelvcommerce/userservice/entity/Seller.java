@@ -1,10 +1,10 @@
 package com.travelvcommerce.userservice.entity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -42,14 +42,36 @@ public class Seller {
     @Column(name = "seller_id", unique = true)
     private String sellerId;
 
-    @PreUpdate
-    public void updatedAt() {
+//    @PreUpdate
+//    public void updatedAt() {
+//        this.updatedAt = LocalDateTime.now();
+//    }
+//
+//    @PrePersist
+//    public void createdDate() {
+//        this.createdAt = LocalDateTime.now();
+//    }
+
+    public void updateSellerName(String sellerName) {
+        this.sellerName = sellerName;
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PrePersist
-    public void createdDate() {
-        this.createdAt = LocalDateTime.now();
+    public void updateSellerLogo(byte[] sellerLogo) {
+        this.sellerLogo = sellerLogo;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Builder
+    public Seller(String email, String password, String sellerName, byte[] sellerLogo, String sellerId, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.email = email;
+        this.password = password;
+        this.sellerName = sellerName;
+        this.sellerLogo = sellerLogo;
+        this.sellerId = sellerId;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
 

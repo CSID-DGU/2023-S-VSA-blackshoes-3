@@ -75,23 +75,24 @@ public class SellerController {
             sellerRegisterRequestDto.setSellerLogo(sellerLogoBytes);
 
             // SellerService를 이용하여 저장된
-            Map<String, String> sellerRegisterResponse = sellerService.registerSeller(sellerRegisterRequestDto);
-            emailService.deleteCompletionCode(sellerRegisterRequestDto.getEmail());
+            SellerDto sellerDto = sellerService.registerSeller(sellerRegisterRequestDto);
+            emailService.deleteCompletionCode(sellerDto.getEmail());
+
+            SellerDto.SellerRegisterResponseDto sellerRegisterResponseDto = SellerDto.SellerRegisterResponseDto.builder()
+                    .sellerId(sellerDto.getSellerId())
+                    .createdAt(sellerDto.getCreatedAt())
+                    .build();
 
             // 생성된 uploader 정보를 kafka topic에 publish
-            String sellerId = sellerRegisterResponse.get("sellerId");
-
-            Seller seller = sellerRepository.findBySellerId(sellerId).get();
-
             SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
-                    .sellerId(sellerId)
-                    .sellerName(seller.getSellerName())
-                    .sellerLogo(seller.getSellerLogo())
+                    .sellerId(sellerDto.getSellerId())
+                    .sellerName(sellerDto.getSellerName())
+                    .sellerLogo(sellerDto.getSellerLogo())
                     .build();
 
             kafkaUploaderInfoProducerService.createUploader(uploaderInfoDto);
 
-            ResponseDto responseDto = ResponseDto.builder().payload(sellerRegisterResponse).build();
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(sellerRegisterResponseDto, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         } catch (RuntimeException | IOException e) {
@@ -172,21 +173,24 @@ public class SellerController {
             }
 
             // SellerService를 이용하여 저장
-            Map<String, String> sellerUpdateResponse = sellerService.updateSeller(sellerId ,sellerUpdateRequestDto, sellerLogo);
+            SellerDto sellerDto = sellerService.updateSeller(sellerId ,sellerUpdateRequestDto, sellerLogo);
+
+            SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = SellerDto.SellerUpdateResponseDto.builder()
+                    .sellerId(sellerId)
+                    .updatedAt(sellerDto.getUpdatedAt())
+                    .build();
 
             // 변경된 정보를 kafka topic에 publish
-            Seller seller = sellerRepository.findBySellerId(sellerId).get();
-
             SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
                     .sellerId(sellerId)
-                    .sellerName(seller.getSellerName())
-                    .sellerLogo(seller.getSellerLogo())
+                    .sellerName(sellerDto.getSellerName())
+                    .sellerLogo(sellerDto.getSellerLogo())
                     .build();
 
             kafkaUploaderInfoProducerService.updateUploader(uploaderInfoDto);
 
 
-            ResponseDto responseDto = ResponseDto.builder().payload(sellerUpdateResponse).build();
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(sellerUpdateResponseDto, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
 

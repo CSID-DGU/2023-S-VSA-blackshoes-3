@@ -108,7 +108,7 @@ public class UserController {
 
             UserDto userDto = userService.updateUser(userId, userUpdateRequestDto);
 
-            UserDto.UserUpdateResponseDto userUpdateResponse = UserDto.UserUpdateResponseDto.builder()
+            UserDto.UserUpdateResponseDto userUpdateResponseDto = UserDto.UserUpdateResponseDto.builder()
                     .userId(userDto.getUserId())
                     .updatedAt(userDto.getCreatedAt())
                     .build();
@@ -120,7 +120,7 @@ public class UserController {
 
             kafkaUserInfoProducerService.updateUser(userInfoDto);
 
-            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(userUpdateResponse, Map.class)).build();
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(userUpdateResponseDto, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 

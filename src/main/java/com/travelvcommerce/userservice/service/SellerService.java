@@ -11,10 +11,10 @@ import java.util.Map;
 @Transactional
 @Service
 public interface SellerService {
-    Map<String, String> updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo);
+    SellerDto updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo);
     void deleteSeller(String sellerId);
     Map<String, String> updatePassword(String sellerId, SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto);
-    Map<String, String> registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
+    SellerDto registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);
     Map<String, String> login(SellerDto.SellerLoginRequestDto sellerLoginRequestDto);
     SellerDto.SellerInfoDto getSellerInfo(String sellerId);
 }

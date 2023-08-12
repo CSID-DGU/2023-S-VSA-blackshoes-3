@@ -30,54 +30,62 @@ public class SellerServiceImpl implements SellerService {
     private final SellerRepository sellerRepository;
 
     @Override
-    public Map<String, String> registerSeller(SellerDto.SellerRegisterRequestDto registerRequestDto) {
-        if(sellerRepository.existsByEmail(registerRequestDto.getEmail())) {
+    public SellerDto registerSeller(SellerDto.SellerRegisterRequestDto registerRequestDto) {
+        if (sellerRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
 
-        Seller seller = new Seller();
-        seller.setSellerId(UUID.randomUUID().toString());
-        seller.setEmail(registerRequestDto.getEmail());
-        seller.setSellerName(registerRequestDto.getSellerName());
-        seller.setSellerLogo(registerRequestDto.getSellerLogo());
-        seller.setRole(Role.valueOf("SELLER"));
-        seller.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));  // 비밀번호 암호화
+        Seller seller = Seller.builder()
+                .sellerId(UUID.randomUUID().toString())
+                .email(registerRequestDto.getEmail())
+                .sellerName(registerRequestDto.getSellerName())
+                .sellerLogo(registerRequestDto.getSellerLogo())
+                .role(Role.valueOf("SELLER"))
+                .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
         sellerRepository.save(seller);
 
-        SellerDto.SellerRegisterResponseDto sellerRegisterResponseDto = new SellerDto.SellerRegisterResponseDto();
-        sellerRegisterResponseDto.setSellerId(seller.getSellerId());
-        sellerRegisterResponseDto.setCreatedAt(seller.getCreatedAt());
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("sellerId", sellerRegisterResponseDto.getSellerId());
-        responseBody.put("createdAt", sellerRegisterResponseDto.getFormattedCreatedAt());
-        return responseBody;
+        SellerDto sellerDto = SellerDto.builder()
+                .sellerId(seller.getSellerId())
+                .email(seller.getEmail())
+                .sellerName(seller.getSellerName())
+                .sellerLogo(seller.getSellerLogo())
+                .createdAt(seller.getCreatedAt())
+                .updatedAt(seller.getUpdatedAt())
+                .build();
+
+        return sellerDto;
     }
 
     @Override
-    public Map<String, String> updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo){
-        Optional<Seller> existingSeller = Optional.ofNullable(sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다.")));
+    public SellerDto updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo) {
+        Seller existingSeller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다."));
 
         if (sellerUpdateRequestDto != null) {
-            existingSeller.get().setSellerName(sellerUpdateRequestDto.getSellerName());
+            existingSeller.updateSellerName(sellerUpdateRequestDto.getSellerName());
         }
 
         if (sellerLogo != null) {
             try {
-                existingSeller.get().setSellerLogo(sellerLogo.getBytes());
+                existingSeller.updateSellerLogo(sellerLogo.getBytes());
             } catch (IOException e) {
                 throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
             }
         }
 
-        SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = new SellerDto.SellerUpdateResponseDto();
-        sellerUpdateResponseDto.setSellerId(sellerId);
-        sellerUpdateResponseDto.setUpdatedAt(LocalDateTime.now());
+        SellerDto sellerDto = SellerDto.builder()
+                .sellerId(existingSeller.getSellerId())
+                .email(existingSeller.getEmail())
+                .sellerName(existingSeller.getSellerName())
+                .sellerLogo(existingSeller.getSellerLogo())
+                .createdAt(existingSeller.getCreatedAt())
+                .updatedAt(existingSeller.getUpdatedAt())
+                .build();
 
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("sellerId", sellerUpdateResponseDto.getSellerId());
-        responseBody.put("updatedAt", sellerUpdateResponseDto.getFormattedUpdatedAt());
-        return responseBody;
+        return sellerDto;
     }
 
     @Override
