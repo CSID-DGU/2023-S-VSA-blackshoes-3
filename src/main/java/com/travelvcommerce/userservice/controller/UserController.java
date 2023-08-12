@@ -9,6 +9,7 @@ import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.UserService;
+import com.travelvcommerce.userservice.service.kafka.KafkaUserInfoProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class UserController {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaUserInfoProducerService kafkaUserInfoProducerService;
     @PostMapping("/join")
     public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto.UserRegisterRequestDto registerRequestDto) {
         try {
@@ -58,10 +60,15 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("닉네임은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
             }
 
-            Map<String, String> userRegisterResponse = userService.registerUser(registerRequestDto);
-            emailService.deleteCompletionCode(registerRequestDto.getEmail());
+            UserDto userDto = userService.registerUser(registerRequestDto);
+            emailService.deleteCompletionCode(userDto.getEmail());
 
-            ResponseDto responseDto = ResponseDto.builder().payload(userRegisterResponse).build();
+            UserDto.UserRegisterResponseDto userRegisterResponseDto = UserDto.UserRegisterResponseDto.builder()
+                    .userId(userDto.getUserId())
+                    .createdAt(userDto.getCreatedAt())
+                    .build();
+
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(userRegisterResponseDto, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         } catch (RuntimeException e) {
@@ -99,11 +106,21 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("닉네임은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
             }
 
-            Map<String, String> userUpdateResponse = userService.updateUser(userId, userUpdateRequestDto);
+            UserDto userDto = userService.updateUser(userId, userUpdateRequestDto);
 
-            ResponseDto responseDto = ResponseDto.builder()
-                    .payload(userUpdateResponse)
+            UserDto.UserUpdateResponseDto userUpdateResponse = UserDto.UserUpdateResponseDto.builder()
+                    .userId(userDto.getUserId())
+                    .updatedAt(userDto.getCreatedAt())
                     .build();
+
+            UserDto.UserInfoDto userInfoDto = UserDto.UserInfoDto.builder()
+                    .userId(userDto.getUserId())
+                    .nickname(userDto.getNickname())
+                    .build();
+
+            kafkaUserInfoProducerService.updateUser(userInfoDto);
+
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(userUpdateResponse, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
@@ -142,6 +159,8 @@ public class UserController {
 
             userService.deleteUser(userId);
             refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenUserType, userEmail);
+
+            kafkaUserInfoProducerService.deleteUser(userId);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } catch (UsernameNotFoundException e) {

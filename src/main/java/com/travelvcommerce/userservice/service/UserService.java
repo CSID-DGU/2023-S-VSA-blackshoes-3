@@ -10,13 +10,13 @@ import java.util.Map;
 @Transactional
 @Service
 public interface UserService {
-    Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto);
+    UserDto updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto);
     void deleteUser(String userId);
     Map<String, String> updatePassword(String userId, UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto);
 
     Map<String, String> findPassword(String email, String password);
 
-    Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto);
+    UserDto registerUser(UserDto.UserRegisterRequestDto registerRequestDto);
     Map<String, String> login(UserDto.UserLoginRequestDto loginRequestDto);
 
     Map<String, String> socialLogin(String email);

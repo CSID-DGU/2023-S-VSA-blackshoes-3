@@ -1,5 +1,6 @@
 package com.travelvcommerce.userservice.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -50,13 +51,32 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
-    @PreUpdate
-    public void updatedAt() {
-        this.updatedAt = LocalDateTime.now();
+//    @PreUpdate
+//    public void updatedAt() {
+//        this.updatedAt = LocalDateTime.now();
+//    }
+
+//    @PrePersist
+//    public void createdDate() {
+//        this.createdAt = LocalDateTime.now();
+//    }
+
+    @Builder
+    public User(String userId, String email, String password, String nickname, LocalDate birthdate, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, String provider, String providerId) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.birthdate = birthdate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 
-    @PrePersist
-    public void createdDate() {
-        this.createdAt = LocalDateTime.now();
+    public void update(String nickname) {
+        this.nickname = nickname;
+        this.updatedAt = LocalDateTime.now();
     }
 }

@@ -35,51 +35,56 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Map<String, String> registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
-        User user = new User();
-        user.setUserId(UUID.randomUUID().toString());
-        user.setEmail(registerRequestDto.getEmail());
-        user.setNickname(registerRequestDto.getNickname());
-        user.setBirthdate(registerRequestDto.getBirthdate());
-        user.setRole(Role.valueOf("USER"));
-        user.setProvider(registerRequestDto.getProvider());
-        user.setProviderId(registerRequestDto.getProviderId());
-        user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));  // 비밀번호 암호화
+    @Transactional
+    public UserDto registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
+        User user = User.builder().
+                userId(UUID.randomUUID().toString()).
+                email(registerRequestDto.getEmail()).
+                nickname(registerRequestDto.getNickname()).
+                birthdate(registerRequestDto.getBirthdate()).
+                role(Role.valueOf("USER")).
+                provider(registerRequestDto.getProvider()).
+                providerId(registerRequestDto.getProviderId()).
+                password(passwordEncoder.encode(registerRequestDto.getPassword())).build();
+
         userRepository.save(user);
 
-        UserDto.UserRegisterResponseDto userRegisterResponseDto = new UserDto.UserRegisterResponseDto();
+        UserDto userDto = UserDto.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .birthdate(user.getBirthdate())
+                .role(user.getRole())
+                .provider(user.getProvider())
+                .providerId(user.getProviderId())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
 
-        userRegisterResponseDto.setUserId(user.getUserId());
-        userRegisterResponseDto.setCreatedAt(user.getCreatedAt());
-        Map<String, String> responseBody = new HashMap<>();
-
-        responseBody.put("userId", userRegisterResponseDto.getUserId());
-        responseBody.put("createdAt", userRegisterResponseDto.getFormattedCreatedAt());
-
-        return responseBody;
+        return userDto;
     }
 
     //이메일, 닉네임, 생일 수정
     @Override
-    public Map<String, String> updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto){
-        Optional<User> existingUser = userRepository.findByUserId(userId);
-        if(existingUser.isPresent()) {
-            existingUser.get().setNickname(userUpdateRequestDto.getNickname());
-            existingUser.get().setBirthdate(userUpdateRequestDto.getBirthdate());
-            userRepository.save(existingUser.get());
-        }
+    @Transactional
+    public UserDto updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto){
+        User existingUser = userRepository.findByUserId(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        UserDto.UserUpdateResponseDto responseDto = new UserDto.UserUpdateResponseDto();
-        responseDto.setUserId(existingUser.get().getUserId());
-        responseDto.setUpdatedAt(LocalDateTime.now());
+        existingUser.update(userUpdateRequestDto.getNickname());
 
-        Map<String, String> responseBody = new HashMap<>();
+        UserDto userDto = UserDto.builder()
+                .userId(existingUser.getUserId())
+                .email(existingUser.getEmail())
+                .nickname(existingUser.getNickname())
+                .birthdate(existingUser.getBirthdate())
+                .role(existingUser.getRole())
+                .provider(existingUser.getProvider())
+                .providerId(existingUser.getProviderId())
+                .createdAt(existingUser.getCreatedAt())
+                .updatedAt(existingUser.getUpdatedAt())
+                .build();
 
-
-        responseBody.put("userId", responseDto.getUserId());
-        responseBody.put("updatedAt", responseDto.getFormattedUpdatedAt());
-
-        return responseBody;
+        return userDto;
     }
 
 

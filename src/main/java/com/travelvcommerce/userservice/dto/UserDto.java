@@ -75,6 +75,7 @@ public class UserDto implements Serializable {
     }
 
     @Data
+    @Builder
     public static class UserRegisterResponseDto{
         private String userId;
         private LocalDateTime createdAt;
@@ -92,6 +93,7 @@ public class UserDto implements Serializable {
     }
 
     @Data
+    @Builder
     public static class UserUpdateResponseDto{
         private String userId;
         private LocalDateTime updatedAt;
