@@ -56,4 +56,9 @@ public class Comment {
         this.content = content;
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
 }
