@@ -5,7 +5,7 @@ import Minus from "../../../assets/images/minus.svg";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
   // Constant----------------------------------------------------
@@ -25,11 +25,15 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
     setAdInputs([...adInputs, newInput]);
   };
 
-  const removeInput = (id) => {
-    const updatedInputs = adInputs.filter((i) => i.id !== id);
-    setAdInputs(updatedInputs);
+  const removeInput = (id, event) => {
+    if (adInputs.length > 1) {
+      const updatedInputs = adInputs.filter((i) => i.id !== id);
+      setAdInputs(updatedInputs);
+    } else {
+      event.preventDefault();
+      alert("광고를 하나 이상 등록해야 합니다.");
+    }
   };
-  console.log(adInputs);
 
   return (
     <A.AdUploadSection>
@@ -97,7 +101,7 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
                     onChange={(e) => setAdUrl(e.target.value)}
                   />
                 </A.LinkBox>
-                <A.RemoveButton onClick={removeInput(i.id)}>
+                <A.RemoveButton onClick={() => removeInput(i.id, event)}>
                   <A.SmallImage src={Minus} alt="minus" />
                 </A.RemoveButton>
               </A.AdInputSection>
