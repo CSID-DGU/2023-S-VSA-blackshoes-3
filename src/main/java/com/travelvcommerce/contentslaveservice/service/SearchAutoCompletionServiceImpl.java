@@ -29,7 +29,7 @@ public class SearchAutoCompletionServiceImpl implements SearchAutoCompletionServ
             autoCompletionList = redisTemplate.opsForList().range(autoCompletionKey, 0, -1);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException("Redis error");
+            throw new RuntimeException("Redis read error");
         }
 
         if (autoCompletionList != null && autoCompletionList.size() > 0) {
@@ -46,7 +46,7 @@ public class SearchAutoCompletionServiceImpl implements SearchAutoCompletionServ
                     .map(SearchAutoCompletionDto::getSellerName)
                     .collect(Collectors.toList());
         }
-        if (searchType.equals(UserSearchType.VIDEONAME.toString())) {
+        else if (searchType.equals(UserSearchType.VIDEONAME.toString())) {
             List<SearchAutoCompletionDto> searchAutoCompletionDtoList = videoRepository.findAutoCompleteResultsByVideoName(keyword);
 
             autoCompletionList = searchAutoCompletionDtoList.stream()
@@ -54,15 +54,18 @@ public class SearchAutoCompletionServiceImpl implements SearchAutoCompletionServ
                     .collect(Collectors.toList());
         }
         else {
+            log.error("Invalid search type");
             throw new IllegalArgumentException("Invalid search type");
         }
 
         try {
-            redisTemplate.opsForList().leftPushAll(autoCompletionKey, autoCompletionList);
-            redisTemplate.expire(autoCompletionKey, 60 * 60 * 24, java.util.concurrent.TimeUnit.SECONDS);
+            if (autoCompletionList != null && autoCompletionList.size() > 0) {
+                redisTemplate.opsForList().leftPushAll(autoCompletionKey, autoCompletionList);
+                redisTemplate.expire(autoCompletionKey, 60 * 60 * 24, java.util.concurrent.TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException("Redis error");
+            throw new RuntimeException("Redis save error");
         }
 
         searchAutoCompletionListDto = SearchAutoCompletionDto.SearchAutoCompletionListDto.builder().autoCompletionList(autoCompletionList).build();
