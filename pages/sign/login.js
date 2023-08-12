@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
-  Alert,
   View,
   TextInput,
   Text,
@@ -11,23 +11,24 @@ import {
   FlatList,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
+import axios from 'axios';
+import {SERVER_IP} from '../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {setAll} from '../../storage/actions';
 
 export default function Login({navigation}) {
+  const dispatch = useDispatch();
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [value, setValue] = useState('naver.com');
   const [modal, setModal] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-
   const [items, setItems] = useState([
     {label: '직접입력', value: '직접입력'},
     {label: 'naver.com', value: 'naver.com'},
     {label: 'daum.net', value: 'daum.net'},
     {label: 'gmail.com', value: 'gmail.com'},
-    {label: 'nate.com', value: 'nate.com'},
-    {label: 'hanmail.net', value: 'hanmail.net'},
-    {label: 'hotmail.com', value: 'hotmail.com'},
-    {label: 'yahoo.com', value: 'yahoo.com'},
   ]);
 
   const openModal = () => {
@@ -39,6 +40,46 @@ export default function Login({navigation}) {
   const handleSelect = e => {
     setValue(e);
     closeModal();
+  };
+
+  const submitData = async () => {
+    const fullEmail = emailInput + '@' + value;
+
+    const registerData = {
+      email: fullEmail,
+      password: passwordInput,
+    };
+
+    try {
+      const response = await axios.post(
+        `${SERVER_IP}:8001/user-service/users/login`,
+        registerData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      console.log('Response:', response.data.payload.userId);
+      if (toggleCheckBox) {
+        AsyncStorage.setItem('user', response.data.payload.userId);
+        AsyncStorage.setItem('accessToken', response.data.payload.accessToken);
+        AsyncStorage.setItem(
+          'refreshToken',
+          response.data.payload.refreshToken,
+        );
+      }
+      dispatch(setAll(response.data.payload));
+
+      navigation.navigate('Home');
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.response.data.error);
+      } else {
+        console.error('Error1:', error.message);
+      }
+    }
   };
 
   return (
@@ -86,7 +127,7 @@ export default function Login({navigation}) {
             onValueChange={newValue => setToggleCheckBox(newValue)}
           />
         </View>
-        <TouchableOpacity style={styles.signUp}>
+        <TouchableOpacity style={styles.signUp} onPress={submitData}>
           <Text style={styles.signUpText}>로그인</Text>
         </TouchableOpacity>
       </View>

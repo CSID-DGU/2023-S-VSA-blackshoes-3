@@ -10,22 +10,23 @@ import {
   Modal,
   ScrollView,
   FlatList,
+  ActivityIndicator as Spinner,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {SERVER_IP} from '../../config';
+import axios from 'axios';
 
 export default function SignUp({navigation}) {
+  ///user-service/users/join
   const [value, setValue] = useState('naver.com');
   const email = [
     {label: '직접입력', value: '직접입력'},
     {label: 'naver.com', value: 'naver.com'},
     {label: 'gmail.com', value: 'gmail.com'},
     {label: 'daum.com', value: 'daum.net'},
-    {label: 'nate.com', value: 'nate.com'},
-    {label: 'hanmail.net', value: 'hanmail.net'},
-    {label: 'hotmail.com', value: 'hotmail.com'},
-    {label: 'yahoo.com', value: 'yahoo.com'},
   ];
+
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -36,6 +37,7 @@ export default function SignUp({navigation}) {
   const [month, setMonth] = useState('1');
   const [day, setDay] = useState('1');
   const [birthDate, setBirthDate] = useState(null);
+  const [confirmIndex, setConfirmIndex] = useState(0);
 
   const years = Array.from({length: 100}, (_, i) => ({
     label: `${2023 - i}`,
@@ -50,9 +52,43 @@ export default function SignUp({navigation}) {
     value: `${i + 1}`,
   }));
 
+  const submitData = async () => {
+    const fullEmail = emailInput + '@' + value;
+    const registerData = {
+      email: fullEmail,
+      password: passwordInput,
+      nickname: nameInput,
+    };
+
+    try {
+      const response = await axios.post(
+        `${SERVER_IP}:8001/user-service/users/join`,
+        registerData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log('Response:', response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.response.data.error);
+      } else {
+        console.error('Error1:', error.message);
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   testData();
+  // }, []);
+
   useEffect(() => {
     if (year && month && day) {
-      setBirthDate(`${year}-${month}-${day}`);
+      const formattedMonth = month.length === 1 ? `0${month}` : month;
+      const formattedDay = day.length === 1 ? `0${day}` : day;
+      setBirthDate(`${year}-${formattedMonth}-${formattedDay}`);
     }
   }, [year, month, day]);
 
@@ -80,7 +116,85 @@ export default function SignUp({navigation}) {
     }
     closeModal();
   };
+
+  const confirmEmail = async () => {
+    const fullEmail = emailInput + '@' + value;
+    console.log(fullEmail);
+
+    if (confirmIndex === 0) {
+      if (!emailInput) {
+        Alert.alert(
+          '이메일 입력',
+          '이메일을 입력해주세요.',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+        return;
+      } else {
+        setConfirmIndex(1);
+        try {
+          const response = await axios.post(
+            `${SERVER_IP}:8001/user-service/mail/send-verification-code`,
+            {
+              email: fullEmail,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          console.log('Response:', response.data);
+        } catch (error) {
+          if (error.response) {
+            console.error('Error:', error.response.data.error);
+          } else {
+            console.error('Error:', error.message);
+          }
+        }
+
+        Alert.alert(
+          '이메일 인증',
+          '인증번호가 발송되었습니다.',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+        setConfirmIndex(2);
+
+        return;
+      }
+    } else {
+      try {
+        console.log('emailConfirm', emailConfirm);
+        console.log('fullEmail', fullEmail);
+        const response = await axios.post(
+          `${SERVER_IP}:8001/user-service/mail/verify-code`,
+          {
+            email: fullEmail,
+            verificationCode: emailConfirm,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Response:', response.data);
+      } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.response.data.error);
+        } else {
+          console.error('Error:', error.message);
+        }
+      }
+      setConfirmIndex(3);
+    }
+  };
+
   const handleSignUp = () => {
+    console.log(birthDate);
+
     //인증번호 axios로 보내서 확인 받기
     if (
       !emailInput ||
@@ -121,7 +235,7 @@ export default function SignUp({navigation}) {
       );
       return;
     } else {
-      //회원가입 정보 보내기
+      submitData();
       navigation.navigate('Login');
     }
   };
@@ -165,8 +279,27 @@ export default function SignUp({navigation}) {
               onChangeText={text => setEmailConfirm(text)}
               value={emailConfirm}
             />
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>인증번호 발송</Text>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {
+                  backgroundColor:
+                    confirmIndex === 1 || confirmIndex === 3
+                      ? '#E6E6E6'
+                      : '#1DAE86',
+                },
+              ]}
+              disabled={confirmIndex === 1}
+              onPress={confirmEmail}>
+              {confirmIndex === 0 ? (
+                <Text style={styles.buttonText}>인증번호 발송</Text>
+              ) : confirmIndex === 1 ? (
+                <Spinner size="small" color="white" />
+              ) : confirmIndex === 2 ? (
+                <Text style={styles.buttonText}>확인</Text>
+              ) : (
+                <Text style={styles.buttonText}>인증완료</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -408,7 +541,6 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1DAE86',
     borderRadius: 17,
     width: 123,
     height: 54,

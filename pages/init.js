@@ -1,13 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {TouchableOpacity, StyleSheet, Animated, View, Text} from 'react-native';
+import {StyleSheet, Animated, View, Text} from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {setUserId, setAccessToken, setRefreshToken} from '../storage/actions';
 
 export default function Init({navigation}) {
+  const dispatch = useDispatch();
   const dropAnimations = Array.from('WANDER').map(
     () => new Animated.Value(-100),
   );
 
+  const loadUserData = async () => {
+    const userId = await AsyncStorage.getItem('user');
+    if (userId) {
+      dispatch(setUserId(userId));
+      dispatch(setAccessToken(await AsyncStorage.getItem('accessToken')));
+      dispatch(setRefreshToken(await AsyncStorage.getItem('refreshToken')));
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('SignIn');
+    }
+  };
+
   useEffect(() => {
+    loadUserData();
     const animate = () => {
       dropAnimations.forEach(animation => animation.setValue(-100));
 
@@ -33,10 +51,7 @@ export default function Init({navigation}) {
       {/* style={styles.container}
       source={require('../assets/first.jpg')}> */}
       <View style={styles.overlay} />
-      <TouchableOpacity
-        style={styles.first}
-        //onPress={() => navigation.navigate('SignIn')}
-        onPress={() => navigation.navigate('ThemeSelect')}>
+      <View style={styles.first}>
         <View style={styles.row}>
           {Array.from('WANDER').map((letter, index) => (
             <Animated.View
@@ -46,7 +61,7 @@ export default function Init({navigation}) {
             </Animated.View>
           ))}
         </View>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 }

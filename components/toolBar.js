@@ -11,8 +11,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('Home')
-              ? require('../assets/toolbarImg/home1.png')
-              : require('../assets/toolbarImg/home.png')
+              ? require('../assets/toolbarImg/home_s.png')
+              : require('../assets/toolbarImg/home_d.png')
           }
         />
       </TouchableOpacity>
@@ -21,8 +21,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('Video')
-              ? require('../assets/toolbarImg/video1.png')
-              : require('../assets/toolbarImg/video.png')
+              ? require('../assets/toolbarImg/video_s.png')
+              : require('../assets/toolbarImg/video_d.png')
           }
         />
       </TouchableOpacity>
@@ -31,8 +31,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('My')
-              ? require('../assets/toolbarImg/my1.png')
-              : require('../assets/toolbarImg/my.png')
+              ? require('../assets/toolbarImg/my_s.png')
+              : require('../assets/toolbarImg/my_d.png')
           }
         />
       </TouchableOpacity>
@@ -41,8 +41,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('Log')
-              ? require('../assets/toolbarImg/log1.png')
-              : require('../assets/toolbarImg/log.png')
+              ? require('../assets/toolbarImg/log_s.png')
+              : require('../assets/toolbarImg/log_d.png')
           }
         />
       </TouchableOpacity>
@@ -55,6 +55,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 45,
+    height: 65,
+    backgroundColor: 'white',
+  },
+  img_style: {
+    width: 36,
+    height: 36,
   },
 });

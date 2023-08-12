@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-shadow */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-
 import axios from 'axios';
 import {SERVER_IP} from '../config';
 import Toolbar from '../components/toolBar';
@@ -25,6 +25,7 @@ export default function Play({route, navigation}) {
   const [isFullScreen, setFullScreen] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [openAd, setOpenAd] = useState(null);
+  const [comment, setComment] = useState([]);
 
   const toggleControls = () => {
     setControlsVisible(!controlsVisible);
@@ -33,24 +34,38 @@ export default function Play({route, navigation}) {
   const videoRef = useRef(null);
   useEffect(() => {
     getData();
+    // getComment();
   }, []);
+
   const getData = async () => {
     const response = await axios.get(
       `${SERVER_IP}:8011/content-slave-service/videos/video?type=videoId&q=${route.params.video.videoId}`,
     );
-
     setVideoData(response.data.payload.video);
   };
-  console.log(videoData);
 
+  // const getComment = async () => {
+  //   const response = await axios.get(`http://192.168.0.8:3001/api/v1/comments`);
+  //   console.log(response.data);
+  //   setComment(response.data);
+  // };
   useEffect(() => {
+    if (videoData.length === 0) {
+      return;
+    }
     if (videoData.videoAds.length === 0) {
       return;
     }
+
     videoData.videoAds.some(ad => {
-      if (ad.startTime < currentTime && ad.endTime > currentTime) {
+      if (
+        parseInt(ad.startTime, 10) < currentTime * 1000 &&
+        parseInt(ad.endTime, 10) > currentTime * 1000
+      ) {
         setOpenAd(ad.adContent);
         return true;
+      } else {
+        setOpenAd(null);
       }
       return false;
     });
@@ -70,6 +85,15 @@ export default function Play({route, navigation}) {
       videoRef.current.seekTo(newTime);
     }
   };
+
+  // const renderComment = item => {
+  //   return (
+  //     <View style={styles.commentContainer}>
+  //       <View style={styles.commentInfoContainer}></View>
+  //     </View>
+  //   );
+  // };
+
   //480p.m3u8 / 720p.m3u8 / 1080p.m3u8
 
   return (
@@ -96,6 +120,10 @@ export default function Play({route, navigation}) {
               style={isFullScreen ? styles.fullScreenVideo : {width: '100%'}}
               resizeMode="contain"
               disableBack={true}
+              onSettingModal={(visible, props) => {
+                console.log(visible, props);
+                // UI 상호작용을 잠시 멈춰둔다
+              }}
               disableVolume={true}
               onProgress={({currentTime}) => setCurrentTime(currentTime)}
               onTouchEnd={toggleControls}
@@ -132,7 +160,7 @@ export default function Play({route, navigation}) {
                 </Text>
                 <Icon
                   style={styles.icon}
-                  name="favorite-outline"
+                  name="heart-outline"
                   size={20}
                   color={'gray'}
                 />
@@ -175,16 +203,18 @@ export default function Play({route, navigation}) {
                   })}
               </ScrollView>
             </View>
-            {openAd && (
-              <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
-            )}
+
             <ScrollView
               style={styles.infoContainer}
-              contentContainerStyle={{alignItems: 'center'}}></ScrollView>
+              contentContainerStyle={{alignItems: 'center'}}>
+              <View style={styles.bottomContainer}>
+                {openAd && (
+                  <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
+                )}
+              </View>
+            </ScrollView>
           </View>
-          <View style={styles.toolbarContainer}>
-            <Toolbar route={route} />
-          </View>
+          <Toolbar route={route} />
         </>
       )}
     </View>
@@ -228,21 +258,16 @@ const styles = StyleSheet.create({
     top: '50%',
     transform: [{translateY: -25}],
   },
+  bottomContainer: {
+    paddingVertical: 20,
+    gap: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
   controlButton: {
     marginHorizontal: 5,
   },
-  toolbarContainer: {
-    height: 60,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 10,
-  },
+
   infoContainer: {
     width: '100%',
     backgroundColor: 'white',
@@ -288,7 +313,6 @@ const styles = StyleSheet.create({
 
   scrollContainer: {
     height: 60,
-    marginBottom: 20,
   },
 
   tagNameContainer: {

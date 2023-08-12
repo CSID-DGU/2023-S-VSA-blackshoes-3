@@ -131,9 +131,7 @@ export default function Home({navigation, route}) {
           <Text style={styles.title}>인기 상품</Text>
         </View>
       </View>
-      <View style={styles.toolbarContainer}>
-        <Toolbar route={route} />
-      </View>
+      <Toolbar route={route} />
     </View>
   );
 }
@@ -148,18 +146,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     alignItems: 'center',
-  },
-  toolbarContainer: {
-    height: 60,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 10,
   },
   textContainer: {
     marginTop: 5,

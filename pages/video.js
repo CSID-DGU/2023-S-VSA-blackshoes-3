@@ -118,9 +118,7 @@ export default function Video({navigation, route}) {
         </ScrollView>
       </View>
 
-      <View style={styles.toolbarContainer}>
-        <Toolbar route={route} />
-      </View>
+      <Toolbar route={route} />
     </View>
   );
 }
@@ -135,18 +133,7 @@ const styles = StyleSheet.create({
   contentsContainer: {
     flex: 1,
   },
-  toolbarContainer: {
-    height: 60,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 10,
-  },
+
   videoContainer: {
     marginTop: 10,
     width: '100%',
