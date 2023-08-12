@@ -69,4 +69,26 @@ public class CommentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @PostMapping("/comments/{sellerId}/{videoId}/{commentId}/delete")
+    public ResponseEntity<ResponseDto> deleteComment(@PathVariable(name = "videoId") String videoId,
+                                                     @PathVariable(name = "commentId") String commentId,
+                                                     @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        String userId = commentRequestDto.getUserId();
+
+        try {
+            commentService.deleteComment(commentId, videoId, userId);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
