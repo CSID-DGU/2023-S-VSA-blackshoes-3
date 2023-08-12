@@ -1,5 +1,6 @@
 package com.travelvcommerce.contentslaveservice.repository;
 
+import com.travelvcommerce.contentslaveservice.dto.SearchAutoCompletionDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.entity.Video;
 import org.springframework.data.domain.Page;
@@ -43,5 +44,11 @@ public interface VideoRepository extends MongoRepository<Video, String> {
 
     @Query(value = "{videoId: {$in: ?0}}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogo: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
     List<VideoDto.VideoListResponseDto> findVideosByVideoIdList(List<String> videoIdList);
+
+    @Query(value = "{'videoName': { $regex: '?0', $options: 'i' }}", fields = "{videoName: 1}")
+    List<SearchAutoCompletionDto> findAutoCompleteResultsByVideoName(String keyword);
+
+    @Query(value = "{'sellerName': { $regex: '?0', $options: 'i' }}", fields = "{sellerName: 1}")
+    List<SearchAutoCompletionDto> findAutoCompleteResultsBySellerName(String keyword);
 }
 
