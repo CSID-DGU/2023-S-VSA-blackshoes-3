@@ -89,7 +89,7 @@ public class VideoServiceImpl implements VideoService {
 
     // tagId에 해당하는 영상 목록 조회, q로 tagId 받아서 최신순 정렬, 페이징 처리
     @Override
-    public Page<VideoDto.VideoListResponseDto> getVideosByTag(String q, String sortType, int page, int size) {
+    public Page<VideoDto.VideoListResponseDto> getVideosByTagId(String q, String sortType, int page, int size) {
         Sort sortBy = Sort.by(Sort.Direction.DESC, sortType);
         Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<VideoDto.VideoListResponseDto> videoPage = videoRepository.findVideosByTagId(q, pageable);
