@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
 import { ColorButton } from "../../Sign/SignStyle";
@@ -13,8 +13,8 @@ const Mmiddle = ({
   videoUrl,
   videoRef,
   videoThumbnail,
+  setVideoThumbnail,
   videoTags,
-  videoAds,
   selectedQuality,
   regionTag,
   themeTag,
@@ -23,17 +23,18 @@ const Mmiddle = ({
 
   // State-------------------------------------------------------
   const [newTagIdList, setNewTagIdList] = useState([]);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [thumbnailModifiedFile, setThumbnailModifiedFile] = useState(null);
 
   // Function----------------------------------------------------
   const handleVideoDelete = async () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       await UploadInstance.delete(`/upload-service/videos/${userId}/${videoId}`)
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           window.location.reload();
         })
         .catch((err) => {
-          console.log(err);
+          alert(err.response.data.error);
         });
     } else {
       return;
@@ -48,24 +49,106 @@ const Mmiddle = ({
     try {
       await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/title`, {
         videoName,
-      }).then((res) => {
-        console.log(res);
+      }).then(() => {
         alert("제목이 수정되었습니다.");
       });
     } catch (err) {
-      console.log(err);
+      alert(err.response.data.error);
     }
   };
 
+  const previewTimer = () => {
+    setTimeout(() => {
+      setThumbnailPreview(null);
+    }, 3000);
+  };
+
+  const handleVideoThumbnail = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setThumbnailModifiedFile(file);
+      if (typeof file === "object") {
+        setVideoThumbnail(file.name);
+      } else {
+        setVideoThumbnail(file);
+      }
+      previewTimer();
+    } else {
+      setVideoThumbnail(null);
+      alert("파일을 등록하는데 실패했습니다.");
+    }
+  };
+
+  const submitVideoThumbnail = async () => {
+    if (window.confirm("썸네일을 수정하시겠습니까?")) {
+      try {
+        const formData = new FormData();
+        formData.append("thumbnail", thumbnailModifiedFile);
+        await UploadInstance.put(
+          `/upload-service/videos/${userId}/${videoId}/thumbnail`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        ).then(() => {
+          alert("썸네일이 수정되었습니다.");
+        });
+      } catch (err) {
+        alert(err.response.data.error);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const handleVideoTag = (tagId) => {
+    if (newTagIdList.includes(tagId)) {
+      setNewTagIdList(newTagIdList.filter((n) => n !== tagId));
+    } else {
+      setNewTagIdList([...newTagIdList, tagId]);
+    }
+  };
+
+  const submitVideoTag = async () => {
+    if (window.confirm("태그를 수정하시겠습니까?")) {
+      try {
+        await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/tags`, {
+          tagIds: newTagIdList,
+        }).then(() => {
+          alert("태그가 수정되었습니다.");
+        });
+      } catch (err) {
+        alert(err.response.data.error);
+      }
+    } else {
+      return;
+    }
+  };
+
+  // ComponentDidMount--------------------------------------------
+  useEffect(() => {
+    setNewTagIdList(videoTags.map((v) => v.tagId));
+  }, [videoTags]);
+
   return (
-    <M.MiddelBox>
+    <M.MiddleBox>
+      <M.PreviewSection $thumbnail_preview={thumbnailPreview}>
+        <M.ThumbnailPreview src={thumbnailPreview} alt="thumbnail_preview" loading="lazy" />
+      </M.PreviewSection>
       <U.TitleBetweenBox>
         <U.SpanTitle>영상 정보 수정</U.SpanTitle>
         <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
           삭제
         </ColorButton>
       </U.TitleBetweenBox>
-      <M.VideoModifyWrapper videourl={videoUrl}>
+      <M.VideoModifyWrapper $videourl={videoUrl}>
         수정을 원하는 영상을 클릭해주세요.
       </M.VideoModifyWrapper>
       {videoUrl && (
@@ -78,20 +161,40 @@ const Mmiddle = ({
           <M.InfoVerticalBox>
             <M.SecondBlackP>제목</M.SecondBlackP>
             <M.CenterBox>
-              <M.FileTextInput type="text" defaultValue={videoName} onChange={handleVideoName} />
-              <M.ExchangeButton onClick={submitVideoName}>변경</M.ExchangeButton>
+              <M.FileTextInput
+                type="text"
+                defaultValue={videoName}
+                onChange={handleVideoName}
+                disabled={!videoId}
+              />
+              <M.ExchangeButton onClick={submitVideoName} disabled={!videoId}>
+                변경
+              </M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
           <M.InfoVerticalBox>
-            <M.SecondBlackP>썸네일</M.SecondBlackP>
+            <M.SecondBlackP>
+              썸네일
+              <M.InputButton htmlFor="file-input">File</M.InputButton>
+            </M.SecondBlackP>
             <M.CenterBox>
-              <M.FileInput type="file" id="file-input" />
-              <M.FileTextInput type="text" defaultValue={videoThumbnail} />
-              <M.ExchangeButton htmlFor="file-input">변경</M.ExchangeButton>
+              <M.FileTextInput type="text" defaultValue={videoThumbnail} disabled={!videoId} />
+              <M.FileInput
+                type="file"
+                id="file-input"
+                accept="image/*"
+                onChange={handleVideoThumbnail}
+                disabled={!videoId}
+              />
+              <M.ExchangeButton onClick={submitVideoThumbnail} disabled={!videoId}>
+                변경
+              </M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
         </M.InfoFlexBox>
-        <M.SecondBlackP>태그</M.SecondBlackP>
+        <M.SecondBlackP>
+          태그 <M.InputButton onClick={() => videoId && submitVideoTag()}>변경</M.InputButton>
+        </M.SecondBlackP>
         <M.TagSection>
           <U.TagCheckSection>
             <U.TagTitle>지역 태그</U.TagTitle>
@@ -99,14 +202,20 @@ const Mmiddle = ({
               {regionTag.map((region) => (
                 <U.TagItemBox key={region.tagId}>
                   <U.NormalSpan>{region.content}</U.NormalSpan>
-                  <U.CheckBoxInput
-                    type="checkbox"
-                    id="checkbox"
-                    defaultChecked={videoTags.includes(region.tagId)}
-                    onChange={() => {
-                      setNewTagIdList([...newTagIdList, region.tagId]);
-                    }}
-                  />
+                  {videoTags.length !== 0 ? (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      checked={newTagIdList.includes(region.tagId)}
+                      onChange={() => handleVideoTag(region.tagId)}
+                    />
+                  ) : (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      checked={false}
+                      onChange={(e) => e.preventDefault()}
+                      disabled
+                    />
+                  )}
                 </U.TagItemBox>
               ))}
             </U.TagScrollBox>
@@ -117,20 +226,28 @@ const Mmiddle = ({
               {themeTag.map((theme) => (
                 <U.TagItemBox key={theme.tagId}>
                   <U.NormalSpan>{theme.content}</U.NormalSpan>
-                  <U.CheckBoxInput
-                    type="checkbox"
-                    id="checkbox"
-                    onChange={() => {
-                      setNewTagIdList([...newTagIdList, theme.tagId]);
-                    }}
-                  />
+                  {videoTags.length !== 0 ? (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      id="checkbox"
+                      checked={newTagIdList.includes(theme.tagId)}
+                      onChange={() => handleVideoTag(theme.tagId)}
+                    />
+                  ) : (
+                    <U.CheckBoxInput
+                      type="checkbox"
+                      checked={false}
+                      onChange={(e) => e.preventDefault()}
+                      disabled
+                    />
+                  )}
                 </U.TagItemBox>
               ))}
             </U.TagScrollBox>
           </U.TagCheckSection>
         </M.TagSection>
       </M.InfoModify>
-    </M.MiddelBox>
+    </M.MiddleBox>
   );
 };
 
@@ -144,8 +261,8 @@ Mmiddle.propTypes = {
   videoUrl: PropTypes.string,
   videoRef: PropTypes.object,
   videoThumbnail: PropTypes.string,
+  setVideoThumbnail: PropTypes.func,
   videoTags: PropTypes.array,
-  videoAds: PropTypes.array,
   selectedQuality: PropTypes.string,
   regionTag: PropTypes.array,
   themeTag: PropTypes.array,

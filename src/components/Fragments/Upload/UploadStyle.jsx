@@ -51,7 +51,7 @@ export const TitleBetweenBox = styled.section`
 `;
 
 export const MiddleSpan = styled.span`
-  display: ${(props) => (props.preview2 === null ? "none" : "block")};
+  display: ${(props) => (props.$preview2 === null ? "none" : "block")};
   position: absolute;
   top: 50%;
   left: 50%;
@@ -64,11 +64,15 @@ export const MiddleSpan = styled.span`
 export const ExtendSpan = styled.span`
   font-size: 12px;
   font-weight: bold;
-  color: ${(props) => props.theme.secondBlack};
+  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.primaryColor};
   cursor: pointer;
 `;
 
 export const SpanTitle = styled.h1`
+  height: 100%;
+  display: flex;
+  align-items: center;
   font-size: 20px;
   font-weight: bold;
   color: ${(props) => props.theme.secondBlack};
@@ -80,16 +84,10 @@ export const VideoInput = styled.input`
 
 export const VideoInputSection = styled.section`
   width: 100%;
-  height: ${(props) => (props.videofile === null ? "400px" : "auto")};
-  max-height: ${(props) => (props.videofile === null ? "400px" : "auto")};
+  height: ${(props) => (props.$video_file === null ? "400px" : "auto")};
+  max-height: ${(props) => (props.$video_file === null ? "400px" : "auto")};
   position: relative;
   background-color: ${(props) => props.theme.bgColor};
-  /* @media all and (max-width: 1480px) {
-    height: ${(props) => (props.videofile === null ? "300px" : "auto")};
-  } */
-  /* @media all and (max-width: 900px) {
-    height: ${(props) => (props.videofile === null ? "200px" : "auto")};
-  } */
 `;
 
 export const Shadow = styled.div`
@@ -114,7 +112,7 @@ export const Shadow = styled.div`
 export const VideoUploadButton = styled.label`
   width: 80px;
   height: 80px;
-  display: ${(props) => (props.videofile === null ? "flex" : "none")};
+  display: ${(props) => (props.$video_file === null ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -130,7 +128,7 @@ export const VideoUploadButton = styled.label`
 export const SpinnerBox = styled.section`
   width: 80px;
   height: 80px;
-  display: flex;
+  display: ${(props) => (props.$timer ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -149,6 +147,7 @@ export const VideoPreview = styled.video`
 
 export const UploadedState = styled.p`
   width: 100%;
+  display: ${(props) => (props.$timer ? "" : "none")};
   position: absolute;
   top: 5%;
   font-size: 16px;
@@ -165,7 +164,7 @@ export const CheckIcon = styled(FontAwesomeIcon)`
 
 export const FullIcon = styled.img`
   width: 100%;
-  height: auto;
+  height: 100%;
 `;
 
 // Info Upload--------------------------------------------
@@ -237,7 +236,7 @@ export const VideoThumbnailSection = styled(VideoInputSection)`
 export const VideoThumbnailUploadInput = styled(VideoInput)``;
 
 export const VideoThumbnailUploadButton = styled(VideoUploadButton)`
-  display: ${(props) => (props.thumbnailfile === null ? "flex" : "none")};
+  display: ${(props) => (props.$thumbnail_file === null ? "flex" : "none")};
   width: 50px;
   height: 50px;
   border: none;
@@ -370,7 +369,7 @@ export const AdUploadButton = styled.button`
 
 export const TitleLeftBox = styled(TitleBetweenBox)`
   justify-content: flex-start;
-  gap: 15px;
+  gap: 5px;
   border-bottom: 1px solid #c4c4c4;
 `;
 
