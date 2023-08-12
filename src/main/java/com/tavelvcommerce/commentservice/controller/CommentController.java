@@ -28,12 +28,12 @@ public class CommentController {
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         String commentId = UUID.randomUUID().toString();
         String userId = commentRequestDto.getUserId();
-        String username = commentRequestDto.getUsername();
+        String nickname = commentRequestDto.getNickname();
         String content = commentRequestDto.getContent();
 
         CommentDto.CommentCreateResponseDto commentCreateResponseDto;
         try {
-            commentCreateResponseDto = commentService.createComment(commentId, sellerId, videoId, userId, username, content);
+            commentCreateResponseDto = commentService.createComment(commentId, sellerId, videoId, userId, nickname, content);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

@@ -24,7 +24,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto.CommentCreateResponseDto createComment(String commentId, String sellerId, String videoId, String userId, String username, String content) {
+    public CommentDto.CommentCreateResponseDto createComment(String commentId, String sellerId, String videoId, String userId, String nickname, String content) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
                 .sellerId(sellerId)
                 .videoId(videoId)
                 .userId(userId)
-                .username(username)
+                .nickname(nickname)
                 .content(content)
                 .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build();
@@ -139,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
                         .sellerId(comment.getSellerId())
                         .videoId(comment.getVideoId())
                         .userId(comment.getUserId())
-                        .username(comment.getUsername())
+                        .nickname(comment.getNickname())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())
@@ -162,7 +162,7 @@ public class CommentServiceImpl implements CommentService {
                         .sellerId(comment.getSellerId())
                         .videoId(comment.getVideoId())
                         .userId(comment.getUserId())
-                        .username(comment.getUsername())
+                        .nickname(comment.getNickname())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())

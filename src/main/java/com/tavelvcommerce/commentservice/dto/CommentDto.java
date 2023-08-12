@@ -11,7 +11,7 @@ public class CommentDto {
     @Getter
     public static class CommentRequestDto {
         private String userId;
-        private String username;
+        private String nickname;
         private String content;
     }
 
@@ -37,7 +37,7 @@ public class CommentDto {
         private String sellerId;
         private String videoId;
         private String userId;
-        private String username;
+        private String nickname;
         private String content;
         private Timestamp createdAt;
         private Timestamp updatedAt;
