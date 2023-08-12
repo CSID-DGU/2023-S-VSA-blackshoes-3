@@ -37,7 +37,7 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
           : adInputs.map((params) => (
               <AdInput
                 key={params.id}
-                params={params}
+                adId={params.id}
                 adInputs={adInputs}
                 setAdInputs={setAdInputs}
                 setStartTime={setStartTime}

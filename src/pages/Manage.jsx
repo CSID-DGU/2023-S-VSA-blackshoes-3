@@ -147,7 +147,7 @@ const Manage = () => {
             themeTag={themeTag}
           />
         </M.LeftMiddleBox>
-        <Mright videoAds={videoAds} />
+        <Mright videoAds={videoAds} userId={userId} videoId={videoId} />
       </Body>
     </GridWrapper>
   );

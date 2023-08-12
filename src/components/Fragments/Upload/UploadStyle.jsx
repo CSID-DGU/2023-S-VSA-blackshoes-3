@@ -70,6 +70,9 @@ export const ExtendSpan = styled.span`
 `;
 
 export const SpanTitle = styled.h1`
+  height: 100%;
+  display: flex;
+  align-items: center;
   font-size: 20px;
   font-weight: bold;
   color: ${(props) => props.theme.secondBlack};
@@ -161,7 +164,7 @@ export const CheckIcon = styled(FontAwesomeIcon)`
 
 export const FullIcon = styled.img`
   width: 100%;
-  height: auto;
+  height: 100%;
 `;
 
 // Info Upload--------------------------------------------

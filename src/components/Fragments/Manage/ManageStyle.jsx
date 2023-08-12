@@ -358,9 +358,11 @@ export const InputButton = styled.label`
 export const AdModifySection = styled.section`
   width: 100%;
   height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   overflow: auto;
   padding-right: 10px;
-  /* border: ${(props) => `1px solid ${props.theme.middleGray}`}; */
 `;
 
 export const AdCommentEmptySection = styled.section`

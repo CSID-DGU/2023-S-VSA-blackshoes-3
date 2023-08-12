@@ -1,86 +1,51 @@
+import { useEffect, useState } from "react";
+import AdInput from "../Reusable/AdInput";
 import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
-import { LocalizationProvider, TimeField } from "@mui/x-date-pickers";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PlusButton from "../../../assets/images/plus-button.svg";
-import Minus from "../../../assets/images/minus.svg";
 import PropTypes from "prop-types";
+import { ColorButton } from "../../Sign/SignStyle";
 
-const Mright = ({ videoAds }) => {
+const Mright = ({ videoAds, userId, videoId }) => {
   // Constant----------------------------------------------------
-  console.log(videoAds);
 
   // State-------------------------------------------------------
 
   // Function----------------------------------------------------
 
+  // ComponentDidMount--------------------------------------------
+  useEffect(() => {
+    //
+  }, []);
+  console.log(videoAds);
   return (
     <M.RightBox>
-      <U.TitleLeftBox>
-        <U.SpanTitle>광고수정</U.SpanTitle>
-        <U.AdUploadButton>
-          <U.FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
-        </U.AdUploadButton>
-      </U.TitleLeftBox>
+      <U.TitleBetweenBox>
+        <U.SpanTitle>
+          광고수정{" "}
+          <U.AdUploadButton>
+            <U.FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
+          </U.AdUploadButton>
+        </U.SpanTitle>
+        <ColorButton width="70px" style={{ height: "35px" }}>
+          변경
+        </ColorButton>
+      </U.TitleBetweenBox>
       <M.AdModifySection>
-        <U.AdInputSection>
-          <U.TimeBox>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["TimeField"]}>
-                <TimeField
-                  label="시작 시간"
-                  onChange={(e) => {
-                    const receivedTime = new Date(e.$d);
-                    const hours = receivedTime.getHours();
-                    const minutes = receivedTime.getMinutes();
-                    const seconds = receivedTime.getSeconds();
-                    const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
-                    // setStartTime(totalMilliseconds.toString());
-                  }}
-                  format="HH:mm:ss"
-                  color="success"
-                />
-                <TimeField
-                  label="종료 시간"
-                  onChange={(e) => {
-                    const receivedTime = new Date(e.$d);
-                    const hours = receivedTime.getHours();
-                    const minutes = receivedTime.getMinutes();
-                    const seconds = receivedTime.getSeconds();
-                    const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
-                    // setEndTime(totalMilliseconds.toString());
-                  }}
-                  format="HH:mm:ss"
-                  color="success"
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-          </U.TimeBox>
-          <U.ContentBox>
-            <U.NormalSpan>내용</U.NormalSpan>
-            <U.AdInput
-              type="text"
-              placeholder="수정할 광고 내용을 입력해주세요."
-              width="85%"
-              height="100px"
-              // onChange={(e) => setAdContent(e.target.value)}
-            />
-          </U.ContentBox>
-          <U.LinkBox>
-            <U.NormalSpan>링크</U.NormalSpan>
-            <U.AdInput
-              type="text"
-              placeholder="수정할 광고 링크를 첨부해주세요."
-              width="85%"
-              height="35px"
-              // onChange={(e) => setAdUrl(e.target.value)}
-            />
-          </U.LinkBox>
-          <U.RemoveButton>
-            <U.SmallImage src={Minus} alt="minus" />
-          </U.RemoveButton>
-        </U.AdInputSection>
+        {videoAds.length === 0
+          ? "추가된 광고가 없습니다."
+          : videoAds.map((params) => (
+              <AdInput
+                key={params.adId}
+                adId={params.adId}
+                userId={userId}
+                videoId={videoId}
+                adContent={params.adContent}
+                adUrl={params.adUrl}
+                adStartTime={params.startTime}
+                adEndTime={params.endTime}
+              />
+            ))}
       </M.AdModifySection>
       <U.TitleLeftBox>
         <U.SpanTitle>댓글조회</U.SpanTitle>
@@ -96,4 +61,6 @@ export default Mright;
 
 Mright.propTypes = {
   videoAds: PropTypes.array,
+  userId: PropTypes.string,
+  videoId: PropTypes.string,
 };
