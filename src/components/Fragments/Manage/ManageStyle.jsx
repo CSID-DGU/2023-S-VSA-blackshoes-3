@@ -373,3 +373,11 @@ export const AdCommentEmptySection = styled.section`
   align-items: center;
   /* border: ${(props) => `1px solid ${props.theme.middleGray}`}; */
 `;
+
+export const EmptyCenterBox = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

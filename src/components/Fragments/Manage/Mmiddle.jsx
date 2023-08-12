@@ -30,12 +30,11 @@ const Mmiddle = ({
   const handleVideoDelete = async () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       await UploadInstance.delete(`/upload-service/videos/${userId}/${videoId}`)
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           window.location.reload();
         })
         .catch((err) => {
-          console.log(err);
+          alert(err.response.data.error);
         });
     } else {
       return;
@@ -54,7 +53,7 @@ const Mmiddle = ({
         alert("제목이 수정되었습니다.");
       });
     } catch (err) {
-      console.log(err);
+      alert(err.response.data.error);
     }
   };
 
@@ -98,12 +97,11 @@ const Mmiddle = ({
               "Content-Type": "multipart/form-data",
             },
           }
-        ).then((res) => {
-          console.log(res);
+        ).then(() => {
           alert("썸네일이 수정되었습니다.");
         });
       } catch (err) {
-        console.log(err);
+        alert(err.response.data.error);
       }
     } else {
       return;
@@ -123,12 +121,11 @@ const Mmiddle = ({
       try {
         await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/tags`, {
           tagIds: newTagIdList,
-        }).then((res) => {
-          console.log(res);
+        }).then(() => {
           alert("태그가 수정되었습니다.");
         });
       } catch (err) {
-        console.log(err);
+        alert(err.response.data.error);
       }
     } else {
       return;
@@ -164,8 +161,15 @@ const Mmiddle = ({
           <M.InfoVerticalBox>
             <M.SecondBlackP>제목</M.SecondBlackP>
             <M.CenterBox>
-              <M.FileTextInput type="text" defaultValue={videoName} onChange={handleVideoName} />
-              <M.ExchangeButton onClick={submitVideoName}>변경</M.ExchangeButton>
+              <M.FileTextInput
+                type="text"
+                defaultValue={videoName}
+                onChange={handleVideoName}
+                disabled={!videoId}
+              />
+              <M.ExchangeButton onClick={submitVideoName} disabled={!videoId}>
+                변경
+              </M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
           <M.InfoVerticalBox>
@@ -174,19 +178,22 @@ const Mmiddle = ({
               <M.InputButton htmlFor="file-input">File</M.InputButton>
             </M.SecondBlackP>
             <M.CenterBox>
-              <M.FileTextInput type="text" defaultValue={videoThumbnail} />
+              <M.FileTextInput type="text" defaultValue={videoThumbnail} disabled={!videoId} />
               <M.FileInput
                 type="file"
                 id="file-input"
                 accept="image/*"
                 onChange={handleVideoThumbnail}
+                disabled={!videoId}
               />
-              <M.ExchangeButton onClick={submitVideoThumbnail}>변경</M.ExchangeButton>
+              <M.ExchangeButton onClick={submitVideoThumbnail} disabled={!videoId}>
+                변경
+              </M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
         </M.InfoFlexBox>
         <M.SecondBlackP>
-          태그 <M.InputButton onClick={submitVideoTag}>변경</M.InputButton>
+          태그 <M.InputButton onClick={() => videoId && submitVideoTag()}>변경</M.InputButton>
         </M.SecondBlackP>
         <M.TagSection>
           <U.TagCheckSection>

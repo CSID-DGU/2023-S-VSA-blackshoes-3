@@ -369,7 +369,7 @@ export const AdUploadButton = styled.button`
 
 export const TitleLeftBox = styled(TitleBetweenBox)`
   justify-content: flex-start;
-  gap: 15px;
+  gap: 5px;
   border-bottom: 1px solid #c4c4c4;
 `;
 

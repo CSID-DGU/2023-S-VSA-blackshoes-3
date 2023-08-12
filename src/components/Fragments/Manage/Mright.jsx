@@ -20,7 +20,7 @@ const Mright = ({ videoAds, userId, videoId }) => {
   console.log(videoAds);
   return (
     <M.RightBox>
-      <U.TitleBetweenBox>
+      <U.TitleBetweenBox style={{ borderBottom: `1px solid #c4c4c4` }}>
         <U.SpanTitle>
           광고수정{" "}
           <U.AdUploadButton>
@@ -32,20 +32,24 @@ const Mright = ({ videoAds, userId, videoId }) => {
         </ColorButton>
       </U.TitleBetweenBox>
       <M.AdModifySection>
-        {videoAds.length === 0
-          ? "추가된 광고가 없습니다."
-          : videoAds.map((params) => (
-              <AdInput
-                key={params.adId}
-                adId={params.adId}
-                userId={userId}
-                videoId={videoId}
-                adContent={params.adContent}
-                adUrl={params.adUrl}
-                adStartTime={params.startTime}
-                adEndTime={params.endTime}
-              />
-            ))}
+        {videoAds.length === 0 ? (
+          <M.EmptyCenterBox>
+            <M.BoldSpan>영상 선택 후 광고를 수정할 수 있습니다.</M.BoldSpan>
+          </M.EmptyCenterBox>
+        ) : (
+          videoAds.map((params) => (
+            <AdInput
+              key={params.adId}
+              adId={params.adId}
+              userId={userId}
+              videoId={videoId}
+              adContent={params.adContent}
+              adUrl={params.adUrl}
+              adStartTime={params.startTime}
+              adEndTime={params.endTime}
+            />
+          ))
+        )}
       </M.AdModifySection>
       <U.TitleLeftBox>
         <U.SpanTitle>댓글조회</U.SpanTitle>

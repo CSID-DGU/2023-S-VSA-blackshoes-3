@@ -42,6 +42,7 @@ const Upload = () => {
   const [tagIdList, setTagIdList] = useState([]);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
+  const [adList, setAdList] = useState([]);
   const [adUrl, setAdUrl] = useState("");
   const [adContent, setAdContent] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -162,7 +163,6 @@ const Upload = () => {
         const formData = new FormData();
         formData.append("thumbnail", thumbnailFile);
         formData.append("requestUpload", blob);
-
         try {
           await UploadInstance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
             headers: {
