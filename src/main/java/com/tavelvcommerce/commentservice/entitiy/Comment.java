@@ -19,6 +19,9 @@ public class Comment {
     @Column(name = "comment_id")
     private String commentId;
 
+    @Column(name = "seller_id")
+    private String sellerId;
+
     @Column(name = "video_id")
     private String videoId;
 
@@ -35,8 +38,9 @@ public class Comment {
     private Timestamp updatedAt;
 
     @Builder
-    public Comment(String commentId, String videoId, String userId, String content, Timestamp createdAt, Timestamp updatedAt) {
+    public Comment(String commentId, String sellerId, String videoId, String userId, String content, Timestamp createdAt, Timestamp updatedAt) {
         this.commentId = commentId;
+        this.sellerId = sellerId;
         this.videoId = videoId;
         this.userId = userId;
         this.content = content;

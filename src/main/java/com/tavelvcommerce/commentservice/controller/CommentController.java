@@ -20,16 +20,17 @@ public class CommentController {
     private final ObjectMapper objectMapper;
     private final CommentService commentService;
 
-    @PostMapping("/comments/{videoId}/{userId}")
-    public ResponseEntity<ResponseDto> createComment(@PathVariable(name = "videoId") String videoId,
-                                                     @PathVariable(name = "userId") String userId,
+    @PostMapping("/comments/{sellerId}/{videoId}")
+    public ResponseEntity<ResponseDto> createComment(@PathVariable(name = "sellerId") String sellerId,
+                                                     @PathVariable(name = "videoId") String videoId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         String commentId = UUID.randomUUID().toString();
+        String userId = commentRequestDto.getUserId();
         String content = commentRequestDto.getContent();
 
         CommentDto.CommentCreateResponseDto commentCreateResponseDto;
         try {
-            commentCreateResponseDto = commentService.createComment(commentId, videoId, userId, content);
+            commentCreateResponseDto = commentService.createComment(commentId, sellerId, videoId, userId, content);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -43,11 +44,11 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @PutMapping("/comments/{videoId}/{userId}/{commentId}")
+    @PutMapping("/comments/{sellerId}/{videoId}/{commentId}")
     public ResponseEntity<ResponseDto> updateComment(@PathVariable(name = "videoId") String videoId,
-                                                     @PathVariable(name = "userId") String userId,
                                                      @PathVariable(name = "commentId") String commentId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        String userId = commentRequestDto.getUserId();
         String content = commentRequestDto.getContent();
 
         CommentDto.CommentUpdateResponseDto commentUpdateResponseDto;

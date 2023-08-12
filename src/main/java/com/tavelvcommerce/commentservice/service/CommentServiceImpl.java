@@ -20,7 +20,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String content) {
+    public CommentDto.CommentCreateResponseDto createComment(String commentId, String sellerId, String videoId, String userId, String content) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID is empty");
+        }
+
         if (content == null || content.isEmpty()) {
             throw new IllegalArgumentException("Content is empty");
         }
@@ -31,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = Comment.builder()
                 .commentId(commentId)
+                .sellerId(sellerId)
                 .videoId(videoId)
                 .userId(userId)
                 .content(content)
@@ -55,6 +60,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto.CommentUpdateResponseDto updateComment(String commentId, String videoId, String userId, String content) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID is empty");
+        }
+
         if (content == null || content.isEmpty()) {
             throw new IllegalArgumentException("Content is empty");
         }
