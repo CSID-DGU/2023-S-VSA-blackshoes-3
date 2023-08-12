@@ -37,15 +37,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto registerUser(UserDto.UserRegisterRequestDto registerRequestDto) {
-        User user = User.builder().
-                userId(UUID.randomUUID().toString()).
-                email(registerRequestDto.getEmail()).
-                nickname(registerRequestDto.getNickname()).
-                birthdate(registerRequestDto.getBirthdate()).
-                role(Role.valueOf("USER")).
-                provider(registerRequestDto.getProvider()).
-                providerId(registerRequestDto.getProviderId()).
-                password(passwordEncoder.encode(registerRequestDto.getPassword())).build();
+        User user = User.builder()
+                .userId(UUID.randomUUID().toString())
+                .email(registerRequestDto.getEmail())
+                .nickname(registerRequestDto.getNickname())
+                .birthdate(registerRequestDto.getBirthdate())
+                .role(Role.valueOf("USER"))
+                .provider(registerRequestDto.getProvider())
+                .providerId(registerRequestDto.getProviderId())
+                .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
         userRepository.save(user);
 
@@ -67,7 +70,7 @@ public class UserServiceImpl implements UserService {
     //이메일, 닉네임, 생일 수정
     @Override
     @Transactional
-    public UserDto updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto){
+    public UserDto updateUser(String userId, UserDto.UserUpdateRequestDto userUpdateRequestDto) {
         User existingUser = userRepository.findByUserId(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         existingUser.update(userUpdateRequestDto.getNickname());
@@ -116,12 +119,13 @@ public class UserServiceImpl implements UserService {
 
         return responseBody;
     }
+
     public Map<String, String> socialLogin(String email) {
         // 사용자 검색
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        if(user.getPassword().equals("")) {
+        if (user.getPassword().equals("")) {
             throw new BadCredentialsException("Invalid password.");
         }
 
@@ -160,7 +164,7 @@ public class UserServiceImpl implements UserService {
     public Map<String, String> findPassword(String email, String password) {
         Optional<User> existingUser = userRepository.findByEmail(email);
 
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             existingUser.get().setPassword(passwordEncoder.encode(password));
             userRepository.save(existingUser.get());
         }
@@ -173,12 +177,13 @@ public class UserServiceImpl implements UserService {
 
         return responseBody;
     }
+
     @Override
     public UserDto.UserInfoResponseDto getUserInfo(String userId) {
         Optional<User> existingUser = userRepository.findByUserId(userId);
 
         UserDto.UserInfoResponseDto userInfoResponseDto = new UserDto.UserInfoResponseDto();
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             userInfoResponseDto.setNickname(existingUser.get().getNickname());
             userInfoResponseDto.setEmail(existingUser.get().getEmail());
             userInfoResponseDto.setBirthdate(existingUser.get().getBirthdate());

@@ -63,10 +63,6 @@ public class SellerDto {
     public static class SellerRegisterResponseDto{
         private String sellerId;
         private LocalDateTime createdAt;
-        public String getFormattedCreatedAt() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            return createdAt.format(formatter);
-        }
     }
 
     @Data
@@ -74,10 +70,6 @@ public class SellerDto {
     public static class SellerUpdateResponseDto{
         private String sellerId;
         private LocalDateTime updatedAt;
-        public String getFormattedUpdatedAt() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            return updatedAt.format(formatter);
-        }
     }
     @Data
     public static class SellerUpdatePasswordRequestDto{

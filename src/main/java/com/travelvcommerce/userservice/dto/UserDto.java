@@ -79,11 +79,6 @@ public class UserDto implements Serializable {
     public static class UserRegisterResponseDto{
         private String userId;
         private LocalDateTime createdAt;
-
-        public String getFormattedCreatedAt() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            return createdAt.format(formatter);
-        }
     }
 
     @Data
@@ -97,10 +92,6 @@ public class UserDto implements Serializable {
     public static class UserUpdateResponseDto{
         private String userId;
         private LocalDateTime updatedAt;
-        public String getFormattedUpdatedAt() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            return updatedAt.format(formatter);
-        }
     }
 
     @Data
