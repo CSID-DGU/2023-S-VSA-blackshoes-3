@@ -5,6 +5,10 @@ import com.tavelvcommerce.commentservice.entitiy.Comment;
 import com.tavelvcommerce.commentservice.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -119,5 +123,27 @@ public class CommentServiceImpl implements CommentService {
             log.error("Failed to delete comment: {}", e.getMessage());
             throw new RuntimeException("Failed to delete comment");
         }
+    }
+
+    @Override
+    public Page<CommentDto.CommentResponseDto> sellerVideoGetComments(String videoId, String sellerId, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+
+        Page<Comment> commentPage = commentRepository.findByVideoIdAndSellerId(videoId, sellerId, pageable);
+
+        Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
+                comment -> CommentDto.CommentResponseDto.builder()
+                        .commentId(comment.getCommentId())
+                        .sellerId(comment.getSellerId())
+                        .videoId(comment.getVideoId())
+                        .userId(comment.getUserId())
+                        .content(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .updatedAt(comment.getUpdatedAt())
+                        .build()
+        );
+
+        return commentResponseDtoPage;
     }
 }

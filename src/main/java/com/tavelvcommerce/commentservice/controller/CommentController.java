@@ -2,9 +2,11 @@ package com.tavelvcommerce.commentservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tavelvcommerce.commentservice.dto.CommentDto;
+import com.tavelvcommerce.commentservice.dto.CommentPagePayloadDto;
 import com.tavelvcommerce.commentservice.dto.ResponseDto;
 import com.tavelvcommerce.commentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +73,7 @@ public class CommentController {
     }
 
     @PostMapping("/comments/{sellerId}/{videoId}/{commentId}/delete")
-    public ResponseEntity<ResponseDto> deleteComment(@PathVariable(name = "videoId") String videoId,
+    public ResponseEntity<ResponseDto> userDeleteComment(@PathVariable(name = "videoId") String videoId,
                                                      @PathVariable(name = "commentId") String commentId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         String userId = commentRequestDto.getUserId();
@@ -93,7 +95,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/comments/{sellerId}/{videoId}/{commentId}")
-    public ResponseEntity<ResponseDto> deleteComment(@PathVariable(name = "sellerId") String sellerId,
+    public ResponseEntity<ResponseDto> sellerDeleteComment(@PathVariable(name = "sellerId") String sellerId,
                                                      @PathVariable(name = "videoId") String videoId,
                                                      @PathVariable(name = "commentId") String commentId) {
         try {
@@ -110,5 +112,30 @@ public class CommentController {
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/comments/{sellerId}/{videoId}")
+    public ResponseEntity<ResponseDto> sellerVideoGetComments(@PathVariable(name = "sellerId") String sellerId,
+                                                              @PathVariable(name = "videoId") String videoId,
+                                                              @RequestParam(name = "page") int page,
+                                                              @RequestParam(name = "size") int size) {
+        Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
+        try {
+            commentResponseDtoPage = commentService.sellerVideoGetComments(videoId, sellerId, page, size);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+        CommentPagePayloadDto commentPagePayloadDto = CommentPagePayloadDto.builder()
+                .totalPages(commentResponseDtoPage.getTotalPages())
+                .currentPage(commentResponseDtoPage.getNumber())
+                .hasNext(commentResponseDtoPage.hasNext())
+                .pageSize(commentResponseDtoPage.getSize())
+                .totalElements(commentResponseDtoPage.getTotalElements())
+                .comments(commentResponseDtoPage.getContent())
+                .build();
+
+        ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentPagePayloadDto, Map.class)).build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

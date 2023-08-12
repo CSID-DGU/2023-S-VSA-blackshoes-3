@@ -1,6 +1,7 @@
 package com.tavelvcommerce.commentservice.service;
 
 import com.tavelvcommerce.commentservice.dto.CommentDto;
+import org.springframework.data.domain.Page;
 
 public interface CommentService {
     CommentDto.CommentCreateResponseDto createComment(String commentId, String sellerId, String videoId, String userId, String content);
@@ -10,4 +11,6 @@ public interface CommentService {
     void userDeleteComment(String commentId, String videoId, String userId);
 
     void sellerDeleteComment(String commentId, String videoId, String sellerId);
+
+    Page<CommentDto.CommentResponseDto> sellerVideoGetComments(String videoId, String sellerId, int page, int size);
 }
