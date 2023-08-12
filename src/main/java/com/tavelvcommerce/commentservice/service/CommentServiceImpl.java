@@ -130,7 +130,29 @@ public class CommentServiceImpl implements CommentService {
         Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sortBy);
 
-        Page<Comment> commentPage = commentRepository.findByVideoIdAndSellerId(videoId, sellerId, pageable);
+        Page<Comment> commentPage = commentRepository.findVideosByVideoIdAndSellerId(videoId, sellerId, pageable);
+
+        Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
+                comment -> CommentDto.CommentResponseDto.builder()
+                        .commentId(comment.getCommentId())
+                        .sellerId(comment.getSellerId())
+                        .videoId(comment.getVideoId())
+                        .userId(comment.getUserId())
+                        .content(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .updatedAt(comment.getUpdatedAt())
+                        .build()
+        );
+
+        return commentResponseDtoPage;
+    }
+
+    @Override
+    public Page<CommentDto.CommentResponseDto> userGetComments(String userId, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+
+        Page<Comment> commentPage = commentRepository.findVideosByUserId(userId, pageable);
 
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()

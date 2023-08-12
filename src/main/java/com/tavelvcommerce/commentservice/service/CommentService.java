@@ -13,4 +13,6 @@ public interface CommentService {
     void sellerDeleteComment(String commentId, String videoId, String sellerId);
 
     Page<CommentDto.CommentResponseDto> sellerVideoGetComments(String videoId, String sellerId, int page, int size);
+
+    Page<CommentDto.CommentResponseDto> userGetComments(String userId, int page, int size);
 }

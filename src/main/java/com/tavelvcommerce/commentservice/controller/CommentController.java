@@ -138,4 +138,28 @@ public class CommentController {
         ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentPagePayloadDto, Map.class)).build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @GetMapping("/comments/{userId}")
+    public ResponseEntity<ResponseDto> userGetComments(@PathVariable(name = "userId") String userId,
+                                                       @RequestParam(name = "page") int page,
+                                                       @RequestParam(name = "size") int size) {
+        Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
+        try {
+            commentResponseDtoPage = commentService.userGetComments(userId, page, size);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+        CommentPagePayloadDto commentPagePayloadDto = CommentPagePayloadDto.builder()
+                .totalPages(commentResponseDtoPage.getTotalPages())
+                .currentPage(commentResponseDtoPage.getNumber())
+                .hasNext(commentResponseDtoPage.hasNext())
+                .pageSize(commentResponseDtoPage.getSize())
+                .totalElements(commentResponseDtoPage.getTotalElements())
+                .comments(commentResponseDtoPage.getContent())
+                .build();
+
+        ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentPagePayloadDto, Map.class)).build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
