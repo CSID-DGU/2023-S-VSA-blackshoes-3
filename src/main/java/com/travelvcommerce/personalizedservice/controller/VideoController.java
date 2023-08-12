@@ -3,8 +3,11 @@ package com.travelvcommerce.personalizedservice.controller;
 import com.travelvcommerce.personalizedservice.dto.ResponseDto;
 import com.travelvcommerce.personalizedservice.dto.VideoDto;
 import com.travelvcommerce.personalizedservice.service.CustomBadRequestException;
+import com.travelvcommerce.personalizedservice.service.ResourceNotFoundException;
 import com.travelvcommerce.personalizedservice.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,6 @@ public class VideoController {
 
     private final VideoService videoService;
 
-    // 비디오 조회 컬럼 추가, 이미 있으면 count += 1
     @PostMapping("/{userId}/videos/history")
     public ResponseEntity<ResponseDto> viewVideo(@PathVariable String userId, @RequestBody VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
         try {
@@ -31,7 +33,9 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
@@ -44,29 +48,43 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
 
     @GetMapping("/{userId}/videos/history")
-    public ResponseEntity<ResponseDto> getViewedVideosByUserId(@PathVariable String userId) {
+    public ResponseEntity<ResponseDto> getViewedVideosByUserId(@PathVariable String userId, @RequestParam int page, @RequestParam int size) {
         try {
-            List<Map<String, Object>> viewVideoListWithViewCount = videoService.getViewVideoIdListWithViewCount(userId);
+            Page<String> viewVideoResponsePage = videoService.getViewVideoIdListWithViewCount(userId, page, size);
+
+            VideoDto.ViewVideoPagePayloadDto viewVideoPagePayloadDto = VideoDto.ViewVideoPagePayloadDto.builder()
+                    .totalPages(viewVideoResponsePage.getTotalPages())
+                    .totalElements(viewVideoResponsePage.getTotalElements())
+                    .currentPage(viewVideoResponsePage.getNumber())
+                    .hasNext(viewVideoResponsePage.hasNext())
+                    .pageSize(viewVideoResponsePage.getSize())
+                    .viewVideoIdList(viewVideoResponsePage.getContent())
+                    .build();
 
             Map<String, Object> getViewedVideosIdResponse = new HashMap<>();
             getViewedVideosIdResponse.put("userId", userId);
-            getViewedVideosIdResponse.put("viewedVideos", viewVideoListWithViewCount);
+            getViewedVideosIdResponse.put("viewedVideos", viewVideoPagePayloadDto);
 
             ResponseDto responseDto = ResponseDto.builder().payload(getViewedVideosIdResponse).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
+
 
 
     // 비디오 좋아요
@@ -79,7 +97,9 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
@@ -91,32 +111,47 @@ public class VideoController {
             videoService.unlikeVideo(userId, videoId);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
 
     // 좋아요한 비디오 리스트
     @GetMapping("/{userId}/videos/liked")
-    public ResponseEntity<ResponseDto> getLikedVideosByUserId(@PathVariable String userId) {
+    public ResponseEntity<ResponseDto> getLikedVideosByUserId(@PathVariable String userId, @RequestParam int page, @RequestParam int size) {
         try {
-            List<String> likedVideosId = videoService.getLikedVideoIdList(userId);
+            Page<String> likedVideosIdPage = videoService.getLikedVideoIdList(userId, page, size);
+
+            VideoDto.LikeVideoPagePayloadDto likeVideoPagePayloadDto = VideoDto.LikeVideoPagePayloadDto.builder()
+                    .totalPages(likedVideosIdPage.getTotalPages())
+                    .totalElements(likedVideosIdPage.getTotalElements())
+                    .currentPage(likedVideosIdPage.getNumber())
+                    .hasNext(likedVideosIdPage.hasNext())
+                    .pageSize(likedVideosIdPage.getSize())
+                    .likedVideoIdList(likedVideosIdPage.getContent())
+                    .build();
 
             Map<String, Object> getLikedVideosIdResponse = new HashMap<>();
             getLikedVideosIdResponse.put("userId", userId);
-            getLikedVideosIdResponse.put("likedVideos", likedVideosId);
+            getLikedVideosIdResponse.put("likedVideos", likeVideoPagePayloadDto);
 
             ResponseDto responseDto = ResponseDto.builder().payload(getLikedVideosIdResponse).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        }catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
+
 
 
 }
