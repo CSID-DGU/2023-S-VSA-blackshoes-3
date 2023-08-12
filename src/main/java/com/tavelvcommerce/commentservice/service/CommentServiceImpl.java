@@ -90,12 +90,28 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(String commentId, String videoId, String userId) {
+    public void userDeleteComment(String commentId, String videoId, String userId) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
 
         Comment comment = commentRepository.findByCommentIdAndVideoIdAndUserId(commentId, videoId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+
+        try {
+            commentRepository.delete(comment);
+        } catch (Exception e) {
+            log.error("Failed to delete comment: {}", e.getMessage());
+            throw new RuntimeException("Failed to delete comment");
+        }
+    }
+
+    @Override
+    public void sellerDeleteComment(String commentId, String videoId, String sellerId) {
+        if (sellerId == null || sellerId.isEmpty()) {
+            throw new IllegalArgumentException("Seller ID is empty");
+        }
+
+        Comment comment = commentRepository.findByCommentIdAndVideoIdAndSellerId(commentId, videoId, sellerId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
 
         try {
             commentRepository.delete(comment);

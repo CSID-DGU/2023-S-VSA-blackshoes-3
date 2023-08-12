@@ -77,7 +77,27 @@ public class CommentController {
         String userId = commentRequestDto.getUserId();
 
         try {
-            commentService.deleteComment(commentId, videoId, userId);
+            commentService.userDeleteComment(commentId, videoId, userId);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/comments/{sellerId}/{videoId}/{commentId}")
+    public ResponseEntity<ResponseDto> deleteComment(@PathVariable(name = "sellerId") String sellerId,
+                                                     @PathVariable(name = "videoId") String videoId,
+                                                     @PathVariable(name = "commentId") String commentId) {
+        try {
+            commentService.sellerDeleteComment(commentId, videoId, sellerId);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);

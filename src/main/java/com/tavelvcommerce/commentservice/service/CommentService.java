@@ -7,5 +7,7 @@ public interface CommentService {
 
     CommentDto.CommentUpdateResponseDto updateComment(String commentId, String videoId, String userId, String content);
 
-    void deleteComment(String commentId, String videoId, String userId);
+    void userDeleteComment(String commentId, String videoId, String userId);
+
+    void sellerDeleteComment(String commentId, String videoId, String sellerId);
 }
