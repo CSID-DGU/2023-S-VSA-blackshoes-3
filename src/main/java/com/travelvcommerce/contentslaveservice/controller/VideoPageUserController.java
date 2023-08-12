@@ -69,8 +69,8 @@ public class VideoPageUserController {
     }
 
     // tagId로 영상 조회
-    @GetMapping("/videos/tag")
-    public ResponseEntity<ResponseDto> getVideosByTag(@RequestParam("q") String q,
+    @GetMapping("/videos/tagId")
+    public ResponseEntity<ResponseDto> getVideosByTag(@RequestParam("q") String tagId,
                                                       @RequestParam("s") String s,
                                                       @RequestParam("page") int page,
                                                       @RequestParam("size") int size) {
@@ -88,7 +88,7 @@ public class VideoPageUserController {
 
         // 비디오 조회 로직 호출
         try {
-            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTag(q, sortType, page, size);
+            Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTagId(tagId, sortType, page, size);
 
             videoPagePayloadDto = VideoPagePayloadDto.builder()
                     .totalPages(videoPage.getTotalPages())
@@ -205,8 +205,8 @@ public class VideoPageUserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/videos")
-    public ResponseEntity<ResponseDto> getVideosByIdList(@RequestParam(name = "ids") List<String> videoIdList) {
+    @GetMapping("/videos/videoIds")
+    public ResponseEntity<ResponseDto> getVideosByIdList(@RequestParam(name = "q") List<String> videoIdList) {
         VideoPagePayloadDto videoPagePayloadDto;
 
         try {

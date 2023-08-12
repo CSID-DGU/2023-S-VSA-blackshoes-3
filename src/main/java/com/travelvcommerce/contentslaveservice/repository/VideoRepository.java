@@ -1,9 +1,11 @@
 package com.travelvcommerce.contentslaveservice.repository;
 
+import com.travelvcommerce.contentslaveservice.dto.SearchAutoCompletionDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.entity.Video;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -43,5 +45,16 @@ public interface VideoRepository extends MongoRepository<Video, String> {
 
     @Query(value = "{videoId: {$in: ?0}}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogo: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
     List<VideoDto.VideoListResponseDto> findVideosByVideoIdList(List<String> videoIdList);
+
+    @Query(value = "{'videoName': { $regex: '?0', $options: 'i' }}", fields = "{videoName: 1}")
+    List<SearchAutoCompletionDto> findAutoCompleteResultsByVideoName(String keyword);
+
+    @Aggregation(pipeline = {
+            "{$match: {'sellerName': { $regex: ?0, $options: 'i' }}}",
+            "{$group: {_id: '$sellerName'}}",
+            "{$project: {_id: 0, sellerName: '$_id'}}"
+    })
+    List<SearchAutoCompletionDto> findAutoCompleteResultsBySellerName(String keyword);
+
 }
 
