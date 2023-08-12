@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -49,5 +50,33 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         return commentCreateResponseDto;
+    }
+
+    @Override
+    @Transactional
+    public CommentDto.CommentUpdateResponseDto updateComment(String commentId, String videoId, String userId, String content) {
+        if (content == null || content.isEmpty()) {
+            throw new IllegalArgumentException("Content is empty");
+        }
+
+        if (content.length() > 140) {
+            throw new IllegalArgumentException("Content should not exceed 140 characters");
+        }
+
+        Comment comment = commentRepository.findByCommentIdAndVideoIdAndUserId(commentId, videoId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+
+        try {
+            comment.updateContent(content);
+        } catch (Exception e) {
+            log.error("Failed to update comment: {}", e.getMessage());
+            throw new RuntimeException("Failed to update comment");
+        }
+
+        CommentDto.CommentUpdateResponseDto commentUpdateResponseDto = CommentDto.CommentUpdateResponseDto.builder()
+                .commentId(comment.getCommentId())
+                .updatedAt(String.valueOf(comment.getUpdatedAt()))
+                .build();
+
+        return commentUpdateResponseDto;
     }
 }

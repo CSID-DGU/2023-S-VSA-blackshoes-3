@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -40,5 +41,31 @@ public class CommentController {
         ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentCreateResponseDto, Map.class)).build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @PutMapping("/comments/{videoId}/{userId}/{commentId}")
+    public ResponseEntity<ResponseDto> updateComment(@PathVariable(name = "videoId") String videoId,
+                                                     @PathVariable(name = "userId") String userId,
+                                                     @PathVariable(name = "commentId") String commentId,
+                                                     @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        String content = commentRequestDto.getContent();
+
+        CommentDto.CommentUpdateResponseDto commentUpdateResponseDto;
+        try {
+            commentUpdateResponseDto = commentService.updateComment(commentId, videoId, userId, content);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (NoSuchElementException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentUpdateResponseDto, Map.class)).build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

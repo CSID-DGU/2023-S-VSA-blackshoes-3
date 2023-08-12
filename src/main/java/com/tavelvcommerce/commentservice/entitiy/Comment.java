@@ -43,4 +43,9 @@ public class Comment {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
 }

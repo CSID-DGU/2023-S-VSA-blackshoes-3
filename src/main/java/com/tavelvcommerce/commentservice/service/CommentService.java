@@ -4,4 +4,6 @@ import com.tavelvcommerce.commentservice.dto.CommentDto;
 
 public interface CommentService {
     CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String content);
+
+    CommentDto.CommentUpdateResponseDto updateComment(String commentId, String videoId, String userId, String content);
 }
