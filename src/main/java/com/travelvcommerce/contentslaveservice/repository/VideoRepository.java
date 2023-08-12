@@ -40,5 +40,8 @@ public interface VideoRepository extends MongoRepository<Video, String> {
 
     @Query(value = "{'videoTags.tagId': ?0}")
     Page<VideoDto.VideoListResponseDto> findVideosByTagId(String q, Pageable pageable);
+
+    @Query(value = "{videoId: {$in: ?0}}", fields = "{videoId: 1, videoName: 1, thumbnailUrl: 1, sellerName: 1, sellerLogo: 1, createdAt: 1, likes: 1, views: 1, adClicks: 1}")
+    List<VideoDto.VideoListResponseDto> findVideosByVideoIdList(List<String> videoIdList);
 }
 
