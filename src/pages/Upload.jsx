@@ -42,6 +42,7 @@ const Upload = () => {
   const [tagIdList, setTagIdList] = useState([]);
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
+  const [adList, setAdList] = useState([]);
   const [adUrl, setAdUrl] = useState("");
   const [adContent, setAdContent] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -49,13 +50,19 @@ const Upload = () => {
   //
   const [isSocketOpen, setIsSocketOpen] = useState(false);
   const [percentage, setPercentage] = useState(0);
+  const [timer, setTimer] = useState(true);
 
   // Function----------------------------------------------------
+  const iconTimer = () => {
+    setTimeout(() => {
+      setTimer(false);
+    }, 3000);
+  };
+
   const fetchData = async () => {
     try {
       await UploadInstance.get(`/upload-service/videos/temporary/${userId}`).then(async (res) => {
         if (res.status === 200) {
-          console.log(res);
           if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
             const expiredAt = new Date(res.data.payload.expiredAt);
             setVideoExpireState(
@@ -71,24 +78,24 @@ const Upload = () => {
             await UploadInstance.delete(
               `/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
             )
-              .then((res) => {
-                console.log(res);
+              .then(() => {
+                alert("이전에 작성하던 영상을 삭제했습니다.");
               })
-              .catch((err) => {
-                console.log(err);
+              .catch(() => {
+                alert("이전에 작성하던 영상을 삭제하는데 실패했습니다.");
               });
           }
         }
       });
     } catch (err) {
       if (err.status === 404) {
-        console.log("이전에 작성하던 영상이 없습니다.");
+        alert("이전에 작성하던 영상이 없습니다.");
         return;
       } else if (err.status === 500) {
-        console.log("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        alert("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        navigate("/", { replace: true });
       }
     }
-
     const regionData = await UploadInstance.get(`/upload-service/tags/region`);
     const themeData = await UploadInstance.get(`/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
@@ -112,9 +119,9 @@ const Upload = () => {
                 "Content-Type": "multipart/form-data",
               },
             }).then((res) => {
-              console.log(res);
               setLoading(false);
               setIsSocketOpen(true);
+              iconTimer();
               alert("영상이 업로드되었습니다.");
               const expiredAt = new Date(res.data.payload.expiredAt);
               setVideoExpireState(
@@ -128,7 +135,6 @@ const Upload = () => {
               });
             });
           } catch (err) {
-            console.log(err);
             setLoading(false);
             setIsSocketOpen(true);
             alert("업로드에 실패했습니다.");
@@ -157,7 +163,6 @@ const Upload = () => {
         const formData = new FormData();
         formData.append("thumbnail", thumbnailFile);
         formData.append("requestUpload", blob);
-
         try {
           await UploadInstance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
             headers: {
@@ -243,7 +248,7 @@ const Upload = () => {
         <V.VideoUploadSection>
           <V.TitleBetweenBox>
             <V.SpanTitle>영상 등록</V.SpanTitle>
-            <V.MiddleSpan preview2={preview2}>
+            <V.MiddleSpan $preview2={preview2}>
               {videoExpireState}{" "}
               <V.ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</V.ExtendSpan>
             </V.MiddleSpan>
@@ -263,6 +268,8 @@ const Upload = () => {
             preview={preview}
             setPreview={setPreview}
             preview2={preview2}
+            timer={timer}
+            iconTimer={iconTimer}
           />
           <br />
           {/* 영상 정보 등록 컴포넌트 조각 */}

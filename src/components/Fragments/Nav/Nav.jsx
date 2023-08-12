@@ -18,13 +18,13 @@ const Nav = () => {
   return (
     <NavSection>
       <NavBox>
-        <HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} page={page}>
+        <HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} $page={page}>
           메인
         </HoverButton0>
-        <HoverButton1 width="270px" onClick={() => navigate(`/home/${userId}/upload`)} page={page}>
+        <HoverButton1 width="270px" onClick={() => navigate(`/home/${userId}/upload`)} $page={page}>
           영상 업로드
         </HoverButton1>
-        <HoverButton2 width="270px" onClick={() => navigate(`/home/${userId}/manage`)} page={page}>
+        <HoverButton2 width="270px" onClick={() => navigate(`/home/${userId}/manage`)} $page={page}>
           영상 관리
         </HoverButton2>
       </NavBox>

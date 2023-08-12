@@ -108,20 +108,20 @@ export const HoverButton0 = styled.button`
   height: 50px;
   border: none;
   border-radius: 16px;
-  background-color: ${(props) => (props.page === 0 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.page === 0 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) => (props.$page === 0 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.$page === 0 ? props.theme.bgColor : props.theme.textColor)};
   font-size: 14px;
   cursor: pointer;
 `;
 
 export const HoverButton1 = styled(HoverButton0)`
-  background-color: ${(props) => (props.page === 1 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.page === 1 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) => (props.$page === 1 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.$page === 1 ? props.theme.bgColor : props.theme.textColor)};
 `;
 
 export const HoverButton2 = styled(HoverButton0)`
-  background-color: ${(props) => (props.page === 2 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.page === 2 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) => (props.$page === 2 ? props.theme.primaryColor : "transparent")};
+  color: ${(props) => (props.$page === 2 ? props.theme.bgColor : props.theme.textColor)};
 `;
 
 export const BorderButton = styled.button`
@@ -161,7 +161,7 @@ export const ResNavItem0 = styled.section`
   color: ${(props) => props.theme.textColor};
   border: none;
   border-bottom: ${(props) =>
-    props.page === 0 ? `2px solid ${props.theme.primaryColor}` : "none"};
+    props.$page === 0 ? `2px solid ${props.theme.primaryColor}` : "none"};
   cursor: pointer;
   @media all and (max-width: 900px) {
     display: flex;
@@ -170,12 +170,12 @@ export const ResNavItem0 = styled.section`
 
 export const ResNavItem1 = styled(ResNavItem0)`
   border-bottom: ${(props) =>
-    props.page === 1 ? `2px solid ${props.theme.primaryColor}` : "none"};
+    props.$page === 1 ? `2px solid ${props.theme.primaryColor}` : "none"};
 `;
 
 export const ResNavItem2 = styled(ResNavItem0)`
   border-bottom: ${(props) =>
-    props.page === 2 ? `2px solid ${props.theme.primaryColor}` : "none"};
+    props.$page === 2 ? `2px solid ${props.theme.primaryColor}` : "none"};
 `;
 
 // Body-------------------------------------------------------------
