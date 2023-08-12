@@ -142,13 +142,12 @@ const Manage = () => {
             videoThumbnail={videoThumbnail}
             setVideoThumbnail={setVideoThumbnail}
             videoTags={videoTags}
-            videoAds={videoAds}
             selectedQuality={selectedQuality}
             regionTag={regionTag}
             themeTag={themeTag}
           />
         </M.LeftMiddleBox>
-        <Mright />
+        <Mright videoAds={videoAds} />
       </Body>
     </GridWrapper>
   );

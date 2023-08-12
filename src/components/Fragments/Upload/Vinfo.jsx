@@ -52,7 +52,7 @@ const Vinfo = ({
               id="thumbnail-input"
               onChange={handleThumbnailFile}
             />
-            <I.VideoThumbnailUploadButton htmlFor="thumbnail-input" thumbnailfile={thumbnailFile}>
+            <I.VideoThumbnailUploadButton htmlFor="thumbnail-input" $thumbnail_file={thumbnailFile}>
               <I.FullIcon src={Plus} alt="plus-icon" loading="lazy" />
             </I.VideoThumbnailUploadButton>
             {thumbnailPreview && (

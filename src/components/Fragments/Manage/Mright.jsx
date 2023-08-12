@@ -5,8 +5,16 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import Minus from "../../../assets/images/minus.svg";
+import PropTypes from "prop-types";
 
-const Mright = () => {
+const Mright = ({ videoAds }) => {
+  // Constant----------------------------------------------------
+  console.log(videoAds);
+
+  // State-------------------------------------------------------
+
+  // Function----------------------------------------------------
+
   return (
     <M.RightBox>
       <U.TitleLeftBox>
@@ -85,3 +93,7 @@ const Mright = () => {
 };
 
 export default Mright;
+
+Mright.propTypes = {
+  videoAds: PropTypes.array,
+};

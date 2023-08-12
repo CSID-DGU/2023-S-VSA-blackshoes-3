@@ -116,7 +116,7 @@ export const VideoListBox = styled.section`
   flex-direction: column;
   padding: 10px;
   border: ${(props) =>
-    props.videoid === props.$clicked_id ? `3px solid ${props.theme.secondBlack}` : ``};
+    props.$video_id === props.$clicked_id ? `3px solid ${props.theme.secondBlack}` : ``};
   @media all and (max-width: 1280px) {
     max-width: 600px;
   }

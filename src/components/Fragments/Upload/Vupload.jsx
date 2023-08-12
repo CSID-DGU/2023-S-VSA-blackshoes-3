@@ -18,6 +18,8 @@ const Vupload = ({
   preview,
   setPreview,
   preview2,
+  timer,
+  iconTimer,
 }) => {
   // Constant----------------------------------------------------
   const baseUrl = preview2;
@@ -45,6 +47,10 @@ const Vupload = ({
 
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
+    if (preview2 !== null) {
+      iconTimer();
+    }
+    // video.js
     if (videoRef.current !== null) {
       // video.js 옵션 설정
       const options = {
@@ -73,8 +79,8 @@ const Vupload = ({
   return (
     <>
       <U.VideoInput type="file" accept="video/*" id="video-input" onChange={handleVideoChange} />
-      <U.VideoInputSection videofile={videoFile}>
-        <U.VideoUploadButton htmlFor="video-input" videofile={videoFile}>
+      <U.VideoInputSection $video_file={videoFile}>
+        <U.VideoUploadButton htmlFor="video-input" $video_file={videoFile}>
           <U.FullIcon src={Plus} alt="plus-icon" loading="lazy" />
         </U.VideoUploadButton>
         {preview !== null && preview2 === null ? (
@@ -104,8 +110,8 @@ const Vupload = ({
         )}
         {step.second && (
           <>
-            <U.UploadedState>영상 업로드 완료</U.UploadedState>
-            <U.SpinnerBox>
+            <U.UploadedState $timer={timer}>영상 업로드 완료</U.UploadedState>
+            <U.SpinnerBox $timer={timer}>
               <U.CheckIcon icon={faSquareCheck} />
             </U.SpinnerBox>
           </>
@@ -128,4 +134,6 @@ Vupload.propTypes = {
   preview: PropTypes.string,
   setPreview: PropTypes.func,
   preview2: PropTypes.string,
+  timer: PropTypes.bool,
+  iconTimer: PropTypes.func,
 };
