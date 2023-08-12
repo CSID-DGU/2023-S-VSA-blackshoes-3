@@ -1,6 +1,8 @@
 package com.travelvcommerce.personalizedservice.repository;
 
 import com.travelvcommerce.personalizedservice.entity.LikeVideo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +20,6 @@ public interface LikeVideoRepository extends JpaRepository<LikeVideo, String> {
     public boolean existsByUserIdAndVideoId(String userId, String videoId);
     boolean existsByUserId(String userId);
     List<LikeVideo> findByUserId(String userId);
+
+    Page<LikeVideo> findByUserId(String userId, Pageable pageable);
 }
