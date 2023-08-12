@@ -1,7 +1,9 @@
 package com.travelvcommerce.contentslaveservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
+import com.travelvcommerce.contentslaveservice.dto.VideoPagePayloadDto;
 import com.travelvcommerce.contentslaveservice.service.UserPersonalizedService;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
 import com.travelvcommerce.contentslaveservice.vo.UserPersonalizedData;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,8 @@ public class VideoPageUserController {
     private VideoService videoService;
     @Autowired
     private UserPersonalizedService userPersonalizedService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     // 전체 영상 조회
     @GetMapping("/videos/sort")
@@ -40,28 +43,28 @@ public class VideoPageUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        Map<String, Object> videoPagePayload;
+        VideoPagePayloadDto videoPagePayloadDto;
 
 
         // 비디오 조회 로직 호출
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideos(sortType, page, size);
 
-            videoPagePayload = new LinkedHashMap<>() {{
-                put("totalPages", videoPage.getTotalPages());
-                put("currentPage", videoPage.getNumber());
-                put("hasNext", videoPage.hasNext());
-                put("pageSize", videoPage.getSize());
-                put("totalElements", videoPage.getTotalElements());
-                put("videos", videoPage.getContent());
-            }};
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .totalPages(videoPage.getTotalPages())
+                    .currentPage(videoPage.getNumber())
+                    .hasNext(videoPage.hasNext())
+                    .pageSize(videoPage.getSize())
+                    .totalElements(videoPage.getTotalElements())
+                    .videos(videoPage.getContent())
+                    .build();
 
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -72,8 +75,6 @@ public class VideoPageUserController {
                                                       @RequestParam("page") int page,
                                                       @RequestParam("size") int size) {
 
-        Map<String, Object> videoPagePayload;
-
         // s로 받은 정렬 타입 검증하고 sortType 변수에 저장
         String sortType;
         try {
@@ -83,26 +84,27 @@ public class VideoPageUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        VideoPagePayloadDto videoPagePayloadDto;
 
         // 비디오 조회 로직 호출
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosByTag(q, sortType, page, size);
 
-            videoPagePayload = new LinkedHashMap<>() {{
-                put("totalPages", videoPage.getTotalPages());
-                put("currentPage", videoPage.getNumber());
-                put("hasNext", videoPage.hasNext());
-                put("pageSize", videoPage.getSize());
-                put("totalElements", videoPage.getTotalElements());
-                put("videos", videoPage.getContent());
-            }};
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .totalPages(videoPage.getTotalPages())
+                    .currentPage(videoPage.getNumber())
+                    .hasNext(videoPage.hasNext())
+                    .pageSize(videoPage.getSize())
+                    .totalElements(videoPage.getTotalElements())
+                    .videos(videoPage.getContent())
+                    .build();
 
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -141,30 +143,31 @@ public class VideoPageUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        Map<String, Object> videoPagePayload;
+        VideoPagePayloadDto videoPagePayloadDto;
 
         // 비디오 조회 로직 호출
         try {
             Page<VideoDto.VideoListResponseDto> videoPage
                     = videoService.getVideosByIdList(idType, idList, sortType, page, size);
 
-            videoPagePayload = new LinkedHashMap<>() {{
-                put("totalPages", videoPage.getTotalPages());
-                put("currentPage", videoPage.getNumber());
-                put("hasNext", videoPage.hasNext());
-                put("pageSize", videoPage.getSize());
-                put("totalElements", videoPage.getTotalElements());
-                put("videos", videoPage.getContent());
-            }};
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .totalPages(videoPage.getTotalPages())
+                    .currentPage(videoPage.getNumber())
+                    .hasNext(videoPage.hasNext())
+                    .pageSize(videoPage.getSize())
+                    .totalElements(videoPage.getTotalElements())
+                    .videos(videoPage.getContent())
+                    .build();
 
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
     // VideoPageUserController.java
     @GetMapping("/videos/search")
     public ResponseEntity<ResponseDto> searchVideos(@RequestParam("type") String type,
@@ -181,24 +184,45 @@ public class VideoPageUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
+        VideoPagePayloadDto videoPagePayloadDto;
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.searchVideos(type, q, sortType, page, size);
 
-            Map<String, Object> videoPagePayload = new LinkedHashMap<>() {{
-                put("totalPages", videoPage.getTotalPages());
-                put("currentPage", videoPage.getNumber());
-                put("hasNext", videoPage.hasNext());
-                put("pageSize", videoPage.getSize());
-                put("totalElements", videoPage.getTotalElements());
-                put("videos", videoPage.getContent());
-            }};
-
-            ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .totalPages(videoPage.getTotalPages())
+                    .currentPage(videoPage.getNumber())
+                    .hasNext(videoPage.hasNext())
+                    .pageSize(videoPage.getSize())
+                    .totalElements(videoPage.getTotalElements())
+                    .videos(videoPage.getContent())
+                    .build();
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/videos")
+    public ResponseEntity<ResponseDto> getVideosByIdList(@RequestParam(name = "ids") List<String> videoIdList) {
+        VideoPagePayloadDto videoPagePayloadDto;
+
+        try {
+            List<VideoDto.VideoListResponseDto> videoList = videoService.getVideosByVideoIdList(videoIdList);
+
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .videos(videoList)
+                    .build();
+
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     private static String validateAndReturnSortType(String s) {

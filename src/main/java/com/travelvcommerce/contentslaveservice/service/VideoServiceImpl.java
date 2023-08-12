@@ -96,4 +96,10 @@ public class VideoServiceImpl implements VideoService {
 
         return videoPage;
     }
+
+    @Override
+    public List<VideoDto.VideoListResponseDto> getVideosByVideoIdList(List<String> videoIdList) {
+        List<VideoDto.VideoListResponseDto> videoList = videoRepository.findVideosByVideoIdList(videoIdList);
+        return videoList;
+    }
 }

@@ -1,7 +1,9 @@
 package com.travelvcommerce.contentslaveservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
+import com.travelvcommerce.contentslaveservice.dto.VideoPagePayloadDto;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
 import com.travelvcommerce.contentslaveservice.vo.SellerSortTypes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import java.util.Map;
 public class VideoPageSellerController {
     @Autowired
     VideoService videoService;
+    @Autowired
+    ObjectMapper objectMapper;
 
     // 판매자별 전체 영상 조회
     @GetMapping("/videos/{sellerId}/sort")
@@ -36,26 +40,26 @@ public class VideoPageSellerController {
             s = "createdAt";
         }
 
-        Map<String, Object> videoPagePayload;
+        VideoPagePayloadDto videoPagePayloadDto;
 
         try {
             Page<VideoDto.VideoListResponseDto> videoPage = videoService.getVideosBySellerId(sellerId, s, page, size);
 
-            videoPagePayload = new LinkedHashMap<>() {{
-                put("totalPages", videoPage.getTotalPages());
-                put("currentPage", videoPage.getNumber());
-                put("hasNext", videoPage.hasNext());
-                put("pageSize", videoPage.getSize());
-                put("totalElements", videoPage.getTotalElements());
-                put("videos", videoPage.getContent());
-            }};
+            videoPagePayloadDto = VideoPagePayloadDto.builder()
+                    .totalPages(videoPage.getTotalPages())
+                    .currentPage(videoPage.getNumber())
+                    .hasNext(videoPage.hasNext())
+                    .pageSize(videoPage.getSize())
+                    .totalElements(videoPage.getTotalElements())
+                    .videos(videoPage.getContent())
+                    .build();
 
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        ResponseDto responseDto = ResponseDto.buildResponseDto(videoPagePayload);
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoPagePayloadDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
