@@ -35,7 +35,13 @@ public class SearchAutoCompletionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
 
-        SearchAutoCompletionDto.SearchAutoCompletionListDto searchAutoCompletionListDto = searchAutoCompletionService.getAutoCompletionList(searchType, keyword);
+        SearchAutoCompletionDto.SearchAutoCompletionListDto searchAutoCompletionListDto;
+        try {
+            searchAutoCompletionListDto = searchAutoCompletionService.getAutoCompletionList(searchType, keyword);
+        } catch (RuntimeException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(searchAutoCompletionListDto, Map.class));
 
