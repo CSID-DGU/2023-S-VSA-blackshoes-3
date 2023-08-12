@@ -47,8 +47,7 @@ const Mleft = ({ videoList, videoId, setVideoId, setSortOption }) => {
             <M.VideoListBox
               key={v.videoId}
               onClick={() => handleVideoModifyFile(v.videoId)}
-              clickedid={videoId}
-              videoid={v.videoId}
+              $clicked_id={videoId}
             >
               <M.VideoListThumbnail src={v.thumbnailUrl} alt="video-thumbnail" loading="lazy" />
               <M.VideoListInfo>

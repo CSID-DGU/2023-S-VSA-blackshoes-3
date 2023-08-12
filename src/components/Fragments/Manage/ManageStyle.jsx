@@ -116,7 +116,7 @@ export const VideoListBox = styled.section`
   flex-direction: column;
   padding: 10px;
   border: ${(props) =>
-    props.videoid === props.clickedid ? `3px solid ${props.theme.secondBlack}` : ``};
+    props.videoid === props.$clicked_id ? `3px solid ${props.theme.secondBlack}` : ``};
   @media all and (max-width: 1280px) {
     max-width: 600px;
   }
@@ -206,11 +206,11 @@ export const Select = styled.select`
 export const PreviewSection = styled.section`
   width: 100%;
   height: 100%;
-  display: ${(props) => (props.thumbnail_preview === null ? "none" : "flex")};
+  display: ${(props) => (props.$thumbnail_preview === null ? "none" : "flex")};
   justify-content: center;
   align-items: center;
   position: absolute;
-  z-index: ${(props) => (props.thumbnail_preview === null ? "-1" : "1")};
+  z-index: ${(props) => (props.$thumbnail_preview === null ? "-1" : "1")};
 `;
 
 export const ThumbnailPreview = styled.img`
@@ -234,7 +234,7 @@ export const VideoModifyWrapper = styled.section`
   min-width: 350px;
   height: 45%;
   max-height: 300px;
-  display: ${(props) => (props.videourl ? "none" : "flex")};
+  display: ${(props) => (props.$videourl ? "none" : "flex")};
   justify-content: center;
   align-items: center;
   font-size: 14px;

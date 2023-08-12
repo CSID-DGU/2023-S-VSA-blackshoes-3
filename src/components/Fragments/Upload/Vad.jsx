@@ -97,7 +97,7 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
         </A.AdUploadButton>
       </A.TitleLeftBox>
       <A.AdUploadGridBox>
-        {input.map((i, idx) => (
+        {input.map((i) => (
           <React.Fragment key={i.id}>{i.value}</React.Fragment>
         ))}
       </A.AdUploadGridBox>
