@@ -6,13 +6,17 @@ import com.travelvcommerce.personalizedservice.entity.ViewVideo;
 import com.travelvcommerce.personalizedservice.repository.LikeVideoRepository;
 import com.travelvcommerce.personalizedservice.repository.ViewVideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
@@ -66,31 +70,10 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public void unviewVideo(String userId, String videoId) {
         if (!viewVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
-            throw new CustomBadRequestException("Invalid video id or user id");
+            throw new ResourceNotFoundException("Invalid video id or user id");
         }
         viewVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
 
-    }
-
-    @Override
-    public List<Map<String, Object>> getViewVideoIdListWithViewCount(String userId) {
-        if (!viewVideoRepository.existsByUserId(userId)) {
-            throw new CustomBadRequestException("Invalid user id");
-        }
-
-        List<ViewVideo> viewVideos = viewVideoRepository.findByUserId(userId);
-
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        for (ViewVideo viewVideo : viewVideos) {
-            Map<String, Object> videoDetailMap = new HashMap<>();
-            videoDetailMap.put("videoId", viewVideo.getVideoId());
-            videoDetailMap.put("viewCount", Math.toIntExact(viewVideo.getVideoViewCount()));
-            videoDetailMap.put("createdAt", viewVideo.getCreatedAt());
-
-            resultList.add(videoDetailMap);
-        }
-
-        return resultList;
     }
 
     @Transactional
@@ -126,23 +109,33 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public void unlikeVideo(String userId, String videoId) {
         if (!likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
-            throw new CustomBadRequestException("Invalid video id or user id");
+            throw new ResourceNotFoundException("Invalid video id or user id");
         }
         likeVideoRepository.deleteByUserIdAndVideoId(userId, videoId);
     }
 
     @Override
-    public List<String> getLikedVideoIdList(String userId) {
-
+    public Page<String> getLikedVideoIdList(String userId, int page, int size){
         if (!likeVideoRepository.existsByUserId(userId)) {
-            throw new CustomBadRequestException("Invalid user id");
+            throw new ResourceNotFoundException("Invalid user id");
         }
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        Page<LikeVideo> pagedLikeVideos = likeVideoRepository.findByUserId(userId, pageable);
 
-        List<LikeVideo> likeVideos = likeVideoRepository.findByUserId(userId);
-        List<String> videoIdList = likeVideos.stream().map(LikeVideo::getVideoId).collect(Collectors.toList());
+        return pagedLikeVideos.map(LikeVideo::getVideoId);
+    }
+    @Override
+    public Page<String> getViewVideoIdListWithViewCount(String userId, int page, int size) {
+        if (!viewVideoRepository.existsByUserId(userId)) {
+            throw new ResourceNotFoundException("Invalid user id");
+        }
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
 
-        // 구현 필요
-        return videoIdList;
+        Page<ViewVideo> pagedViewVideos = viewVideoRepository.findByUserId(userId, pageable);
+
+        return pagedViewVideos.map(ViewVideo::getVideoId);
     }
 
     @Override

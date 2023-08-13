@@ -6,6 +6,7 @@ import com.travelvcommerce.personalizedservice.entity.ViewTag;
 import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepository;
 import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import com.travelvcommerce.personalizedservice.service.CustomBadRequestException;
+import com.travelvcommerce.personalizedservice.service.ResourceNotFoundException;
 import com.travelvcommerce.personalizedservice.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -37,16 +38,23 @@ public class TagController {
 
     @GetMapping("/{userId}/tags/subscribed")
     public ResponseEntity<ResponseDto> getSubscribedTagList(@PathVariable String userId){
+        try {
+            Map<String, Object> subscribedTagListResponse = new HashMap<>();
+            subscribedTagListResponse.put("userId", userId);
+            subscribedTagListResponse.put("subscribedTagList", tagService.getSubscribedTagList(userId));
 
-        Map<String, Object> subscribedTagListResponse = new HashMap<>();
-        subscribedTagListResponse.put("userId", userId);
-        subscribedTagListResponse.put("subscribedTagList", tagService.getSubscribedTagList(userId));
+            ResponseDto responseDto = ResponseDto.builder().
+                    payload(subscribedTagListResponse).
+                    build();
 
-        ResponseDto responseDto = ResponseDto.builder().
-                payload(subscribedTagListResponse).
-                build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        }catch (CustomBadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
+        }
     }
 
     @GetMapping("/{userId}/tags/viewed")
@@ -61,9 +69,11 @@ public class TagController {
             ResponseDto responseDto = ResponseDto.builder().payload(viewedTagListResponse).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch (CustomBadRequestException e) {
+        }catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
@@ -80,9 +90,11 @@ public class TagController {
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch(CustomBadRequestException e){
+        }catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch (Exception e){
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
@@ -90,9 +102,11 @@ public class TagController {
     public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @PathVariable String tagId) {
         try{
             tagService.unsubscribeTag(userId, tagId);
-        }catch(CustomBadRequestException e){
+        }catch (CustomBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
-        } catch(Exception e){
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

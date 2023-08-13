@@ -1,9 +1,14 @@
 package com.travelvcommerce.personalizedservice.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class VideoDto {
 
@@ -14,7 +19,7 @@ public class VideoDto {
     }
 
     @Data
-    public static class GetLikedVideosResponseDto {
+    public static class GetLikeVideosResponseDto {
         private String userId;
         private List<String> videoIdList;
     }
@@ -54,5 +59,28 @@ public class VideoDto {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
             return getUpdatedAt().format(formatter);
         }
+    }
+
+    @Getter
+    @Builder
+    public static class ViewVideoPagePayloadDto {
+        private int totalPages;
+        private int currentPage;
+        private boolean hasNext;
+        private int pageSize;
+        private long totalElements;
+        private List<String> viewVideoIdList;
+    }
+
+    @Getter
+    @Builder
+    public static class LikeVideoPagePayloadDto{
+        private int totalPages;
+        private int currentPage;
+        private boolean hasNext;
+        private int pageSize;
+        private long totalElements;
+        private List<String> likedVideoIdList;
+
     }
 }
