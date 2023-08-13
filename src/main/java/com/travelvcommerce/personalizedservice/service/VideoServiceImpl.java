@@ -144,4 +144,12 @@ public class VideoServiceImpl implements VideoService {
         // 구현 필요
         return videoIdList;
     }
+
+    @Override
+    public Boolean isUserLikedVideo(String userId, String videoId) {
+        if (!likeVideoRepository.existsByUserIdAndVideoId(userId, videoId)) {
+            return false;
+        }
+        return true;
+    }
 }

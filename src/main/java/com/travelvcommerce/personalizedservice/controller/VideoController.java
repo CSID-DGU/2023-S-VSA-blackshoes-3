@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,21 @@ public class VideoController {
             getLikedVideosIdResponse.put("likedVideos", likedVideosId);
 
             ResponseDto responseDto = ResponseDto.builder().payload(getLikedVideosIdResponse).build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (CustomBadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error(e.getMessage()).build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
+        }
+    }
+
+    @GetMapping("/{userId}/videos/liked/{videoId}")
+    public ResponseEntity<ResponseDto> getIsUserLikedVideo(@PathVariable String userId, @PathVariable String videoId) {
+        try {
+            Boolean isUserLikedVideo = videoService.isUserLikedVideo(userId, videoId);
+
+            ResponseDto responseDto = ResponseDto.builder().payload(Collections.singletonMap("isLiked", isUserLikedVideo.toString())).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {

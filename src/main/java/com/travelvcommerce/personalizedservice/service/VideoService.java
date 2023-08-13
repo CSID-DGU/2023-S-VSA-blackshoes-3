@@ -18,4 +18,5 @@ public interface VideoService {
     void unlikeVideo(String userId, String videoId);
     List<String> getLikedVideoIdList(String userId);
 
+    Boolean isUserLikedVideo(String userId, String videoId);
 }
