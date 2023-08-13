@@ -3,6 +3,8 @@ package com.travelvcommerce.statisticsservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
 @Builder
 public class LikeDto {
@@ -17,7 +19,8 @@ public class LikeDto {
     }
 
     @Builder
-    public static class LikeResponseDto {
+    @Getter
+    public static class LikeResponseDto  implements Serializable {
         private String videoId;
         private String updatedAt;
     }

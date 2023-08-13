@@ -31,7 +31,6 @@ public class RankDto {
     @Getter
     @Builder
     public static class VideoAdClickRankDto {
-        private String adId;
         private String videoId;
         private String videoName;
         private long adClicks;

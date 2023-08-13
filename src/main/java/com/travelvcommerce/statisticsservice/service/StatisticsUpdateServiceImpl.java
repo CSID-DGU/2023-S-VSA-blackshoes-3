@@ -53,6 +53,8 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
         VideoCountInfoDto videoCountInfoDto = VideoCountInfoDto.builder()
                 .videoId(videoId)
                 .views(videoViewCount.getViewCount())
+                .likes(-1L)
+                .adClicks(-1L)
                 .build();
 
         redisTemplate.opsForValue().set(viewCountKey, "true");
@@ -103,7 +105,9 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
 
         VideoCountInfoDto videoCountInfoDto = VideoCountInfoDto.builder()
                 .videoId(videoId)
+                .views(-1L)
                 .likes(videoLikeCount.getLikeCount())
+                .adClicks(-1L)
                 .build();
 
         return videoCountInfoDto;
@@ -132,13 +136,16 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
 
         VideoCountInfoDto videoCountInfoDto = VideoCountInfoDto.builder()
                 .videoId(videoId)
+                .views(-1L)
                 .likes(videoLikeCount.getLikeCount())
+                .adClicks(-1L)
                 .build();
 
         return videoCountInfoDto;
     }
 
     @Override
+    @Transactional
     public VideoCountInfoDto increaseVideoAdClickCount(String adId, String userId) {
         String adClickCountKey = "adClickCount:" + adId + ":" + userId;
         if (redisTemplate.hasKey(adClickCountKey)) {
@@ -155,7 +162,9 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
         }
 
         VideoCountInfoDto videoCountInfoDto = VideoCountInfoDto.builder()
-                .videoId(adId)
+                .videoId(adClickCount.getVideoId())
+                .views(-1L)
+                .likes(-1L)
                 .adClicks(adClickCount.getClickCount())
                 .build();
 

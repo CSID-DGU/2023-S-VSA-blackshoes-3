@@ -2,6 +2,7 @@ package com.travelvcommerce.statisticsservice.repository;
 
 import com.travelvcommerce.statisticsservice.entity.AdClickCount;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -18,5 +19,10 @@ public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long
 
     Optional<AdClickCount> findByAdId(String adId);
 
-    List<AdClickCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
+    @Query("SELECT acc " +
+            "FROM AdClickCount acc " +
+            "WHERE acc.sellerId = :sellerId " +
+            "GROUP BY acc.videoId " +
+            "ORDER BY SUM(acc.clickCount) DESC")
+    List<AdClickCount> findTop10BySellerIdOrderByClickCountDesc(String sellerId);
 }

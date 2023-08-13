@@ -7,6 +7,7 @@ import com.travelvcommerce.statisticsservice.entity.AdClickCount;
 import com.travelvcommerce.statisticsservice.entity.TagViewCount;
 import com.travelvcommerce.statisticsservice.entity.VideoLikeCount;
 import com.travelvcommerce.statisticsservice.entity.VideoViewCount;
+
 import com.travelvcommerce.statisticsservice.repository.AdClickCountRepository;
 import com.travelvcommerce.statisticsservice.repository.TagViewCountRepository;
 import com.travelvcommerce.statisticsservice.repository.VideoLikeCountRepository;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (redisTemplate.hasKey(videoViewRankKey)) {
             String value = redisTemplate.opsForValue().get(videoViewRankKey);
-            String aggregatedAt = redisTemplate.opsForValue().get(videoViewRankKey + ":aggregatedAt");
+            String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoViewRankDtoList = value.substring(aggregatedAt.length() + 1);
             List<RankDto.VideoViewRankDto> videoViewRankDtoList = new ArrayList<>();
             try {
@@ -60,7 +62,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return videoViewRankResponseDto;
         }
 
-        List<VideoViewCount> videoViewCountTop10 = videoViewCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
+        List<VideoViewCount> videoViewCountTop10 = videoViewCountRepository.findTop10BySellerIdOrderByViewCountDesc(sellerId);
 
         List<RankDto.VideoViewRankDto> videoViewRankDtoList = new ArrayList<>();
 
@@ -72,11 +74,12 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .build());
         });
 
+        String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
+
         if (!videoViewRankDtoList.isEmpty()) {
             try {
                 String stringVideoViewRankDtoList = objectMapper.writeValueAsString(videoViewRankDtoList);
-                String aggregatedAt = LocalDateTime.now().toString();
-                String value = aggregatedAt + ":" + stringVideoViewRankDtoList;
+                String value = aggregatedAt + "&" + stringVideoViewRankDtoList;
 
                 redisTemplate.opsForValue().set(videoViewRankKey, value);
                 redisTemplate.expire(videoViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
@@ -86,7 +89,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
         }
 
         RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto = RankResponseDto.VideoViewRankResponseDto.builder()
-                .aggregatedAt(LocalDateTime.now().toString())
+                .aggregatedAt(aggregatedAt)
                 .videoViewRank(videoViewRankDtoList)
                 .build();
 
@@ -99,7 +102,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (redisTemplate.hasKey(tagViewRankKey)) {
             String value = redisTemplate.opsForValue().get(tagViewRankKey);
-            String aggregatedAt = redisTemplate.opsForValue().get(tagViewRankKey + ":aggregatedAt");
+            String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringTagViewRankDtoList = value.substring(aggregatedAt.length() + 1);
             List<RankDto.TagViewRankDto> tagViewRankDtoList = new ArrayList<>();
 
@@ -117,7 +120,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return tagViewRankResponseDto;
         }
 
-        List<TagViewCount> tagViewCountTop10 = tagViewCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
+        List<TagViewCount> tagViewCountTop10 = tagViewCountRepository.findTop10BySellerIdOrderByViewCountDesc(sellerId);
 
         List<RankDto.TagViewRankDto> tagViewRankDtoList = new ArrayList<>();
 
@@ -129,11 +132,12 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .build());
         });
 
+        String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
+
         if (!tagViewRankDtoList.isEmpty()) {
             try {
                 String stringTagViewRankDtoList = objectMapper.writeValueAsString(tagViewRankDtoList);
-                String aggregatedAt = LocalDateTime.now().toString();
-                String value = aggregatedAt + ":" + stringTagViewRankDtoList;
+                String value = aggregatedAt + "&" + stringTagViewRankDtoList;
 
                 redisTemplate.opsForValue().set(tagViewRankKey, value);
                 redisTemplate.expire(tagViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
@@ -143,7 +147,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
         }
 
         RankResponseDto.TagViewRankResponseDto tagViewRankResponseDto = RankResponseDto.TagViewRankResponseDto.builder()
-                .aggregatedAt(LocalDateTime.now().toString())
+                .aggregatedAt(aggregatedAt)
                 .tagViewRank(tagViewRankDtoList)
                 .build();
 
@@ -156,7 +160,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (redisTemplate.hasKey(videoLikeRankKey)) {
             String value = redisTemplate.opsForValue().get(videoLikeRankKey);
-            String aggregatedAt = redisTemplate.opsForValue().get(videoLikeRankKey + ":aggregatedAt");
+            String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoLikeRankDtoList = value.substring(aggregatedAt.length() + 1);
             List<RankDto.VideoLikeRankDto> videoLikeRankDtoList = new ArrayList<>();
             try {
@@ -173,7 +177,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return videoLikeRankResponseDto;
         }
 
-        List<VideoLikeCount> videoLikeCountTop10 = videoLikeCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
+        List<VideoLikeCount> videoLikeCountTop10 = videoLikeCountRepository.findTop10BySellerIdOrderByLikeCountDesc(sellerId);
 
         List<RankDto.VideoLikeRankDto> videoLikeRankDtoList = new ArrayList<>();
 
@@ -185,13 +189,14 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .build());
         });
 
+        String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
+
         if (!videoLikeRankDtoList.isEmpty()) {
             try {
                 String stringVideoLikeRankDtoList = objectMapper.writeValueAsString(videoLikeRankDtoList);
-                String aggregatedAt = LocalDateTime.now().toString();
-                String value = aggregatedAt + ":" + stringVideoLikeRankDtoList;
+                String value = aggregatedAt + "&" + stringVideoLikeRankDtoList;
 
-                redisTemplate.opsForValue().set(videoLikeRankKey, objectMapper.writeValueAsString(value));
+                redisTemplate.opsForValue().set(videoLikeRankKey, value);
                 redisTemplate.expire(videoLikeRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching video like rank value", e);
@@ -199,7 +204,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
         }
 
         RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto = RankResponseDto.VideoLikeRankResponseDto.builder()
-                .aggregatedAt(LocalDateTime.now().toString())
+                .aggregatedAt(aggregatedAt)
                 .videoLikeRank(videoLikeRankDtoList)
                 .build();
 
@@ -212,7 +217,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (redisTemplate.hasKey(adClickRankKey)) {
             String value = redisTemplate.opsForValue().get(adClickRankKey);
-            String aggregatedAt = redisTemplate.opsForValue().get(adClickRankKey + ":aggregatedAt");
+            String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoAdClickRankDtoList = value.substring(aggregatedAt.length() + 1);
 
             List<RankDto.VideoAdClickRankDto> videoAdClickRankDtoList = new ArrayList<>();
@@ -230,26 +235,26 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return videoAdClickRankResponseDto;
         }
 
-        List<AdClickCount> adClickCountTop10 = adClickCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
+        List<AdClickCount> adClickCountTop10 = adClickCountRepository.findTop10BySellerIdOrderByClickCountDesc(sellerId);
 
         List<RankDto.VideoAdClickRankDto> videoAdClickRankDtoList = new ArrayList<>();
 
         adClickCountTop10.stream().forEach(adClickCount -> {
             videoAdClickRankDtoList.add(RankDto.VideoAdClickRankDto.builder()
-                    .adId(adClickCount.getAdId())
                     .videoId(adClickCount.getVideoId())
                     .videoName(adClickCount.getVideoName())
                     .adClicks(adClickCount.getClickCount())
                     .build());
         });
 
+        String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
+
         if (!videoAdClickRankDtoList.isEmpty()) {
             try {
                 String stringVideoAdClickRankDtoList = objectMapper.writeValueAsString(videoAdClickRankDtoList);
-                String aggregatedAt = LocalDateTime.now().toString();
-                String value = aggregatedAt + ":" + stringVideoAdClickRankDtoList;
+                String value = aggregatedAt + "&" + stringVideoAdClickRankDtoList;
 
-                redisTemplate.opsForValue().set(adClickRankKey, objectMapper.writeValueAsString(value));
+                redisTemplate.opsForValue().set(adClickRankKey, value);
                 redisTemplate.expire(adClickRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching ad click rank value", e);
@@ -257,7 +262,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
         }
 
         RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto = RankResponseDto.VideoAdClickRankResponseDto.builder()
-                .aggregatedAt(LocalDateTime.now().toString())
+                .aggregatedAt(aggregatedAt)
                 .videoAdClickRank(videoAdClickRankDtoList)
                 .build();
 

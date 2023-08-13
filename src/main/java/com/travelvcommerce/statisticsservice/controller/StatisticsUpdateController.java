@@ -2,6 +2,8 @@ package com.travelvcommerce.statisticsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.*;
+import com.travelvcommerce.statisticsservice.exception.UserAlreadyClickedAdException;
+import com.travelvcommerce.statisticsservice.exception.UserDidNotLikedVideoException;
 import com.travelvcommerce.statisticsservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyLikedVideoException;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyViewedVideoException;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +65,7 @@ public class StatisticsUpdateController {
 
         ViewCountDto.ViewCountResponseDto viewCountResponseDto = ViewCountDto.ViewCountResponseDto.builder()
                 .videoId(videoId)
-                .updatedAt(LocalDateTime.now().toString())
+                .updatedAt(Timestamp.valueOf(LocalDateTime.now()).toString())
                 .build();
 
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(viewCountResponseDto, Map.class));
@@ -86,6 +89,9 @@ public class StatisticsUpdateController {
         } catch (UserAlreadyLikedVideoException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (UserDidNotLikedVideoException e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -98,7 +104,7 @@ public class StatisticsUpdateController {
 
         LikeDto.LikeResponseDto likeResponseDto = LikeDto.LikeResponseDto.builder()
                 .videoId(videoId)
-                .updatedAt(LocalDateTime.now().toString())
+                .updatedAt(Timestamp.valueOf(LocalDateTime.now()).toString())
                 .build();
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(likeResponseDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -112,9 +118,9 @@ public class StatisticsUpdateController {
 
         try {
             videoCountInfoDto = statisticsUpdateService.increaseVideoAdClickCount(adId, userId);
-        } catch (IllegalArgumentException e) {
+        } catch (UserAlreadyClickedAdException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -127,7 +133,7 @@ public class StatisticsUpdateController {
 
         AdClickDto.AdClickResponseDto adClickResponseDto = AdClickDto.AdClickResponseDto.builder()
                 .adId(adId)
-                .updatedAt(LocalDateTime.now().toString())
+                .updatedAt(Timestamp.valueOf(LocalDateTime.now()).toString())
                 .build();
         ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(adClickResponseDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);

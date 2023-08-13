@@ -3,6 +3,8 @@ package com.travelvcommerce.statisticsservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
 @Builder
 public class AdClickDto {
@@ -17,7 +19,8 @@ public class AdClickDto {
     }
 
     @Builder
-    public static class AdClickResponseDto {
+    @Getter
+    public static class AdClickResponseDto  implements Serializable {
         private String adId;
         private String updatedAt;
     }

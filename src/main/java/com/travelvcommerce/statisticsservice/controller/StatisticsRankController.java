@@ -64,7 +64,7 @@ public class StatisticsRankController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/rank/ads/clicks/{sellerId}")
+    @GetMapping("/rank/videos/adClicks/{sellerId}")
     public ResponseEntity<ResponseDto> getAdClickRank(@PathVariable(name = "sellerId") String sellerId) {
         RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto;
 

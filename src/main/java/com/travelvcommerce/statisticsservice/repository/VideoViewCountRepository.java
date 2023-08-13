@@ -16,5 +16,5 @@ public interface VideoViewCountRepository extends JpaRepository<VideoViewCount, 
 
     Collection<VideoViewCount> findAllByVideoId(String videoId);
 
-    List<VideoViewCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
+    List<VideoViewCount> findTop10BySellerIdOrderByViewCountDesc(String sellerId);
 }

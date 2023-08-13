@@ -3,6 +3,7 @@ package com.travelvcommerce.statisticsservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class ViewCountDto {
@@ -29,7 +30,8 @@ public class ViewCountDto {
     }
 
     @Builder
-    public static class ViewCountResponseDto {
+    @Getter
+    public static class ViewCountResponseDto implements Serializable {
         private String videoId;
         private String updatedAt;
     }

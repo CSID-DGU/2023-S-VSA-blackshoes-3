@@ -16,5 +16,5 @@ public interface VideoLikeCountRepository extends JpaRepository<VideoLikeCount, 
 
     Collection<VideoLikeCount> findAllByVideoId(String videoId);
 
-    List<VideoLikeCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
+    List<VideoLikeCount> findTop10BySellerIdOrderByLikeCountDesc(String sellerId);
 }
