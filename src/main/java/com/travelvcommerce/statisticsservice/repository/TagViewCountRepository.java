@@ -16,5 +16,5 @@ public interface TagViewCountRepository extends JpaRepository<TagViewCount, Long
 
     void deleteAllByVideoId(String videoId);
 
-    Optional<TagViewCount> findByVideoIdAndTagId(String videoId, String tagId);
+    Collection<TagViewCount> findAllByVideoId(String videoId);
 }

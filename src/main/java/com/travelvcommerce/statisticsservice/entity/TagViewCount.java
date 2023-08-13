@@ -19,8 +19,14 @@ public class TagViewCount {
     @Column(name = "tag_id")
     private String tagId;
 
+    @Column(name = "tag_name")
+    private String tagName;
+
     @Column(name = "video_id")
     private String videoId;
+
+    @Column(name = "video_name")
+    private String videoName;
 
     @Column(name = "seller_id")
     private String sellerId;
@@ -29,14 +35,20 @@ public class TagViewCount {
     private long viewCount;
 
     @Builder
-    public TagViewCount(String tagId, String videoId, String sellerId, long viewCount) {
+    public TagViewCount(String tagId, String tagName, String videoId, String videoName, String sellerId, long viewCount) {
         this.tagId = tagId;
+        this.tagName = tagName;
         this.videoId = videoId;
+        this.videoName = videoName;
         this.sellerId = sellerId;
         this.viewCount = viewCount;
     }
 
     public void increaseViewCount() {
         this.viewCount++;
+    }
+
+    public void updateVideoName(String videoName) {
+        this.videoName = videoName;
     }
 }
