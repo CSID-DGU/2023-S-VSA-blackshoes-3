@@ -24,8 +24,8 @@ const SignUp = () => {
   const [emailValidation, setEmailValidation] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
-  const [coporateName, setCoporateName] = useState("");
-  const [icon, setIcon] = useState(null);
+  const [companyName, setCompanyName] = useState("");
+  const [sellorLogo, setSellorLogo] = useState(null);
 
   // ErrorMessage State----------------------------------------
   const [emailMessage, setEmailMessage] = useState("");
@@ -48,10 +48,10 @@ const SignUp = () => {
       setEmail(emailCurrent);
 
       if (!emailRegex.test(emailCurrent)) {
-        setEmailMessage("유효하지 않은 이메일");
+        setEmailMessage("유효하지 않은 이메일입니다.");
         setIsEmail(false);
       } else {
-        setEmailMessage("유효한 이메일");
+        setEmailMessage("유효한 이메일입니다.");
         setIsEmail(true);
       }
     },
@@ -65,10 +65,10 @@ const SignUp = () => {
     setPassword(passwordCurrent);
 
     if (!passwordRegex.test(passwordCurrent)) {
-      setPasswordMessage("숫자+영문자+특수문자[8글자↑]");
+      setPasswordMessage("숫자+영문자+특수문자를 조합하여 8글자 이상 작성하세요.");
       setIsPassword(false);
     } else {
-      setPasswordMessage("유효한 비밀번호");
+      setPasswordMessage("유효한 비밀번호입니다.");
       setIsPassword(true);
     }
   }, []);
@@ -80,10 +80,10 @@ const SignUp = () => {
       setPasswordCheck(password2Current);
 
       if (password === password2Current) {
-        setPasswordCheckMessage("비밀번호 입력 일치");
+        setPasswordCheckMessage("비밀번호 입력 일치합니다.");
         setIsPasswordCheck(true);
       } else {
-        setPasswordCheckMessage("비밀번호 입력 불일치");
+        setPasswordCheckMessage("비밀번호 입력 불일치합니다.");
         setIsPasswordCheck(false);
       }
     },
@@ -130,6 +130,53 @@ const SignUp = () => {
     }
   }, [debouncedEmailValidation]);
 
+  // 아이콘 등록--------------------------------------------------------------
+  const handleIconFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      setSellorLogo(file);
+    } else {
+      alert("파일을 등록하는데 실패했습니다.");
+    }
+  };
+
+  // 회원가입--------------------------------------------------------------
+  const submitSignUp = async (e) => {
+    e.preventDefault();
+    if (window.confirm("회원가입을 하시겠습니까?")) {
+      try {
+        const jsonData = {
+          email: email,
+          password: password,
+          companyName: companyName,
+        };
+        const formData = new FormData();
+        formData.append("joinRequest", JSON.stringify(jsonData));
+        await axios
+          .post(`http://13.125.69.94:8001/user-service/sellers/join`, formData, {
+            params: {
+              sellorLogo: sellorLogo,
+            },
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            alert("회원가입이 완료되었습니다.");
+            navigate("/");
+          });
+      } catch (err) {
+        console.log(err);
+        alert("회원가입에 실패했습니다.");
+      }
+    } else {
+      return;
+    }
+  };
+
   return (
     <Wrapper>
       <S.HalfSection style={{ backgroundColor: "#eaeaea" }}>
@@ -165,9 +212,9 @@ const SignUp = () => {
               인증번호 발송
             </S.ColorButton>
           </S.InputBox>
-          <S.FormHelperEmails is_email_validation={isEmailValidation ? "true" : "false"}>
+          <S.FormHelperEmailValidation is_email_validation={isEmailValidation ? "true" : "false"}>
             {emailValidationMessage}
-          </S.FormHelperEmails>
+          </S.FormHelperEmailValidation>
           <S.LeftAlignSection>
             <S.SignUpHead>비밀번호</S.SignUpHead>
           </S.LeftAlignSection>
@@ -199,18 +246,31 @@ const SignUp = () => {
             type="text"
             width="450px"
             placeholder="회사명을 입력해주세요."
-            onChange={(e) => setCoporateName(e.target.value)}
+            onChange={(e) => setCompanyName(e.target.value)}
           />
           <S.LeftAlignSection>
             <S.SignUpHead>아이콘 등록</S.SignUpHead>
           </S.LeftAlignSection>
           <S.InputBox width="450px">
-            <S.SignInput type="text" width="280px" placeholder="파일을 입력해주세요." />
+            <S.SignInput
+              type="text"
+              width="280px"
+              placeholder="파일을 선택해주세요."
+              defaultValue={sellorLogo && sellorLogo.name}
+            />
             <S.ColorLabel htmlFor="sign-input">파일 선택</S.ColorLabel>
-            <S.SignInput type="file" width="130px" id="sign-input" style={{ display: "none" }} />
+            <S.SignInput
+              type="file"
+              width="130px"
+              id="sign-input"
+              style={{ display: "none" }}
+              onChange={handleIconFile}
+            />
           </S.InputBox>
           <br />
-          <S.ColorButton width="450px">회원가입</S.ColorButton>
+          <S.ColorButton width="450px" onClick={submitSignUp}>
+            회원가입
+          </S.ColorButton>
         </S.SignForm>
       </S.HalfSection>
     </Wrapper>
