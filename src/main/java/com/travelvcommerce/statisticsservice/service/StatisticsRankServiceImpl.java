@@ -59,11 +59,13 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .build());
         });
 
-        try {
-            redisTemplate.opsForValue().set(videoViewRankKey, objectMapper.writeValueAsString(videoViewRankDtoList));
-            redisTemplate.expire(videoViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            log.error("Error caching video view rank value", e);
+        if (!videoViewRankDtoList.isEmpty()) {
+            try {
+                redisTemplate.opsForValue().set(videoViewRankKey, objectMapper.writeValueAsString(videoViewRankDtoList));
+                redisTemplate.expire(videoViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.error("Error caching video view rank value", e);
+            }
         }
 
         return videoViewRankDtoList;
@@ -93,12 +95,13 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .views(tagViewCount.getViewCount())
                     .build());
         });
-
-        try {
-            redisTemplate.opsForValue().set(tagViewRankKey, objectMapper.writeValueAsString(tagViewRankDtoList));
-            redisTemplate.expire(tagViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            log.error("Error caching tag view rank value", e);
+        if (!tagViewRankDtoList.isEmpty()) {
+            try {
+                redisTemplate.opsForValue().set(tagViewRankKey, objectMapper.writeValueAsString(tagViewRankDtoList));
+                redisTemplate.expire(tagViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.error("Error caching tag view rank value", e);
+            }
         }
 
         return tagViewRankDtoList;
@@ -128,12 +131,13 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .likes(videoLikeCount.getLikeCount())
                     .build());
         });
-
-        try {
-            redisTemplate.opsForValue().set(videoLikeRankKey, objectMapper.writeValueAsString(videoLikeRankDtoList));
-            redisTemplate.expire(videoLikeRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            log.error("Error caching video like rank value", e);
+        if (!videoLikeRankDtoList.isEmpty()) {
+            try {
+                redisTemplate.opsForValue().set(videoLikeRankKey, objectMapper.writeValueAsString(videoLikeRankDtoList));
+                redisTemplate.expire(videoLikeRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.error("Error caching video like rank value", e);
+            }
         }
 
         return videoLikeRankDtoList;
@@ -165,11 +169,13 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .build());
         });
 
-        try {
-            redisTemplate.opsForValue().set(adClickRankKey, objectMapper.writeValueAsString(videoAdClickRankDtoList));
-            redisTemplate.expire(adClickRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            log.error("Error caching ad click rank value", e);
+        if (!videoAdClickRankDtoList.isEmpty()) {
+            try {
+                redisTemplate.opsForValue().set(adClickRankKey, objectMapper.writeValueAsString(videoAdClickRankDtoList));
+                redisTemplate.expire(adClickRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.error("Error caching ad click rank value", e);
+            }
         }
 
         return videoAdClickRankDtoList;
