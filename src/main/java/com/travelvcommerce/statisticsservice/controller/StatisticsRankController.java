@@ -1,7 +1,6 @@
 package com.travelvcommerce.statisticsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelvcommerce.statisticsservice.dto.RankDto;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.dto.ResponseDto;
 import com.travelvcommerce.statisticsservice.service.StatisticsRankService;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,79 +19,63 @@ public class StatisticsRankController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @GetMapping("/rank/videos/likes/{sellerId}")
-    public ResponseEntity<ResponseDto> getLikeRank(@PathVariable(name = "sellerId") String sellerId) {
-        List<RankDto.VideoLikeRankDto> ranks;
-
-        try {
-            ranks = statisticsRankService.getVideoLikeTop10(sellerId);
-        } catch (Exception e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-        }
-
-        RankResponseDto rankResponseDto = RankResponseDto.builder()
-                .videoLikeRank(ranks)
-                .build();
-
-        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(rankResponseDto, Map.class));
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
     @GetMapping("/rank/videos/views/{sellerId}")
     public ResponseEntity<ResponseDto> getViewRank(@PathVariable(name = "sellerId") String sellerId) {
-        List<RankDto.VideoViewRankDto> ranks;
+        RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto;
 
         try {
-            ranks = statisticsRankService.getVideoViewTop10(sellerId);
+            videoViewRankResponseDto = statisticsRankService.getVideoViewTop10(sellerId);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        RankResponseDto rankResponseDto = RankResponseDto.builder()
-                .videoViewRank(ranks)
-                .build();
-
-        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(rankResponseDto, Map.class));
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoViewRankResponseDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/rank/tags/views/{sellerId}")
     public ResponseEntity<ResponseDto> getTagViewRank(@PathVariable(name = "sellerId") String sellerId) {
-        List<RankDto.TagViewRankDto> ranks;
+        RankResponseDto.TagViewRankResponseDto tagRankResponseDto;
 
         try {
-            ranks = statisticsRankService.getTagViewTop10(sellerId);
+            tagRankResponseDto = statisticsRankService.getTagViewTop10(sellerId);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        RankResponseDto rankResponseDto = RankResponseDto.builder()
-                .tagViewRank(ranks)
-                .build();
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(tagRankResponseDto, Map.class));
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 
-        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(rankResponseDto, Map.class));
+    @GetMapping("/rank/videos/likes/{sellerId}")
+    public ResponseEntity<ResponseDto> getLikeRank(@PathVariable(name = "sellerId") String sellerId) {
+        RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto;
+
+        try {
+            videoLikeRankResponseDto = statisticsRankService.getVideoLikeTop10(sellerId);
+        } catch (Exception e) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoLikeRankResponseDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/rank/ads/clicks/{sellerId}")
     public ResponseEntity<ResponseDto> getAdClickRank(@PathVariable(name = "sellerId") String sellerId) {
-        List<RankDto.VideoAdClickRankDto> ranks;
+        RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto;
 
         try {
-            ranks = statisticsRankService.getAdClickTop10(sellerId);
+            videoAdClickRankResponseDto = statisticsRankService.getAdClickTop10(sellerId);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
 
-        RankResponseDto rankResponseDto = RankResponseDto.builder()
-                .videoAdClickRank(ranks)
-                .build();
-
-        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(rankResponseDto, Map.class));
+        ResponseDto responseDto = ResponseDto.buildResponseDto(objectMapper.convertValue(videoAdClickRankResponseDto, Map.class));
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

@@ -2,6 +2,7 @@ package com.travelvcommerce.statisticsservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankDto;
+import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.entity.AdClickCount;
 import com.travelvcommerce.statisticsservice.entity.TagViewCount;
 import com.travelvcommerce.statisticsservice.entity.VideoLikeCount;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,15 +38,26 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
     private ObjectMapper objectMapper;
 
     @Override
-    public List<RankDto.VideoViewRankDto> getVideoViewTop10(String sellerId) {
+    public RankResponseDto.VideoViewRankResponseDto getVideoViewTop10(String sellerId) {
         String videoViewRankKey = "videoViewRank:" + sellerId;
+
         if (redisTemplate.hasKey(videoViewRankKey)) {
-            String videoViewRankValue = redisTemplate.opsForValue().get(videoViewRankKey);
+            String value = redisTemplate.opsForValue().get(videoViewRankKey);
+            String aggregatedAt = redisTemplate.opsForValue().get(videoViewRankKey + ":aggregatedAt");
+            String stringVideoViewRankDtoList = value.substring(aggregatedAt.length() + 1);
+            List<RankDto.VideoViewRankDto> videoViewRankDtoList = new ArrayList<>();
             try {
-                return objectMapper.readValue(videoViewRankValue, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoViewRankDto.class));
+                videoViewRankDtoList = objectMapper.readValue(stringVideoViewRankDtoList, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoViewRankDto.class));
             } catch (Exception e) {
                 log.error("Error parsing video view rank value", e);
             }
+
+            RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto = RankResponseDto.VideoViewRankResponseDto.builder()
+                    .aggregatedAt(aggregatedAt)
+                    .videoViewRank(videoViewRankDtoList)
+                    .build();
+
+            return videoViewRankResponseDto;
         }
 
         List<VideoViewCount> videoViewCountTop10 = videoViewCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
@@ -61,27 +74,47 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (!videoViewRankDtoList.isEmpty()) {
             try {
-                redisTemplate.opsForValue().set(videoViewRankKey, objectMapper.writeValueAsString(videoViewRankDtoList));
+                String stringVideoViewRankDtoList = objectMapper.writeValueAsString(videoViewRankDtoList);
+                String aggregatedAt = LocalDateTime.now().toString();
+                String value = aggregatedAt + ":" + stringVideoViewRankDtoList;
+
+                redisTemplate.opsForValue().set(videoViewRankKey, value);
                 redisTemplate.expire(videoViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching video view rank value", e);
             }
         }
 
-        return videoViewRankDtoList;
+        RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto = RankResponseDto.VideoViewRankResponseDto.builder()
+                .aggregatedAt(LocalDateTime.now().toString())
+                .videoViewRank(videoViewRankDtoList)
+                .build();
+
+        return videoViewRankResponseDto;
     }
 
     @Override
-    public List<RankDto.TagViewRankDto> getTagViewTop10(String sellerId) {
+    public RankResponseDto.TagViewRankResponseDto getTagViewTop10(String sellerId) {
         String tagViewRankKey = "tagViewRank:" + sellerId;
 
         if (redisTemplate.hasKey(tagViewRankKey)) {
-            String tagViewRankValue = redisTemplate.opsForValue().get(tagViewRankKey);
+            String value = redisTemplate.opsForValue().get(tagViewRankKey);
+            String aggregatedAt = redisTemplate.opsForValue().get(tagViewRankKey + ":aggregatedAt");
+            String stringTagViewRankDtoList = value.substring(aggregatedAt.length() + 1);
+            List<RankDto.TagViewRankDto> tagViewRankDtoList = new ArrayList<>();
+
             try {
-                return objectMapper.readValue(tagViewRankValue, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.TagViewRankDto.class));
+                tagViewRankDtoList =  objectMapper.readValue(stringTagViewRankDtoList, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.TagViewRankDto.class));
             } catch (Exception e) {
                 log.error("Error parsing tag view rank value", e);
             }
+
+            RankResponseDto.TagViewRankResponseDto tagViewRankResponseDto = RankResponseDto.TagViewRankResponseDto.builder()
+                    .aggregatedAt(aggregatedAt)
+                    .tagViewRank(tagViewRankDtoList)
+                    .build();
+
+            return tagViewRankResponseDto;
         }
 
         List<TagViewCount> tagViewCountTop10 = tagViewCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
@@ -95,29 +128,49 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .views(tagViewCount.getViewCount())
                     .build());
         });
+
         if (!tagViewRankDtoList.isEmpty()) {
             try {
-                redisTemplate.opsForValue().set(tagViewRankKey, objectMapper.writeValueAsString(tagViewRankDtoList));
+                String stringTagViewRankDtoList = objectMapper.writeValueAsString(tagViewRankDtoList);
+                String aggregatedAt = LocalDateTime.now().toString();
+                String value = aggregatedAt + ":" + stringTagViewRankDtoList;
+
+                redisTemplate.opsForValue().set(tagViewRankKey, value);
                 redisTemplate.expire(tagViewRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching tag view rank value", e);
             }
         }
 
-        return tagViewRankDtoList;
+        RankResponseDto.TagViewRankResponseDto tagViewRankResponseDto = RankResponseDto.TagViewRankResponseDto.builder()
+                .aggregatedAt(LocalDateTime.now().toString())
+                .tagViewRank(tagViewRankDtoList)
+                .build();
+
+        return tagViewRankResponseDto;
     }
 
     @Override
-    public List<RankDto.VideoLikeRankDto> getVideoLikeTop10(String sellerId) {
+    public RankResponseDto.VideoLikeRankResponseDto getVideoLikeTop10(String sellerId) {
         String videoLikeRankKey = "videoLikeRank:" + sellerId;
 
         if (redisTemplate.hasKey(videoLikeRankKey)) {
-            String videoLikeRankValue = redisTemplate.opsForValue().get(videoLikeRankKey);
+            String value = redisTemplate.opsForValue().get(videoLikeRankKey);
+            String aggregatedAt = redisTemplate.opsForValue().get(videoLikeRankKey + ":aggregatedAt");
+            String stringVideoLikeRankDtoList = value.substring(aggregatedAt.length() + 1);
+            List<RankDto.VideoLikeRankDto> videoLikeRankDtoList = new ArrayList<>();
             try {
-                return objectMapper.readValue(videoLikeRankValue, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoLikeRankDto.class));
+                videoLikeRankDtoList =  objectMapper.readValue(stringVideoLikeRankDtoList, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoLikeRankDto.class));
             } catch (Exception e) {
                 log.error("Error parsing video like rank value", e);
             }
+
+            RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto = RankResponseDto.VideoLikeRankResponseDto.builder()
+                    .aggregatedAt(aggregatedAt)
+                    .videoLikeRank(videoLikeRankDtoList)
+                    .build();
+
+            return videoLikeRankResponseDto;
         }
 
         List<VideoLikeCount> videoLikeCountTop10 = videoLikeCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
@@ -131,29 +184,50 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                     .likes(videoLikeCount.getLikeCount())
                     .build());
         });
+
         if (!videoLikeRankDtoList.isEmpty()) {
             try {
-                redisTemplate.opsForValue().set(videoLikeRankKey, objectMapper.writeValueAsString(videoLikeRankDtoList));
+                String stringVideoLikeRankDtoList = objectMapper.writeValueAsString(videoLikeRankDtoList);
+                String aggregatedAt = LocalDateTime.now().toString();
+                String value = aggregatedAt + ":" + stringVideoLikeRankDtoList;
+
+                redisTemplate.opsForValue().set(videoLikeRankKey, objectMapper.writeValueAsString(value));
                 redisTemplate.expire(videoLikeRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching video like rank value", e);
             }
         }
 
-        return videoLikeRankDtoList;
+        RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto = RankResponseDto.VideoLikeRankResponseDto.builder()
+                .aggregatedAt(LocalDateTime.now().toString())
+                .videoLikeRank(videoLikeRankDtoList)
+                .build();
+
+        return videoLikeRankResponseDto;
     }
 
     @Override
-    public List<RankDto.VideoAdClickRankDto> getAdClickTop10(String sellerId) {
+    public RankResponseDto.VideoAdClickRankResponseDto getAdClickTop10(String sellerId) {
         String adClickRankKey = "adClickRank:" + sellerId;
 
         if (redisTemplate.hasKey(adClickRankKey)) {
-            String adClickRankValue = redisTemplate.opsForValue().get(adClickRankKey);
+            String value = redisTemplate.opsForValue().get(adClickRankKey);
+            String aggregatedAt = redisTemplate.opsForValue().get(adClickRankKey + ":aggregatedAt");
+            String stringVideoAdClickRankDtoList = value.substring(aggregatedAt.length() + 1);
+
+            List<RankDto.VideoAdClickRankDto> videoAdClickRankDtoList = new ArrayList<>();
             try {
-                return objectMapper.readValue(adClickRankValue, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoAdClickRankDto.class));
+                videoAdClickRankDtoList =  objectMapper.readValue(stringVideoAdClickRankDtoList, objectMapper.getTypeFactory().constructCollectionType(List.class, RankDto.VideoAdClickRankDto.class));
             } catch (Exception e) {
                 log.error("Error parsing ad click rank value", e);
             }
+
+            RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto = RankResponseDto.VideoAdClickRankResponseDto.builder()
+                    .aggregatedAt(aggregatedAt)
+                    .videoAdClickRank(videoAdClickRankDtoList)
+                    .build();
+
+            return videoAdClickRankResponseDto;
         }
 
         List<AdClickCount> adClickCountTop10 = adClickCountRepository.findTop10BySellerIdOrderByCountDesc(sellerId);
@@ -171,13 +245,22 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
         if (!videoAdClickRankDtoList.isEmpty()) {
             try {
-                redisTemplate.opsForValue().set(adClickRankKey, objectMapper.writeValueAsString(videoAdClickRankDtoList));
+                String stringVideoAdClickRankDtoList = objectMapper.writeValueAsString(videoAdClickRankDtoList);
+                String aggregatedAt = LocalDateTime.now().toString();
+                String value = aggregatedAt + ":" + stringVideoAdClickRankDtoList;
+
+                redisTemplate.opsForValue().set(adClickRankKey, objectMapper.writeValueAsString(value));
                 redisTemplate.expire(adClickRankKey, 60 * 60 * 6, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("Error caching ad click rank value", e);
             }
         }
 
-        return videoAdClickRankDtoList;
+        RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto = RankResponseDto.VideoAdClickRankResponseDto.builder()
+                .aggregatedAt(LocalDateTime.now().toString())
+                .videoAdClickRank(videoAdClickRankDtoList)
+                .build();
+
+        return videoAdClickRankResponseDto;
     }
 }

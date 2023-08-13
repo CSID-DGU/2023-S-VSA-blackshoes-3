@@ -1,12 +1,13 @@
 package com.travelvcommerce.statisticsservice.service;
 
 import com.travelvcommerce.statisticsservice.dto.RankDto;
+import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 
 import java.util.List;
 
 public interface StatisticsRankService {
-    List<RankDto.VideoViewRankDto> getVideoViewTop10(String sellerId);
-    List<RankDto.TagViewRankDto> getTagViewTop10(String sellerId);
-    List<RankDto.VideoLikeRankDto> getVideoLikeTop10(String sellerId);
-    List<RankDto.VideoAdClickRankDto> getAdClickTop10(String sellerId);
+    RankResponseDto.VideoViewRankResponseDto getVideoViewTop10(String sellerId);
+    RankResponseDto.TagViewRankResponseDto getTagViewTop10(String sellerId);
+    RankResponseDto.VideoLikeRankResponseDto getVideoLikeTop10(String sellerId);
+    RankResponseDto.VideoAdClickRankResponseDto getAdClickTop10(String sellerId);
 }

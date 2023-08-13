@@ -6,12 +6,33 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
-@Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class RankResponseDto {
-    private List<RankDto.VideoViewRankDto> videoViewRank;
-    private List<RankDto.TagViewRankDto> tagViewRank;
-    private List<RankDto.VideoLikeRankDto> videoLikeRank;
-    private List<RankDto.VideoAdClickRankDto> videoAdClickRank;
+    @Getter
+    @Builder
+    public static class VideoViewRankResponseDto {
+        private List<RankDto.VideoViewRankDto> videoViewRank;
+        private String aggregatedAt;
+    }
+
+    @Getter
+    @Builder
+    public static class TagViewRankResponseDto {
+        private List<RankDto.TagViewRankDto> tagViewRank;
+        private String aggregatedAt;
+    }
+
+    @Getter
+    @Builder
+    public static class VideoLikeRankResponseDto {
+        private List<RankDto.VideoLikeRankDto> videoLikeRank;
+        private String aggregatedAt;
+    }
+
+    @Getter
+    @Builder
+    public static class VideoAdClickRankResponseDto {
+        private List<RankDto.VideoAdClickRankDto> videoAdClickRank;
+        private String aggregatedAt;
+    }
 }
