@@ -1,3 +1,4 @@
+import { FormHelperText } from "@mui/material";
 import { styled } from "styled-components";
 
 export const HalfSection = styled.section`
@@ -137,3 +138,30 @@ export const ClauseBox = styled.section`
 `;
 
 export const SignCheckBox = styled.input``;
+
+// MUI-------------------------------------------------------
+export const FormHelperEmails = styled(FormHelperText)`
+  width: 100%;
+  margin-left: 0 !important;
+  font-weight: 700 !important;
+  color: ${(props) =>
+    props.is_email === "true" ? props.theme.primaryColor : props.theme.secondBlack} !important;
+`;
+
+export const FormHelperPWs = styled(FormHelperText)`
+  width: 100%;
+  margin-left: 0 !important;
+  font-weight: 700 !important;
+  color: ${(props) =>
+    props.is_password === "true" ? props.theme.primaryColor : props.theme.secondBlack} !important;
+`;
+
+export const FormHelperPWCF = styled(FormHelperText)`
+  width: 100%;
+  margin-left: 0 !important;
+  font-weight: 700 !important;
+  color: ${(props) =>
+    props.is_password_check === "true"
+      ? props.theme.primaryColor
+      : props.theme.secondBlack} !important;
+`;

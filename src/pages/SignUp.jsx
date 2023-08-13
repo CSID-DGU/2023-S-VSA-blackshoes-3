@@ -93,6 +93,8 @@ const SignUp = () => {
               width="230px"
               placeholder="이메일을 입력해주세요."
               onChange={onChangeEmail}
+              error={email !== "" && !isEmail}
+              required
             />
             @
             <S.SignSelect width="180px">
@@ -102,6 +104,7 @@ const SignUp = () => {
               <option value="nate.com">nate.com</option>
             </S.SignSelect>
           </S.InputBox>
+          <S.FormHelperEmails is_email={isEmail ? "true" : "false"}></S.FormHelperEmails>
           <S.InputBox width="450px">
             <S.SignInput type="text" width="230px" placeholder="인증번호를 입력해주세요." />
             <S.ColorButton width="180px">인증번호 발송</S.ColorButton>
