@@ -60,14 +60,14 @@ public class UserServiceController {
                 throw new BadCredentialsException("리프레시 토큰이 일치하지 않습니다.");
             }
 
-            // 4. refreshToken이 존재한다면 newAccessToken을 발급한다.
-            String newAccessToken = jwtTokenProvider.createAccessToken(emailFromToken, userTypeFromToken);
+            // 4. refreshToken이 존재한다면 new Token을 발급한다.
+            String userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
+            TokenDto tokenDto = jwtTokenProvider.createTokens(emailFromToken, userTypeFromToken, userId);
             return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + newAccessToken)
                     .body(ResponseDto.builder()
                             .payload(new HashMap<String, Object>() {{
-                                put("refreshToken", refreshToken);
-                                put("accessToken", newAccessToken);
+                                put("refreshToken", tokenDto.getRefreshToken());
+                                put("accessToken", tokenDto.getAccessToken());
                             }})
                             .build());
         } catch (Exception e) {

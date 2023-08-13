@@ -51,18 +51,18 @@ public class JwtTokenProvider {
         return new TokenDto(token, refreshToken);
     }
 
-    public String createAccessToken(String username, String userType) {
-        Date now = new Date();
-        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .claim("userType", userType)
-                .setExpiration(tokenExpiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
+//    public String createAccessToken(String username, String userType) {
+//        Date now = new Date();
+//        Date tokenExpiryDate = new Date(now.getTime() + jwtTokenExpiry);
+//
+//        return Jwts.builder()
+//                .setSubject(username)
+//                .setIssuedAt(now)
+//                .claim("userType", userType)
+//                .setExpiration(tokenExpiryDate)
+//                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+//                .compact();
+//    }
 
     public String getEmailFromToken(String token) {
         return Jwts.parser()
@@ -118,5 +118,14 @@ public class JwtTokenProvider {
                 .getBody();
 
         return claims.get("userType", String.class);
+    }
+
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("Id", String.class);
     }
 }
