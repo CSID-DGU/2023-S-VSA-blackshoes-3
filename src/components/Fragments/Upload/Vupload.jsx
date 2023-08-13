@@ -110,8 +110,10 @@ const Vupload = ({
         )}
         {step.second && (
           <>
-            <U.UploadedState $timer={timer}>영상 업로드 완료</U.UploadedState>
-            <U.SpinnerBox $timer={timer}>
+            <U.UploadedState style={{ display: timer ? "" : "none" }}>
+              영상 업로드 완료
+            </U.UploadedState>
+            <U.SpinnerBox style={{ display: timer ? "flex" : "none" }}>
               <U.CheckIcon icon={faSquareCheck} />
             </U.SpinnerBox>
           </>
