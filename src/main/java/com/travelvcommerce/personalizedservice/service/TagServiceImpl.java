@@ -25,7 +25,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public List<String> getSubscribedTagList(String userId) {
         if(!subscribedTagRepository.existsByUserId(userId)){
-            throw new CustomBadRequestException("Invalid user id");
+            throw new ResourceNotFoundException("Invalid user id");
         }
 
         List<SubscribedTag> subscribedTagList = subscribedTagRepository.findByUserId(userId);
@@ -37,7 +37,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public List<Map<String, Object>> getViewedTagList(String userId) {
         if (!viewTagRepository.existsByUserId(userId)) {
-            throw new CustomBadRequestException("Invalid user id");
+            throw new ResourceNotFoundException("Invalid user id");
         }
 
         List<ViewTag> viewTagList = viewTagRepository.findByUserId(userId);
@@ -110,7 +110,7 @@ public class TagServiceImpl implements TagService{
     public Map<String, String> unsubscribeTag(String userId, String tagId) {
 
         if(!subscribedTagRepository.existsByUserIdAndTagId(userId, tagId)) {
-            throw new CustomBadRequestException("Invalid tag id or user id");
+            throw new ResourceNotFoundException("Invalid tag id or user id");
         }
 
         subscribedTagRepository.deleteByUserIdAndTagId(userId, tagId);

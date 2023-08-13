@@ -1,9 +1,8 @@
 package com.travelvcommerce.personalizedservice.service;
 
-import com.travelvcommerce.personalizedservice.dto.ResponseDto;
 import com.travelvcommerce.personalizedservice.dto.VideoDto;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Map;
 
 public interface VideoService {
@@ -11,12 +10,12 @@ public interface VideoService {
 
     void unviewVideo(String userId, String videoId);
 
-    List<Map<String, Object>> getViewVideoIdListWithViewCount(String userId);
+    Page<String> getViewVideoIdListWithViewCount(String userId, int page, int size);
 
     Map<String, String> likeVideo(String userId, VideoDto.LikeVideoRequestDto likeVideoRequestDto);
 
     void unlikeVideo(String userId, String videoId);
-    List<String> getLikedVideoIdList(String userId);
+    Page<String> getLikedVideoIdList(String userId, int page, int size);
 
     Boolean isUserLikedVideo(String userId, String videoId);
 }
