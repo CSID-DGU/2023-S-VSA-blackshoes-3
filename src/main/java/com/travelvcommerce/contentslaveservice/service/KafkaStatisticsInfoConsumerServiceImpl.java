@@ -6,6 +6,7 @@ import com.travelvcommerce.contentslaveservice.entity.Video;
 import com.travelvcommerce.contentslaveservice.repository.VideoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,7 @@ public class KafkaStatisticsInfoConsumerServiceImpl implements KafkaStatisticsIn
     private VideoRepository videoRepository;
 
     @Override
+    @KafkaListener(topics = "statistics-update")
     public void updateStatistics(String payload) {
         log.info("received payload='{}'", payload);
         StatisticsInfoDto statisticsInfoDto;
