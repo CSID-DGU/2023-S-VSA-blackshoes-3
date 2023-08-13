@@ -3,14 +3,24 @@ import { useNavigate } from "react-router-dom";
 import * as S from "../components/Sign/SignStyle";
 import { Wrapper } from "../components/Home/HomeStyle";
 import landingImage from "../assets/images/travel.jpg";
+import axios from "axios";
 
+// 13.125.69.94
+// :8001 user
+// :8011 content
+// :8031 statistics
+// :8041 comment
+// :8051 personalized
+
+// 210.94.179.19
+// :9127 upload
 const SignUp = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
 
   // Input State-----------------------------------------------
   const [email, setEmail] = useState("");
-  const [eamilValidation, setEmailValidation] = useState("");
+  const [emailValidation, setEmailValidation] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [coporateName, setCoporateName] = useState("");
@@ -26,21 +36,24 @@ const SignUp = () => {
   const [isPassword, setIsPassword] = useState(false);
   const [isPasswordCheck, setIsPasswordCheck] = useState(false);
 
-  // Email 유효성 관리-------------------------------------------------------
-  const onChangeEmail = useCallback((e) => {
-    const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    const emailCurrent = e.target.value;
-    setEmail(emailCurrent);
+  // Email 유효성 관리------------------------------------------------------
+  const onChangeEmail = useCallback(
+    (e) => {
+      const emailRegex =
+        /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      const emailCurrent = e.target.value;
+      setEmail(emailCurrent);
 
-    if (!emailRegex.test(emailCurrent)) {
-      setEmailMessage("유효하지 않은 이메일");
-      setIsEmail(false);
-    } else {
-      setEmailMessage("유효한 이메일 형식");
-      setIsEmail(true);
-    }
-  }, []);
+      if (!emailRegex.test(emailCurrent)) {
+        setEmailMessage("유효하지 않은 이메일");
+        setIsEmail(false);
+      } else {
+        setEmailMessage("유효한 이메일 형식");
+        setIsEmail(true);
+      }
+    },
+    [email]
+  );
 
   // 비밀번호 유효성 관리----------------------------------------------------
   const onChangePassword = useCallback((e) => {
@@ -74,6 +87,22 @@ const SignUp = () => {
     [password]
   );
 
+  // 이메일 인증번호 발송----------------------------------------------------
+  const sendEmail = async (e) => {
+    e.preventDefault();
+    try {
+      await axios
+        .post(`http://13.125.69.94:8001/user-service/mail/send-verification-code`, {
+          email: email,
+        })
+        .then(() => {
+          alert("인증번호가 발송되었습니다.");
+        });
+    } catch (err) {
+      alert("이메일을 다시 확인해주세요.");
+    }
+  };
+
   return (
     <Wrapper>
       <S.HalfSection style={{ backgroundColor: "#eaeaea" }}>
@@ -90,25 +119,19 @@ const SignUp = () => {
           <S.InputBox width="450px">
             <S.SignInput
               type="email"
-              width="230px"
+              width="450px"
               placeholder="이메일을 입력해주세요."
               onChange={onChangeEmail}
-              required
             />
-            @
-            <S.SignSelect width="180px">
-              <option value="naver.com">naver.com</option>
-              <option value="gmail.com">gmail.com</option>
-              <option value="daum.net">daum.net</option>
-              <option value="nate.com">nate.com</option>
-            </S.SignSelect>
           </S.InputBox>
           <S.FormHelperEmails is_email={isEmail ? "true" : "false"}>
             {emailMessage}
           </S.FormHelperEmails>
           <S.InputBox width="450px">
             <S.SignInput type="text" width="230px" placeholder="인증번호를 입력해주세요." />
-            <S.ColorButton width="180px">인증번호 발송</S.ColorButton>
+            <S.ColorButton width="180px" onClick={sendEmail}>
+              인증번호 발송
+            </S.ColorButton>
           </S.InputBox>
           <S.LeftAlignSection>
             <S.SignUpHead>비밀번호</S.SignUpHead>

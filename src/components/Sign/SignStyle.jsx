@@ -48,16 +48,6 @@ export const SignInput = styled.input`
   padding: 15px;
 `;
 
-export const SignSelect = styled.select`
-  width: ${(props) => props.width};
-  height: 50px;
-  border: none;
-  background-color: ${(props) => props.theme.lightGray};
-  color: ${(props) => props.theme.textColor};
-  border-radius: 16px;
-  padding: 15px;
-`;
-
 export const ColorLabel = styled.label`
   width: 130px;
   height: 50px;
