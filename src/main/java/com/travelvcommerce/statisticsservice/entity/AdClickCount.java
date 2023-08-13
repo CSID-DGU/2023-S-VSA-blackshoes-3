@@ -20,6 +20,9 @@ public class AdClickCount {
     @Column(name = "video_id")
     private String videoId;
 
+    @Column(name = "video_name")
+    private String videoName;
+
     @Column(name = "seller_id")
     private String sellerId;
 
@@ -28,8 +31,9 @@ public class AdClickCount {
     private long clickCount;
 
     @Builder
-    public AdClickCount(String adId, String videoId, String sellerId, long clickCount) {
+    public AdClickCount(String adId, String videoId, String videoName, String sellerId, long clickCount) {
         this.adId = adId;
+        this.videoName = videoName;
         this.videoId = videoId;
         this.sellerId = sellerId;
         this.clickCount = clickCount;
@@ -37,5 +41,9 @@ public class AdClickCount {
 
     public void increaseClickCount() {
         this.clickCount++;
+    }
+
+    public void updateVideoName(String videoName) {
+        this.videoName = videoName;
     }
 }

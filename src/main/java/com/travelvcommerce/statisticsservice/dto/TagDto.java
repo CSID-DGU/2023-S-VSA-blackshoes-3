@@ -8,4 +8,5 @@ import java.io.Serializable;
 @Data
 public class TagDto implements Serializable {
     private String tagId;
+    private String tagName;
 }

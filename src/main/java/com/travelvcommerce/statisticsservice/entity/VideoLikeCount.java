@@ -19,6 +19,9 @@ public class VideoLikeCount {
     @Column(name = "video_id")
     private String videoId;
 
+    @Column(name = "video_name")
+    private String videoName;
+
     @Column(name = "seller_id")
     private String sellerId;
 
@@ -26,8 +29,9 @@ public class VideoLikeCount {
     private long likeCount;
 
     @Builder
-    public VideoLikeCount(String videoId, String sellerId, long likeCount) {
+    public VideoLikeCount(String videoId, String videoName, String sellerId, long likeCount) {
         this.videoId = videoId;
+        this.videoName = videoName;
         this.sellerId = sellerId;
         this.likeCount = likeCount;
     }
@@ -38,5 +42,9 @@ public class VideoLikeCount {
 
     public void decreaseLikeCount() {
         this.likeCount--;
+    }
+
+    public void updateVideoName(String videoName) {
+        this.videoName = videoName;
     }
 }
