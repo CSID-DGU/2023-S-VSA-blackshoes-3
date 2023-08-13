@@ -51,6 +51,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void saveVerificationCode(String email, String code) {
         String verificationCodeKey = "verificationCode:"+email;
+        redisTemplate.opsForValue().set(verificationCodeKey, code);
+        redisTemplate.expire(verificationCodeKey, 60 * 5, java.util.concurrent.TimeUnit.SECONDS);
     }
     @Override
     public boolean checkVerificationCode(String email, String code) {
