@@ -25,4 +25,6 @@ public interface TagViewCountRepository extends JpaRepository<TagViewCount, Long
             "GROUP BY tvc.tagId " +
             "ORDER BY SUM(tvc.viewCount) DESC")
     List<TagViewCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
+
+    Optional<TagViewCount> findByVideoIdAndTagId(String videoId, String tagId);
 }
