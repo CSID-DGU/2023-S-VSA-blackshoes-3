@@ -20,9 +20,9 @@ public class VideoDto {
     private String createdAt;
     private List<Map<String, String>> videoTags;
     private List<Map<String, String>> videoAds;
-    private int likes;
-    private int views;
-    private int adClicks;
+    private long likes;
+    private long views;
+    private long adClicks;
 
     public Video toEntity() {
         return Video.builder()
@@ -51,9 +51,9 @@ public class VideoDto {
         private String sellerName;
         private String sellerLogo;
         private String createdAt;
-        private int likes;
-        private int views;
-        private int adClicks;
+        private long likes;
+        private long views;
+        private long adClicks;
     }
 
     // 개별 영상 조회 dto
@@ -69,8 +69,8 @@ public class VideoDto {
         private String createdAt;
         private List<Map<String, String>> videoTags;
         private List<Map<String, String>> videoAds;
-        private int likes;
-        private int views;
-        private int adClicks;
+        private long likes;
+        private long views;
+        private long adClicks;
     }
 }

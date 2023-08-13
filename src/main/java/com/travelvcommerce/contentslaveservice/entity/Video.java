@@ -25,9 +25,9 @@ public class Video {
     private String createdAt;
     private List<Map<String, String>> videoTags;
     private List<Map<String, String>> videoAds;
-    private int likes;
-    private int views;
-    private int adClicks;
+    private long likes;
+    private long views;
+    private long adClicks;
 
     public void update(VideoDto videoDto) {
         if (videoDto.getVideoName() != null) {
@@ -63,5 +63,17 @@ public class Video {
         if (videoDto.getAdClicks() != 0) {
             this.adClicks = videoDto.getAdClicks();
         }
+    }
+
+    public void updateLikes(long likes) {
+        this.likes = likes;
+    }
+
+    public void updateViews(long views) {
+        this.views = views;
+    }
+
+    public void updateAdClicks(long adClicks) {
+        this.adClicks = adClicks;
     }
 }
