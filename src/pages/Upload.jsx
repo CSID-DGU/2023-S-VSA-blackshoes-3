@@ -56,7 +56,7 @@ const Upload = () => {
   const iconTimer = () => {
     setTimeout(() => {
       setTimer(false);
-    }, 3000);
+    }, 5000);
   };
 
   const fetchData = async () => {

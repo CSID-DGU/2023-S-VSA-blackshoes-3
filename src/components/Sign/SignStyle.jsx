@@ -8,6 +8,12 @@ export const HalfSection = styled.section`
   align-items: center;
 `;
 
+export const FullImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 // 로그인----------------------------------------------------
 export const SignForm = styled.form`
   width: 500px;
@@ -32,6 +38,16 @@ export const SubText = styled.h1`
 `;
 
 export const SignInput = styled.input`
+  width: ${(props) => props.width};
+  height: 50px;
+  border: none;
+  background-color: ${(props) => props.theme.lightGray};
+  color: ${(props) => props.theme.textColor};
+  border-radius: 16px;
+  padding: 15px;
+`;
+
+export const SignSelect = styled.select`
   width: ${(props) => props.width};
   height: 50px;
   border: none;

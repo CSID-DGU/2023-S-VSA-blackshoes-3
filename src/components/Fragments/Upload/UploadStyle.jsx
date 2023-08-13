@@ -128,7 +128,7 @@ export const VideoUploadButton = styled.label`
 export const SpinnerBox = styled.section`
   width: 80px;
   height: 80px;
-  display: ${(props) => (props.$timer ? "flex" : "none")};
+  display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -147,7 +147,6 @@ export const VideoPreview = styled.video`
 
 export const UploadedState = styled.p`
   width: 100%;
-  display: ${(props) => (props.$timer ? "" : "none")};
   position: absolute;
   top: 5%;
   font-size: 16px;
