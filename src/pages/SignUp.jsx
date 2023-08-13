@@ -89,11 +89,10 @@ const SignUp = () => {
           </S.LeftAlignSection>
           <S.InputBox width="450px">
             <S.SignInput
-              type="text"
+              type="email"
               width="230px"
               placeholder="이메일을 입력해주세요."
               onChange={onChangeEmail}
-              error={email !== "" && !isEmail}
               required
             />
             @
@@ -104,7 +103,9 @@ const SignUp = () => {
               <option value="nate.com">nate.com</option>
             </S.SignSelect>
           </S.InputBox>
-          <S.FormHelperEmails is_email={isEmail ? "true" : "false"}></S.FormHelperEmails>
+          <S.FormHelperEmails is_email={isEmail ? "true" : "false"}>
+            {emailMessage}
+          </S.FormHelperEmails>
           <S.InputBox width="450px">
             <S.SignInput type="text" width="230px" placeholder="인증번호를 입력해주세요." />
             <S.ColorButton width="180px">인증번호 발송</S.ColorButton>
@@ -113,20 +114,26 @@ const SignUp = () => {
             <S.SignUpHead>비밀번호</S.SignUpHead>
           </S.LeftAlignSection>
           <S.SignInput
-            type="text"
+            type="password"
             width="450px"
             placeholder="사용하실 비밀번호를 입력해주세요."
             onChange={onChangePassword}
           />
+          <S.FormHelperPWs is_password={isPassword ? "true" : "false"}>
+            {passwordMessage}
+          </S.FormHelperPWs>
           <S.LeftAlignSection>
             <S.SignUpHead>비밀번호 확인</S.SignUpHead>
           </S.LeftAlignSection>
           <S.SignInput
-            type="text"
+            type="password"
             width="450px"
             placeholder="비밀번호를 확인해주세요."
             onChange={onChangePasswordCheck}
           />
+          <S.FormHelperPWCF is_password_check={isPasswordCheck ? "true" : "false"}>
+            {passwordCheckMessage}
+          </S.FormHelperPWCF>
           <S.LeftAlignSection>
             <S.SignUpHead>회사명</S.SignUpHead>
           </S.LeftAlignSection>

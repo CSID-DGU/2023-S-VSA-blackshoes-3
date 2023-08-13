@@ -141,7 +141,7 @@ export const SignCheckBox = styled.input``;
 
 // MUI-------------------------------------------------------
 export const FormHelperEmails = styled(FormHelperText)`
-  width: 100%;
+  width: 450px;
   margin-left: 0 !important;
   font-weight: 700 !important;
   color: ${(props) =>
@@ -149,7 +149,7 @@ export const FormHelperEmails = styled(FormHelperText)`
 `;
 
 export const FormHelperPWs = styled(FormHelperText)`
-  width: 100%;
+  width: 450px;
   margin-left: 0 !important;
   font-weight: 700 !important;
   color: ${(props) =>
@@ -157,7 +157,7 @@ export const FormHelperPWs = styled(FormHelperText)`
 `;
 
 export const FormHelperPWCF = styled(FormHelperText)`
-  width: 100%;
+  width: 450px;
   margin-left: 0 !important;
   font-weight: 700 !important;
   color: ${(props) =>
