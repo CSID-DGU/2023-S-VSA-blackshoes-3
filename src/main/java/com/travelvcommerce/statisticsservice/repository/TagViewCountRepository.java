@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TagViewCountRepository extends JpaRepository<TagViewCount, Long> {
@@ -14,4 +15,6 @@ public interface TagViewCountRepository extends JpaRepository<TagViewCount, Long
     void deleteByVideoIdAndTagId(String videoId, String tagId);
 
     void deleteAllByVideoId(String videoId);
+
+    Optional<TagViewCount> findByVideoIdAndTagId(String videoId, String tagId);
 }

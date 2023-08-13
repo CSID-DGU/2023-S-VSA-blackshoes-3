@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long> {
@@ -13,4 +14,6 @@ public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long
     void deleteByVideoIdAndAdId(String videoId, String adId);
 
     void deleteAllByVideoId(String videoId);
+
+    Optional<AdClickCount> findByAdId(String adId);
 }
