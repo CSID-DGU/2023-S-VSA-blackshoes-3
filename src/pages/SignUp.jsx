@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "../components/Sign/SignStyle";
 import { Wrapper } from "../components/Home/HomeStyle";
 import landingImage from "../assets/images/travel.jpg";
 import axios from "axios";
+import { useDebounce } from "../hooks/useDebounce";
 
 // 13.125.69.94
 // :8001 user
@@ -28,11 +29,13 @@ const SignUp = () => {
 
   // ErrorMessage State----------------------------------------
   const [emailMessage, setEmailMessage] = useState("");
+  const [emailValidationMessage, setEmailValidationMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordCheckMessage, setPasswordCheckMessage] = useState("");
 
   // Validation State------------------------------------------
   const [isEmail, setIsEmail] = useState(false);
+  const [isEmailValidation, setIsEmailValidation] = useState(false);
   const [isPassword, setIsPassword] = useState(false);
   const [isPasswordCheck, setIsPasswordCheck] = useState(false);
 
@@ -48,7 +51,7 @@ const SignUp = () => {
         setEmailMessage("유효하지 않은 이메일");
         setIsEmail(false);
       } else {
-        setEmailMessage("유효한 이메일 형식");
+        setEmailMessage("유효한 이메일");
         setIsEmail(true);
       }
     },
@@ -65,7 +68,7 @@ const SignUp = () => {
       setPasswordMessage("숫자+영문자+특수문자[8글자↑]");
       setIsPassword(false);
     } else {
-      setPasswordMessage("비밀번호 보안 높음");
+      setPasswordMessage("유효한 비밀번호");
       setIsPassword(true);
     }
   }, []);
@@ -103,6 +106,30 @@ const SignUp = () => {
     }
   };
 
+  // 이메일 인증번호 확인----------------------------------------------------
+  const debouncedEmailValidation = useDebounce(emailValidation, 1000);
+  const emailValidationCheck = async () => {
+    try {
+      await axios
+        .post(`http://13.125.69.94:8001/user-service/mail/verify-code`, {
+          email: email,
+          verificationCode: debouncedEmailValidation,
+        })
+        .then(() => {
+          setIsEmailValidation(true);
+          setEmailValidationMessage("인증번호 확인 완료");
+        });
+    } catch (err) {
+      setIsEmailValidation(false);
+      setEmailValidationMessage("인증번호 확인 실패");
+    }
+  };
+  useEffect(() => {
+    if (debouncedEmailValidation) {
+      emailValidationCheck();
+    }
+  }, [debouncedEmailValidation]);
+
   return (
     <Wrapper>
       <S.HalfSection style={{ backgroundColor: "#eaeaea" }}>
@@ -128,11 +155,19 @@ const SignUp = () => {
             {emailMessage}
           </S.FormHelperEmails>
           <S.InputBox width="450px">
-            <S.SignInput type="text" width="230px" placeholder="인증번호를 입력해주세요." />
+            <S.SignInput
+              type="text"
+              width="230px"
+              placeholder="인증번호를 입력해주세요."
+              onChange={(e) => setEmailValidation(e.target.value)}
+            />
             <S.ColorButton width="180px" onClick={sendEmail}>
               인증번호 발송
             </S.ColorButton>
           </S.InputBox>
+          <S.FormHelperEmails is_email_validation={isEmailValidation ? "true" : "false"}>
+            {emailValidationMessage}
+          </S.FormHelperEmails>
           <S.LeftAlignSection>
             <S.SignUpHead>비밀번호</S.SignUpHead>
           </S.LeftAlignSection>

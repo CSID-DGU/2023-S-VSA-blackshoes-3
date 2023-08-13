@@ -138,6 +138,16 @@ export const FormHelperEmails = styled(FormHelperText)`
     props.is_email === "true" ? props.theme.primaryColor : props.theme.secondBlack} !important;
 `;
 
+export const FormHelperEmailValidation = styled(FormHelperText)`
+  width: 450px;
+  margin-left: 0 !important;
+  font-weight: 700 !important;
+  color: ${(props) =>
+    props.is_email_validation === "true"
+      ? props.theme.primaryColor
+      : props.theme.secondBlack} !important;
+`;
+
 export const FormHelperPWs = styled(FormHelperText)`
   width: 450px;
   margin-left: 0 !important;
