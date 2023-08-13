@@ -11,9 +11,12 @@ import java.util.Optional;
 @Repository
 public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long> {
     Collection<AdClickCount> findAllByVideoId(String videoId);
+
     void deleteByVideoIdAndAdId(String videoId, String adId);
 
     void deleteAllByVideoId(String videoId);
 
     Optional<AdClickCount> findByAdId(String adId);
+
+    List<AdClickCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
 }

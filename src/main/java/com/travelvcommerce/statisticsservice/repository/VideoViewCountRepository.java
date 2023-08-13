@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,6 @@ public interface VideoViewCountRepository extends JpaRepository<VideoViewCount, 
     Optional<VideoViewCount> findByVideoId(String videoId);
 
     Collection<VideoViewCount> findAllByVideoId(String videoId);
+
+    List<VideoViewCount> findTop10BySellerIdOrderByCountDesc(String sellerId);
 }
