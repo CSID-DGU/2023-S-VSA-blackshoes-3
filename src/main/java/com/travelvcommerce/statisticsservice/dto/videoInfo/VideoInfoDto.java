@@ -1,4 +1,4 @@
-package com.travelvcommerce.statisticsservice.dto;
+package com.travelvcommerce.statisticsservice.dto.videoInfo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -20,16 +20,16 @@ public class VideoInfoDto implements Serializable {
     private String sellerLogo;
     private String createdAt;
     private String updatedAt;
-    private List<TagDto> videoTags;
-    private List<AdDto> videoAds;
+    private List<TagInfoDto> videoTags;
+    private List<AdInfoDto> videoAds;
 
     @Data
     public static class VideoCreateDto implements Serializable {
         private String videoId;
         private String videoName;
         private String sellerId;
-        private List<TagDto> videoTags;
-        private List<AdDto> videoAds;
+        private List<TagInfoDto> videoTags;
+        private List<AdInfoDto> videoAds;
     }
 
     @Data
@@ -41,7 +41,7 @@ public class VideoInfoDto implements Serializable {
         private String sellerId;
         private String sellerName;
         private String sellerLogo;
-        private List<TagDto> videoTags;
-        private List<AdDto> videoAds;
+        private List<TagInfoDto> videoTags;
+        private List<AdInfoDto> videoAds;
     }
 }

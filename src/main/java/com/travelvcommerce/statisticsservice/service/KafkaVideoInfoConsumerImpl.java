@@ -1,9 +1,9 @@
 package com.travelvcommerce.statisticsservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelvcommerce.statisticsservice.dto.AdDto;
-import com.travelvcommerce.statisticsservice.dto.TagDto;
-import com.travelvcommerce.statisticsservice.dto.VideoInfoDto;
+import com.travelvcommerce.statisticsservice.dto.videoInfo.AdInfoDto;
+import com.travelvcommerce.statisticsservice.dto.videoInfo.TagInfoDto;
+import com.travelvcommerce.statisticsservice.dto.videoInfo.VideoInfoDto;
 import com.travelvcommerce.statisticsservice.entity.*;
 import com.travelvcommerce.statisticsservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,14 +71,14 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         }
 
         try {
-            List<String> tagIds = videoCreateDto.getVideoTags().stream().map(TagDto::getTagId).collect(Collectors.toList());
+            List<String> tagIds = videoCreateDto.getVideoTags().stream().map(TagInfoDto::getTagId).collect(Collectors.toList());
             createTagViewCount(video, tagIds);
         } catch (Exception e) {
             log.error("Error creating tag view count", e);
         }
 
         try {
-            List<String> adIds = videoCreateDto.getVideoAds().stream().map(AdDto::getAdId).collect(Collectors.toList());
+            List<String> adIds = videoCreateDto.getVideoAds().stream().map(AdInfoDto::getAdId).collect(Collectors.toList());
             createAdClickCount(video, adIds);
         } catch (Exception e) {
             log.error("Error creating ad click count", e);
@@ -201,7 +200,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         }
 
         List<String> newAdIdList = videoUpdateDto.getVideoAds().stream()
-                .map(AdDto::getAdId)
+                .map(AdInfoDto::getAdId)
                 .collect(Collectors.toList());
 
         List<String> oldAdIdList = video.getAdClickCounts().stream()
@@ -232,10 +231,10 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
             return;
         }
 
-        List<TagDto> tagDtoList = videoUpdateDto.getVideoTags();
+        List<TagInfoDto> tagInfoDtoList = videoUpdateDto.getVideoTags();
 
-        List<String> newTagIdList = tagDtoList.stream()
-                .map(TagDto::getTagId)
+        List<String> newTagIdList = tagInfoDtoList.stream()
+                .map(TagInfoDto::getTagId)
                 .collect(Collectors.toList());
 
         List<String> oldTagIdList = video.getTagViewCounts().stream()
@@ -249,10 +248,10 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
             }
         });
 
-        tagDtoList.stream().forEach(tagDto -> {
-            if (!oldTagIdList.contains(tagDto.getTagId())) {
+        tagInfoDtoList.stream().forEach(tagInfoDto -> {
+            if (!oldTagIdList.contains(tagInfoDto.getTagId())) {
                 TagViewCount tagViewCount = TagViewCount.builder()
-                        .tag(tagRepository.findByTagId(tagDto.getTagId()).get())
+                        .tag(tagRepository.findByTagId(tagInfoDto.getTagId()).get())
                         .video(video)
                         .viewCount(0)
                         .build();

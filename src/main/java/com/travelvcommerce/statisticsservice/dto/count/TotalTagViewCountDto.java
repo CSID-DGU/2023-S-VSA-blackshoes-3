@@ -1,4 +1,4 @@
-package com.travelvcommerce.statisticsservice.dto;
+package com.travelvcommerce.statisticsservice.dto.count;
 
 import com.travelvcommerce.statisticsservice.entity.Tag;
 import lombok.Builder;

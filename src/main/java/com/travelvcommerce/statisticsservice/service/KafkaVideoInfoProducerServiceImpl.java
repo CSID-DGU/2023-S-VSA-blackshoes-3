@@ -2,7 +2,7 @@ package com.travelvcommerce.statisticsservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelvcommerce.statisticsservice.dto.VideoCountInfoDto;
+import com.travelvcommerce.statisticsservice.dto.count.VideoCountInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

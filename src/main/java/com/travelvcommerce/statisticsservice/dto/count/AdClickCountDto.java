@@ -1,4 +1,4 @@
-package com.travelvcommerce.statisticsservice.dto;
+package com.travelvcommerce.statisticsservice.dto.count;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Getter
 @Builder
-public class AdClickDto {
+public class AdClickCountDto {
     private String adId;
     private String videoId;
     private String videoName;

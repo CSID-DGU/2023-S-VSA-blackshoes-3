@@ -1,6 +1,6 @@
 package com.travelvcommerce.statisticsservice.service;
 
-import com.travelvcommerce.statisticsservice.dto.VideoCountInfoDto;
+import com.travelvcommerce.statisticsservice.dto.count.VideoCountInfoDto;
 import com.travelvcommerce.statisticsservice.entity.*;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyClickedAdException;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyLikedVideoException;

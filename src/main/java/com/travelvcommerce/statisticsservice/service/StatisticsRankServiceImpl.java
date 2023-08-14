@@ -3,10 +3,8 @@ package com.travelvcommerce.statisticsservice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankDto;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
-import com.travelvcommerce.statisticsservice.dto.TotalAdClickCountDto;
-import com.travelvcommerce.statisticsservice.dto.TotalTagViewCountDto;
-import com.travelvcommerce.statisticsservice.entity.AdClickCount;
-import com.travelvcommerce.statisticsservice.entity.TagViewCount;
+import com.travelvcommerce.statisticsservice.dto.count.TotalAdClickCountDto;
+import com.travelvcommerce.statisticsservice.dto.count.TotalTagViewCountDto;
 import com.travelvcommerce.statisticsservice.entity.VideoLikeCount;
 import com.travelvcommerce.statisticsservice.entity.VideoViewCount;
 

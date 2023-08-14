@@ -1,6 +1,6 @@
 package com.travelvcommerce.statisticsservice.service;
 
-import com.travelvcommerce.statisticsservice.dto.VideoCountInfoDto;
+import com.travelvcommerce.statisticsservice.dto.count.VideoCountInfoDto;
 
 public interface StatisticsUpdateService {
     VideoCountInfoDto increaseViewCount(String videoId, String userId);

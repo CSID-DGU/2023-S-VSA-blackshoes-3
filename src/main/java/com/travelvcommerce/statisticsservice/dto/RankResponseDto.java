@@ -35,4 +35,11 @@ public class RankResponseDto {
         private List<RankDto.VideoAdClickRankDto> videoAdClickRank;
         private String aggregatedAt;
     }
+
+    @Getter
+    @Builder
+    public static class TagRankResponseDto {
+        private List<TagRankDto> tagRank;
+        private String aggregatedAt;
+    }
 }
