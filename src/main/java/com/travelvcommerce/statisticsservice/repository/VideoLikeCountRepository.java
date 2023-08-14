@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface VideoLikeCountRepository extends JpaRepository<VideoLikeCount, Long> {
     @Query("SELECT vlc " +
             "FROM VideoLikeCount vlc " +
-            "WHERE vlc.video.videoId IN :videoIds")
+            "WHERE vlc.video.videoId = :videoId")
     Optional<VideoLikeCount> findByVideoId(String videoId);
 
     @Query("SELECT vlc " +

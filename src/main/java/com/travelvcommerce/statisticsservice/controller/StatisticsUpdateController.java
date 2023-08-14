@@ -63,7 +63,7 @@ public class StatisticsUpdateController {
     }
 
     @PutMapping("/{videoId}/likes")
-    public ResponseEntity<ResponseDto> increaseLikeCount(@PathVariable("videoId") String videoId,
+    public ResponseEntity<ResponseDto> changeLikeCount(@PathVariable("videoId") String videoId,
                                                          @RequestBody LikeCountDto.LikeRequestDto likeRequestDto) {
         String userId = likeRequestDto.getUserId();
         String action = likeRequestDto.getAction();

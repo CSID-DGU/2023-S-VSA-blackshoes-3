@@ -21,7 +21,7 @@ public class TagRankController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @GetMapping("/tag/region/rank")
+    @GetMapping("/rank/tags/region")
     public ResponseEntity<ResponseDto> getTagRankByRegion() {
         RankResponseDto.TagRankResponseDto tagRankResponseDto;
         try {
@@ -35,7 +35,7 @@ public class TagRankController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/tag/theme/rank")
+    @GetMapping("/rank/tag/theme")
     public ResponseEntity<ResponseDto> getTagRankByTheme() {
         RankResponseDto.TagRankResponseDto tagRankResponseDto;
         try {

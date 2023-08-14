@@ -17,8 +17,7 @@ public class VideoViewCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "video_view_count_fk_video_id"))
-    @OneToOne
+    @OneToOne(mappedBy = "videoViewCount")
     private Video video;
 
     @Column(name = "view_count")

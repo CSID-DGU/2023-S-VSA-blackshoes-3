@@ -20,6 +20,4 @@ public interface AdClickCountRepository extends JpaRepository<AdClickCount, Long
             "GROUP BY acc.video " +
             "ORDER BY SUM(acc.clickCount) DESC")
     List<TotalAdClickCountDto> findTop10BySellerIdOrderByClickCountDesc(String sellerId);
-
-    void deleteByAdId(String adId);
 }

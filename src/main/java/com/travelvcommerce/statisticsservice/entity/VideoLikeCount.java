@@ -16,8 +16,7 @@ public class VideoLikeCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "video_like_count_fk_video_id"))
-    @OneToOne
+    @OneToOne(mappedBy = "videoLikeCount")
     private Video video;
 
     @Column(name = "like_count")
