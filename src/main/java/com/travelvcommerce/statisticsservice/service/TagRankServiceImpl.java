@@ -7,6 +7,7 @@ import com.travelvcommerce.statisticsservice.dto.TagRankDto;
 import com.travelvcommerce.statisticsservice.repository.TagViewCountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,8 @@ public class TagRankServiceImpl implements TagRankService {
             return tagRankResponseDto;
         }
 
-        List<TagRankDto> tagRegionRankDtoList = tagViewCountRepository.findRegionTop10();
+        Pageable pageable = Pageable.ofSize(10);
+        List<TagRankDto> tagRegionRankDtoList = tagViewCountRepository.findRegionRank(pageable);
         String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
 
         try {
@@ -57,7 +59,7 @@ public class TagRankServiceImpl implements TagRankService {
             String value = aggregatedAt + "&" + stringVideoLikeRankDtoList;
 
             redisTemplate.opsForValue().set(tagRegionRankKey, value);
-            redisTemplate.expire(tagRegionRankKey, 60 * 60 * 24, TimeUnit.SECONDS);
+            redisTemplate.expire(tagRegionRankKey, 60 * 60 * 1, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("Error caching video like rank value", e);
         }
@@ -93,7 +95,8 @@ public class TagRankServiceImpl implements TagRankService {
             return tagRankResponseDto;
         }
 
-        List<TagRankDto> tagThemeRankDtoList = tagViewCountRepository.findThemeTop10();
+        Pageable pageable = Pageable.ofSize(10);
+        List<TagRankDto> tagThemeRankDtoList = tagViewCountRepository.findThemeRank(pageable);
         String aggregatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
 
         try {
@@ -101,7 +104,7 @@ public class TagRankServiceImpl implements TagRankService {
             String value = aggregatedAt + "&" + stringVideoLikeRankDtoList;
 
             redisTemplate.opsForValue().set(tagThemeRankKey, value);
-            redisTemplate.expire(tagThemeRankKey, 60 * 60 * 24, TimeUnit.SECONDS);
+            redisTemplate.expire(tagThemeRankKey, 60 * 60 * 1, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("Error caching video like rank value", e);
         }

@@ -35,7 +35,7 @@ public class TagRankController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/rank/tag/theme")
+    @GetMapping("/rank/tags/theme")
     public ResponseEntity<ResponseDto> getTagRankByTheme() {
         RankResponseDto.TagRankResponseDto tagRankResponseDto;
         try {
