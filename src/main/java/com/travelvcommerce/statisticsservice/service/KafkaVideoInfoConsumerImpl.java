@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.AdDto;
 import com.travelvcommerce.statisticsservice.dto.TagDto;
 import com.travelvcommerce.statisticsservice.dto.VideoInfoDto;
-import com.travelvcommerce.statisticsservice.entity.AdClickCount;
-import com.travelvcommerce.statisticsservice.entity.TagViewCount;
-import com.travelvcommerce.statisticsservice.entity.VideoLikeCount;
-import com.travelvcommerce.statisticsservice.entity.VideoViewCount;
+import com.travelvcommerce.statisticsservice.entity.*;
 import com.travelvcommerce.statisticsservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +31,10 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
     private VideoLikeCountRepository videoLikeCountRepository;
     @Autowired
     private LikeRepository likeRepository;
+    @Autowired
+    private TagRepository tagRepository;
+    @Autowired
+    private VideoRepository videoRepository;
 
     @Override
     @Transactional
@@ -49,26 +51,36 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
             return;
         }
 
+        Video video;
         try {
-            createVideoLikeCount(videoCreateDto);
+            video = createVideoEntity(videoCreateDto);
+        } catch (Exception e) {
+            log.error("Error creating video", e);
+            return;
+        }
+
+        try {
+            createVideoLikeCount(video);
         } catch (Exception e) {
             log.error("Error creating video like count", e);
         }
 
         try {
-            createVideoViewCount(videoCreateDto);
+            createVideoViewCount(video);
         } catch (Exception e) {
             log.error("Error creating video view count", e);
         }
 
         try {
-            createTagViewCount(videoCreateDto);
+            List<String> tagIds = videoCreateDto.getVideoTags().stream().map(TagDto::getTagId).collect(Collectors.toList());
+            createTagViewCount(video, tagIds);
         } catch (Exception e) {
             log.error("Error creating tag view count", e);
         }
 
         try {
-            createAdClickCount(videoCreateDto);
+            List<String> adIds = videoCreateDto.getVideoAds().stream().map(AdDto::getAdId).collect(Collectors.toList());
+            createAdClickCount(video, adIds);
         } catch (Exception e) {
             log.error("Error creating ad click count", e);
         }
@@ -90,25 +102,25 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         }
 
         String videoId = videoUpdateDto.getVideoId();
-        String videoName = videoUpdateDto.getVideoName();
-        String sellerId = videoUpdateDto.getSellerId();
+
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
 
         try {
-            updateAdClickCount(videoUpdateDto, videoId, videoName, sellerId);
+            updateAdClickCount(video, videoUpdateDto);
             return;
         } catch (Exception e) {
             log.error("Error updating ad click count", e);
         }
 
         try {
-            updateTagViewCount(videoUpdateDto, videoId, videoName, sellerId);
+            updateTagViewCount(video, videoUpdateDto);
             return;
         } catch (Exception e) {
             log.error("Error updating tag view count", e);
         }
 
         try {
-            updateVideoName(videoId, videoName);
+            updateVideoName(video, videoUpdateDto);
         } catch (Exception e) {
             log.error("Error updating video name", e);
         }
@@ -122,68 +134,48 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         String videoId = payload;
 
         try {
-            videoViewCountRepository.deleteAllByVideoId(videoId);
+            videoRepository.deleteByVideoId(videoId);
         } catch (Exception e) {
-            log.error("Error deleting video view count", e);
-        }
-
-        try {
-            tagViewCountRepository.deleteAllByVideoId(videoId);
-        } catch (Exception e) {
-            log.error("Error deleting tag view count", e);
-        }
-
-        try {
-            videoLikeCountRepository.deleteAllByVideoId(videoId);
-        } catch (Exception e) {
-            log.error("Error deleting video like count", e);
-        }
-
-        try {
-            adClickCountRepository.deleteAllByVideoId(videoId);
-        } catch (Exception e) {
-            log.error("Error deleting ad click count", e);
-        }
-
-        try {
-            likeRepository.deleteAllByVideoId(videoId);
-        } catch (Exception e) {
-            log.error("Error deleting like", e);
+            log.error("Error deleting video", e);
         }
     }
 
-    private void createVideoLikeCount(VideoInfoDto.VideoCreateDto videoCreateDto) {
-        VideoLikeCount videoLikeCount = VideoLikeCount.builder()
+    private Video createVideoEntity(VideoInfoDto.VideoCreateDto videoCreateDto) {
+        Video video = Video.builder()
                 .videoId(videoCreateDto.getVideoId())
                 .videoName(videoCreateDto.getVideoName())
                 .sellerId(videoCreateDto.getSellerId())
+                .build();
+
+        videoRepository.save(video);
+
+        return video;
+    }
+
+    private void createVideoLikeCount(Video video) {
+        VideoLikeCount videoLikeCount = VideoLikeCount.builder()
+                .video(video)
                 .likeCount(0)
                 .build();
 
         videoLikeCountRepository.save(videoLikeCount);
     }
 
-    private void createVideoViewCount(VideoInfoDto.VideoCreateDto videoCreateDto) {
+    private void createVideoViewCount(Video video) {
         VideoViewCount videoViewCount = VideoViewCount.builder()
-                .videoId(videoCreateDto.getVideoId())
-                .videoName(videoCreateDto.getVideoName())
-                .sellerId(videoCreateDto.getSellerId())
+                .video(video)
                 .viewCount(0)
                 .build();
 
         videoViewCountRepository.save(videoViewCount);
     }
 
-    private void createTagViewCount(VideoInfoDto.VideoCreateDto videoCreateDto) {
-        List<TagDto> tagDtoList = videoCreateDto.getVideoTags();
+    private void createTagViewCount(Video video, List<String> tagIds) {
 
-        for (TagDto tagDto : tagDtoList) {
+        for (String tagId : tagIds) {
             TagViewCount tagViewCount = TagViewCount.builder()
-                    .tagId(tagDto.getTagId())
-                    .tagName(tagDto.getTagName())
-                    .videoId(videoCreateDto.getVideoId())
-                    .videoName(videoCreateDto.getVideoName())
-                    .sellerId(videoCreateDto.getSellerId())
+                    .tag(tagRepository.findByTagId(tagId).get())
+                    .video(video)
                     .viewCount(0)
                     .build();
 
@@ -191,15 +183,11 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         }
     }
 
-    private void createAdClickCount(VideoInfoDto.VideoCreateDto videoCreateDto) {
-        List<AdDto> adDtoList = videoCreateDto.getVideoAds();
-
-        for (AdDto adDto : adDtoList) {
+    private void createAdClickCount(Video video, List<String> adIds) {
+        for (String adId : adIds) {
             AdClickCount adClickCount = AdClickCount.builder()
-                    .adId(adDto.getAdId())
-                    .videoId(videoCreateDto.getVideoId())
-                    .videoName(videoCreateDto.getVideoName())
-                    .sellerId(videoCreateDto.getSellerId())
+                    .adId(adId)
+                    .video(video)
                     .clickCount(0)
                     .build();
 
@@ -207,113 +195,85 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         }
     }
 
-    private void updateAdClickCount(VideoInfoDto.VideoUpdateDto videoUpdateDto, String videoId, String videoName, String sellerId) {
-        if (videoUpdateDto.getVideoAds() != null) {
-            List<String> newAdIdList = videoUpdateDto.getVideoAds().stream()
-                    .map(AdDto::getAdId)
-                    .collect(Collectors.toList());
-
-            List<String> oldAdIdList = adClickCountRepository.findAllByVideoId(videoId).stream()
-                    .map(AdClickCount::getAdId)
-                    .collect(Collectors.toList());
-
-            oldAdIdList.stream().forEach(adId -> {
-                if (!newAdIdList.contains(adId)) {
-                    adClickCountRepository.deleteByVideoIdAndAdId(videoId, adId);
-                }
-            });
-
-            newAdIdList.stream().forEach(adId -> {
-                if (!oldAdIdList.contains(adId)) {
-                    AdClickCount adClickCount = AdClickCount.builder()
-                            .adId(adId)
-                            .videoId(videoId)
-                            .videoName(videoName)
-                            .sellerId(sellerId)
-                            .clickCount(0)
-                            .build();
-
-                    adClickCountRepository.save(adClickCount);
-                }
-            });
+    private void updateAdClickCount(Video video, VideoInfoDto.VideoUpdateDto videoUpdateDto) {
+        if (videoUpdateDto.getVideoAds() == null) {
+            return;
         }
+
+        List<String> newAdIdList = videoUpdateDto.getVideoAds().stream()
+                .map(AdDto::getAdId)
+                .collect(Collectors.toList());
+
+        List<String> oldAdIdList = video.getAdClickCounts().stream()
+                .map(AdClickCount::getAdId)
+                .collect(Collectors.toList());
+
+        oldAdIdList.stream().forEach(adId -> {
+            if (!newAdIdList.contains(adId)) {
+                adClickCountRepository.deleteByAdId(adId);
+            }
+        });
+
+        newAdIdList.stream().forEach(adId -> {
+            if (!oldAdIdList.contains(adId)) {
+                AdClickCount adClickCount = AdClickCount.builder()
+                        .adId(adId)
+                        .video(video)
+                        .clickCount(0)
+                        .build();
+
+                adClickCountRepository.save(adClickCount);
+            }
+        });
     }
 
-    private void updateTagViewCount(VideoInfoDto.VideoUpdateDto videoUpdateDto, String videoId, String videoName, String sellerId) {
-        if (videoUpdateDto.getVideoTags() != null) {
-            List<TagDto> tagDtoList = videoUpdateDto.getVideoTags();
-
-            List<String> newTagIdList = tagDtoList.stream()
-                    .map(TagDto::getTagId)
-                    .collect(Collectors.toList());
-
-            List<String> oldTagIdList = tagViewCountRepository.findAllByVideoId(videoId).stream()
-                    .map(TagViewCount::getTagId)
-                    .collect(Collectors.toList());
-
-
-            oldTagIdList.stream().forEach(tagId -> {
-                if (!newTagIdList.contains(tagId)) {
-                    tagViewCountRepository.deleteByVideoIdAndTagId(videoId, tagId);
-                }
-            });
-
-            tagDtoList.stream().forEach(tagDto -> {
-                if (!oldTagIdList.contains(tagDto.getTagId())) {
-                    TagViewCount tagViewCount = TagViewCount.builder()
-                            .tagId(tagDto.getTagId())
-                            .tagName(tagDto.getTagName())
-                            .videoId(videoId)
-                            .videoName(videoName)
-                            .sellerId(sellerId)
-                            .viewCount(0)
-                            .build();
-
-                    tagViewCountRepository.save(tagViewCount);
-                }
-            });
+    private void updateTagViewCount(Video video, VideoInfoDto.VideoUpdateDto videoUpdateDto) {
+        if (videoUpdateDto.getVideoTags() == null) {
+            return;
         }
+
+        List<TagDto> tagDtoList = videoUpdateDto.getVideoTags();
+
+        List<String> newTagIdList = tagDtoList.stream()
+                .map(TagDto::getTagId)
+                .collect(Collectors.toList());
+
+        List<String> oldTagIdList = video.getTagViewCounts().stream()
+                .map(TagViewCount::getTagId)
+                .collect(Collectors.toList());
+
+
+        oldTagIdList.stream().forEach(tagId -> {
+            if (!newTagIdList.contains(tagId)) {
+                tagViewCountRepository.deleteByVideoIdAndTagId(video.getVideoId(), tagId);
+            }
+        });
+
+        tagDtoList.stream().forEach(tagDto -> {
+            if (!oldTagIdList.contains(tagDto.getTagId())) {
+                TagViewCount tagViewCount = TagViewCount.builder()
+                        .tag(tagRepository.findByTagId(tagDto.getTagId()).get())
+                        .video(video)
+                        .viewCount(0)
+                        .build();
+
+                tagViewCountRepository.save(tagViewCount);
+            }
+        });
     }
 
-    private void updateVideoName(String videoId, String videoName) {
-        try {
-            videoViewCountRepository.findAllByVideoId(videoId).stream()
-                    .forEach(videoViewCount -> {
-                        videoViewCount.updateVideoName(videoName);
-                        videoViewCountRepository.save(videoViewCount);
-                    });
-        } catch (Exception e) {
-            log.error("Error updating video view count", e);
+    private void updateVideoName(Video video, VideoInfoDto.VideoUpdateDto videoUpdateDto) {
+        if (videoUpdateDto.getVideoName() == null) {
+            return;
         }
 
-        try {
-            tagViewCountRepository.findAllByVideoId(videoId).stream()
-                    .forEach(tagViewCount -> {
-                        tagViewCount.updateVideoName(videoName);
-                        tagViewCountRepository.save(tagViewCount);
-                    });
-        } catch (Exception e) {
-            log.error("Error updating tag view count", e);
-        }
+        String videoName = videoUpdateDto.getVideoName();
 
         try {
-            videoLikeCountRepository.findAllByVideoId(videoId).stream()
-                    .forEach(videoLikeCount -> {
-                        videoLikeCount.updateVideoName(videoName);
-                        videoLikeCountRepository.save(videoLikeCount);
-                    });
+            video.updateVideoName(videoName);
+            ;
         } catch (Exception e) {
-            log.error("Error updating video like count", e);
-        }
-
-        try {
-            adClickCountRepository.findAllByVideoId(videoId).stream()
-                    .forEach(adClickCount -> {
-                        adClickCount.updateVideoName(videoName);
-                        adClickCountRepository.save(adClickCount);
-                    });
-        } catch (Exception e) {
-            log.error("Error updating ad click count", e);
+            log.error("Error updating video name", e);
         }
     }
 }

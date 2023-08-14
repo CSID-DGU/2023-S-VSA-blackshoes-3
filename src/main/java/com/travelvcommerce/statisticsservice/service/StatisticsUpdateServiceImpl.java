@@ -26,6 +26,8 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
     @Autowired
     private TagViewCountRepository tagViewCountRepository;
     @Autowired
+    private VideoRepository videoRepository;
+    @Autowired
     private VideoLikeCountRepository videoLikeCountRepository;
     @Autowired
     private LikeRepository likeRepository;
@@ -34,19 +36,29 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
 
     @Override
     @Transactional
-    public VideoCountInfoDto increaseVideoViewCount(String videoId, String userId) {
+    public VideoCountInfoDto increaseViewCount(String videoId, String userId) {
         String viewCountKey = "viewCount:" + videoId + ":" + userId;
         if (redisTemplate.hasKey(viewCountKey)) {
             throw new UserAlreadyViewedVideoException("User already viewed video");
         }
 
 
-        VideoViewCount videoViewCount = videoViewCountRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video view count not found"));
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video not found"));
 
+        VideoViewCount videoViewCount = video.getVideoViewCount();
         try {
             videoViewCount.increaseViewCount();
         } catch (RuntimeException e) {
             log.error("Error increasing video view count", e);
+            throw new RuntimeException(e.getMessage());
+        }
+
+        try {
+            video.getTagViewCounts().stream().forEach(tagViewCount -> {
+                tagViewCount.increaseViewCount();
+            });
+        } catch (RuntimeException e) {
+            log.error("Error increasing tag view count", e);
             throw new RuntimeException(e.getMessage());
         }
 
@@ -65,25 +77,13 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
 
     @Override
     @Transactional
-    public void increaseTagViewCount(String videoId, String tagId, String userId) {
-        TagViewCount tagViewCount = tagViewCountRepository.findByVideoIdAndTagId(videoId, tagId).orElseThrow(() -> new NoSuchElementException("Tag view count not found"));
-
-        try {
-            tagViewCount.increaseViewCount();
-        } catch (RuntimeException e) {
-            log.error("Error increasing tag view count", e);
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    @Override
-    @Transactional
     public VideoCountInfoDto increaseVideoLikeCount(String videoId, String userId) {
         if (likeRepository.findByVideoIdAndUserId(videoId, userId).isPresent()) {
             throw new UserAlreadyLikedVideoException("User already liked video");
         }
 
-        VideoLikeCount videoLikeCount = videoLikeCountRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video like count not found"));
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video not found"));
+        VideoLikeCount videoLikeCount = video.getVideoLikeCount();
 
         try {
             videoLikeCount.increaseLikeCount();
@@ -94,7 +94,7 @@ public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
 
         try {
             Like like = Like.builder()
-                    .videoId(videoId)
+                    .video(video)
                     .userId(userId)
                     .build();
             likeRepository.save(like);

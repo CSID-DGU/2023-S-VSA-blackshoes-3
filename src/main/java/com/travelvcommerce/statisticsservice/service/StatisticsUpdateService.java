@@ -3,9 +3,7 @@ package com.travelvcommerce.statisticsservice.service;
 import com.travelvcommerce.statisticsservice.dto.VideoCountInfoDto;
 
 public interface StatisticsUpdateService {
-    VideoCountInfoDto increaseVideoViewCount(String videoId, String userId);
-
-    void increaseTagViewCount(String videoId, String tagId, String userId);
+    VideoCountInfoDto increaseViewCount(String videoId, String userId);
 
     VideoCountInfoDto increaseVideoLikeCount(String videoId, String userId);
 

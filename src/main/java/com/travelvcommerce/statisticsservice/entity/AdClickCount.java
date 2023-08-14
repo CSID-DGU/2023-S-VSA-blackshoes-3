@@ -17,25 +17,18 @@ public class AdClickCount {
     @Column(name = "ad_id")
     private String adId;
 
-    @Column(name = "video_id")
-    private String videoId;
-
-    @Column(name = "video_name")
-    private String videoName;
-
-    @Column(name = "seller_id")
-    private String sellerId;
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "ad_click_count_fk_video_id"))
+    @ManyToOne
+    private Video video;
 
     @Column(name = "click_count")
     @ColumnDefault("0")
     private long clickCount;
 
     @Builder
-    public AdClickCount(String adId, String videoId, String videoName, String sellerId, long clickCount) {
+    public AdClickCount(String adId, Video video, long clickCount) {
         this.adId = adId;
-        this.videoName = videoName;
-        this.videoId = videoId;
-        this.sellerId = sellerId;
+        this.video = video;
         this.clickCount = clickCount;
     }
 
@@ -43,7 +36,11 @@ public class AdClickCount {
         this.clickCount++;
     }
 
-    public void updateVideoName(String videoName) {
-        this.videoName = videoName;
+    public String getVideoId() {
+        return this.video.getVideoId();
+    }
+
+    public String getVideoName() {
+        return this.video.getVideoName();
     }
 }

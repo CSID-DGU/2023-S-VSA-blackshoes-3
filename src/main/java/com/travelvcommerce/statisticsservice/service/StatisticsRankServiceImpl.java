@@ -3,6 +3,8 @@ package com.travelvcommerce.statisticsservice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankDto;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
+import com.travelvcommerce.statisticsservice.dto.TotalAdClickCountDto;
+import com.travelvcommerce.statisticsservice.dto.TotalTagViewCountDto;
 import com.travelvcommerce.statisticsservice.entity.AdClickCount;
 import com.travelvcommerce.statisticsservice.entity.TagViewCount;
 import com.travelvcommerce.statisticsservice.entity.VideoLikeCount;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
     private ObjectMapper objectMapper;
 
     @Override
+    @Transactional
     public RankResponseDto.VideoViewRankResponseDto getVideoViewTop10(String sellerId) {
         String videoViewRankKey = "videoViewRank:" + sellerId;
 
@@ -97,6 +101,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
     }
 
     @Override
+    @Transactional
     public RankResponseDto.TagViewRankResponseDto getTagViewTop10(String sellerId) {
         String tagViewRankKey = "tagViewRank:" + sellerId;
 
@@ -120,15 +125,15 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return tagViewRankResponseDto;
         }
 
-        List<TagViewCount> tagViewCountTop10 = tagViewCountRepository.findTop10BySellerIdOrderByViewCountDesc(sellerId);
+        List<TotalTagViewCountDto> tagViewCountTop10 = tagViewCountRepository.findTop10BySellerIdOrderByViewCountDesc(sellerId);
 
         List<RankDto.TagViewRankDto> tagViewRankDtoList = new ArrayList<>();
 
         tagViewCountTop10.stream().forEach(tagViewCount -> {
             tagViewRankDtoList.add(RankDto.TagViewRankDto.builder()
-                    .tagId(tagViewCount.getTagId())
-                    .tagName(tagViewCount.getTagName())
-                    .views(tagViewCount.getViewCount())
+                    .tagId(tagViewCount.getTag().getTagId())
+                    .tagName(tagViewCount.getTag().getContent())
+                    .views(tagViewCount.getTotalViewCount())
                     .build());
         });
 
@@ -155,6 +160,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
     }
 
     @Override
+    @Transactional
     public RankResponseDto.VideoLikeRankResponseDto getVideoLikeTop10(String sellerId) {
         String videoLikeRankKey = "videoLikeRank:" + sellerId;
 
@@ -212,6 +218,7 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
     }
 
     @Override
+    @Transactional
     public RankResponseDto.VideoAdClickRankResponseDto getAdClickTop10(String sellerId) {
         String adClickRankKey = "adClickRank:" + sellerId;
 
@@ -235,15 +242,15 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
             return videoAdClickRankResponseDto;
         }
 
-        List<AdClickCount> adClickCountTop10 = adClickCountRepository.findTop10BySellerIdOrderByClickCountDesc(sellerId);
+        List<TotalAdClickCountDto> adClickCountTop10 = adClickCountRepository.findTop10BySellerIdOrderByClickCountDesc(sellerId);
 
         List<RankDto.VideoAdClickRankDto> videoAdClickRankDtoList = new ArrayList<>();
 
         adClickCountTop10.stream().forEach(adClickCount -> {
             videoAdClickRankDtoList.add(RankDto.VideoAdClickRankDto.builder()
-                    .videoId(adClickCount.getVideoId())
-                    .videoName(adClickCount.getVideoName())
-                    .adClicks(adClickCount.getClickCount())
+                    .videoId(adClickCount.getVideo().getVideoId())
+                    .videoName(adClickCount.getVideo().getVideoName())
+                    .adClicks(adClickCount.getTotalAdClickCount())
                     .build());
         });
 

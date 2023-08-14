@@ -16,31 +16,21 @@ public class TagViewCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "tag_id")
-    private String tagId;
+    @ManyToOne
+    @JoinColumn(name = "tag_id", referencedColumnName = "tag_id", foreignKey = @ForeignKey(name = "tag_view_count_fk_tag_id"))
+    private Tag tag;
 
-    @Column(name = "tag_name")
-    private String tagName;
-
-    @Column(name = "video_id")
-    private String videoId;
-
-    @Column(name = "video_name")
-    private String videoName;
-
-    @Column(name = "seller_id")
-    private String sellerId;
+    @ManyToOne
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "tag_view_count_fk_video_id"))
+    private Video video;
 
     @Column(name = "view_count")
     private long viewCount;
 
     @Builder
-    public TagViewCount(String tagId, String tagName, String videoId, String videoName, String sellerId, long viewCount) {
-        this.tagId = tagId;
-        this.tagName = tagName;
-        this.videoId = videoId;
-        this.videoName = videoName;
-        this.sellerId = sellerId;
+    public TagViewCount(Tag tag, Video video, long viewCount) {
+        this.tag = tag;
+        this.video = video;
         this.viewCount = viewCount;
     }
 
@@ -48,7 +38,7 @@ public class TagViewCount {
         this.viewCount++;
     }
 
-    public void updateVideoName(String videoName) {
-        this.videoName = videoName;
+    public String getTagId() {
+        return this.tag.getTagId();
     }
 }

@@ -17,23 +17,16 @@ public class VideoViewCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "video_id")
-    private String videoId;
-
-    @Column(name = "video_name")
-    private String videoName;
-
-    @Column(name = "seller_id")
-    private String sellerId;
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "video_view_count_fk_video_id"))
+    @OneToOne
+    private Video video;
 
     @Column(name = "view_count")
     private long viewCount;
 
     @Builder
-    public VideoViewCount(String videoId, String videoName, String sellerId, long viewCount) {
-        this.videoId = videoId;
-        this.videoName = videoName;
-        this.sellerId = sellerId;
+    public VideoViewCount(Video video, long viewCount) {
+        this.video = video;
         this.viewCount = viewCount;
     }
 
@@ -41,7 +34,11 @@ public class VideoViewCount {
         this.viewCount++;
     }
 
-    public void updateVideoName(String videoName) {
-        this.videoName = videoName;
+    public String getVideoId() {
+        return this.video.getVideoId();
+    }
+
+    public String getVideoName() {
+        return this.video.getVideoName();
     }
 }

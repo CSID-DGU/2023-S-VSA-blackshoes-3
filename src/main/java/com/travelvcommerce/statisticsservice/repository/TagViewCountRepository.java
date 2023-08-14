@@ -1,5 +1,6 @@
 package com.travelvcommerce.statisticsservice.repository;
 
+import com.travelvcommerce.statisticsservice.dto.TotalTagViewCountDto;
 import com.travelvcommerce.statisticsservice.entity.TagViewCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,20 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface TagViewCountRepository extends JpaRepository<TagViewCount, Long> {
-    Collection<TagViewCount> findAllByVideoIdAndSellerId(String videoId, String sellerId);
-
+    @Query("DELETE FROM TagViewCount tvc WHERE tvc.video.videoId IN :videoIds AND tvc.tag.tagId IN :tagIds")
     void deleteByVideoIdAndTagId(String videoId, String tagId);
 
-    void deleteAllByVideoId(String videoId);
-
-    Collection<TagViewCount> findAllByVideoId(String videoId);
-
-    @Query("SELECT tvc " +
+    @Query("SELECT new com.travelvcommerce.statisticsservice.dto.TotalTagViewCountDto(tvc.tag, SUM(tvc.viewCount)) " +
             "FROM TagViewCount tvc " +
-            "WHERE tvc.sellerId = :sellerId " +
-            "GROUP BY tvc.tagId " +
+            "WHERE tvc.video.sellerId = :sellerId " +
+            "GROUP BY tvc.tag " +
             "ORDER BY SUM(tvc.viewCount) DESC")
-    List<TagViewCount> findTop10BySellerIdOrderByViewCountDesc(String sellerId);
-
-    Optional<TagViewCount> findByVideoIdAndTagId(String videoId, String tagId);
+    List<TotalTagViewCountDto> findTop10BySellerIdOrderByViewCountDesc(String sellerId);
 }

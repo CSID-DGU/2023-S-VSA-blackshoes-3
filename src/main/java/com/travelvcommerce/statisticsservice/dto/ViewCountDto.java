@@ -26,7 +26,6 @@ public class ViewCountDto {
     @Getter
     public static class ViewCountRequestDto {
         private String userId;
-        private List<String> tagIdList;
     }
 
     @Builder

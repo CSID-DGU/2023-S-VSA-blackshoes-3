@@ -36,23 +36,10 @@ public class StatisticsUpdateController {
         VideoCountInfoDto videoCountInfoDto;
 
         try {
-            videoCountInfoDto = statisticsUpdateService.increaseVideoViewCount(videoId, userId);
+            videoCountInfoDto = statisticsUpdateService.increaseViewCount(videoId, userId);
         } catch (UserAlreadyViewedVideoException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch (NoSuchElementException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-        }
-
-        try {
-            List<String> tagIdList = viewCountRequestDto.getTagIdList();
-            for (String tagId : tagIdList) {
-                statisticsUpdateService.increaseTagViewCount(videoId, tagId, userId);
-            }
         } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
