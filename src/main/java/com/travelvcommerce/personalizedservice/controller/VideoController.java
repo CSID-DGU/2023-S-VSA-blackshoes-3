@@ -158,7 +158,7 @@ public class VideoController {
         try {
             Boolean isUserLikedVideo = videoService.isUserLikedVideo(userId, videoId);
 
-            ResponseDto responseDto = ResponseDto.builder().payload(Collections.singletonMap("isLiked", isUserLikedVideo.toString())).build();
+            ResponseDto responseDto = ResponseDto.builder().payload(Collections.singletonMap("isLiked", isUserLikedVideo)).build();
 
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (CustomBadRequestException e) {
