@@ -1,4 +1,4 @@
-package com.travelvcommerce.statisticsservice.dto;
+package com.travelvcommerce.statisticsservice.dto.count;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,6 @@ public class ViewCountDto {
     @Getter
     public static class ViewCountRequestDto {
         private String userId;
-        private List<String> tagIdList;
     }
 
     @Builder

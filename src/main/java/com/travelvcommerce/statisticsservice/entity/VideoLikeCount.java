@@ -16,23 +16,15 @@ public class VideoLikeCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "video_id")
-    private String videoId;
-
-    @Column(name = "video_name")
-    private String videoName;
-
-    @Column(name = "seller_id")
-    private String sellerId;
+    @OneToOne(mappedBy = "videoLikeCount")
+    private Video video;
 
     @Column(name = "like_count")
     private long likeCount;
 
     @Builder
-    public VideoLikeCount(String videoId, String videoName, String sellerId, long likeCount) {
-        this.videoId = videoId;
-        this.videoName = videoName;
-        this.sellerId = sellerId;
+    public VideoLikeCount(Video video, long likeCount) {
+        this.video = video;
         this.likeCount = likeCount;
     }
 
@@ -44,7 +36,11 @@ public class VideoLikeCount {
         this.likeCount--;
     }
 
-    public void updateVideoName(String videoName) {
-        this.videoName = videoName;
+    public String getVideoId() {
+        return this.video.getVideoId();
+    }
+
+    public String getVideoName() {
+        return this.video.getVideoName();
     }
 }

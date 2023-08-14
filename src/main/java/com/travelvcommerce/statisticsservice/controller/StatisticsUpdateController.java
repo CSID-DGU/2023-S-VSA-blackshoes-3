@@ -2,6 +2,10 @@ package com.travelvcommerce.statisticsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.*;
+import com.travelvcommerce.statisticsservice.dto.count.AdClickCountDto;
+import com.travelvcommerce.statisticsservice.dto.count.LikeCountDto;
+import com.travelvcommerce.statisticsservice.dto.count.VideoCountInfoDto;
+import com.travelvcommerce.statisticsservice.dto.count.ViewCountDto;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyClickedAdException;
 import com.travelvcommerce.statisticsservice.exception.UserDidNotLikedVideoException;
 import com.travelvcommerce.statisticsservice.service.KafkaVideoInfoProducerService;
@@ -15,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -36,23 +39,10 @@ public class StatisticsUpdateController {
         VideoCountInfoDto videoCountInfoDto;
 
         try {
-            videoCountInfoDto = statisticsUpdateService.increaseVideoViewCount(videoId, userId);
+            videoCountInfoDto = statisticsUpdateService.increaseViewCount(videoId, userId);
         } catch (UserAlreadyViewedVideoException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-        } catch (NoSuchElementException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-        } catch (RuntimeException e) {
-            ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-        }
-
-        try {
-            List<String> tagIdList = viewCountRequestDto.getTagIdList();
-            for (String tagId : tagIdList) {
-                statisticsUpdateService.increaseTagViewCount(videoId, tagId, userId);
-            }
         } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -73,8 +63,8 @@ public class StatisticsUpdateController {
     }
 
     @PutMapping("/{videoId}/likes")
-    public ResponseEntity<ResponseDto> increaseLikeCount(@PathVariable("videoId") String videoId,
-                                                         @RequestBody LikeDto.LikeRequestDto likeRequestDto) {
+    public ResponseEntity<ResponseDto> changeLikeCount(@PathVariable("videoId") String videoId,
+                                                         @RequestBody LikeCountDto.LikeRequestDto likeRequestDto) {
         String userId = likeRequestDto.getUserId();
         String action = likeRequestDto.getAction();
         VideoCountInfoDto videoCountInfoDto;
@@ -102,7 +92,7 @@ public class StatisticsUpdateController {
 
         kafkaVideoInfoProducerService.updateVideoStatistics(videoCountInfoDto);
 
-        LikeDto.LikeResponseDto likeResponseDto = LikeDto.LikeResponseDto.builder()
+        LikeCountDto.LikeResponseDto likeResponseDto = LikeCountDto.LikeResponseDto.builder()
                 .videoId(videoId)
                 .updatedAt(Timestamp.valueOf(LocalDateTime.now()).toString())
                 .build();
@@ -112,7 +102,7 @@ public class StatisticsUpdateController {
 
     @PutMapping("/{adId}/adClicks")
     public ResponseEntity<ResponseDto> increaseAdClickCount(@PathVariable("adId") String adId,
-                                                            @RequestBody AdClickDto.AdClickRequestDto adClickRequestDto) {
+                                                            @RequestBody AdClickCountDto.AdClickRequestDto adClickRequestDto) {
         String userId = adClickRequestDto.getUserId();
         VideoCountInfoDto videoCountInfoDto;
 
@@ -131,7 +121,7 @@ public class StatisticsUpdateController {
 
         kafkaVideoInfoProducerService.updateVideoStatistics(videoCountInfoDto);
 
-        AdClickDto.AdClickResponseDto adClickResponseDto = AdClickDto.AdClickResponseDto.builder()
+        AdClickCountDto.AdClickResponseDto adClickResponseDto = AdClickCountDto.AdClickResponseDto.builder()
                 .adId(adId)
                 .updatedAt(Timestamp.valueOf(LocalDateTime.now()).toString())
                 .build();

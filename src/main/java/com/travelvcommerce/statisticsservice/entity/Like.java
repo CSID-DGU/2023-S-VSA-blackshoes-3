@@ -16,15 +16,16 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "video_id")
-    private String videoId;
+    @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "like_fk_video_id"))
+    @ManyToOne
+    private Video video;
 
     @Column(name = "user_id")
     private String userId;
 
     @Builder
-    public Like(String videoId, String userId) {
-        this.videoId = videoId;
+    public Like(Video video, String userId) {
+        this.video = video;
         this.userId = userId;
     }
 }
