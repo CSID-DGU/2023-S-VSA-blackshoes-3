@@ -25,7 +25,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [sellorLogo, setSellorLogo] = useState(null);
+  const [sellerLogo, setSellorLogo] = useState(null);
 
   // ErrorMessage State----------------------------------------
   const [emailMessage, setEmailMessage] = useState("");
@@ -48,10 +48,10 @@ const SignUp = () => {
       setEmail(emailCurrent);
 
       if (!emailRegex.test(emailCurrent)) {
-        setEmailMessage("유효하지 않은 이메일입니다.");
+        setEmailMessage("유효하지 않은 이메일 형식입니다.");
         setIsEmail(false);
       } else {
-        setEmailMessage("유효한 이메일입니다.");
+        setEmailMessage("유효한 이메일 형식입니다.");
         setIsEmail(true);
       }
     },
@@ -68,7 +68,7 @@ const SignUp = () => {
       setPasswordMessage("숫자+영문자+특수문자를 조합하여 8글자 이상 작성하세요.");
       setIsPassword(false);
     } else {
-      setPasswordMessage("유효한 비밀번호입니다.");
+      setPasswordMessage("유효한 비밀번호 형식입니다.");
       setIsPassword(true);
     }
   }, []);
@@ -135,6 +135,9 @@ const SignUp = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
+      reader.onloadend = () => {
+        // 파일 읽기 끝나면 실행
+      };
       reader.readAsDataURL(file);
       setSellorLogo(file);
     } else {
@@ -147,18 +150,18 @@ const SignUp = () => {
     e.preventDefault();
     if (window.confirm("회원가입을 하시겠습니까?")) {
       try {
-        const jsonData = {
+        const requestData = {
           email: email,
           password: password,
           companyName: companyName,
         };
+        const jsonData = JSON.stringify(requestData);
+        const blob = new Blob([jsonData], { type: "application/json" });
         const formData = new FormData();
-        formData.append("joinRequest", JSON.stringify(jsonData));
+        formData.append("joinRequest", blob);
+        formData.append("sellerLogo", sellerLogo);
         await axios
           .post(`http://13.125.69.94:8001/user-service/sellers/join`, formData, {
-            params: {
-              sellorLogo: sellorLogo,
-            },
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -179,10 +182,10 @@ const SignUp = () => {
 
   return (
     <Wrapper>
-      <S.HalfSection style={{ backgroundColor: "#eaeaea" }}>
+      <S.HalfSection position="left">
         <S.FullImage src={landingImage} alt="landingImage" loading="lazy" />
       </S.HalfSection>
-      <S.HalfSection>
+      <S.HalfSection position="right">
         <S.SignForm>
           <S.LeftAlignSection>
             <S.SignUpTitle>회원가입</S.SignUpTitle>
@@ -196,6 +199,7 @@ const SignUp = () => {
               width="450px"
               placeholder="이메일을 입력해주세요."
               onChange={onChangeEmail}
+              required
             />
           </S.InputBox>
           <S.FormHelperEmails is_email={isEmail ? "true" : "false"}>
@@ -207,6 +211,7 @@ const SignUp = () => {
               width="230px"
               placeholder="인증번호를 입력해주세요."
               onChange={(e) => setEmailValidation(e.target.value)}
+              required
             />
             <S.ColorButton width="180px" onClick={sendEmail}>
               인증번호 발송
@@ -223,6 +228,7 @@ const SignUp = () => {
             width="450px"
             placeholder="사용하실 비밀번호를 입력해주세요."
             onChange={onChangePassword}
+            required
           />
           <S.FormHelperPWs is_password={isPassword ? "true" : "false"}>
             {passwordMessage}
@@ -235,6 +241,7 @@ const SignUp = () => {
             width="450px"
             placeholder="비밀번호를 확인해주세요."
             onChange={onChangePasswordCheck}
+            required
           />
           <S.FormHelperPWCF is_password_check={isPasswordCheck ? "true" : "false"}>
             {passwordCheckMessage}
@@ -247,6 +254,7 @@ const SignUp = () => {
             width="450px"
             placeholder="회사명을 입력해주세요."
             onChange={(e) => setCompanyName(e.target.value)}
+            required
           />
           <S.LeftAlignSection>
             <S.SignUpHead>아이콘 등록</S.SignUpHead>
@@ -256,7 +264,8 @@ const SignUp = () => {
               type="text"
               width="280px"
               placeholder="파일을 선택해주세요."
-              defaultValue={sellorLogo && sellorLogo.name}
+              defaultValue={sellerLogo && sellerLogo.name}
+              readOnly
             />
             <S.ColorLabel htmlFor="sign-input">파일 선택</S.ColorLabel>
             <S.SignInput
