@@ -14,6 +14,14 @@ export const SlaveInstance = axios.create({
   },
 });
 
+export const UserInstance = axios.create({
+  baseURL: "http://13.125.69.94:8001",
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
+});
+
 // Instance.interceptors.request.use(
 //   (config) => {
 //     const token = localStorage.getItem("accessToken");
