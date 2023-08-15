@@ -1,14 +1,18 @@
 import { HeaderInfoBox, HeaderRSection, HeaderSection, LogoCircleBox } from "../../Home/HomeStyle";
 import { ColorButton, Logo } from "../../Sign/SignStyle";
 import logo from "../../../assets/images/logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCookie, removeCookie } from "../../../Cookie";
 import axios from "axios";
+import { useEffect } from "react";
+import { UserInstance } from "../../../api/axios";
 
 const Header = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem("accessToken");
   const refreshToken = getCookie("refreshToken");
+  const { userId } = useParams();
 
   // Function--------------------------------------------------
   const submitLogout = async () => {
@@ -25,9 +29,33 @@ const Header = () => {
         })
         .catch((err) => {
           console.log(err);
+          if (err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다.") {
+            alert(err.response.data.error);
+            localStorage.removeItem("accessToken");
+            removeCookie("refreshToken");
+            navigate(`/`, { replace: true });
+          }
         });
     }
   };
+
+  // ComponentDidMount-----------------------------------------
+  const fetchData = async () => {
+    try {
+      const userData = await UserInstance.get(`/user-service/sellers/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(userData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <HeaderSection>
@@ -37,7 +65,7 @@ const Header = () => {
           <LogoCircleBox>LOGO</LogoCircleBox>
           회사명
         </HeaderInfoBox>
-        <ColorButton width="130px" onClick={submitLogout}>
+        <ColorButton width="130px" onClick={() => submitLogout()}>
           로그아웃
         </ColorButton>
       </HeaderRSection>

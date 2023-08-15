@@ -66,6 +66,9 @@ export const ExtendSpan = styled.span`
   font-weight: bold;
   color: ${(props) => props.theme.bgColor};
   background-color: ${(props) => props.theme.primaryColor};
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 `;
 
