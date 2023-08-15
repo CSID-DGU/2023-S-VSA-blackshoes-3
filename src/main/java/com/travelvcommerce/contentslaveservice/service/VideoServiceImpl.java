@@ -113,7 +113,7 @@ public class VideoServiceImpl implements VideoService {
         String redisKey = "tagIdList:" + tagIdList.toString() + ":userId:" + userId;
         List<VideoDto.VideoListResponseDto> videoPage;
 
-        if (page == 6) {
+        if (page == 5) {
             throw new IllegalArgumentException("Invalid page number: " + page);
         }
 
