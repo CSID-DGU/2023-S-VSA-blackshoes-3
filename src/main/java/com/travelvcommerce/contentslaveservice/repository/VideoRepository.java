@@ -56,5 +56,7 @@ public interface VideoRepository extends MongoRepository<Video, String> {
     })
     List<SearchAutoCompletionDto> findAutoCompleteResultsBySellerName(String keyword);
 
+    @Query(value = "{'videoTags.tagId': {$in : ?0}}")
+    List<VideoDto.VideoListResponseDto> findVideosByTagIdList(List<String> tagIdList, Pageable pageable);
 }
 

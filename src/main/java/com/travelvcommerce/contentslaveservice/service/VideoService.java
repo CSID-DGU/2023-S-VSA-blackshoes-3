@@ -20,4 +20,6 @@ public interface VideoService {
     Page<VideoDto.VideoListResponseDto> getVideosByTagId(String q, String sortType, int page, int size);
 
     List<VideoDto.VideoListResponseDto> getVideosByVideoIdList(List<String> videoIdList);
+
+    List<VideoDto.VideoListResponseDto> getRandomVideosByTagIdList(List<String> tagIdList, String userId, int page);
 }
