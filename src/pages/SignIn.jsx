@@ -4,12 +4,13 @@ import { Wrapper } from "../components/Home/HomeStyle";
 import * as S from "../components/Sign/SignStyle";
 import logo from "../assets/images/logo.svg";
 import landingImage from "../assets/images/travel.jpg";
-import { getCookie } from "../Cookie";
+import { getCookie, setCookie } from "../Cookie";
 import axios from "axios";
 
 const SELLOR_1_ID = "21d40e1a-86fc-480e-a4bf-b084f8ac6c55";
 const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
 const SELLOR_3_ID = "14517d06-88cb-4edf-b6dd-67a63f469b6b";
+// naver sellerId : "6b8484c1-5c2e-4c3a-a21c-54eb9a7681b5"
 
 const SignIn = () => {
   // Constant--------------------------------------------------
@@ -42,15 +43,15 @@ const SignIn = () => {
       email,
       password,
     };
-    if (email === "") {
-      setIsEmail(false);
-      setEmailMessage("이메일을 입력해주세요.");
-    } else {
+    if (email && password) {
       setIsEmail(true);
       await axios
         .post(`http://13.125.69.94:8001/user-service/sellers/login`, user)
         .then((res) => {
           console.log(res);
+          localStorage.setItem("accessToken", res.data.payload.accessToken);
+          setCookie("refreshToken", res.data.payload.refreshToken);
+          navigate(`/home/${res.data.payload.sellerId}`, { replace: true });
         })
         .catch((err) => {
           console.log(err);
@@ -74,6 +75,7 @@ const SignIn = () => {
             placeholder="Email"
             width="450px"
             onChange={onChangeSignIn}
+            required
           />
           <S.FormHelperEmails isemail={isEmail ? "true" : "false"}>
             {emailMessage}
@@ -84,12 +86,13 @@ const SignIn = () => {
             placeholder="PW"
             width="450px"
             onChange={onChangeSignIn}
+            required
           />
           <S.FormHelperPWs ispassword={isPassword ? "true" : "false"}>
             {passwordMessage}
           </S.FormHelperPWs>
-          <S.ColorButton width="450px" onClick={() => navigate(`/home/${SELLOR_3_ID}`)}>
-            {/* <S.ColorButton width="450px" onClick={onSubmitSignIn}> */}
+          {/* <S.ColorButton width="450px" onClick={() => navigate(`/home/${SELLOR_3_ID}`)}> */}
+          <S.ColorButton width="450px" onClick={onSubmitSignIn}>
             시작하기
           </S.ColorButton>
           <S.RightAlignSection>
