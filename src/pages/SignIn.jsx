@@ -43,18 +43,39 @@ const SignIn = () => {
       email,
       password,
     };
-    if (email && password) {
+    if (email === "" && password === "") {
+      setIsEmail(false);
+      setIsPassword(false);
+      setEmailMessage("이메일을 입력해주세요.");
+      setPasswordMessage("비밀번호를 입력해주세요.");
+    } else if (email === "" && password !== "") {
+      setIsEmail(false);
+      setIsPassword(true);
+      setEmailMessage("이메일을 입력해주세요.");
+      setPasswordMessage("");
+    } else if (email !== "" && password === "") {
+      setIsEmail(true);
+      setIsPassword(false);
+      setPasswordMessage("비밀번호를 입력해주세요.");
+      setEmailMessage("");
+    } else if (email && password) {
       setIsEmail(true);
       await axios
         .post(`http://13.125.69.94:8001/user-service/sellers/login`, user)
         .then((res) => {
-          console.log(res);
           localStorage.setItem("accessToken", res.data.payload.accessToken);
           setCookie("refreshToken", res.data.payload.refreshToken);
           navigate(`/home/${res.data.payload.sellerId}`, { replace: true });
         })
         .catch((err) => {
           console.log(err);
+          if (err.response.data.error === `Seller not found with email: ${email}`) {
+            alert(err.response.data.error);
+            return;
+          } else if (err.response.data.error === "Invalid password.") {
+            alert(err.response.data.error);
+            return;
+          }
         });
     }
   };
