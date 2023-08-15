@@ -19,6 +19,8 @@ const Mleft = ({ videoList, videoId, setVideoId, setSortOption }) => {
       setSortOption("조회수순");
     } else if (selectedOption === "좋아요순") {
       setSortOption("좋아요순");
+    } else if (selectedOption === "광고클릭순") {
+      setSortOption("광고클릭순");
     }
   };
 
@@ -34,6 +36,7 @@ const Mleft = ({ videoList, videoId, setVideoId, setSortOption }) => {
           <option value="최신순">최신순</option>
           <option value="조회수순">조회수순</option>
           <option value="좋아요순">좋아요순</option>
+          <option value="광고클릭순">광고클릭순</option>
         </M.Select>
       </U.TitleBetweenBox>
       <M.VideoListWrapper>
