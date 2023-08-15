@@ -45,7 +45,7 @@ export const HeaderSection = styled.div`
 `;
 
 export const HeaderRSection = styled.section`
-  width: 300px;
+  min-width: 300px;
   height: 100px;
   display: flex;
   justify-content: space-between;
@@ -53,7 +53,6 @@ export const HeaderRSection = styled.section`
 `;
 
 export const HeaderInfoBox = styled.section`
-  width: 130px;
   height: 50px;
   display: flex;
   align-items: center;
