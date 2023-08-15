@@ -182,10 +182,10 @@ const SignUp = () => {
 
   return (
     <Wrapper>
-      <S.HalfSection position="left">
+      <S.HalfSection $position="left">
         <S.FullImage src={landingImage} alt="landingImage" loading="lazy" />
       </S.HalfSection>
-      <S.HalfSection position="right">
+      <S.HalfSection $position="right">
         <S.SignForm>
           <S.LeftAlignSection>
             <S.SignUpTitle>회원가입</S.SignUpTitle>
@@ -270,6 +270,7 @@ const SignUp = () => {
             <S.ColorLabel htmlFor="sign-input">파일 선택</S.ColorLabel>
             <S.SignInput
               type="file"
+              accept="image/png, image/jpeg, image/jpg"
               width="130px"
               id="sign-input"
               style={{ display: "none" }}
