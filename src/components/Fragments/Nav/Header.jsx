@@ -1,10 +1,10 @@
-import { HeaderInfoBox, HeaderRSection, HeaderSection, LogoCircleBox } from "../../Home/HomeStyle";
-import { ColorButton, Logo } from "../../Sign/SignStyle";
-import logo from "../../../assets/images/logo.svg";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCookie, removeCookie } from "../../../Cookie";
+import * as H from "../../Home/HomeStyle";
+import * as S from "../../Sign/SignStyle";
+import logo from "../../../assets/images/logo.svg";
 import axios from "axios";
-import { useEffect } from "react";
 import { UserInstance } from "../../../api/axios";
 
 const Header = () => {
@@ -13,6 +13,10 @@ const Header = () => {
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = getCookie("refreshToken");
   const { userId } = useParams();
+
+  // State-----------------------------------------------------
+  const [sellerLogo, setSellerLogo] = useState(null);
+  const [sellerName, setSellerName] = useState("");
 
   // Function--------------------------------------------------
   const submitLogout = async () => {
@@ -42,12 +46,14 @@ const Header = () => {
   // ComponentDidMount-----------------------------------------
   const fetchData = async () => {
     try {
-      const userData = await UserInstance.get(`/user-service/sellers/${userId}`, {
+      await UserInstance.get(`/user-service/sellers/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+      }).then((res) => {
+        setSellerLogo(res.data.payload.sellerLogo);
+        setSellerName(res.data.payload.sellerName);
       });
-      console.log(userData);
     } catch (err) {
       console.log(err);
     }
@@ -58,18 +64,20 @@ const Header = () => {
   }, []);
 
   return (
-    <HeaderSection>
-      <Logo src={logo} alt="logo" loading="lazy" />
-      <HeaderRSection>
-        <HeaderInfoBox>
-          <LogoCircleBox>LOGO</LogoCircleBox>
-          회사명
-        </HeaderInfoBox>
-        <ColorButton width="130px" onClick={() => submitLogout()}>
+    <H.HeaderSection>
+      <S.Logo src={logo} alt="logo" loading="lazy" />
+      <H.HeaderRSection>
+        <H.HeaderInfoBox>
+          <H.LogoCircleBox>
+            <S.FullImage src={`data:image/;base64,${sellerLogo}`} alt="sellorLogo" loading="lazy" />
+          </H.LogoCircleBox>
+          {sellerName}
+        </H.HeaderInfoBox>
+        <S.ColorButton width="130px" onClick={() => submitLogout()}>
           로그아웃
-        </ColorButton>
-      </HeaderRSection>
-    </HeaderSection>
+        </S.ColorButton>
+      </H.HeaderRSection>
+    </H.HeaderSection>
   );
 };
 
