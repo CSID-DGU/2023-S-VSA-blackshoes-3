@@ -4,9 +4,14 @@ import { styled } from "styled-components";
 export const HalfSection = styled.section`
   width: 50%;
   height: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0, 3s;
+  @media all and (max-width: 1080px) {
+    width: ${(props) => (props.$position === "right" ? "100%" : "0")};
+  }
 `;
 
 export const FullImage = styled.img`
@@ -34,8 +39,10 @@ export const Logo = styled.img`
 `;
 
 export const SubText = styled.h1`
-  font-weight: 600;
-  font-size: 20px;
+  font-family: "MontserratBold";
+  font-weight: 900;
+  font-size: 16px;
+  color: ${(props) => props.theme.secondBlack};
 `;
 
 export const SignInput = styled.input`

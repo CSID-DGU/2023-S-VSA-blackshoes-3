@@ -17,7 +17,7 @@ const Mright = ({ videoAds, userId, videoId }) => {
   useEffect(() => {
     //
   }, []);
-  console.log(videoAds);
+  // console.log(videoAds);
   return (
     <M.RightBox>
       <U.TitleBetweenBox style={{ borderBottom: `1px solid #c4c4c4` }}>

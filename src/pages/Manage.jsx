@@ -60,6 +60,11 @@ const Manage = () => {
           `/content-slave-service/videos/${userId}/sort?s=likes&page=0&size=10`
         );
         setVideoList(videoLikeData.data.payload.videos);
+      } else if (sortOption === "광고클릭순") {
+        const videoAdsData = await SlaveInstance.get(
+          `/content-slave-service/videos/${userId}/sort?s=adClicks&page=0&size=10`
+        );
+        setVideoList(videoAdsData.data.payload.videos);
       }
     } catch (err) {
       console.log(err);

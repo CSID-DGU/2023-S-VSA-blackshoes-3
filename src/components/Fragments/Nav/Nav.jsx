@@ -27,6 +27,9 @@ const Nav = () => {
         <HoverButton2 width="270px" onClick={() => navigate(`/home/${userId}/manage`)} $page={page}>
           영상 관리
         </HoverButton2>
+        <HoverButton0 width="270px" onClick={() => console.log("마이 페이지")}>
+          마이 페이지
+        </HoverButton0>
       </NavBox>
       <BorderButton width="270px">탈퇴하기</BorderButton>
     </NavSection>
