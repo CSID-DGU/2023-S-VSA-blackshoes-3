@@ -6,15 +6,6 @@ import landingImage from "../assets/images/travel.jpg";
 import axios from "axios";
 import { useDebounce } from "../hooks/useDebounce";
 
-// 13.125.69.94
-// :8001 user
-// :8011 content
-// :8031 statistics
-// :8041 comment
-// :8051 personalized
-
-// 210.94.179.19
-// :9127 upload
 const SignUp = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
@@ -24,7 +15,7 @@ const SignUp = () => {
   const [emailValidation, setEmailValidation] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
-  const [companyName, setCompanyName] = useState("");
+  const [sellerName, setSellerName] = useState("");
   const [sellerLogo, setSellorLogo] = useState(null);
 
   // ErrorMessage State----------------------------------------
@@ -138,7 +129,7 @@ const SignUp = () => {
       reader.onloadend = () => {
         // 파일 읽기 끝나면 실행
       };
-      reader.readAsDataURL(file);
+      // reader.readAsDataURL(file);
       setSellorLogo(file);
     } else {
       alert("파일을 등록하는데 실패했습니다.");
@@ -153,7 +144,7 @@ const SignUp = () => {
         const requestData = {
           email: email,
           password: password,
-          companyName: companyName,
+          sellerName: sellerName,
         };
         const jsonData = JSON.stringify(requestData);
         const blob = new Blob([jsonData], { type: "application/json" });
@@ -253,7 +244,7 @@ const SignUp = () => {
             type="text"
             width="450px"
             placeholder="회사명을 입력해주세요."
-            onChange={(e) => setCompanyName(e.target.value)}
+            onChange={(e) => setSellerName(e.target.value)}
             required
           />
           <S.LeftAlignSection>
