@@ -6,6 +6,9 @@ import com.travelvcommerce.personalizedservice.entity.ViewTag;
 import com.travelvcommerce.personalizedservice.repository.SubscribedTagRepository;
 import com.travelvcommerce.personalizedservice.repository.ViewTagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +43,8 @@ public class TagServiceImpl implements TagService{
             throw new ResourceNotFoundException("Invalid user id");
         }
 
-        List<ViewTag> viewTagList = viewTagRepository.findByUserId(userId);
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("tagViewCount").descending());
+        List<ViewTag> viewTagList = viewTagRepository.findByUserId(userId, pageable);
 
         List<Map<String, Object>> resultList = new ArrayList<>();
         for (ViewTag viewTag : viewTagList) {
