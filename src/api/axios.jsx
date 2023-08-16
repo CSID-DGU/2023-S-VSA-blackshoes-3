@@ -1,31 +1,19 @@
 import axios from "axios";
 import { getCookie, removeCookie } from "../Cookie";
 
-export const UploadInstance = axios.create({
-  baseURL: "http://210.94.179.19:9127",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const BASE_URL = "https://api.roberniro-projects.xyz/";
 
-export const SlaveInstance = axios.create({
-  baseURL: "http://13.125.69.94:8011",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export const UserInstance = axios.create({
-  baseURL: "http://13.125.69.94:8001",
+export const Instance = axios.create({
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 let accessToken = localStorage.getItem("accessToken");
-const refreshToken = getCookie("refreshToken");
+let refreshToken = getCookie("refreshToken");
 
-UserInstance.interceptors.request.use(
+Instance.interceptors.request.use(
   (config) => {
     if (accessToken && refreshToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -37,33 +25,37 @@ UserInstance.interceptors.request.use(
   }
 );
 
-UserInstance.interceptors.response.use(
+Instance.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
-    console.log(error);
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await UserInstance.post("/user-service/refresh", {
+        await Instance.post("user-service/refresh", {
           refreshToken,
         }).then(async (res) => {
-          accessToken = res.data.accessToken;
+          console.log(res);
           localStorage.removeItem("accessToken");
+          accessToken = res.data.payload.accessToken;
           localStorage.setItem("accessToken", accessToken);
-          UserInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+          Instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
           originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-          return await UserInstance(originalRequest);
+          return await Instance(originalRequest);
         });
       } catch (err) {
         console.log("리프레쉬 실패", err);
-        // if (err.response.status === 401) {
-        //   localStorage.removeItem("accessToken");
-        //   removeCookie("refreshToken");
-        //   window.location.replace("/");
-        // }
+        if (
+          err.response.status === 400 &&
+          err.response.data.error === "토큰 갱신 오류: 리프레시 토큰이 일치하지 않습니다."
+        ) {
+          alert(err.response.data.error);
+          localStorage.removeItem("accessToken");
+          removeCookie("refreshToken", { path: "/" });
+          window.location.replace("/");
+        }
       }
     }
     return Promise.reject(error);

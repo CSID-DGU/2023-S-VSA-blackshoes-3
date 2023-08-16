@@ -12,7 +12,7 @@ import Vad from "../components/Fragments/Upload/Vad";
 import { ColorButton } from "../components/Sign/SignStyle";
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
-import { UploadInstance } from "../api/axios";
+import { Instance } from "../api/axios";
 
 // Upload EC2
 // 210.94.179.19:9127
@@ -61,7 +61,7 @@ const Upload = () => {
 
   const fetchData = async () => {
     try {
-      await UploadInstance.get(`/upload-service/videos/temporary/${userId}`).then(async (res) => {
+      await Instance.get(`/upload-service/videos/temporary/${userId}`).then(async (res) => {
         if (res.status === 200) {
           if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
             const expiredAt = new Date(res.data.payload.expiredAt);
@@ -75,7 +75,7 @@ const Upload = () => {
               second: true,
             });
           } else {
-            await UploadInstance.delete(
+            await Instance.delete(
               `/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
             )
               .then(() => {
@@ -96,8 +96,8 @@ const Upload = () => {
         navigate("/", { replace: true });
       }
     }
-    const regionData = await UploadInstance.get(`/upload-service/tags/region`);
-    const themeData = await UploadInstance.get(`/upload-service/tags/theme`);
+    const regionData = await Instance.get(`/upload-service/tags/region`);
+    const themeData = await Instance.get(`/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
     setThemeTag(themeData.data.payload.tags);
   };
@@ -114,7 +114,7 @@ const Upload = () => {
             setIsSocketOpen(true);
             const formData = new FormData();
             formData.append("video", videoFile);
-            await UploadInstance.post(`/upload-service/videos/${userId}`, formData, {
+            await Instance.post(`/upload-service/videos/${userId}`, formData, {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
@@ -164,7 +164,7 @@ const Upload = () => {
         formData.append("thumbnail", thumbnailFile);
         formData.append("requestUpload", blob);
         try {
-          await UploadInstance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
+          await Instance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -185,14 +185,12 @@ const Upload = () => {
   const handleVideoExtend = async () => {
     if (window.confirm("영상이 지금으로부터 30분 후 만료됩니다.")) {
       try {
-        await UploadInstance.put(`/upload-service/videos/temporary/${userId}/${videoId}`).then(
-          (res) => {
-            const expiredAt = new Date(res.data.payload.expiredAt);
-            setVideoExpireState(
-              `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
-            );
-          }
-        );
+        await Instance.put(`/upload-service/videos/temporary/${userId}/${videoId}`).then((res) => {
+          const expiredAt = new Date(res.data.payload.expiredAt);
+          setVideoExpireState(
+            `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+          );
+        });
       } catch (err) {
         console.log(err);
         alert("연장에 실패했습니다.");

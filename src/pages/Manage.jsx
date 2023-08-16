@@ -8,10 +8,10 @@ import { GlobalContext } from "../context/GlobalContext";
 import * as M from "../components/Fragments/Manage/ManageStyle";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import { SlaveInstance, UploadInstance } from "../api/axios";
 import Mleft from "../components/Fragments/Manage/Mleft";
 import Mmiddle from "../components/Fragments/Manage/Mmiddle";
 import Mright from "../components/Fragments/Manage/Mright";
+import { Instance } from "../api/axios";
 
 const Manage = () => {
   // Constant----------------------------------------------------
@@ -39,29 +39,29 @@ const Manage = () => {
   // Function----------------------------------------------------
   const fetchData = async () => {
     // 기본 태그 가져오기
-    const regionData = await UploadInstance.get(`/upload-service/tags/region`);
-    const themeData = await UploadInstance.get(`/upload-service/tags/theme`);
+    const regionData = await Instance.get(`/upload-service/tags/region`);
+    const themeData = await Instance.get(`/upload-service/tags/theme`);
     setRegionTag(regionData.data.payload.tags);
     setThemeTag(themeData.data.payload.tags);
     try {
       // 비디오 리스트 가져오기
       if (sortOption === "최신순") {
-        const videoRecentData = await SlaveInstance.get(
+        const videoRecentData = await Instance.get(
           `/content-slave-service/videos/${userId}/sort?s=recent&page=0&size=10`
         );
         setVideoList(videoRecentData.data.payload.videos);
       } else if (sortOption === "조회수순") {
-        const videoViewData = await SlaveInstance.get(
+        const videoViewData = await Instance.get(
           `/content-slave-service/videos/${userId}/sort?s=views&page=0&size=10`
         );
         setVideoList(videoViewData.data.payload.videos);
       } else if (sortOption === "좋아요순") {
-        const videoLikeData = await SlaveInstance.get(
+        const videoLikeData = await Instance.get(
           `/content-slave-service/videos/${userId}/sort?s=likes&page=0&size=10`
         );
         setVideoList(videoLikeData.data.payload.videos);
       } else if (sortOption === "광고클릭순") {
-        const videoAdsData = await SlaveInstance.get(
+        const videoAdsData = await Instance.get(
           `/content-slave-service/videos/${userId}/sort?s=adClicks&page=0&size=10`
         );
         setVideoList(videoAdsData.data.payload.videos);
@@ -74,7 +74,7 @@ const Manage = () => {
   const fetchModifyData = async () => {
     if (videoId) {
       // 수정 영상 가져오기
-      await SlaveInstance.get(`/content-slave-service/videos/video?type=videoId&q=${videoId}`).then(
+      await Instance.get(`/content-slave-service/videos/video?type=videoId&q=${videoId}`).then(
         (res) => {
           setVideoUrl(res.data.payload.video.videoUrl);
           setVideoName(res.data.payload.video.videoName);
