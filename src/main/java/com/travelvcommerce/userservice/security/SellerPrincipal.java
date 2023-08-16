@@ -32,6 +32,10 @@ public class SellerPrincipal implements UserDetails {
         return seller.getEmail();
     }
 
+    public String getId() {
+        return seller.getSellerId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

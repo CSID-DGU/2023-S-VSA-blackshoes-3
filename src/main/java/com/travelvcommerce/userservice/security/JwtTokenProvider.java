@@ -72,25 +72,13 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public boolean validateToken(String token, String id) {
-        try {
-            Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-            String tokenId = claims.get("Id", String.class);
-            if (tokenId.equals(id)) {
-                return true;
-            } else {
-                System.out.println("토큰의 사용자 ID가 일치하지 않습니다");
-            }
-        } catch (SignatureException ex) {
-            System.out.println("유효하지 않은 JWT 서명입니다");
-        } catch (MalformedJwtException ex) {
-            System.out.println("유효하지 않은 JWT 토큰입니다");
-        } catch (ExpiredJwtException ex) {
-            System.out.println("만료된 JWT 토큰입니다");
-        } catch (UnsupportedJwtException ex) {
-            System.out.println("지원하지 않는 JWT 토큰입니다");
-        } catch (IllegalArgumentException ex) {
-            System.out.println("JWT 토큰이 비어있습니다");
+    public boolean validateUserIdWithToken(String token, String id) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        String tokenId = claims.get("Id", String.class);
+        if (tokenId.equals(id)) {
+            return true;
+        } else {
+            System.out.println("토큰의 사용자 ID가 일치하지 않습니다");
         }
         return false;
     }

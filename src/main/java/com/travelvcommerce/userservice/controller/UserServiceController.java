@@ -11,6 +11,7 @@ import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.social.SocialLoginService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @RestController
@@ -189,6 +191,7 @@ public class UserServiceController {
         return "redirect:/social-login-success?email=" + userInfo.get("email");
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/authentication-failure")
     public ResponseEntity<ResponseDto> handleAuthenticationFailure(AuthenticationException e) {
         ResponseDto responseDto = ResponseDto.builder()

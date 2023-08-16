@@ -8,13 +8,17 @@ import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
+import com.travelvcommerce.userservice.security.SellerPrincipal;
 import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.kafka.KafkaUploaderInfoProducerService;
 import com.travelvcommerce.userservice.service.SellerServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +35,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/user-service/sellers")
 @RequiredArgsConstructor
+@Slf4j
 public class SellerController {
     private final String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private final String passwordRegex = "^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,16}$";
@@ -49,27 +54,27 @@ public class SellerController {
     public ResponseEntity<ResponseDto> registerSeller(@RequestPart(name = "joinRequest") SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto,
                                                       @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
         try {
-            if(!emailService.isExistCompletionCode(sellerRegisterRequestDto.getEmail())){
+            if (!emailService.isExistCompletionCode(sellerRegisterRequestDto.getEmail())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("인증코드를 재확인하세요.").build());
             }
 
-            if(sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
+            if (sellerRepository.existsByEmail(sellerRegisterRequestDto.getEmail())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("이미 가입된 이메일입니다.").build());
             }
 
             String password = sellerRegisterRequestDto.getPassword();
-            if(!password.matches(passwordRegex)) {
+            if (!password.matches(passwordRegex)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("비밀번호는 8~16자리의 영문, 숫자, 특수문자 조합이어야 합니다.").build());
             }
 
             String sellerName = sellerRegisterRequestDto.getSellerName();
-            if(!sellerName.matches(sellerNameRegex)) {
+            if (!sellerName.matches(sellerNameRegex)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
             }
 
             // MultipartFile를 byte 배열로 변환
             byte[] sellerLogoBytes = sellerLogo.getBytes();
-            if(sellerLogoBytes.length > 16777215){
+            if (sellerLogoBytes.length > 16777215) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자 로고는 16MB 이하의 파일만 업로드 가능합니다.").build());
             }
             sellerRegisterRequestDto.setSellerLogo(sellerLogoBytes);
@@ -102,17 +107,14 @@ public class SellerController {
     }
 
     @PostMapping("/{sellerId}/withdrawal")
-    public ResponseEntity<ResponseDto> deleteSeller(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<ResponseDto> deleteSeller(@AuthenticationPrincipal SellerPrincipal sellerPrincipal,
                                                     @PathVariable String sellerId,
                                                     @RequestBody SellerDto.SellerDeleteRequestDto sellerDeleteRequestDto) {
         try {
-            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!sellerId.equals(sellerPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
-
-            String tokenSellerEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
-            String tokenSellerType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<Seller> sellerOptional = sellerRepository.findBySellerId(sellerId);
             if (sellerOptional.isEmpty()) {
@@ -120,16 +122,12 @@ public class SellerController {
             }
             String sellerEmail = sellerOptional.get().getEmail();
 
-            if (!sellerEmail.equals(tokenSellerEmail)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
-            }
-
             if(!passwordEncoder.matches(sellerDeleteRequestDto.getPassword(), sellerOptional.get().getPassword())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid Password").build());
             }
 
             sellerService.deleteSeller(sellerId);
-            refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenSellerType, sellerEmail);
+            refreshTokenRepository.deleteRefreshTokenByUserEmail("SELLER", sellerEmail);
 
             // 삭제된 판매자의 정보를 kafka topic에 publish
             kafkaUploaderInfoProducerService.deleteUploader(sellerId);
@@ -143,14 +141,14 @@ public class SellerController {
     }
 
     @PutMapping("/{sellerId}")
-    public ResponseEntity<ResponseDto> updateSeller(@RequestHeader("Authorization") String token,
+    public ResponseEntity<ResponseDto> updateSeller(@AuthenticationPrincipal SellerPrincipal sellerPrincipal,
                                                     @PathVariable String sellerId,
                                                     @RequestPart(name = "updateRequest", required = false) SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto,
                                                     @RequestPart(name = "sellerLogo", required = false) MultipartFile sellerLogo) {
         try {
-            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!sellerId.equals(sellerPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
 
             if (sellerUpdateRequestDto == null && sellerLogo == null) {
@@ -234,12 +232,12 @@ public class SellerController {
 
     @PutMapping("/{sellerId}/password")
     public ResponseEntity<ResponseDto> updatePassword(@PathVariable String sellerId,
-                                                      @RequestHeader("Authorization") String token,
+                                                      @AuthenticationPrincipal SellerPrincipal sellerPrincipal,
                                                       @RequestBody SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto){
         try {
-            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken, sellerId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!sellerId.equals(sellerPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
 
             String newPassword = sellerUpdatePasswordRequestDto.getNewPassword();
@@ -302,7 +300,12 @@ public class SellerController {
     }
 
     @GetMapping("/{sellerId}")
-    public ResponseEntity<ResponseDto> getSellerInfo(@PathVariable String sellerId) {
+    public ResponseEntity<ResponseDto> getSellerInfo(@AuthenticationPrincipal SellerPrincipal sellerPrincipal, @PathVariable String sellerId) {
+        if (!sellerId.equals(sellerPrincipal.getId())) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         SellerDto.SellerInfoDto sellerInfoDto;
 
         try {

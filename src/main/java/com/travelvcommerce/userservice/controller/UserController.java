@@ -7,6 +7,8 @@ import com.travelvcommerce.userservice.entity.User;
 import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
+import com.travelvcommerce.userservice.security.SellerPrincipal;
+import com.travelvcommerce.userservice.security.UserPrincipal;
 import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.UserService;
 import com.travelvcommerce.userservice.service.kafka.KafkaUserInfoProducerService;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -79,27 +82,20 @@ public class UserController {
 
     //닉네임, 생일
     @PutMapping("/{userId}")
-    public ResponseEntity<ResponseDto> updateUser(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<ResponseDto> updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                   @PathVariable String userId,
                                                   @RequestBody UserDto.UserUpdateRequestDto userUpdateRequestDto) {
         try {
-            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!userId.equals(userPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
-
-            String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
 
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
             String userEmail = userOptional.get().getEmail();
-
-            if (!userEmail.equals(tokenUserEmail)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
-            }
-
 
             String nickname = userUpdateRequestDto.getNickname();
             if(!nickname.matches(nicknameRegex)) {
@@ -132,16 +128,12 @@ public class UserController {
 
 
     @PostMapping("/{userId}/withdrawal")
-    public ResponseEntity<ResponseDto> deleteUser(@RequestHeader("Authorization") String accessToken, @PathVariable String userId, @RequestBody UserDto.UserDeleteRequestDto userDeleteRequestDto){
+    public ResponseEntity<ResponseDto> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String userId, @RequestBody UserDto.UserDeleteRequestDto userDeleteRequestDto){
         try {
-            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-
-            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!userId.equals(userPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
-
-            String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
-            String tokenUserType = jwtTokenProvider.getUserTypeFromToken(bearerToken);
 
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
@@ -149,16 +141,12 @@ public class UserController {
             }
             String userEmail = userOptional.get().getEmail();
 
-            if (!userEmail.equals(tokenUserEmail)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
-            }
-
             if(!passwordEncoder.matches(userDeleteRequestDto.getPassword(), userOptional.get().getPassword())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid Password").build());
             }
 
             userService.deleteUser(userId);
-            refreshTokenRepository.deleteRefreshTokenByUserEmail(tokenUserType, userEmail);
+            refreshTokenRepository.deleteRefreshTokenByUserEmail("USER", userEmail);
 
             kafkaUserInfoProducerService.deleteUser(userId);
 
@@ -205,13 +193,13 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    public ResponseEntity<ResponseDto> updatePassword(@RequestHeader("Authorization") String token,
+    public ResponseEntity<ResponseDto> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                       @PathVariable String userId,
                                                       @RequestBody UserDto.UserUpdatePasswordRequestDto userUpdatePasswordRequestDto){
         try {
-            String bearerToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!userId.equals(userPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
 
 
@@ -269,26 +257,17 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ResponseDto> getUserInfo(@RequestHeader("Authorization") String accessToken, @PathVariable String userId) {
+    public ResponseEntity<ResponseDto> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String userId) {
         try {
-            String bearerToken = accessToken.startsWith("Bearer ") ? accessToken.substring(7) : accessToken;
-
-            if (!jwtTokenProvider.validateToken(bearerToken, userId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.builder().error("Invalid token").build());
+            if (!userId.equals(userPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
-
-            String tokenUserEmail = jwtTokenProvider.getEmailFromToken(bearerToken);
 
             Optional<User> userOptional = userRepository.findByUserId(userId);
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
-            String userEmail = userOptional.get().getEmail();
-
-            if (!userEmail.equals(tokenUserEmail)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
-            }
-
 
             UserDto.UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(userId);
 
