@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.dto.ResponseDto;
 import com.travelvcommerce.statisticsservice.service.StatisticsRankService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/statistics-service")
 public class StatisticsRankController {
@@ -20,7 +22,12 @@ public class StatisticsRankController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/rank/videos/views/{sellerId}")
-    public ResponseEntity<ResponseDto> getViewRank(@PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getViewRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
+        }
+
         RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto;
 
         try {
@@ -35,7 +42,12 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/tags/views/{sellerId}")
-    public ResponseEntity<ResponseDto> getTagViewRank(@PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getTagViewRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
+        }
+
         RankResponseDto.TagViewRankResponseDto tagRankResponseDto;
 
         try {
@@ -50,7 +62,12 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/videos/likes/{sellerId}")
-    public ResponseEntity<ResponseDto> getLikeRank(@PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getLikeRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
+        }
+
         RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto;
 
         try {
@@ -65,7 +82,12 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/videos/adClicks/{sellerId}")
-    public ResponseEntity<ResponseDto> getAdClickRank(@PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getAdClickRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
+        }
+
         RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto;
 
         try {
