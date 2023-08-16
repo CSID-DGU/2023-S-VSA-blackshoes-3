@@ -23,9 +23,15 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comments/{sellerId}/{videoId}")
-    public ResponseEntity<ResponseDto> createComment(@PathVariable(name = "sellerId") String sellerId,
+    public ResponseEntity<ResponseDto> createComment(@RequestHeader("Authorization") String id,
+                                                     @PathVariable(name = "sellerId") String sellerId,
                                                      @PathVariable(name = "videoId") String videoId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        if (!id.equals(commentRequestDto.getUserId())) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         String commentId = UUID.randomUUID().toString();
         String userId = commentRequestDto.getUserId();
         String nickname = commentRequestDto.getNickname();
@@ -48,9 +54,15 @@ public class CommentController {
     }
 
     @PutMapping("/comments/{sellerId}/{videoId}/{commentId}")
-    public ResponseEntity<ResponseDto> updateComment(@PathVariable(name = "videoId") String videoId,
+    public ResponseEntity<ResponseDto> updateComment(@RequestHeader("Authorization") String id,
+                                                     @PathVariable(name = "videoId") String videoId,
                                                      @PathVariable(name = "commentId") String commentId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        if (!id.equals(commentRequestDto.getUserId())) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         String userId = commentRequestDto.getUserId();
         String content = commentRequestDto.getContent();
 
@@ -74,9 +86,15 @@ public class CommentController {
     }
 
     @PostMapping("/comments/{sellerId}/{videoId}/{commentId}/delete")
-    public ResponseEntity<ResponseDto> userDeleteComment(@PathVariable(name = "videoId") String videoId,
-                                                     @PathVariable(name = "commentId") String commentId,
-                                                     @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+    public ResponseEntity<ResponseDto> userDeleteComment(@RequestHeader("Authorization") String id,
+                                                         @PathVariable(name = "videoId") String videoId,
+                                                         @PathVariable(name = "commentId") String commentId,
+                                                         @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
+        if (!id.equals(commentRequestDto.getUserId())) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         String userId = commentRequestDto.getUserId();
 
         try {
@@ -96,9 +114,15 @@ public class CommentController {
     }
 
     @DeleteMapping("/comments/{sellerId}/{videoId}/{commentId}")
-    public ResponseEntity<ResponseDto> sellerDeleteComment(@PathVariable(name = "sellerId") String sellerId,
-                                                     @PathVariable(name = "videoId") String videoId,
-                                                     @PathVariable(name = "commentId") String commentId) {
+    public ResponseEntity<ResponseDto> sellerDeleteComment(@RequestHeader("Authorization") String id,
+                                                           @PathVariable(name = "sellerId") String sellerId,
+                                                           @PathVariable(name = "videoId") String videoId,
+                                                           @PathVariable(name = "commentId") String commentId) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             commentService.sellerDeleteComment(commentId, videoId, sellerId);
         } catch (IllegalArgumentException e) {
@@ -116,10 +140,16 @@ public class CommentController {
     }
 
     @GetMapping("/comments/{sellerId}/{videoId}")
-    public ResponseEntity<ResponseDto> sellerVideoGetComments(@PathVariable(name = "sellerId") String sellerId,
+    public ResponseEntity<ResponseDto> sellerVideoGetComments(@RequestHeader("Authorization") String id,
+                                                              @PathVariable(name = "sellerId") String sellerId,
                                                               @PathVariable(name = "videoId") String videoId,
                                                               @RequestParam(name = "page") int page,
                                                               @RequestParam(name = "size") int size) {
+        if (!id.equals(sellerId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
         try {
             commentResponseDtoPage = commentService.sellerVideoGetComments(videoId, sellerId, page, size);
@@ -141,9 +171,15 @@ public class CommentController {
     }
 
     @GetMapping("/comments/{userId}")
-    public ResponseEntity<ResponseDto> userGetComments(@PathVariable(name = "userId") String userId,
+    public ResponseEntity<ResponseDto> userGetComments(@RequestHeader("Authorization") String id,
+                                                       @PathVariable(name = "userId") String userId,
                                                        @RequestParam(name = "page") int page,
                                                        @RequestParam(name = "size") int size) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
         try {
             commentResponseDtoPage = commentService.userGetComments(userId, page, size);
