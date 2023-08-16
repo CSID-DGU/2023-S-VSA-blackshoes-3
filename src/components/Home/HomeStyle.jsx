@@ -210,7 +210,7 @@ export const ModalSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${(props) => props.theme.primaryColor};
+  gap: 25px;
 `;
 
 export const ModalInputSection = styled.section`
@@ -220,4 +220,16 @@ export const ModalInputSection = styled.section`
   justify-content: space-between;
   align-items: center;
   border: ${(props) => `1px solid ${props.theme.secondBlack}`};
+`;
+
+export const ModalInput = styled.input`
+  width: 80%;
+  height: 100%;
+  border: none;
+  border-radius: 16px;
+  background-color: ${(props) => props.theme.lightGray};
+  padding: 0 20px;
+  &:focus {
+    outline: none;
+  }
 `;

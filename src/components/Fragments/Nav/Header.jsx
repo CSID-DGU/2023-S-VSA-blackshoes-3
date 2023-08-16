@@ -47,9 +47,6 @@ const Header = () => {
     }
   };
 
-  // eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3bnN0ajcwMUBuYXZlci5jb20iLCJ1c2VyVHlwZSI6IlJPTEVfU0VMTEVSIiwiSWQiOiI2Yjg0ODRjMS01YzJlLTRjM2EtYTIxYy01NGViOWE3NjgxYjUiLCJpYXQiOjE2OTIyMTg4MjMsImV4cCI6MTY5MjIxOTEyMywiaXNzIjoidHJhdmVsdmNvbW1lcmNlIn0.mxH1AE6XbzkLskZhXDpWVe2PHxMDtvYoA7hFH0MXRdJgBbRcO5iRIdNMSqrUy5TyNf-cuh42RvPeKPaIAMLChA
-  // eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3bnN0ajcwMUBuYXZlci5jb20iLCJ1c2VyVHlwZSI6IlJPTEVfU0VMTEVSIiwiSWQiOiI2Yjg0ODRjMS01YzJlLTRjM2EtYTIxYy01NGViOWE3NjgxYjUiLCJpYXQiOjE2OTIyMTk2NDQsImV4cCI6MTY5MjIxOTk0NCwiaXNzIjoidHJhdmVsdmNvbW1lcmNlIn0.oI2TcCZD4EkJuTPtPL_-Gwnzm7psaKDBSPr99ou0AAn4r_elNgqQ-htdmcRcqq6lZBRb1JMzZSZ86YeeuWcKpA
-
   // ComponentDidMount-----------------------------------------
   const fetchData = async () => {
     if (refreshToken) {

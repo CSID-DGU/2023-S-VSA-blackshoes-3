@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import * as H from "../../Home/HomeStyle";
+import * as S from "../../Sign/SignStyle";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
 import Modal from "react-modal";
@@ -14,8 +15,8 @@ const customStyles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    maxWidth: "1000px",
-    width: "80%",
+    width: "30%",
+    minWidth: "350px",
   },
 };
 
@@ -64,6 +65,10 @@ const Nav = () => {
         </H.HoverButton0>
         <Modal isOpen={modal} onRequestClose={closeModal} style={customStyles}>
           <H.ModalSection>
+            <H.ModalInputSection>
+              <H.ModalInput type="text" placeholder="수정할 유저 이름을 작성하세요" />
+              <S.ColorButton width="15%">수정</S.ColorButton>
+            </H.ModalInputSection>
             <H.ModalInputSection></H.ModalInputSection>
             <H.ModalInputSection></H.ModalInputSection>
           </H.ModalSection>
