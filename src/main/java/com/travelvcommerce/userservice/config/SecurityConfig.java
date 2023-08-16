@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //헤더에 Authorization 없는경우 or 잘못된 토큰 받은 경우
                 .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/user-service/authentication-failure"))
+                .authenticationEntryPoint((request, response, authException) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
                 .and()
                 .oauth2Login()
                 .redirectionEndpoint()
