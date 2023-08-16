@@ -35,6 +35,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(tokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .setIssuer("travelvcommerce")
                 .compact();
 
         String refreshToken = Jwts.builder()
@@ -44,6 +45,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .setIssuer("travelvcommerce")
                 .compact();
 
         refreshTokenRepository.save(userType, email, refreshToken, jwtRefreshTokenExpiry);

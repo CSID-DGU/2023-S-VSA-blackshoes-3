@@ -44,7 +44,6 @@ public class UserServiceImpl implements UserService {
                 .birthdate(registerRequestDto.getBirthdate())
                 .role(Role.valueOf("USER"))
                 .provider(registerRequestDto.getProvider())
-                .providerId(registerRequestDto.getProviderId())
                 .password(passwordEncoder.encode(registerRequestDto.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
                 .birthdate(user.getBirthdate())
                 .role(user.getRole())
                 .provider(user.getProvider())
-                .providerId(user.getProviderId())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
@@ -82,7 +80,6 @@ public class UserServiceImpl implements UserService {
                 .birthdate(existingUser.getBirthdate())
                 .role(existingUser.getRole())
                 .provider(existingUser.getProvider())
-                .providerId(existingUser.getProviderId())
                 .createdAt(existingUser.getCreatedAt())
                 .updatedAt(existingUser.getUpdatedAt())
                 .build();
