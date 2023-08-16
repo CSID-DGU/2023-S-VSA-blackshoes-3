@@ -36,8 +36,14 @@ public class VideoCreateController {
     private TemporaryVideoService temporaryVideoService;
 
     @PostMapping("/videos/{userId}")
-    public ResponseEntity<ResponseDto> uploadVideo(@PathVariable String userId,
+    public ResponseEntity<ResponseDto> uploadVideo(@RequestHeader("Authorization") String id,
+                                                   @PathVariable String userId,
                                                    @RequestPart(value = "video") MultipartFile video) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         String videoId = UUID.randomUUID().toString();
         String uploadedFilePath;
         String encodedFilePath;
@@ -49,12 +55,10 @@ public class VideoCreateController {
             encodedFilePath = videoCreateService.encodeVideo(userId, videoId, uploadedFilePath);
             videoUrls = awsS3Service.uploadEncodedVideo(userId, videoId, encodedFilePath);
             temporaryVideoResponseDto = temporaryVideoService.createTemporaryVideo(userId, videoId, videoUrls);
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             temporaryVideoService.deleteTemporaryVideo(userId, videoId);
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
@@ -68,11 +72,17 @@ public class VideoCreateController {
     }
 
     @PostMapping("/videos/{userId}/{videoId}")
-    public ResponseEntity<ResponseDto> createVideo(@PathVariable String userId,
+    public ResponseEntity<ResponseDto> createVideo(@RequestHeader("Authorization") String id,
+                                                   @PathVariable String userId,
                                                    @PathVariable String videoId,
                                                    @RequestPart(value = "thumbnail") MultipartFile thumbnail,
                                                    @RequestPart(value = "requestUpload")
                                                    VideoDto.VideoUploadRequestDto videoUploadRequestDto) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         S3Video videoUrls;
         S3Thumbnail thumbnailUrls;
         DenormalizedVideoDto denormalizedVideoDto;
@@ -81,16 +91,13 @@ public class VideoCreateController {
             videoUrls = temporaryVideoService.findTemporaryVideoUrls(userId, videoId);
             thumbnailUrls = awsS3Service.uploadThumbnail(userId, videoId, thumbnail);
             denormalizedVideoDto = videoCreateService.createVideo(userId, videoId, videoUploadRequestDto, videoUrls, thumbnailUrls);
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }

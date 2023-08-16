@@ -7,10 +7,7 @@ import com.travelvcommerce.uploadservice.service.VideoDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
@@ -25,8 +22,13 @@ public class VideoDeleteController {
     KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @DeleteMapping("/videos/{userId}/{videoId}")
-    public ResponseEntity<ResponseDto> deleteVideo(@PathVariable(name = "userId") String userId,
+    public ResponseEntity<ResponseDto> deleteVideo(@RequestHeader("Authorization") String id,
+                                                   @PathVariable(name = "userId") String userId,
                                                    @PathVariable(name = "videoId") String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
 
         String s3key;
 

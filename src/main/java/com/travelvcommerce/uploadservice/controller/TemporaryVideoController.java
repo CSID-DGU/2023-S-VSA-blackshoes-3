@@ -21,7 +21,13 @@ public class TemporaryVideoController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/videos/temporary/{userId}")
-    public ResponseEntity<ResponseDto> checkTemporaryVideo(@PathVariable String userId) {
+    public ResponseEntity<ResponseDto> checkTemporaryVideo(@RequestHeader("Authorization") String id,
+                                                           @PathVariable String userId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
         try {
@@ -42,7 +48,14 @@ public class TemporaryVideoController {
     }
 
     @PutMapping("/videos/temporary/{userId}/{videoId}")
-    public ResponseEntity<ResponseDto> extendTemporaryVideoExpiredAt(@PathVariable String userId, @PathVariable String videoId) {
+    public ResponseEntity<ResponseDto> extendTemporaryVideoExpiredAt(@RequestHeader("Authorization") String id,
+                                                                     @PathVariable String userId,
+                                                                     @PathVariable String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto;
 
         try {
@@ -62,7 +75,14 @@ public class TemporaryVideoController {
     }
 
     @DeleteMapping("/videos/temporary/{userId}/{videoId}")
-    public ResponseEntity<ResponseDto> deleteTemporaryVideo(@PathVariable String userId, @PathVariable String videoId) {
+    public ResponseEntity<ResponseDto> deleteTemporaryVideo(@RequestHeader("Authorization") String id,
+                                                            @PathVariable String userId,
+                                                            @PathVariable String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             temporaryVideoService.deleteTemporaryVideo(userId, videoId);
         }
