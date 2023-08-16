@@ -8,7 +8,6 @@ import com.travelvcommerce.userservice.repository.RefreshTokenRepository;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import com.travelvcommerce.userservice.service.EmailService;
-import com.travelvcommerce.userservice.service.social.SocialLoginService;
 import com.travelvcommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +34,8 @@ public class UserServiceController {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
-    private final SocialLoginService naverLoginService;
-    private final SocialLoginService kakaoLoginService;
+//    private final SocialLoginService naverLoginService;
+//    private final SocialLoginService kakaoLoginService;
     @PostMapping("/refresh")
     public ResponseEntity<ResponseDto> refreshToken(@RequestBody TokenDto.RefreshTokenDto refreshTokenDto) {
         try {
@@ -148,56 +147,5 @@ public class UserServiceController {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
-    }
-
-    @GetMapping("/social-login-success")
-    public ResponseEntity<ResponseDto> handleLoginSuccess(@RequestParam String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user == null) {
-            // 사용자를 찾지 못했다면 에러를 던집니다.
-            throw new RuntimeException("User not found");
-        }
-
-        // 패스워드가 있다면 토큰을 생성하고 발급합니다.
-        Map<String, String> loginResponse = userService.socialLogin(user.getEmail());
-
-        ResponseDto responseDto = ResponseDto.builder()
-                .payload(loginResponse)
-                .build();
-
-        return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + loginResponse.get("token"))
-                .body(responseDto);
-    }
-
-
-    @GetMapping("/login/oauth2/code/naver")
-    public String naverLogin(@RequestParam(value = "code") String code) throws JSONException {
-
-        String accessToken = naverLoginService.getAccessToken(code);
-        Map<String, String> userInfo = naverLoginService.getSocialUserInfo(accessToken);
-
-        return "redirect:/social-login-success?email=" + userInfo.get("email");
-    }
-
-    @GetMapping("/login/oauth2/code/kakao")
-    public String kakaoLogin(@RequestParam(value = "code") String code) throws JSONException {
-
-        String accessToken = kakaoLoginService.getAccessToken(code);
-        Map<String, String> userInfo = kakaoLoginService.getSocialUserInfo(accessToken);
-
-        return "redirect:/social-login-success?email=" + userInfo.get("email");
-    }
-
-    @CrossOrigin(origins = "*")
-    @GetMapping("/authentication-failure")
-    public ResponseEntity<ResponseDto> handleAuthenticationFailure(AuthenticationException e) {
-        ResponseDto responseDto = ResponseDto.builder()
-                .error(e.getMessage())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
     }
 }

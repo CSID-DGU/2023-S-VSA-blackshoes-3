@@ -1,7 +1,10 @@
 package com.travelvcommerce.userservice.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,14 +25,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
-
     @Autowired
-    @Qualifier("customUserDetailsService")
-    private UserDetailsService customUserDetailsService;
+    private UserDetailsService userDetailsService;
 
-    @Autowired
-    @Qualifier("sellerDetailsService")
-    private UserDetailsService sellerDetailsService;
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -38,23 +38,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (token != null && tokenProvider.validateToken(token)) {
             String email = tokenProvider.getEmailFromToken(token);
             String userType = tokenProvider.getUserTypeFromToken(token);  // userType을 가져옵니다.
-
-            UserDetailsService userDetailsService;
-
-            if ("ROLE_USER".equals(userType)) {
-                userDetailsService = customUserDetailsService;
-            } else if ("ROLE_SELLER".equals(userType)) {
-                userDetailsService = sellerDetailsService;
-            } else {
-                throw new RuntimeException("Unknown user type: " + userType);
-            }
+            String userId = tokenProvider.getUserIdFromToken(token);  // userId를 가져옵니다.
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    AuthorityUtils.NO_AUTHORITIES
+            );
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authentication);
+            SecurityContextHolder.setContext(securityContext);
         }
 
         chain.doFilter(request, response);

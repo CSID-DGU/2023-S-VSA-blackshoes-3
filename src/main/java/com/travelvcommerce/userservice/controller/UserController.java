@@ -13,6 +13,7 @@ import com.travelvcommerce.userservice.service.EmailService;
 import com.travelvcommerce.userservice.service.UserService;
 import com.travelvcommerce.userservice.service.kafka.KafkaUserInfoProducerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user-service/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private final String passwordRegex = "^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,16}$";
@@ -95,7 +97,6 @@ public class UserController {
             if (userOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseDto.builder().error("Invalid UserId").build());
             }
-            String userEmail = userOptional.get().getEmail();
 
             String nickname = userUpdateRequestDto.getNickname();
             if(!nickname.matches(nicknameRegex)) {
@@ -121,6 +122,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
@@ -259,6 +261,10 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String userId) {
         try {
+            log.info("userPrincipal : {}", userPrincipal);
+            log.info("userId : {}", userId);
+            log.info("userPrincipal.getId() : {}", userPrincipal.getId());
+
             if (!userId.equals(userPrincipal.getId())) {
                 ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
@@ -281,6 +287,7 @@ public class UserController {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
         } catch (RuntimeException e) {
+            log.error(e.getMessage());
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }

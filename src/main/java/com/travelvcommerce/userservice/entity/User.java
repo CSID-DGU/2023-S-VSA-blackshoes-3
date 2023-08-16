@@ -40,16 +40,12 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
     @Column(name = "provider")
     private String provider;
-
-    @Column(name = "provider_id")
-    private String providerId;
 
 //    @PreUpdate
 //    public void updatedAt() {
@@ -62,7 +58,7 @@ public class User {
 //    }
 
     @Builder
-    public User(String userId, String email, String password, String nickname, LocalDate birthdate, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, String provider, String providerId) {
+    public User(String userId, String email, String password, String nickname, LocalDate birthdate, LocalDateTime createdAt, LocalDateTime updatedAt, Role role, String provider) {
         this.userId = userId;
         this.email = email;
         this.password = password;
@@ -72,7 +68,6 @@ public class User {
         this.updatedAt = updatedAt;
         this.role = role;
         this.provider = provider;
-        this.providerId = providerId;
     }
 
     public void update(String nickname) {
