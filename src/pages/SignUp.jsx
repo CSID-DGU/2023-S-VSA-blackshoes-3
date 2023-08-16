@@ -5,6 +5,7 @@ import { Wrapper } from "../components/Home/HomeStyle";
 import landingImage from "../assets/images/travel.jpg";
 import axios from "axios";
 import { useDebounce } from "../hooks/useDebounce";
+import { BASE_URL } from "../api/axios";
 
 const SignUp = () => {
   // Constant--------------------------------------------------
@@ -152,7 +153,7 @@ const SignUp = () => {
         formData.append("joinRequest", blob);
         formData.append("sellerLogo", sellerLogo);
         await axios
-          .post(`http://13.125.69.94:8001/user-service/sellers/join`, formData, {
+          .post(`${BASE_URL}user-service/sellers/join`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },

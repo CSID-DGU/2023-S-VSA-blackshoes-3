@@ -6,6 +6,7 @@ import logo from "../assets/images/logo.svg";
 import landingImage from "../assets/images/travel.jpg";
 import { getCookie, setCookie } from "../Cookie";
 import axios from "axios";
+import { BASE_URL } from "../api/axios";
 
 const SELLOR_1_ID = "21d40e1a-86fc-480e-a4bf-b084f8ac6c55";
 const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
@@ -61,20 +62,25 @@ const SignIn = () => {
     } else if (email && password) {
       setIsEmail(true);
       await axios
-        .post(`http://13.125.69.94:8001/user-service/sellers/login`, user)
+        .post(`${BASE_URL}user-service/sellers/login`, user)
         .then((res) => {
           localStorage.setItem("accessToken", res.data.payload.accessToken);
           setCookie("refreshToken", res.data.payload.refreshToken);
-          navigate(`/home/${res.data.payload.sellerId}`, { replace: true });
+          return res.data.payload.sellerId;
+        })
+        .then((sellerId) => {
+          navigate(`/home/${sellerId}`, { replace: true });
         })
         .catch((err) => {
           console.log(err);
-          if (err.response.data.error === `Seller not found with email: ${email}`) {
-            alert(err.response.data.error);
+          if (err.response?.data.error === `Seller not found with email: ${email}`) {
+            alert(err.response?.data.error);
             return;
-          } else if (err.response.data.error === "Invalid password.") {
-            alert(err.response.data.error);
+          } else if (err.response?.data.error === "Invalid password.") {
+            alert(err.response?.data.error);
             return;
+          } else {
+            alert(err.code);
           }
         });
     }
@@ -97,6 +103,7 @@ const SignIn = () => {
             width="450px"
             onChange={onChangeSignIn}
             required
+            autoComplete="email"
           />
           <S.FormHelperEmails isemail={isEmail ? "true" : "false"}>
             {emailMessage}
@@ -108,6 +115,7 @@ const SignIn = () => {
             width="450px"
             onChange={onChangeSignIn}
             required
+            autoComplete="current-password"
           />
           <S.FormHelperPWs ispassword={isPassword ? "true" : "false"}>
             {passwordMessage}

@@ -202,3 +202,22 @@ export const Body = styled.div`
     max-width: 100%;
   }
 `;
+
+// Modal-------------------------------------------------------------
+export const ModalSection = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: ${(props) => props.theme.primaryColor};
+`;
+
+export const ModalInputSection = styled.section`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: ${(props) => `1px solid ${props.theme.secondBlack}`};
+`;
