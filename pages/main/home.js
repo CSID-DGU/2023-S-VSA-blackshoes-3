@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useRef, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   ScrollView,
   TouchableOpacity,
@@ -9,22 +10,42 @@ import {
   ImageBackground,
   Image,
 } from 'react-native';
-import Toolbar from '../components/toolBar';
-import {regionList} from '../constant';
-import {themeList} from '../constant';
+import {regionList} from '../../constant/themes';
+import {themeList} from '../../constant/themes';
+import {useDispatch, useSelector} from 'react-redux';
+import {setTag} from '../../storage/actions';
+import axiosInstance from '../../utils/axiosInstance';
+import NavigationBar from '../../components/tools/navigationBar';
 
 export default function Home({navigation, route}) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollPosition2, setScrollPosition2] = useState(0);
   const scrollViewRef = useRef();
   const scrollViewRef2 = useRef();
+  const userId = useSelector(state => state.USER);
+  const dispatch = useDispatch();
 
-  const handleIconPress = (direction, scrollRef, setScrollPos) => {
-    let currentScrollPosition =
-      scrollRef.current?.getScrollableNode().scrollLeft || 0;
+  useEffect(() => {
+    getData();
+  }, []);
 
+  const getData = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `personalized-service/${userId}/tags/subscribed`,
+      );
+
+      console.log('hi tags : ', response.data.payload.subscribedTagList);
+
+      dispatch(setTag(response.data.payload.subscribedTagList));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleIconPress = (direction, scrollRef, setScrollPos, currentPos) => {
     if (direction === 'left') {
-      let newScrollPosition = currentScrollPosition - 200;
+      let newScrollPosition = currentPos - 250;
       scrollRef.current.scrollTo({
         x: newScrollPosition,
         y: 0,
@@ -32,7 +53,7 @@ export default function Home({navigation, route}) {
       });
       setScrollPos(newScrollPosition);
     } else if (direction === 'right') {
-      let newScrollPosition = currentScrollPosition + 200;
+      let newScrollPosition = currentPos + 250;
       scrollRef.current.scrollTo({
         x: newScrollPosition,
         y: 0,
@@ -45,7 +66,6 @@ export default function Home({navigation, route}) {
   const handleScroll = (event, setScrollPos) => {
     setScrollPos(event.nativeEvent.contentOffset.x);
   };
-
   const Item = ({item}) => (
     <View style={styles.item}>
       <ImageBackground
@@ -71,9 +91,14 @@ export default function Home({navigation, route}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() =>
-              handleIconPress('left', scrollViewRef, setScrollPosition)
+              handleIconPress(
+                'left',
+                scrollViewRef,
+                setScrollPosition,
+                scrollPosition,
+              )
             }>
-            <Image source={require('../assets/themeImg/arrow-left.png')} />
+            <Image source={require('../../assets/themeImg/arrow-left.png')} />
           </TouchableOpacity>
           <ScrollView
             horizontal
@@ -90,9 +115,14 @@ export default function Home({navigation, route}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() =>
-              handleIconPress('right', scrollViewRef, setScrollPosition)
+              handleIconPress(
+                'right',
+                scrollViewRef,
+                setScrollPosition,
+                scrollPosition,
+              )
             }>
-            <Image source={require('../assets/themeImg/arrow-right.png')} />
+            <Image source={require('../../assets/themeImg/arrow-right.png')} />
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>
@@ -103,9 +133,14 @@ export default function Home({navigation, route}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() =>
-              handleIconPress('left', scrollViewRef2, setScrollPosition2)
+              handleIconPress(
+                'left',
+                scrollViewRef2,
+                setScrollPosition2,
+                scrollPosition2,
+              )
             }>
-            <Image source={require('../assets/themeImg/arrow-left.png')} />
+            <Image source={require('../../assets/themeImg/arrow-left.png')} />
           </TouchableOpacity>
           <ScrollView
             horizontal
@@ -122,16 +157,21 @@ export default function Home({navigation, route}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() =>
-              handleIconPress('right', scrollViewRef2, setScrollPosition2)
+              handleIconPress(
+                'right',
+                scrollViewRef2,
+                setScrollPosition2,
+                scrollPosition2,
+              )
             }>
-            <Image source={require('../assets/themeImg/arrow-right.png')} />
+            <Image source={require('../../assets/themeImg/arrow-right.png')} />
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.title}>인기 상품</Text>
         </View>
       </View>
-      <Toolbar route={route} />
+      <NavigationBar route={route} />
     </View>
   );
 }

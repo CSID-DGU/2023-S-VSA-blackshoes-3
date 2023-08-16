@@ -1,9 +1,11 @@
 import React from 'react';
 import {Image, View, TouchableOpacity, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useRoute, useNavigation} from '@react-navigation/native';
 
-export default function Toolbar({route}) {
+export default function NavigationBar() {
   const navigation = useNavigation();
+  const route = useRoute();
+
   return (
     <View style={styles.style_Toolbar}>
       <TouchableOpacity onPress={() => navigation.navigate('Home')}>
@@ -11,18 +13,18 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('Home')
-              ? require('../assets/toolbarImg/home_s.png')
-              : require('../assets/toolbarImg/home_d.png')
+              ? require('../../assets/toolbarImg/home_s.png')
+              : require('../../assets/toolbarImg/home_d.png')
           }
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Video')}>
+      <TouchableOpacity onPress={() => navigation.navigate('ShowVideo')}>
         <Image
           style={styles.img_style}
           source={
-            route.name.includes('Video')
-              ? require('../assets/toolbarImg/video_s.png')
-              : require('../assets/toolbarImg/video_d.png')
+            route.name.includes('ShowVideo')
+              ? require('../../assets/toolbarImg/video_s.png')
+              : require('../../assets/toolbarImg/video_d.png')
           }
         />
       </TouchableOpacity>
@@ -31,8 +33,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('My')
-              ? require('../assets/toolbarImg/my_s.png')
-              : require('../assets/toolbarImg/my_d.png')
+              ? require('../../assets/toolbarImg/my_s.png')
+              : require('../../assets/toolbarImg/my_d.png')
           }
         />
       </TouchableOpacity>
@@ -41,8 +43,8 @@ export default function Toolbar({route}) {
           style={styles.img_style}
           source={
             route.name.includes('Log')
-              ? require('../assets/toolbarImg/log_s.png')
-              : require('../assets/toolbarImg/log_d.png')
+              ? require('../../assets/toolbarImg/log_s.png')
+              : require('../../assets/toolbarImg/log_d.png')
           }
         />
       </TouchableOpacity>

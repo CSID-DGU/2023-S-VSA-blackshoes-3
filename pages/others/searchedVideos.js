@@ -1,13 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, StyleSheet, ScrollView, Text} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {VideoThumbnail} from '../components/videothumbnail';
-import {SERVER_IP} from '../config';
-import Toolbar from '../components/toolBar';
-import axios from 'axios';
-export default function Video({navigation, route}) {
+import Toolbar from '../../components/tools/navigationBar';
+import {VideoThumbnail} from '../../components/contents/thumbnailBox';
+import axiosInstance from '../../utils/axiosInstance';
+export default function SearchedVideos({route, navigation}) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [maxPage, setMaxPage] = useState(10);
@@ -62,8 +62,8 @@ export default function Video({navigation, route}) {
 
   const getData = async () => {
     try {
-      const response = await axios.get(
-        `${SERVER_IP}:8011/content-slave-service/videos/sort?s=${value}&page=${page}&size=10`,
+      const response = await axiosInstance.get(
+        `content-slave-service/videos/search?type=videoName&q=${route.params.searchText}&s=${value}&page=${page}&size=10`,
       );
       return [response.data.payload.videos, response.data.payload.totalPages];
     } catch (error) {
@@ -86,7 +86,7 @@ export default function Video({navigation, route}) {
       }
     }
   };
-
+  console.log(videoData);
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
@@ -100,19 +100,37 @@ export default function Video({navigation, route}) {
             setItems={setItems}
             style={styles.dropDownButton}
             containerStyle={{width: 107}}
+            dropDownContainerStyle={{
+              marginTop: 11,
+              width: 105,
+              borderWidth: 0,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
           />
         </View>
 
         <ScrollView
           ref={scrollViewRef}
-          style={styles.videoContainer}
+          style={styles.scrollContainer}
           contentContainerStyle={{alignItems: 'center'}}
           onScroll={handleScroll}
           scrollEventThrottle={400}>
           {videoData.length > 0 &&
             videoData.map((e, i) => {
               return (
-                <VideoThumbnail key={i} video={e} navigation={navigation} />
+                <TouchableOpacity
+                  style={styles.videoThumbnailContainer}
+                  key={i}
+                  onPress={() => navigation.navigate('Play', {video: e})}>
+                  <VideoThumbnail key={i} video={e} navigation={navigation} />
+                </TouchableOpacity>
               );
             })}
         </ScrollView>
@@ -134,17 +152,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  videoContainer: {
+  scrollContainer: {
     marginTop: 10,
     width: '100%',
   },
 
+  videoThumbnailContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    paddingTop: 17,
+    paddingBottom: 10,
+    marginVertical: 7,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '90%',
+    borderRadius: 10,
+  },
+
   dropDownButton: {
     marginTop: 10,
-    marginLeft: 18,
     minHeight: 40,
     width: 105,
-    borderColor: 'gray',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -153,9 +187,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 0,
   },
   dropdownpickerContainer: {
     justifyContent: 'center',
     zIndex: 2,
+    marginLeft: 20,
+
+    borderWidth: 0,
   },
 });

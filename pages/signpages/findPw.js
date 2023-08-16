@@ -8,12 +8,18 @@ import {
   Text,
   Modal,
   FlatList,
+  Alert,
+  ActivityIndicator as Spinner,
 } from 'react-native';
+import axios from 'axios';
+import {SERVER_IP} from '../../config';
+
 export default function FindPw({navigation}) {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [emailConfirm, setEmailConfirm] = useState('');
   const [passwordConfirmInput, setPasswordConfirmInput] = useState('');
+  const [confirmIndex, setConfirmIndex] = useState(0);
 
   const [value, setValue] = useState('naver.com');
   const [modal, setModal] = useState(false);
@@ -22,10 +28,6 @@ export default function FindPw({navigation}) {
     {label: 'naver.com', value: 'naver.com'},
     {label: 'daum.net', value: 'daum.net'},
     {label: 'gmail.com', value: 'gmail.com'},
-    {label: 'nate.com', value: 'nate.com'},
-    {label: 'hanmail.net', value: 'hanmail.net'},
-    {label: 'hotmail.com', value: 'hotmail.com'},
-    {label: 'yahoo.com', value: 'yahoo.com'},
   ]);
 
   const openModal = () => {
@@ -37,6 +39,144 @@ export default function FindPw({navigation}) {
   const handleSelect = e => {
     setValue(e);
     closeModal();
+  };
+  const confirmEmail = async () => {
+    const fullEmail = emailInput + '@' + value;
+    console.log(fullEmail);
+
+    if (confirmIndex === 0) {
+      if (!emailInput) {
+        Alert.alert(
+          '이메일 입력',
+          '이메일을 입력해주세요.',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+        return;
+      } else {
+        setConfirmIndex(1);
+        try {
+          const response = await axios.post(
+            `${SERVER_IP}user-service/mail/send-verification-code`,
+            {
+              email: fullEmail,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          console.log('Response:', response.data);
+        } catch (error) {
+          if (error.response) {
+            console.error('Error:', error.response.data.error);
+          } else {
+            console.error('Error:', error.message);
+          }
+        }
+
+        Alert.alert(
+          '이메일 인증',
+          '인증번호가 발송되었습니다.',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+        setConfirmIndex(2);
+
+        return;
+      }
+    } else {
+      try {
+        console.log('emailConfirm', emailConfirm);
+        console.log('fullEmail', fullEmail);
+        const response = await axios.post(
+          `${SERVER_IP}user-service/mail/verify-code`,
+          {
+            email: fullEmail,
+            verificationCode: emailConfirm,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Response:', response.data);
+      } catch (error) {
+        if (error.response) {
+          console.error('Error:', error.response.data.error);
+        } else {
+          console.error('Error:', error.message);
+        }
+      }
+      setConfirmIndex(3);
+    }
+  };
+
+  const handleSignUp = () => {
+    if (confirmIndex !== 3) {
+      Alert.alert(
+        '이메일 인증',
+        '이메일 인증을 완료해주세요.',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+      return;
+    }
+
+    if (
+      !emailInput ||
+      !passwordInput ||
+      !passwordConfirmInput ||
+      !emailConfirm
+    ) {
+      Alert.alert(
+        '회원가입 실패',
+        '모든 항목을 입력해주세요.',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+      return;
+    } else if (passwordInput !== passwordConfirmInput) {
+      Alert.alert(
+        '회원가입 실패',
+        '비밀번호가 일치하지 않습니다.',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+      return;
+    } else if (passwordInput.length < 8) {
+      Alert.alert(
+        '회원가입 실패',
+        '비밀번호는 8자리 이상이어야 합니다.',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+      return;
+    } else {
+      submitData();
+    }
+  };
+
+  const submitData = async () => {
+    const fullEmail = emailInput + '@' + value;
+    console.log(fullEmail);
+    console.log(passwordInput);
+    try {
+      const response = await axios.put(
+        `${SERVER_IP}user-service/users/password`,
+        {
+          email: fullEmail,
+          password: passwordInput,
+        },
+      );
+      console.log('Response:', response.data);
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -75,8 +215,27 @@ export default function FindPw({navigation}) {
             onChangeText={text => setEmailConfirm(text)}
             value={emailConfirm}
           />
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>인증번호 발송</Text>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  confirmIndex === 1 || confirmIndex === 3
+                    ? '#E6E6E6'
+                    : '#1DAE86',
+              },
+            ]}
+            disabled={confirmIndex === 1}
+            onPress={confirmEmail}>
+            {confirmIndex === 0 ? (
+              <Text style={styles.buttonText}>인증번호 발송</Text>
+            ) : confirmIndex === 1 ? (
+              <Spinner size="small" color="white" />
+            ) : confirmIndex === 2 ? (
+              <Text style={styles.buttonText}>확인</Text>
+            ) : (
+              <Text style={styles.buttonText}>인증완료</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -100,7 +259,7 @@ export default function FindPw({navigation}) {
           value={passwordConfirmInput}
         />
       </View>
-      <TouchableOpacity style={styles.signUp}>
+      <TouchableOpacity style={styles.signUp} onPress={handleSignUp}>
         <Text style={styles.signUpText}>비밀번호 변경</Text>
       </TouchableOpacity>
       <Modal
@@ -291,5 +450,9 @@ const styles = StyleSheet.create({
   signUpText: {
     color: 'white',
     fontSize: 16,
+  },
+  birthText: {
+    fontSize: 16,
+    color: 'black',
   },
 });

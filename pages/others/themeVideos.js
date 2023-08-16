@@ -1,11 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
-import axios from 'axios';
-import Toolbar from '../components/toolBar';
-import {SERVER_IP} from '../config';
-import {VideoThumbnail} from '../components/videothumbnail';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import Toolbar from '../../components/tools/navigationBar';
+import axiosInstance from '../../utils/axiosInstance';
+import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 export default function ThemeVideo({route, navigation}) {
   // console.log(route.params.item.tagId);
   const [videoData, setVideoData] = useState([]);
@@ -15,8 +20,8 @@ export default function ThemeVideo({route, navigation}) {
   }, []);
 
   const getData = async () => {
-    const response = await axios.get(
-      `${SERVER_IP}:8011/content-slave-service/videos/search?type=tagName&q=${route.params.item.tagName}&s=recent&page=0&size=10`,
+    const response = await axiosInstance.get(
+      `content-slave-service/videos/search?type=tagName&q=${route.params.item.tagName}&s=recent&page=0&size=10`,
     );
     setVideoData(response.data.payload.videos);
     // console.log(route.params.item.tagName);
@@ -30,12 +35,17 @@ export default function ThemeVideo({route, navigation}) {
         </View>
 
         <ScrollView
-          style={styles.videoContainer}
+          style={styles.scrollContainer}
           contentContainerStyle={{alignItems: 'center'}}>
           {videoData.length > 0 &&
             videoData.map((e, i) => {
               return (
-                <VideoThumbnail key={i} video={e} navigation={navigation} />
+                <TouchableOpacity
+                  style={styles.videoThumbnailContainer}
+                  key={i}
+                  onPress={() => navigation.navigate('Play', {video: e})}>
+                  <VideoThumbnail key={i} video={e} navigation={navigation} />
+                </TouchableOpacity>
               );
             })}
         </ScrollView>
@@ -55,11 +65,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  videoContainer: {
+  scrollContainer: {
     marginTop: 15,
     width: '100%',
   },
   textContainer: {width: '100%'},
+
   title: {
     fontSize: 30,
     color: '#525252',
@@ -70,5 +81,23 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: 0, height: 1},
     textShadowRadius: 2,
     textShadowColor: 'gray',
+  },
+
+  videoThumbnailContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    paddingTop: 17,
+    paddingBottom: 10,
+    marginVertical: 7,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '90%',
+    borderRadius: 10,
   },
 });

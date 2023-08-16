@@ -16,6 +16,8 @@ import CheckBox from '@react-native-community/checkbox';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {SERVER_IP} from '../../config';
 import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import {firstEmail} from '../../storage/actions';
 
 export default function SignUp({navigation}) {
   ///user-service/users/join
@@ -26,6 +28,7 @@ export default function SignUp({navigation}) {
     {label: 'gmail.com', value: 'gmail.com'},
     {label: 'daum.com', value: 'daum.net'},
   ];
+  const dispatch = useDispatch();
 
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [emailInput, setEmailInput] = useState('');
@@ -58,11 +61,12 @@ export default function SignUp({navigation}) {
       email: fullEmail,
       password: passwordInput,
       nickname: nameInput,
+      birthdate: birthDate,
     };
 
     try {
       const response = await axios.post(
-        `${SERVER_IP}:8001/user-service/users/join`,
+        `${SERVER_IP}user-service/users/join`,
         registerData,
         {
           headers: {
@@ -71,6 +75,8 @@ export default function SignUp({navigation}) {
         },
       );
       console.log('Response:', response.data);
+      dispatch(firstEmail(emailInput));
+      navigation.navigate('Login');
     } catch (error) {
       if (error.response) {
         console.error('Error:', error.response.data.error);
@@ -134,7 +140,7 @@ export default function SignUp({navigation}) {
         setConfirmIndex(1);
         try {
           const response = await axios.post(
-            `${SERVER_IP}:8001/user-service/mail/send-verification-code`,
+            `${SERVER_IP}user-service/mail/send-verification-code`,
             {
               email: fullEmail,
             },
@@ -168,7 +174,7 @@ export default function SignUp({navigation}) {
         console.log('emailConfirm', emailConfirm);
         console.log('fullEmail', fullEmail);
         const response = await axios.post(
-          `${SERVER_IP}:8001/user-service/mail/verify-code`,
+          `${SERVER_IP}user-service/mail/verify-code`,
           {
             email: fullEmail,
             verificationCode: emailConfirm,
@@ -193,9 +199,16 @@ export default function SignUp({navigation}) {
   };
 
   const handleSignUp = () => {
-    console.log(birthDate);
+    if (confirmIndex !== 3) {
+      Alert.alert(
+        '이메일 인증',
+        '이메일 인증을 완료해주세요.',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+      return;
+    }
 
-    //인증번호 axios로 보내서 확인 받기
     if (
       !emailInput ||
       !passwordInput ||
@@ -236,7 +249,6 @@ export default function SignUp({navigation}) {
       return;
     } else {
       submitData();
-      navigation.navigate('Login');
     }
   };
 

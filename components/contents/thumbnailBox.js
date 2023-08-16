@@ -14,9 +14,10 @@ export const VideoThumbnail = ({video, navigation}) => {
   // },
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => navigation.navigate('Play', {video})}>
+    // <TouchableOpacity
+    //   style={styles.container}
+    //   onPress={() => navigation.navigate('Play', {video})}>
+    <>
       <Image style={styles.imgStyle} source={{uri: video.thumbnailUrl}} />
       <View style={styles.informationContainer}>
         <Image
@@ -37,28 +38,29 @@ export const VideoThumbnail = ({video, navigation}) => {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </>
+    // </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-    paddingTop: 17,
-    paddingBottom: 10,
-    marginVertical: 7,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
-    width: '90%',
-    borderRadius: 10,
-  },
+  // container: {
+  //   backgroundColor: 'white',
+  //   alignItems: 'center',
+  //   paddingTop: 17,
+  //   paddingBottom: 10,
+  //   marginVertical: 7,
+  //   shadowColor: '#000',
+  //   shadowOffset: {
+  //     width: 0,
+  //     height: 2,
+  //   },
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 4,
+  //   elevation: 3,
+  //   width: '90%',
+  //   borderRadius: 10,
+  // },
 
   imgStyle: {
     width: '90%',

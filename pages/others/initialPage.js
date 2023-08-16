@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {StyleSheet, Animated, View, Text} from 'react-native';
-
+import {StyleSheet, Animated, View, TouchableOpacity, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import {setUserId, setAccessToken, setRefreshToken} from '../storage/actions';
+import {setAll, setTag} from '../../storage/actions';
+import axiosInstance from '../../utils/axiosInstance';
 
 export default function Init({navigation}) {
   const dispatch = useDispatch();
@@ -13,12 +13,39 @@ export default function Init({navigation}) {
   );
 
   const loadUserData = async () => {
-    const userId = await AsyncStorage.getItem('user');
-    if (userId) {
-      dispatch(setUserId(userId));
-      dispatch(setAccessToken(await AsyncStorage.getItem('accessToken')));
-      dispatch(setRefreshToken(await AsyncStorage.getItem('refreshToken')));
-      navigation.navigate('Home');
+    const email = await AsyncStorage.getItem('email');
+    if (email) {
+      const password = await AsyncStorage.getItem('pass');
+      console.log(email);
+      console.log(password);
+      const registerData = {
+        email: email,
+        password: password,
+      };
+      try {
+        const userResponse = await axiosInstance.post(
+          'user-service/users/login',
+          registerData,
+        );
+
+        console.log(userResponse);
+        dispatch(setAll(userResponse.data.payload));
+        // try {
+        //   console.log('hi', userResponse.data.payload.userId);
+        //   const tagResponse = await axios.get(
+        //     `${SERVER_IP}personalized-service/${userResponse.data.payload.userId}/tags/subscribed`,
+        //   );
+
+        //   console.log('hi tagIds', tagResponse.data.payload.subscribedTagList);
+        //   dispatch(setTag(tagResponse.data.payload.subscribedTagList));
+        // } catch (e) {
+        //   console.log(e);
+        // }
+
+        navigation.navigate('Home');
+      } catch (e) {
+        console.log(e);
+      }
     } else {
       navigation.navigate('SignIn');
     }
@@ -48,10 +75,7 @@ export default function Init({navigation}) {
 
   return (
     <View style={styles.container}>
-      {/* style={styles.container}
-      source={require('../assets/first.jpg')}> */}
-      <View style={styles.overlay} />
-      <View style={styles.first}>
+      <TouchableOpacity style={styles.first} onPress={loadUserData}>
         <View style={styles.row}>
           {Array.from('WANDER').map((letter, index) => (
             <Animated.View
@@ -61,7 +85,7 @@ export default function Init({navigation}) {
             </Animated.View>
           ))}
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -71,10 +95,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E2F5FF',
   },
-  // overlay: {
-  //   ...StyleSheet.absoluteFillObject,
-  //   backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  // },
   first: {
     flex: 1,
     justifyContent: 'center',

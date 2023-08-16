@@ -12,14 +12,17 @@ import {
   ImageBackground,
   Image,
 } from 'react-native';
-import {themeList} from '../constant';
-import {regionList} from '../constant';
+import {themeList} from '../../constant/themes';
+
+import {regionList} from '../../constant/themes';
+import axiosInstance from '../../utils/axiosInstance';
+import {useSelector} from 'react-redux';
 
 export default function ThemeSelect({navigation}) {
   const [selectedItem, setSelectedItem] = useState([]);
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollViewRef = useRef();
-
+  const userId = useSelector(state => state.USER);
   const handlePress = e => {
     if (selectedItem.includes(e)) {
       setSelectedItem(() => selectedItem.filter(el => el !== e));
@@ -45,10 +48,32 @@ export default function ThemeSelect({navigation}) {
       });
     }
   };
-
+  console.log(selectedItem);
   const handleScroll = event => {
     setScrollPosition(event.nativeEvent.contentOffset.x);
   };
+
+  const submitData = async () => {
+    if (selectedItem.length !== 0) {
+      console.log('hi');
+      try {
+        const response = await axiosInstance.post(
+          `personalized-service/${userId}/tags/subscribed/init`,
+          {
+            tagIdList: selectedItem,
+          },
+        );
+        navigation.navigate('Home');
+
+        console.log(response);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      navigation.navigate('Home');
+    }
+  };
+
   const Item = ({item}) => {
     const isItemSelected = selectedItem.includes(item.tagId);
     return (
@@ -88,7 +113,7 @@ export default function ThemeSelect({navigation}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() => handleIconPress('left')}>
-            <Image source={require('../assets/themeImg/arrow-left.png')} />
+            <Image source={require('../../assets/themeImg/arrow-left.png')} />
           </TouchableOpacity>
           <ScrollView
             horizontal
@@ -105,7 +130,7 @@ export default function ThemeSelect({navigation}) {
           <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() => handleIconPress('right')}>
-            <Image source={require('../assets/themeImg/arrow-right.png')} />
+            <Image source={require('../../assets/themeImg/arrow-right.png')} />
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>
@@ -120,9 +145,7 @@ export default function ThemeSelect({navigation}) {
           numColumns={3}
         />
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.button} onPress={submitData}>
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
     </View>

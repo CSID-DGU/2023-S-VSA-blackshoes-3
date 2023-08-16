@@ -1,287 +1,275 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, {useState, useCallback} from 'react';
+import {Header, createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import Init from './pages/init';
-import ThemeSelect from './pages/themeSelect';
-import Home from './pages/home';
-import ThemeVideo from './pages/themeVideo';
-import MyLog from './pages/myLog';
-import Video from './pages/video';
-import MyVideo from './pages/myVideo';
-import Play from './pages/play';
-import SignIn from './pages/sign/signIn';
-import SignUp from './pages/sign/signUp';
-import FindPw from './pages/sign/findPw';
-import Login from './pages/sign/login';
-import CheckInfo from './pages/myPage/checkInfo';
+import Init from './pages/others/initialPage';
+import ThemeSelect from './pages/others/themeSelect';
+import Home from './pages/main/home';
+import ThemeVideo from './pages/others/themeVideos';
+import MyLog from './pages/main/myLog';
+import Video from './pages/main/showVideos';
+import MyVideo from './pages/main/myVideo';
+import Play from './pages/others/playVideo';
+import SignIn from './pages/signpages/signIn';
+import SignUp from './pages/signpages/signUp';
+import FindPw from './pages/signpages/findPw';
+import Login from './pages/signpages/login';
+import CheckInfo from './pages/mypages/userInfo';
+import ThemeSelectEach from './pages/mypages/subscribeManage';
+import SearchedVideos from './pages/others/searchedVideos';
+import NavigationContainer from '@react-navigation/native';
+import NavigationBar from './components/tools/navigationBar';
 import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Modal,
-} from 'react-native';
+  HeaderTitleComponent,
+  HeaderRightComponent,
+  HeaderLeftComponent,
+} from './components/tools/headerComponents';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Store from './storage/store';
-import {Provider} from 'react-redux';
+import {deleteUserId} from './storage/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {SERVER_IP} from './config';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 export default function App() {
+  console.log('count render');
   const [search, setSearch] = useState(false);
-  const [value, setValue] = useState('recent');
+  const [value, setValue] = useState('videoName');
+  const [searchText, setSearchText] = useState('');
+  const navigation = useNavigation();
   const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
 
   const items = [
-    {label: '최신순', value: 'recent'},
-    {label: '조회순', value: 'views'},
-    {label: '좋아요순', value: 'likes'},
+    {label: 'Video', value: 'videoName'},
+    {label: 'Seller', value: 'sellerName'},
   ];
 
-  const getLabelForValue = val => {
-    const item = items.find(i => i.value === val);
-    return item ? item.label : val;
-  };
-  function HeaderRightComponent() {
-    const navigation = useNavigation();
+  function CustomDrawer({drawerNavigation}) {
+    return (
+      <View style={styles.toggleMenuContainer}>
+        <View style={styles.toggleMenuTop}>
+          <Text style={styles.menuTitle}>MyPage</Text>
 
-    if (search) {
-      return (
-        <View style={styles.itemContainer}>
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => setSearch(false)}>
-            <Icon style={styles.icon} name="close" size={30} color={'black'} />
+            style={styles.closeMenuButton}
+            onPress={() => drawerNavigation.closeDrawer()}>
+            <Icon name="close-outline" size={30} color={'black'} />
           </TouchableOpacity>
         </View>
-      );
-    }
-
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setSearch(!search)}>
-          <Icon
-            style={styles.icon}
-            name="search-outline"
-            size={30}
-            color={'black'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.openDrawer()}>
-          <Icon
-            style={styles.icon}
-            name="person-circle-outline"
-            size={30}
-            color={'black'}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const screenOptions = {
-    headerMode: 'float',
-    headerTitleAlign: 'center',
-    headerLeft: () =>
-      search ? (
-        <TouchableOpacity
-          style={styles.dropDownButton}
-          onPress={() => setSortModalVisible(true)}>
-          <Text style={styles.dropDownFont}>{getLabelForValue(value)}</Text>
-        </TouchableOpacity>
-      ) : null,
-
-    headerTitle: () =>
-      search ? (
-        <TextInput placeholder="검색" style={styles.searchBar} />
-      ) : (
-        <Image source={require('./assets/logo.png')} />
-      ),
-    headerRight: () => <HeaderRightComponent />,
-    headerStyle: {
-      height: 60,
-      borderBottomWidth: 1,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 2,
-      elevation: 1,
-    },
-  };
-
-  function CustomDrawer({drawerNavigation}) {
-    const navigation = useNavigation();
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Drawer Menu</Text>
 
         <TouchableOpacity
-          style={styles.closeMenuButton}
-          onPress={() => drawerNavigation.closeDrawer()}>
-          <Text>Close Menu</Text>
-          <Icon name="close-outline" size={30} color={'black'} />
+          style={styles.menuContentsContainer}
+          onPress={() => navigation.navigate('CheckInfo')}>
+          <Icon name="person" size={30} color={'black'} />
+          <Text style={styles.menuContentsText}>회원 정보 조회</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuContentsContainer}
+          onPress={() => navigation.navigate('ThemeSelectEach')}>
+          <Icon name="bookmark" size={30} color={'black'} />
+          <Text style={styles.menuContentsText}>구독 관리</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuContentsContainer}
+          onPress={() => navigation.navigate('CheckInfo')}>
+          <Icon name="chatbubble-outline" size={30} color={'black'} />
+          <Text style={styles.menuContentsText}>내가 쓴 댓글</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuContentsContainer}
+          onPress={async () => {
+            const refreshToken = Store.getState().REFRESH;
 
-        <TouchableOpacity onPress={() => navigation.navigate('CheckInfo')}>
-          <Text>CheckInfo</Text>
+            console.log(refreshToken);
+            try {
+              await axios.post(`${SERVER_IP}user-service/logout`, {
+                refreshToken: refreshToken,
+              });
+              await AsyncStorage.removeItem('email');
+              await AsyncStorage.removeItem('pass');
+              Store.dispatch(deleteUserId());
+              navigation.navigate('SignIn');
+            } catch (e) {
+              console.log(e);
+            }
+          }}>
+          <Icon name="log-out" size={30} color={'black'} />
+          <Text style={styles.menuContentsText}>로그 아웃</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <Provider store={Store}>
-      <NavigationContainer>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={sortModalVisible}
-          onRequestClose={() => {
-            setSortModalVisible(!sortModalVisible);
-          }}>
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <View
-              style={{
-                width: 300,
-                height: 200,
-                backgroundColor: 'white',
-                borderRadius: 20,
-                padding: 20,
-              }}>
-              {items.map(item => (
-                <TouchableOpacity
-                  key={item.value}
-                  onPress={() => {
-                    setValue(item.value);
-                    setSortModalVisible(false);
-                  }}>
-                  <Text>{item.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </Modal>
-        <Drawer.Navigator
-          screenOptions={{
-            drawerPosition: 'right',
-            headerShown: false,
-          }}
-          drawerWidth="70%"
-          initialRouteName="MainStack"
-          drawerContent={props => (
-            <CustomDrawer drawerNavigation={props.navigation} />
-          )}>
-          <Drawer.Screen
-            name="MainStack"
-            options={{title: 'Main', headerShown: false}}>
-            {() => (
-              <Stack.Navigator
-                initialRouteName="First"
-                screenOptions={screenOptions}>
-                <Stack.Screen
-                  name="First"
-                  component={Init}
-                  options={{headerShown: false}}
+    <Drawer.Navigator
+      screenOptions={{
+        drawerPosition: 'right',
+        headerShown: false,
+      }}
+      drawerWidth="70%"
+      initialRouteName="MainStack"
+      drawerContent={props => (
+        <CustomDrawer drawerNavigation={props.navigation} />
+      )}>
+      <Drawer.Screen
+        name="MainStack"
+        options={{title: 'Main', headerShown: false}}>
+        {() => (
+          <Stack.Navigator
+            initialRouteName="First"
+            screenOptions={{
+              animationEnabled: false,
+              headerMode: 'float',
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <HeaderLeftComponent
+                  search={search}
+                  setSortModalVisible={setSortModalVisible}
+                  sortModalVisible={sortModalVisible}
+                  setValue={setValue}
+                  items={items}
+                  value={value}
                 />
-                <Stack.Screen
-                  name="ThemeSelect"
-                  component={ThemeSelect}
-                  options={{
-                    headerRight: () => <></>,
-                  }}
-                />
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="ThemeVideo" component={ThemeVideo} />
-                <Stack.Screen name="Video" component={Video} />
-                <Stack.Screen name="My" component={MyVideo} />
-                <Stack.Screen name="Log" component={MyLog} />
-                <Stack.Screen name="CheckInfo" component={CheckInfo} />
+              ),
 
-                <Stack.Screen
-                  name="Play"
-                  component={Play}
-                  options={{headerShown: false}}
+              headerTitle: () => (
+                <HeaderTitleComponent
+                  value={value}
+                  search={search}
+                  setSearch={setSearch}
+                  searchText={searchText}
+                  setSearchText={setSearchText}
+                  suggestions={suggestions}
+                  setSuggestions={setSuggestions}
                 />
-                <Stack.Screen
-                  name="SignIn"
-                  component={SignIn}
-                  options={{
-                    headerRight: () => <></>,
-                  }}
+              ),
+              headerRight: () => (
+                <HeaderRightComponent
+                  search={search}
+                  setSearch={setSearch}
+                  setSuggestions={setSuggestions}
                 />
-                <Stack.Screen
-                  name="SignUp"
-                  component={SignUp}
-                  options={{
-                    headerRight: () => <></>,
-                  }}
-                />
-                <Stack.Screen
-                  name="Login"
-                  component={Login}
-                  options={{
-                    headerRight: () => <></>,
-                  }}
-                />
-                <Stack.Screen
-                  name="FindPw"
-                  component={FindPw}
-                  options={{
-                    headerRight: () => <></>,
-                  }}
-                />
-              </Stack.Navigator>
-            )}
-          </Drawer.Screen>
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </Provider>
+              ),
+              headerStyle: {
+                height: 60,
+                borderBottomWidth: 1,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.5,
+                shadowRadius: 2,
+                elevation: 1,
+              },
+            }}>
+            <Stack.Screen
+              name="First"
+              component={Init}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="ThemeSelect"
+              component={ThemeSelect}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="ThemeVideo" component={ThemeVideo} />
+            <Stack.Screen name="ShowVideo" component={Video} />
+            <Stack.Screen name="My" component={MyVideo} />
+            <Stack.Screen name="Log" component={MyLog} />
+            <Stack.Screen name="SearchedVideos" component={SearchedVideos} />
+            <Stack.Screen name="CheckInfo" component={CheckInfo} />
+            <Stack.Screen name="ThemeSelectEach" component={ThemeSelectEach} />
+
+            <Stack.Screen
+              name="Play"
+              component={Play}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="SignIn"
+              component={SignIn}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+            <Stack.Screen
+              name="SignUp"
+              component={SignUp}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+            <Stack.Screen
+              name="FindPw"
+              component={FindPw}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+          </Stack.Navigator>
+        )}
+      </Drawer.Screen>
+    </Drawer.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
-  itemContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 5,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  searchBar: {
-    position: 'relative',
-    left: 15,
-    backgroundColor: '#EBEBEB',
-    width: 250,
-    borderRadius: 10,
-    height: 40,
-    paddingHorizontal: 10,
-  },
-  dropDownButton: {
-    width: 60,
+  toggleMenuContainer: {
+    flex: 1,
     alignItems: 'center',
-    marginLeft: 10,
-    height: 39,
-    justifyContent: 'center',
-    borderRadius: 10,
-    borderWidth: 0.5,
   },
-  dropDownFont: {
-    fontWeight: '600',
-    letterSpacing: 0.5,
+  toggleMenuTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 13,
+    backgroundColor: '#F2F8FF',
+    paddingLeft: 16,
+    paddingRight: 10,
+    borderBottomWidth: 0.5,
+    paddingBottom: 15,
+  },
+  menuTitle: {
+    fontSize: 23,
+    fontWeight: 'bold',
+    letterSpacing: 3,
+    fontStyle: 'italic',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
+    color: '#828282',
+  },
+  menuContentsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20,
+    width: '100%',
+    paddingLeft: 25,
+    paddingVertical: 20,
+    borderBottomWidth: 0.5,
+    paddingRight: 60,
+  },
+  menuContentsText: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
