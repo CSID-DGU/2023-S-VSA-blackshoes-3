@@ -26,7 +26,14 @@ public class TagController {
 
     //TagId가 유효한지 아닌지 예외처리 추가해야함
     @PostMapping("/{userId}/tags/subscribed/init")
-    public ResponseEntity<ResponseDto> InitSubscribedTagList(@PathVariable String userId, @RequestBody TagDto.InitTagListRequestDto initTagListRequestDto){
+    public ResponseEntity<ResponseDto> InitSubscribedTagList(@RequestHeader("Authorization") String id,
+                                                             @PathVariable String userId,
+                                                             @RequestBody TagDto.InitTagListRequestDto initTagListRequestDto) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         Map<String, String> initTagListResponse = tagService.initSubscribedTagList(userId, initTagListRequestDto);
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -37,7 +44,13 @@ public class TagController {
     }
 
     @GetMapping("/{userId}/tags/subscribed")
-    public ResponseEntity<ResponseDto> getSubscribedTagList(@PathVariable String userId){
+    public ResponseEntity<ResponseDto> getSubscribedTagList(@RequestHeader("Authorization") String id,
+                                                            @PathVariable String userId){
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Map<String, Object> subscribedTagListResponse = new HashMap<>();
             subscribedTagListResponse.put("userId", userId);
@@ -58,7 +71,13 @@ public class TagController {
     }
 
     @GetMapping("/{userId}/tags/viewed")
-    public ResponseEntity<ResponseDto> getViewedTagList(@PathVariable String userId) {
+    public ResponseEntity<ResponseDto> getViewedTagList(@RequestHeader("Authorization") String id,
+                                                        @PathVariable String userId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             List<Map<String, Object>> viewedTagListWithDetails = tagService.getViewedTagList(userId);
 
@@ -81,7 +100,14 @@ public class TagController {
 
     //해당하는 유저 없는 경우 서비스에서 예외처리 되어있음.
     @PostMapping("/{userId}/tags/subscribed")
-    public ResponseEntity<ResponseDto> subscribeTag(@PathVariable String userId, @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
+    public ResponseEntity<ResponseDto> subscribeTag(@RequestHeader("Authorization") String id,
+                                                    @PathVariable String userId,
+                                                    @RequestBody TagDto.SubscribeTagRequestDto subscribeTagRequestDto){
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Map<String, String> subscribeTagResponse = tagService.subscribeTag(userId, subscribeTagRequestDto);
 
@@ -99,7 +125,14 @@ public class TagController {
         }
     }
     @DeleteMapping("/{userId}/tags/subscribed/{tagId}")
-    public ResponseEntity<ResponseDto> unsubscribeTag(@PathVariable String userId, @PathVariable String tagId) {
+    public ResponseEntity<ResponseDto> unsubscribeTag(@RequestHeader("Authorization") String id,
+                                                      @PathVariable String userId,
+                                                      @PathVariable String tagId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try{
             tagService.unsubscribeTag(userId, tagId);
         }catch (CustomBadRequestException e) {
@@ -114,7 +147,14 @@ public class TagController {
 
     //조회한 태그 추가, 삭제는 없음
     @PostMapping("/{userId}/tags/viewed")
-    public ResponseEntity<ResponseDto> viewTag(@PathVariable String userId, @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
+    public ResponseEntity<ResponseDto> viewTag(@RequestHeader("Authorization") String id,
+                                               @PathVariable String userId,
+                                               @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         List<String> tagIdList = viewTagRequestDto.getTagIdList();
 
         List<Map<String, String>> viewTagResponseList = new ArrayList<>();

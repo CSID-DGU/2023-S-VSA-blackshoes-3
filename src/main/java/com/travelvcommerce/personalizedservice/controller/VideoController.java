@@ -25,7 +25,14 @@ public class VideoController {
     private final VideoService videoService;
 
     @PostMapping("/{userId}/videos/history")
-    public ResponseEntity<ResponseDto> viewVideo(@PathVariable String userId, @RequestBody VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
+    public ResponseEntity<ResponseDto> viewVideo(@RequestHeader("Authorization") String id,
+                                                 @PathVariable String userId,
+                                                 @RequestBody VideoDto.ViewVideoRequestDto viewVideoRequestDto) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Map<String, String> viewVideoResponse = videoService.viewVideo(userId, viewVideoRequestDto);
 
@@ -42,7 +49,14 @@ public class VideoController {
     }
 
     @DeleteMapping("/{userId}/videos/history/{videoId}")
-    public ResponseEntity<ResponseDto> deleteViewVideo(@PathVariable String userId, @PathVariable String videoId) {
+    public ResponseEntity<ResponseDto> deleteViewVideo(@RequestHeader("Authorization") String id,
+                                                       @PathVariable String userId,
+                                                       @PathVariable String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             videoService.unviewVideo(userId, videoId);
 
@@ -57,7 +71,15 @@ public class VideoController {
     }
 
     @GetMapping("/{userId}/videos/history")
-    public ResponseEntity<ResponseDto> getViewedVideosByUserId(@PathVariable String userId, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ResponseDto> getViewedVideosByUserId(@RequestHeader("Authorization") String id,
+                                                               @PathVariable String userId,
+                                                               @RequestParam int page,
+                                                               @RequestParam int size) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Page<String> viewVideoResponsePage = videoService.getViewVideoIdListWithViewCount(userId, page, size);
 
@@ -90,7 +112,14 @@ public class VideoController {
 
     // 비디오 좋아요
     @PostMapping("/{userId}/videos/liked")
-    public ResponseEntity<ResponseDto> likeVideo(@PathVariable String userId, @RequestBody VideoDto.LikeVideoRequestDto likeVideoRequestDto) {
+    public ResponseEntity<ResponseDto> likeVideo(@RequestHeader("Authorization") String id,
+                                                 @PathVariable String userId,
+                                                 @RequestBody VideoDto.LikeVideoRequestDto likeVideoRequestDto) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Map<String, String> likeVideoResponse = videoService.likeVideo(userId, likeVideoRequestDto);
             ResponseDto responseDto = ResponseDto.builder().payload(likeVideoResponse).build();
@@ -107,7 +136,14 @@ public class VideoController {
 
     // 비디오 좋아요 해제
     @DeleteMapping("/{userId}/videos/liked/{videoId}")
-    public ResponseEntity<ResponseDto> unlikeVideo(@PathVariable String userId, @PathVariable String videoId) {
+    public ResponseEntity<ResponseDto> unlikeVideo(@RequestHeader("Authorization") String id,
+                                                   @PathVariable String userId,
+                                                   @PathVariable String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             videoService.unlikeVideo(userId, videoId);
 
@@ -124,7 +160,15 @@ public class VideoController {
 
     // 좋아요한 비디오 리스트
     @GetMapping("/{userId}/videos/liked")
-    public ResponseEntity<ResponseDto> getLikedVideosByUserId(@PathVariable String userId, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ResponseDto> getLikedVideosByUserId(@RequestHeader("Authorization") String id,
+                                                              @PathVariable String userId,
+                                                              @RequestParam int page,
+                                                              @RequestParam int size) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Page<String> likedVideosIdPage = videoService.getLikedVideoIdList(userId, page, size);
 
@@ -154,7 +198,14 @@ public class VideoController {
     }
 
     @GetMapping("/{userId}/videos/liked/{videoId}")
-    public ResponseEntity<ResponseDto> getIsUserLikedVideo(@PathVariable String userId, @PathVariable String videoId) {
+    public ResponseEntity<ResponseDto> getIsUserLikedVideo(@RequestHeader("Authorization") String id,
+                                                           @PathVariable String userId,
+                                                           @PathVariable String videoId) {
+        if (!id.equals(userId)) {
+            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+        }
+
         try {
             Boolean isUserLikedVideo = videoService.isUserLikedVideo(userId, videoId);
 
@@ -167,7 +218,4 @@ public class VideoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().error("서버 내부 오류").build());
         }
     }
-
-
-
 }
