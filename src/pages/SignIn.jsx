@@ -29,6 +29,7 @@ const SignIn = () => {
   const [emailMessage, setEmailMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
+  // Function--------------------------------------------------
   const onChangeSignIn = async (e) => {
     const { name, value } = e.target;
     setInputs({
@@ -73,7 +74,9 @@ const SignIn = () => {
         })
         .catch((err) => {
           console.log(err);
-          if (err.response?.data.error === `Seller not found with email: ${email}`) {
+          if (
+            err.response?.data.error === `Seller not found with email: ${email}`
+          ) {
             alert(err.response?.data.error);
             return;
           } else if (err.response?.data.error === "Invalid password.") {
@@ -115,7 +118,7 @@ const SignIn = () => {
             width="450px"
             onChange={onChangeSignIn}
             required
-            autoComplete="current-password"
+            autoComplete="password"
           />
           <S.FormHelperPWs ispassword={isPassword ? "true" : "false"}>
             {passwordMessage}
@@ -125,7 +128,9 @@ const SignIn = () => {
             시작하기
           </S.ColorButton>
           <S.RightAlignSection>
-            <S.SignUpText onClick={() => navigate("/signup")}>회원가입</S.SignUpText>
+            <S.SignUpText onClick={() => navigate("/signup")}>
+              회원가입
+            </S.SignUpText>
           </S.RightAlignSection>
         </S.SignForm>
       </S.HalfSection>
