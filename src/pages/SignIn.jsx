@@ -13,6 +13,9 @@ const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
 const SELLOR_3_ID = "14517d06-88cb-4edf-b6dd-67a63f469b6b";
 // naver sellerId : "6b8484c1-5c2e-4c3a-a21c-54eb9a7681b5"
 
+// wanderTestSeller1@gmail.com
+// abcd1234!
+
 const SignIn = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
@@ -29,6 +32,7 @@ const SignIn = () => {
   const [emailMessage, setEmailMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
+  // Function--------------------------------------------------
   const onChangeSignIn = async (e) => {
     const { name, value } = e.target;
     setInputs({
@@ -73,7 +77,9 @@ const SignIn = () => {
         })
         .catch((err) => {
           console.log(err);
-          if (err.response?.data.error === `Seller not found with email: ${email}`) {
+          if (
+            err.response?.data.error === `Seller not found with email: ${email}`
+          ) {
             alert(err.response?.data.error);
             return;
           } else if (err.response?.data.error === "Invalid password.") {
@@ -115,7 +121,7 @@ const SignIn = () => {
             width="450px"
             onChange={onChangeSignIn}
             required
-            autoComplete="current-password"
+            autoComplete="password"
           />
           <S.FormHelperPWs ispassword={isPassword ? "true" : "false"}>
             {passwordMessage}
@@ -125,7 +131,9 @@ const SignIn = () => {
             시작하기
           </S.ColorButton>
           <S.RightAlignSection>
-            <S.SignUpText onClick={() => navigate("/signup")}>회원가입</S.SignUpText>
+            <S.SignUpText onClick={() => navigate("/signup")}>
+              회원가입
+            </S.SignUpText>
           </S.RightAlignSection>
         </S.SignForm>
       </S.HalfSection>

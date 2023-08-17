@@ -53,6 +53,9 @@ export const SignInput = styled.input`
   color: ${(props) => props.theme.textColor};
   border-radius: 16px;
   padding: 15px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 export const ColorLabel = styled.label`
