@@ -73,6 +73,13 @@ public class UserController {
                     .createdAt(userDto.getCreatedAt())
                     .build();
 
+            UserDto.UserInfoDto userInfoDto = UserDto.UserInfoDto.builder()
+                    .userId(userDto.getUserId())
+                    .nickname(userDto.getNickname())
+                    .build();
+
+            kafkaUserInfoProducerService.createUser(userInfoDto);
+
             ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(userRegisterResponseDto, Map.class)).build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
