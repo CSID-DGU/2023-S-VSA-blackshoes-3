@@ -20,6 +20,7 @@ export default function MyCommentPage({navigation, route}) {
 
   const getUserComment = async () => {
     try {
+      console.log('userId in getUserComment : ', userId);
       const response = await axiosInstance.get(
         `comment-service/comments/user?userId=${userId}&page=0&size=10`,
       );
@@ -35,12 +36,12 @@ export default function MyCommentPage({navigation, route}) {
       <Text style={styles.title}>내가 쓴 댓글</Text>
       <ScrollView style={styles.scrollContainer}>
         <View>
-          {commentContents.comments &&
+          {commentContents &&
             commentContents.comments.map((e, i) => {
               return (
                 <TouchableOpacity key={i}>
-                  <View>{e.createdAt.split('T')[0]}</View>
-                  <View>{e.content}</View>
+                  <Text>{e.createdAt.split('T')[0]}</Text>
+                  <Text>{e.content}</Text>
                 </TouchableOpacity>
               );
             })}

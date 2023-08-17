@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Animated, View, TouchableOpacity, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import {setAll} from '../../storage/actions';
+import {setAll, setNickName} from '../../storage/actions';
 import axiosInstance from '../../utils/axiosInstance';
 
 export default function Init({navigation}) {
@@ -11,7 +11,6 @@ export default function Init({navigation}) {
   const dropAnimations = Array.from('WANDER').map(
     () => new Animated.Value(-100),
   );
-
   const loadUserData = async () => {
     const email = await AsyncStorage.getItem('email');
     if (email) {

@@ -138,7 +138,6 @@ export default function Video({navigation, route}) {
             })}
         </ScrollView>
       </View>
-
       <NavigationBar route={route} />
     </View>
   );

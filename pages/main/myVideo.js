@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -21,17 +21,19 @@ export default function MyVideo({navigation, route}) {
   const [view, setView] = useState(0);
   const [videoData, setVideoData] = useState([]);
   const [selectedTagId, setSelectedTagId] = useState('');
+  const [page, setPage] = useState(0);
+  const [maxPage, setMaxPage] = useState(10);
+
   const userId = useSelector(state => state.USER);
+  const [isEndOfScroll, setEndOfScroll] = useState(false);
+  const scrollViewRef = useRef(null);
   const tagId = useSelector(state => state.TAG);
   const theme = getMatchingThemeNames(tagId, regionList, themeList);
 
   useEffect(() => {
     if (view === 0) {
-      console.log(view);
       if (tagId.length > 0) {
-        console.log(theme[0].tagId);
         setSelectedTagId(theme[0].tagId);
-        getData();
       }
     } else {
       getDataLike();
@@ -40,10 +42,25 @@ export default function MyVideo({navigation, route}) {
 
   useEffect(() => {
     if (selectedTagId !== '') {
-      console.log('');
       getData();
     }
   }, [selectedTagId]);
+
+  useEffect(() => {
+    if (isEndOfScroll) {
+      setPage(prevPage => prevPage + 1);
+    }
+  }, [isEndOfScroll]);
+
+  useEffect(() => {
+    if (page === 0) {
+      getData(0);
+    } else {
+      if (page !== maxPage) {
+        getData(1);
+      }
+    }
+  }, [page]);
 
   function getMatchingThemeNames(tagIds, regionLists, themeLists) {
     const matchedRegionThemes = regionLists.filter(region =>
@@ -85,27 +102,54 @@ export default function MyVideo({navigation, route}) {
     </View>
   );
 
-  const getData = async () => {
+  const getData = async key => {
     try {
-      const response = await axiosInstance.get(
-        `content-slave-service/videos/tagId?q=${selectedTagId}&s=recent&page=0&size=10`,
-      );
+      let response;
+      if (view === 0) {
+        response = await axiosInstance.get(
+          `content-slave-service/videos/tagId?q=${selectedTagId}&s=recent&page=${page}&size=10`,
+        );
+      } else {
+        response = await axiosInstance.get(
+          `personalized-service/${userId}/videos/liked?page=${page}&size=10`,
+        );
+      }
 
-      setVideoData(response.data.payload.videos);
+      if (key === 0) {
+        setVideoData(response.data.payload.videos);
+        setMaxPage(response.data.payload.totalPages);
+      } else {
+        setVideoData(prevVideoData => [
+          ...prevVideoData,
+          ...response.data.payload.videos,
+        ]);
+      }
     } catch (e) {
       console.log(e);
     }
   };
 
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+
+    if (offsetY + layoutHeight >= contentHeight) {
+      if (!isEndOfScroll) {
+        setEndOfScroll(true);
+      }
+    } else {
+      if (isEndOfScroll) {
+        setEndOfScroll(false);
+      }
+    }
+  };
   const getDataLike = async () => {
     try {
       const response = await axiosInstance.get(
         `personalized-service/${userId}/videos/liked?page=0&size=10`,
       );
       const likedVideoIds = response.data.payload.likedVideos.likedVideoIdList;
-      // setLikedVideoId(likedVideoIds);
-
-      // likedVideoIds를 사용해서 getLikedVideo 호출
       if (likedVideoIds && likedVideoIds.length > 0) {
         await getLikedVideo(likedVideoIds);
       }
@@ -193,6 +237,8 @@ export default function MyVideo({navigation, route}) {
         </View>
 
         <ScrollView
+          ref={scrollViewRef}
+          onScroll={handleScroll}
           style={styles.videoContainer}
           contentContainerStyle={{alignItems: 'center'}}>
           {videoData.length > 0 ? (

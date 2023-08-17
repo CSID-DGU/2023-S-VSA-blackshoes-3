@@ -265,7 +265,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F2F8FF',
   },
   contentsContainer: {
     flex: 1,
@@ -310,21 +309,13 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#DEDEDE',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
     marginVertical: 7,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
+
     width: '95%',
-    borderRadius: 10,
   },
 
   item: {

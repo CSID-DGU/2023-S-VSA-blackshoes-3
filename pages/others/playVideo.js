@@ -14,9 +14,12 @@ import {
 import Orientation from 'react-native-orientation-locker';
 import axiosInstance from '../../utils/axiosInstance';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/Ionicons';
 import VideoPlayer from 'react-native-video-controls';
 import {Ad} from '../../components/contents/advertiseBox';
 import {useSelector} from 'react-redux';
+import axios from 'axios';
+import {set} from 'lodash';
 
 export default function Play({route, navigation}) {
   const [videoData, setVideoData] = useState([]);
@@ -28,8 +31,13 @@ export default function Play({route, navigation}) {
   const [countLike, setConutLike] = useState(route.params.video.likes);
   const [tagIds, setTagIds] = useState([]);
   const [commentIndex, setCommentIndex] = useState(false);
-  const [comment, setComment] = useState(null);
+  const [comment, setComment] = useState([]);
+  const [commentAmmount, setCommentAmmount] = useState(0);
+  const [commentPage, setCommentPage] = useState(null);
   const [commentInput, setCommentInput] = useState('');
+  const [modifying, setModifying] = useState('');
+  const [modifyIndex, setModifyIndex] = useState(false);
+
   const userId = useSelector(state => state.USER);
   const nick = useSelector(state => state.NICK);
 
@@ -47,7 +55,6 @@ export default function Play({route, navigation}) {
       return;
     } else {
       registerHistory();
-
       checkLike();
       getComment();
     }
@@ -103,15 +110,22 @@ export default function Play({route, navigation}) {
     setLike(response.data.payload.isLiked);
   };
 
-  const likes = () => {
+  const likes = async () => {
     if (like) {
       try {
-        const response = axiosInstance.delete(
+        const response = await axiosInstance.delete(
           `personalized-service/${userId}/videos/liked/${videoData.videoId}`,
         );
-        console.log(response);
         setLike(false);
         setConutLike(countLike - 1);
+
+        const response2 = await axiosInstance.put(
+          `statistics-service/statistics/${videoData.videoId}/like`,
+          {
+            userId: userId,
+            action: 'dislike',
+          },
+        );
       } catch (e) {
         console.log(e);
       }
@@ -124,9 +138,17 @@ export default function Play({route, navigation}) {
             sellerId: videoData.sellerId,
           },
         );
-        console.log(response);
+
         setLike(true);
         setConutLike(countLike + 1);
+
+        const response2 = axiosInstance.put(
+          `statistics-service/${videoData.videoId}/likes`,
+          {
+            userId: userId,
+            action: 'like',
+          },
+        );
       } catch (e) {
         console.log(e.response);
       }
@@ -135,14 +157,19 @@ export default function Play({route, navigation}) {
 
   const registerHistory = async () => {
     try {
-      const response = axiosInstance.post(
+      const response = await axiosInstance.post(
         `personalized-service/${userId}/videos/history`,
         {
           videoId: videoData.videoId,
           sellerId: videoData.sellerId,
         },
       );
-      console.log('시청기록 응답 : ', response.data.payload);
+      const response2 = await axiosInstance.put(
+        `statistics-service/${videoData.videoId}/views`,
+        {
+          userId: userId,
+        },
+      );
     } catch (e) {
       console.log(e);
     }
@@ -159,7 +186,6 @@ export default function Play({route, navigation}) {
         },
       );
       console.log('response of tag');
-      console.log(response);
     } catch (e) {
       console.log(e);
     }
@@ -170,8 +196,9 @@ export default function Play({route, navigation}) {
       const response = await axiosInstance.get(
         `comment-service/comments/video?videoId=${videoData.videoId}&page=0&size=10`,
       );
-      console.log('받아온 댓글 :  ', response.data.payload);
-      setComment(response.data.payload);
+      setComment(response.data.payload.comments);
+      setCommentAmmount(response.data.payload.totalElements);
+      setComment;
     } catch (e) {
       console.log(e);
     }
@@ -179,17 +206,51 @@ export default function Play({route, navigation}) {
 
   const submitComment = async () => {
     try {
+      console.log('userId submitComment : ', userId);
       const response = await axiosInstance.post(
-        `/comment-service/comments/${videoData.videoId}`,
+        `comment-service/comments/${videoData.videoId}`,
         {
-          usderId: userId,
+          userId: userId,
           nickname: nick,
           content: commentInput,
         },
       );
-      console.log(response);
+      getComment();
+
+      setCommentInput('');
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const deleteComment = async e => {
+    try {
+      const response = await axiosInstance.put(
+        `comment-service/comments/${videoData.videoId}/${e.commentId}/delete`,
+        {
+          userId: userId,
+        },
+      );
+      setComment(prevComments =>
+        prevComments.filter(comment => comment.commentId !== e.commentId),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const modifyComment = async e => {
+    try {
+      const response = await axiosInstance.put(
+        `comment-service/comments/${videoData.videoId}/${e.commentId}`,
+        {
+          userId: userId,
+          content: modifying,
+        },
+      );
+      getData();
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -311,7 +372,7 @@ export default function Play({route, navigation}) {
                 style={styles.firstCommentContainer}
                 onPress={() => setCommentIndex(true)}>
                 {comment ? (
-                  comment.comments.length === 0 ? (
+                  comment.length === 0 ? (
                     <Text style={styles.commentContents}>
                       아직 댓글이 없습니다. 댓글을 등록해주세요.
                     </Text>
@@ -320,10 +381,10 @@ export default function Play({route, navigation}) {
                       <Text style={styles.commentTitle}>댓글</Text>
                       <View style={styles.firstCommentBox}>
                         <Text style={styles.commentUserName}>
-                          {comment.comments[0].nickname}
+                          {comment[0].nickname}
                         </Text>
                         <Text style={styles.commentContents}>
-                          {comment.comments[0].content}
+                          {comment[0].content}
                         </Text>
                       </View>
                     </>
@@ -347,10 +408,22 @@ export default function Play({route, navigation}) {
                 </View>
 
                 {comment ? (
-                  comment.comments.length === 0 ? (
-                    <Text style={styles.commentContents}>
-                      아직 댓글이 없습니다.
-                    </Text>
+                  comment.length === 0 ? (
+                    <>
+                      <Text style={styles.commentContents}>
+                        아직 댓글이 없습니다.
+                      </Text>
+                      <TextInput
+                        style={styles.commentInput}
+                        placeholder="댓글 입력"
+                        placeholderTextColor={'#c9c9c9'}
+                        onChangeText={text => setCommentInput(text)}
+                        value={commentInput}
+                        onSubmitEditing={() => {
+                          submitComment();
+                        }}
+                      />
+                    </>
                   ) : (
                     <>
                       <TextInput
@@ -363,12 +436,11 @@ export default function Play({route, navigation}) {
                           submitComment();
                         }}
                       />
-
                       <ScrollView
                         style={styles.commentScrollContainer}
                         contentContainerStyle={{alignItems: 'center'}}>
                         <View>
-                          {comment.comments.map((e, i) => {
+                          {comment.map((e, i) => {
                             return (
                               <TouchableOpacity
                                 style={styles.allCommentsBox}
@@ -381,10 +453,45 @@ export default function Play({route, navigation}) {
                                     {e.createdAt.split('T')[0]}
                                   </Text>
                                 </View>
-
-                                <Text style={styles.commentContentsAll}>
-                                  {e.content}
-                                </Text>
+                                <View
+                                  style={styles.commentContentsAllContainer}>
+                                  <Text style={styles.commentContentsAll}>
+                                    {e.content}
+                                  </Text>
+                                  {e.userId === userId && (
+                                    <>
+                                      <TouchableOpacity
+                                        onPress={() => deleteComment(e)}>
+                                        <Icon2
+                                          name="trash-outline"
+                                          size={30}
+                                          color={'black'}
+                                        />
+                                      </TouchableOpacity>
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          setModifyIndex(!modifyIndex)
+                                        }>
+                                        <Text>수정 버튼</Text>
+                                      </TouchableOpacity>
+                                      {modifyIndex && (
+                                        <TextInput
+                                          style={styles.commentInput}
+                                          placeholder="댓글 수정"
+                                          placeholderTextColor={'#c9c9c9'}
+                                          onChangeText={text =>
+                                            setModifying(text)
+                                          }
+                                          value={modifying}
+                                          onSubmitEditing={() => {
+                                            modifyComment(e);
+                                            setModifyIndex(false);
+                                          }}
+                                        />
+                                      )}
+                                    </>
+                                  )}
+                                </View>
                               </TouchableOpacity>
                             );
                           })}
@@ -408,7 +515,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F2F8FF',
+    backgroundColor: '#F2F2F2',
   },
   fullScreenContainer: {
     flex: 1,
@@ -651,4 +758,7 @@ const styles = StyleSheet.create({
   },
   commentDate: {fontSize: 11},
   commentContentsAll: {fontSize: 16},
+  commentContentsAllContainer: {
+    flexDirection: 'row',
+  },
 });

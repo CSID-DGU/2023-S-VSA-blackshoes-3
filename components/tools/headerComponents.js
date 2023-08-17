@@ -64,11 +64,7 @@ export const HeaderTitleComponent = ({
           onSubmitEditing={() => {
             setSuggestions([]);
             setSearch(false);
-
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'SearchedVideos', params: {searchText}}],
-            });
+            navigation.push('SearchedVideos', {searchText});
           }}
         />
         {suggestions.length > 0 && (

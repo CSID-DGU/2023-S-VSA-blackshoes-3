@@ -17,8 +17,8 @@ import FindPw from './pages/signpages/findPw';
 import Login from './pages/signpages/login';
 import CheckInfo from './pages/mypages/userInfo';
 import ThemeSelectEach from './pages/mypages/subscribeManage';
+import MyCommentPage from './pages/mypages/comment';
 import SearchedVideos from './pages/others/searchedVideos';
-// import MyCommentPage from './pages/myPages/myComment';
 import NavigationContainer from '@react-navigation/native';
 import NavigationBar from './components/tools/navigationBar';
 import {
@@ -68,19 +68,19 @@ export default function App() {
         <TouchableOpacity
           style={styles.menuContentsContainer}
           onPress={() => navigation.navigate('CheckInfo')}>
-          <Icon name="person" size={35} color={'black'} />
+          {/* <Icon name="person" size={35} color={'black'} /> */}
           <Text style={styles.menuContentsText}>회원 정보 조회</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuContentsContainer}
           onPress={() => navigation.navigate('ThemeSelectEach')}>
-          <Icon name="bookmark" size={35} color={'black'} />
+          {/* <Icon name="bookmark" size={35} color={'black'} /> */}
           <Text style={styles.menuContentsText}>구독 관리</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuContentsContainer}
-          onPress={() => navigation.navigate('CheckInfo')}>
-          <Icon name="chatbubble-outline" size={35} color={'black'} />
+          onPress={() => navigation.navigate('MyCommentPage')}>
+          {/* <Icon name="chatbubble" size={35} color={'black'} /> */}
           <Text style={styles.menuContentsText}>내가 쓴 댓글</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -101,7 +101,7 @@ export default function App() {
               console.log(e);
             }
           }}>
-          <Icon name="log-out" size={35} color={'black'} />
+          {/* <Icon name="log-out" size={35} color={'black'} /> */}
           <Text style={styles.menuContentsText}>로그 아웃</Text>
         </TouchableOpacity>
       </View>
@@ -110,11 +110,13 @@ export default function App() {
 
   return (
     <Drawer.Navigator
+      style={styles.fontStyle}
       screenOptions={{
         drawerPosition: 'right',
         headerShown: false,
         drawerStyle: {
           width: '100%',
+          backgroundColor: '#F5F5F5',
         },
       }}
       initialRouteName="MainStack"
@@ -193,7 +195,7 @@ export default function App() {
             <Stack.Screen name="SearchedVideos" component={SearchedVideos} />
             <Stack.Screen name="CheckInfo" component={CheckInfo} />
             <Stack.Screen name="ThemeSelectEach" component={ThemeSelectEach} />
-            {/* <Stack.Screen name="MyCommentPage" component={MyCommentPage} /> */}
+            <Stack.Screen name="MyCommentPage" component={MyCommentPage} />
 
             <Stack.Screen
               name="Play"
@@ -246,19 +248,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingVertical: 15,
-    backgroundColor: '#F2F8FF',
+    backgroundColor: 'white',
     paddingHorizontal: 16,
     borderBottomWidth: 1,
+    borderBottomColor: '#D9D9D9',
+
     borderTopWidth: 1,
   },
   menuTitle: {
     fontSize: 25,
     fontWeight: 'bold',
     letterSpacing: 3,
-    fontStyle: 'italic',
-    textShadowOffset: {width: 1, height: 2},
-    textShadowRadius: 1,
-    color: '#828282',
+    color: 'black',
   },
   menuContentsContainer: {
     flexDirection: 'row',
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 35,
     paddingVertical: 25,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.4,
     borderStyle: 'dotted',
   },
   menuContentsText: {
