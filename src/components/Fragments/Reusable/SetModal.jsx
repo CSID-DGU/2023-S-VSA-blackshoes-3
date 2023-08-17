@@ -33,6 +33,58 @@ const SetModal = ({ modal, setModal }) => {
   const [sellerLogo, setSellerLogo] = useState(null);
 
   // function----------------------------------------------
+  const submitNewName = async () => {
+    try {
+      await Instance.put(
+        `${BASE_URL}user-service/sellers/${userId}/sellerName`,
+        {
+          sellerName,
+        }
+      ).then((res) => {
+        alert("이름이 변경되었습니다.");
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
+  };
+
+  const submitNewLogo = async () => {
+    const formData = new FormData();
+    formData.append("sellerLogo", sellerLogo);
+    try {
+      await Instance.put(
+        `${BASE_URL}user-service/sellers/${userId}/sellerLogo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      ).then((res) => {
+        alert("로고가 변경되었습니다.");
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
+  };
+
+  const submitNewPassword = async () => {
+    try {
+      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/password`, {
+        oldPassword,
+        newPassword,
+      }).then(() => {
+        alert("비밀번호가 변경되었습니다.");
+        setOldPassword("");
+        setNewPassword("");
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
+  };
 
   // ComponentDidMount-------------------------------------
   const fetchData = async () => {
@@ -51,22 +103,6 @@ const SetModal = ({ modal, setModal }) => {
     fetchData();
   }, []);
 
-  const submitNewPassword = async () => {
-    try {
-      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/password`, {
-        oldPassword,
-        newPassword,
-      }).then(() => {
-        alert("비밀번호가 변경되었습니다.");
-        setOldPassword("");
-        setNewPassword("");
-      });
-    } catch (err) {
-      console.log(err);
-      alert(err.response.data.error);
-    }
-  };
-
   return (
     <Modal
       isOpen={modal}
@@ -80,8 +116,11 @@ const SetModal = ({ modal, setModal }) => {
             type="text"
             placeholder="변경할 유저 이름을 작성하세요"
             defaultValue={sellerName && sellerName}
+            onChange={(e) => setSellerName(e.target.value)}
           />
-          <S.ColorButton width="30%">수정</S.ColorButton>
+          <S.ColorButton width="30%" onClick={submitNewName}>
+            수정
+          </S.ColorButton>
         </H.ModalInputSection>
         <H.ModalTitle>회원 비밀번호 수정</H.ModalTitle>
         <H.ModalInputSection>
@@ -114,11 +153,14 @@ const SetModal = ({ modal, setModal }) => {
               type="file"
               accept="image/"
               placeholder="로고 이미지"
+              onChange={(e) => setSellerLogo(e.target.files[0])}
             />
             <H.ModalFileInputLabel htmlFor="file-input">
               로고 업로드
             </H.ModalFileInputLabel>
-            <S.ColorButton width="80px">수정</S.ColorButton>
+            <S.ColorButton width="80px" onClick={submitNewLogo}>
+              수정
+            </S.ColorButton>
           </H.ModalBetweenBox>
         </H.ModalInputSection>
       </H.ModalSection>
