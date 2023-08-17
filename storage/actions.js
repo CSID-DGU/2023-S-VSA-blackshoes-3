@@ -2,6 +2,7 @@ export const SET_ALL = 'SET_ALL';
 
 export const SET_TOKEN = 'SET_TOKEN';
 export const SET_USER_ID = 'SET_USER_ID';
+export const SET_NICK_NAME = 'SET_NICK_NAME';
 export const SET_ACCESS_TOKEN = 'SET_ACCESS_TOKEN';
 export const SET_REFRESH_TOKEN = 'SET_REFRESH_TOKEN';
 export const SET_TAG = 'SET_TAG';
@@ -21,6 +22,10 @@ export function setToken(payload) {
 
 export function setUserId(payload) {
   return {type: SET_USER_ID, payload: payload};
+}
+
+export function setNickName(payload) {
+  return {type: SET_NICK_NAME, payload: payload};
 }
 
 export function setAccessToken(payload) {

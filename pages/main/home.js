@@ -14,7 +14,7 @@ import {
 import {regionList} from '../../constant/themes';
 import {themeList} from '../../constant/themes';
 import {useDispatch, useSelector} from 'react-redux';
-import {setTag} from '../../storage/actions';
+import {setTag, setNickName} from '../../storage/actions';
 import axiosInstance from '../../utils/axiosInstance';
 import NavigationBar from '../../components/tools/navigationBar';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -32,6 +32,7 @@ export default function Home({navigation, route}) {
   useEffect(() => {
     getSubscribedData();
     getViewData();
+    getUserData();
   }, []);
 
   useEffect(() => {
@@ -42,6 +43,16 @@ export default function Home({navigation, route}) {
       getRecommandVideos(viewedTag);
     }
   }, [viewedTag]);
+
+  const getUserData = async () => {
+    try {
+      const response = await axiosInstance.get(`user-service/users/${userId}`);
+      console.log('회원정보 조회 : ', response.data.payload);
+      dispatch(setNickName(response.data.payload.nickname));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const getSubscribedData = async () => {
     try {

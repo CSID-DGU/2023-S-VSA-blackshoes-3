@@ -31,6 +31,7 @@ export default function Play({route, navigation}) {
   const [comment, setComment] = useState(null);
   const [commentInput, setCommentInput] = useState('');
   const userId = useSelector(state => state.USER);
+  const nick = useSelector(state => state.NICK);
 
   const toggleControls = () => {
     setControlsVisible(!controlsVisible);
@@ -169,7 +170,24 @@ export default function Play({route, navigation}) {
       const response = await axiosInstance.get(
         `comment-service/comments/video?videoId=${videoData.videoId}&page=0&size=10`,
       );
+      console.log('받아온 댓글 :  ', response.data.payload);
       setComment(response.data.payload);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const submitComment = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `/comment-service/comments/${videoData.videoId}`,
+        {
+          usderId: userId,
+          nickname: nick,
+          content: commentInput,
+        },
+      );
+      console.log(response);
     } catch (e) {
       console.log(e);
     }
@@ -209,140 +227,177 @@ export default function Play({route, navigation}) {
 
       {!isFullScreen && (
         <View style={styles.contentsContainer}>
-          <View style={styles.videoInfoContainer}>
-            <Text style={styles.title}>{videoData.videoName}</Text>
-            <View style={styles.subInfoContainer}>
-              <View style={styles.subInfoContainer1}>
-                <Text style={styles.smallText}>
-                  {videoData.createdAt && videoData.createdAt.slice(0, 10)}
-                </Text>
+          {!commentIndex && (
+            <>
+              <View style={styles.videoInfoContainer}>
+                <Text style={styles.title}>{videoData.videoName}</Text>
+                <View style={styles.subInfoContainer}>
+                  <View style={styles.subInfoContainer1}>
+                    <Text style={styles.smallText}>
+                      {videoData.createdAt && videoData.createdAt.slice(0, 10)}
+                    </Text>
 
-                <Text style={styles.smallText}>
-                  조회수 {route.params.video.views}회
-                </Text>
+                    <Text style={styles.smallText}>
+                      조회수 {route.params.video.views}회
+                    </Text>
 
-                <Text style={styles.smallText}>좋아요 {countLike}회</Text>
+                    <Text style={styles.smallText}>좋아요 {countLike}회</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.likesContainer}
+                    onPress={likes}>
+                    <Icon
+                      name="cards-heart"
+                      size={20}
+                      color={like ? 'red' : 'grey'}
+                    />
+                    <Text style={styles.likesText}>Like ~</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.sellerInfoContainer}>
+                <Image
+                  style={styles.logo}
+                  source={{
+                    uri: `data:image/png;base64,${videoData.sellerLogo}`,
+                  }}
+                />
+                <Text style={styles.title}>
+                  {route.params.video.sellerName}
+                </Text>
+              </View>
+              <View style={styles.scrollContainer}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    width: 400,
+                    alignItems: 'center',
+                    gap: 20,
+                    paddingHorizontal: 15,
+                  }}>
+                  {videoData.videoTags &&
+                    videoData.videoTags.map((item, index) => {
+                      return (
+                        <TouchableOpacity
+                          key={index}
+                          style={styles.tagNameContainer}
+                          onPress={() =>
+                            navigation.navigate('ThemeVideo', {item})
+                          }>
+                          <Text style={styles.tagName}>{item.tagName}</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                </ScrollView>
               </View>
 
-              <TouchableOpacity style={styles.likesContainer} onPress={likes}>
-                <Icon
-                  name="cards-heart"
-                  size={20}
-                  color={like ? 'red' : 'grey'}
-                />
-                <Text style={styles.likesText}>Like ~</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.sellerInfoContainer}>
-            <Image
-              style={styles.logo}
-              source={{
-                uri: `data:image/png;base64,${videoData.sellerLogo}`,
-              }}
-            />
-            <Text style={styles.title}>{route.params.video.sellerName}</Text>
-          </View>
-          <View style={styles.scrollContainer}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                width: 400,
-                alignItems: 'center',
-                gap: 20,
-                paddingHorizontal: 15,
-              }}>
-              {videoData.videoTags &&
-                videoData.videoTags.map((item, index) => {
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.tagNameContainer}
-                      onPress={() => navigation.navigate('ThemeVideo', {item})}>
-                      <Text style={styles.tagName}>{item.tagName}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-            </ScrollView>
-          </View>
+              <View style={styles.bottomContainer}>
+                {openAd && (
+                  <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
+                )}
+              </View>
+            </>
+          )}
 
-          <ScrollView
-            style={styles.infoContainer}
-            contentContainerStyle={{alignItems: 'center'}}>
-            <View style={styles.bottomContainer}>
-              {openAd && (
-                <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
-              )}
-            </View>
-            <View style={styles.commentContainer}>
-              {!commentIndex ? (
-                <TouchableOpacity
-                  style={styles.firstCommentContainer}
-                  onPress={() => setCommentIndex(true)}>
-                  {comment ? (
-                    comment.comments.length === 0 ? (
-                      <Text style={styles.commentContents}>
-                        아직 댓글이 없습니다. 댓글을 등록해주세요.
-                      </Text>
-                    ) : (
-                      <>
+          <View
+            style={[
+              styles.commentContainer,
+              !commentIndex ? {paddingHorizontal: 15} : {},
+            ]}>
+            {!commentIndex ? (
+              <TouchableOpacity
+                style={styles.firstCommentContainer}
+                onPress={() => setCommentIndex(true)}>
+                {comment ? (
+                  comment.comments.length === 0 ? (
+                    <Text style={styles.commentContents}>
+                      아직 댓글이 없습니다. 댓글을 등록해주세요.
+                    </Text>
+                  ) : (
+                    <>
+                      <Text style={styles.commentTitle}>댓글</Text>
+                      <View style={styles.firstCommentBox}>
                         <Text style={styles.commentUserName}>
                           {comment.comments[0].nickname}
                         </Text>
                         <Text style={styles.commentContents}>
                           {comment.comments[0].content}
                         </Text>
-                      </>
-                    )
-                  ) : (
-                    <Text>wait hi</Text>
-                  )}
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.allCommentsContainer}>
+                      </View>
+                    </>
+                  )
+                ) : (
+                  <Text>wait hi</Text>
+                )}
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.allCommentsContainer}>
+                <View style={styles.allCommentsTopMenu}>
+                  <Text style={styles.commentTitle}>댓글</Text>
                   <TouchableOpacity onPress={() => setCommentIndex(false)}>
-                    <Text>close</Text>
+                    <Icon
+                      style={styles.icon}
+                      name="close"
+                      size={23}
+                      color={'black'}
+                    />
                   </TouchableOpacity>
-                  {comment ? (
-                    comment.comments.length === 0 ? (
-                      <Text style={styles.commentContents}>
-                        아직 댓글이 없습니다.
-                      </Text>
-                    ) : (
-                      <>
-                        <TextInput
-                          style={styles.comments.commentInput}
-                          placeholder="댓글 입력"
-                          placeholderTextColor={'#c9c9c9'}
-                          onChangeText={text => setCommentInput(text)}
-                          value={commentInput}
-                          onSubmitEditing={() => {
-                            // submitComment();
-                          }}
-                        />
-                        <TouchableOpacity
-                          style={styles.submitButton}
-                          // onPress={() => submitComment()}
-                        >
-                          <Text>submit</Text>
-                        </TouchableOpacity>
-                        {comment.comments.map((e, i) => {
-                          <TouchableOpacity
-                            style={styles.allCommentsBox}
-                            key={i}>
-                            <Text>hi</Text>
-                          </TouchableOpacity>;
-                        })}
-                      </>
-                    )
-                  ) : (
-                    <Text>wait hi</Text>
-                  )}
                 </View>
-              )}
-            </View>
-          </ScrollView>
+
+                {comment ? (
+                  comment.comments.length === 0 ? (
+                    <Text style={styles.commentContents}>
+                      아직 댓글이 없습니다.
+                    </Text>
+                  ) : (
+                    <>
+                      <TextInput
+                        style={styles.commentInput}
+                        placeholder="댓글 입력"
+                        placeholderTextColor={'#c9c9c9'}
+                        onChangeText={text => setCommentInput(text)}
+                        value={commentInput}
+                        onSubmitEditing={() => {
+                          submitComment();
+                        }}
+                      />
+
+                      <ScrollView
+                        style={styles.commentScrollContainer}
+                        contentContainerStyle={{alignItems: 'center'}}>
+                        <View>
+                          {comment.comments.map((e, i) => {
+                            return (
+                              <TouchableOpacity
+                                style={styles.allCommentsBox}
+                                key={i}>
+                                <View style={styles.commentsInfo}>
+                                  <Text style={styles.commentUserNameAll}>
+                                    {e.nickname}
+                                  </Text>
+                                  <Text style={styles.commentDate}>
+                                    {e.createdAt.split('T')[0]}
+                                  </Text>
+                                </View>
+
+                                <Text style={styles.commentContentsAll}>
+                                  {e.content}
+                                </Text>
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </View>
+                      </ScrollView>
+                    </>
+                  )
+                ) : (
+                  <Text>wait hi</Text>
+                )}
+              </View>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -361,7 +416,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   videoContainer: {
-    height: 240,
+    height: 235,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -396,9 +451,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 
-  infoContainer: {
+  commentScrollContainer: {
     width: '100%',
     backgroundColor: 'white',
+    marginTop: 20,
   },
   contentsContainer: {
     flex: 1,
@@ -496,4 +552,103 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     width: '80%',
   },
+  commentContainer: {
+    width: '100%',
+  },
+  firstCommentContainer: {
+    backgroundColor: '#F0F0F0',
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    paddingVertical: 12,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 2,
+    gap: 7,
+    marginBottom: 20,
+  },
+  commentTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: 'black',
+  },
+  firstCommentBox: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingVertical: 15,
+    gap: 22,
+    paddingHorizontal: 17,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 0.5,
+  },
+  commentUserName: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  commentContents: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  allCommentsContainer: {
+    backgroundColor: '#F0F0F0',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 2,
+    marginBottom: 20,
+    height: '100%',
+    paddingVertical: 15,
+  },
+  allCommentsTopMenu: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 5,
+    marginHorizontal: 15,
+  },
+  commentInput: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginTop: 10,
+    marginHorizontal: 15,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 1,
+  },
+  allCommentsBox: {
+    paddingVertical: 10,
+    width: 350,
+    gap: 5,
+    paddingHorizontal: 10,
+  },
+  commentsInfo: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'flex-end',
+  },
+  commentUserNameAll: {
+    fontSize: 19,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  commentDate: {fontSize: 11},
+  commentContentsAll: {fontSize: 16},
 });

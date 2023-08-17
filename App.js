@@ -18,6 +18,7 @@ import Login from './pages/signpages/login';
 import CheckInfo from './pages/mypages/userInfo';
 import ThemeSelectEach from './pages/mypages/subscribeManage';
 import SearchedVideos from './pages/others/searchedVideos';
+// import MyCommentPage from './pages/myPages/myComment';
 import NavigationContainer from '@react-navigation/native';
 import NavigationBar from './components/tools/navigationBar';
 import {
@@ -192,6 +193,7 @@ export default function App() {
             <Stack.Screen name="SearchedVideos" component={SearchedVideos} />
             <Stack.Screen name="CheckInfo" component={CheckInfo} />
             <Stack.Screen name="ThemeSelectEach" component={ThemeSelectEach} />
+            {/* <Stack.Screen name="MyCommentPage" component={MyCommentPage} /> */}
 
             <Stack.Screen
               name="Play"

@@ -2,6 +2,7 @@ import {
   SET_ALL,
   SET_TOKEN,
   SET_USER_ID,
+  SET_NICK_NAME,
   SET_ACCESS_TOKEN,
   SET_REFRESH_TOKEN,
   SET_TAG,
@@ -14,6 +15,7 @@ import {
 
 const initialState = {
   USER: null,
+  NICK: null,
   ACCESS: null,
   REFRESH: null,
   TAG: null,
@@ -37,6 +39,10 @@ function rootReducer(state = initialState, action) {
       };
     case SET_USER_ID:
       return {...state, USER: action.payload};
+
+    case SET_NICK_NAME:
+      return {...state, NICK: action.payload};
+
     case SET_ACCESS_TOKEN:
       return {...state, ACCESS: action.payload};
     case SET_REFRESH_TOKEN:
