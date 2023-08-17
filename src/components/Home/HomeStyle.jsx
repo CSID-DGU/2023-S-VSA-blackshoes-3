@@ -107,20 +107,26 @@ export const HoverButton0 = styled.button`
   height: 50px;
   border: none;
   border-radius: 16px;
-  background-color: ${(props) => (props.$page === 0 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 0 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 0 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 0 ? props.theme.bgColor : props.theme.textColor};
   font-size: 14px;
   cursor: pointer;
 `;
 
 export const HoverButton1 = styled(HoverButton0)`
-  background-color: ${(props) => (props.$page === 1 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 1 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 1 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 1 ? props.theme.bgColor : props.theme.textColor};
 `;
 
 export const HoverButton2 = styled(HoverButton0)`
-  background-color: ${(props) => (props.$page === 2 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 2 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 2 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 2 ? props.theme.bgColor : props.theme.textColor};
 `;
 
 export const BorderButton = styled.button`
@@ -150,7 +156,7 @@ export const ResNavSection = styled.section`
 `;
 
 export const ResNavItem0 = styled.section`
-  width: 33%;
+  width: 25%;
   min-width: 100px;
   height: 40px;
   display: none;

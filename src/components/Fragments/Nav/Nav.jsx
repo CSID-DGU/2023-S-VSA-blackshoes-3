@@ -4,6 +4,7 @@ import * as S from "../../Sign/SignStyle";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
 import Modal from "react-modal";
+import SetModal from "../Reusable/SetModal";
 
 const customStyles = {
   content: {
@@ -31,19 +32,14 @@ const Nav = () => {
   // State-------------------------------------------------
   const [modal, setModal] = useState(false);
 
-  // function----------------------------------------------
-  const openModal = () => {
-    setModal(true);
-  };
-
-  const closeModal = () => {
-    setModal(false);
-  };
-
   return (
     <H.NavSection>
       <H.NavBox>
-        <H.HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} $page={page}>
+        <H.HoverButton0
+          width="270px"
+          onClick={() => navigate(`/home/${userId}`)}
+          $page={page}
+        >
           메인
         </H.HoverButton0>
         <H.HoverButton1
@@ -60,19 +56,10 @@ const Nav = () => {
         >
           영상 관리
         </H.HoverButton2>
-        <H.HoverButton0 width="270px" onClick={openModal}>
+        <H.HoverButton0 width="270px" onClick={() => setModal(true)}>
           설정
         </H.HoverButton0>
-        <Modal isOpen={modal} onRequestClose={closeModal} style={customStyles}>
-          <H.ModalSection>
-            <H.ModalInputSection>
-              <H.ModalInput type="text" placeholder="수정할 유저 이름을 작성하세요" />
-              <S.ColorButton width="15%">수정</S.ColorButton>
-            </H.ModalInputSection>
-            <H.ModalInputSection></H.ModalInputSection>
-            <H.ModalInputSection></H.ModalInputSection>
-          </H.ModalSection>
-        </Modal>
+        <SetModal modal={modal} setModal={setModal} />
       </H.NavBox>
       <H.BorderButton width="270px">탈퇴하기</H.BorderButton>
     </H.NavSection>
