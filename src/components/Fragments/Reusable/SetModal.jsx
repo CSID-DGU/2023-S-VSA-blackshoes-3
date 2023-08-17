@@ -51,6 +51,22 @@ const SetModal = ({ modal, setModal }) => {
     fetchData();
   }, []);
 
+  const submitNewPassword = async () => {
+    try {
+      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/password`, {
+        oldPassword,
+        newPassword,
+      }).then(() => {
+        alert("비밀번호가 변경되었습니다.");
+        setOldPassword("");
+        setNewPassword("");
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
+  };
+
   return (
     <Modal
       isOpen={modal}
@@ -73,13 +89,17 @@ const SetModal = ({ modal, setModal }) => {
             <H.ModalInput
               type="password"
               placeholder="기존 비밀번호를 작성하세요"
+              onChange={(e) => setOldPassword(e.target.value)}
             />
             <H.ModalInput
               type="password"
               placeholder="변경할 비밀번호를 작성하세요"
+              onChange={(e) => setNewPassword(e.target.value)}
             />
           </H.ModalBetweenBox>
-          <S.ColorButton width="30%">수정</S.ColorButton>
+          <S.ColorButton width="30%" onClick={submitNewPassword}>
+            수정
+          </S.ColorButton>
         </H.ModalInputSection>
         <H.ModalTitle>회원 로고 수정</H.ModalTitle>
         <H.ModalInputSection>

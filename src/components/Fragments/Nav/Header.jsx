@@ -27,7 +27,6 @@ const Header = () => {
           refreshToken,
         })
         .then((res) => {
-          console.log(res);
           localStorage.removeItem("accessToken");
           removeCookie("refreshToken", { path: "/" });
           navigate(`/`, { replace: true });
@@ -35,8 +34,10 @@ const Header = () => {
         .catch((err) => {
           console.log(err);
           if (
-            err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
-            err.response.data.error === "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
+            err.response.data.error ===
+              "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
+            err.response.data.error ===
+              "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
           ) {
             alert(err.response.data.error);
             localStorage.removeItem("accessToken");
