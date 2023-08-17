@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -139,20 +140,25 @@ export default function MyLog({navigation, route}) {
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
-        {deleteControl && (
-          <View style={styles.deleteButtonContainer}>
-            <TouchableOpacity onPress={deleteSubmit}>
-              <Icon name="trash-outline" size={30} color={'black'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setDeleteArray([]);
-                setDeleteControl(false);
-              }}>
-              <Icon name="close" size={30} color={'black'} />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>시청 기록</Text>
+
+          {deleteControl && (
+            <View style={styles.deleteButtonContainer}>
+              <TouchableOpacity onPress={deleteSubmit}>
+                <Icon name="trash-outline" size={30} color={'black'} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setDeleteArray([]);
+                  setDeleteControl(false);
+                }}>
+                <Icon name="close" size={30} color={'black'} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
         <ScrollView
           ref={scrollViewRef}
           style={styles.scrollContainer}
@@ -210,7 +216,21 @@ const styles = StyleSheet.create({
   contentsContainer: {
     flex: 1,
   },
-
+  textContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 10,
+    width: 360,
+    marginTop: 10,
+  },
+  title: {
+    fontSize: 23,
+    color: '#4D4D4D',
+    marginLeft: 15,
+    fontWeight: '700',
+    fontStyle: 'italic',
+    width: 120,
+  },
   scrollContainer: {
     marginTop: 8,
     width: '100%',
@@ -219,8 +239,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 10,
     gap: 5,
   },
   videoThumbnailContainer: {

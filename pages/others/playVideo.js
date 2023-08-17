@@ -166,9 +166,8 @@ export default function Play({route, navigation}) {
 
   const getComment = async () => {
     try {
-      console.log('셀러아이디 : ', videoData.sellerId);
       const response = await axiosInstance.get(
-        `comment-service/comments/${videoData.sellerId}/${videoData.videoId}?page=0&size=10`,
+        `comment-service/comments/video?videoId=${videoData.videoId}&page=0&size=10`,
       );
       setComment(response.data.payload);
     } catch (e) {

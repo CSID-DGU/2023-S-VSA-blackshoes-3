@@ -49,6 +49,7 @@ axiosInstance.interceptors.response.use(
   async error => {
     console.log('에러 : ', error);
     const originalRequest = error.config;
+    console.log('originalRequest : ', originalRequest);
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 

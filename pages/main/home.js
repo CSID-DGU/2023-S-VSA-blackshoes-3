@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useRef, useEffect, useState} from 'react';
@@ -16,30 +17,84 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setTag} from '../../storage/actions';
 import axiosInstance from '../../utils/axiosInstance';
 import NavigationBar from '../../components/tools/navigationBar';
+import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 
 export default function Home({navigation, route}) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollPosition2, setScrollPosition2] = useState(0);
+  const [viewedTag, setViewedTag] = useState([]);
+  const [recommendedVideos, setRecommendedVideos] = useState([]);
   const scrollViewRef = useRef();
   const scrollViewRef2 = useRef();
   const userId = useSelector(state => state.USER);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getData();
+    getSubscribedData();
+    getViewData();
   }, []);
 
-  const getData = async () => {
+  useEffect(() => {
+    if (viewedTag.length === 0) {
+      const randomTags = getRandomTags();
+      getRecommandVideos(randomTags);
+    } else {
+      getRecommandVideos(viewedTag);
+    }
+  }, [viewedTag]);
+
+  const getSubscribedData = async () => {
     try {
       const response = await axiosInstance.get(
         `personalized-service/${userId}/tags/subscribed`,
       );
-
-      console.log('hi tags : ', response.data.payload.subscribedTagList);
-
       dispatch(setTag(response.data.payload.subscribedTagList));
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const getRecommandVideos = async tags => {
+    try {
+      const tagIds = tags.map(tag => tag.tagId).join(',');
+      console.log('Tag IDs array : ', tagIds);
+      const response = await axiosInstance.get(
+        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=0`,
+      );
+      setRecommendedVideos(response.data.payload.videos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // const getRecommandVideos = async () => {
+  //   try {
+  //     console.log('viewTag array : ', viewedTag);
+  //     const response = await axiosInstance.get(
+  //       `content-slave-service/videos/tagIds?q=${viewedTag[0].tagId},${viewedTag[1].tagId},${viewedTag[2].tagId},${viewedTag[3].tagId},${viewedTag[4].tagId}&u=${userId}&page=0`,
+  //     );
+  //     setRecommendedVideos(response.data.payload.videos);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  const getRandomTags = () => {
+    const combinedList = [...regionList, ...themeList];
+    combinedList.sort(() => 0.5 - Math.random());
+    return combinedList.slice(0, 5);
+  };
+
+  const getViewData = async () => {
+    try {
+      console.log('userId in getViewData : ', userId);
+      const response = await axiosInstance.get(
+        `personalized-service/${userId}/tags/viewed`,
+      );
+      console.log('response of getViewDATA : ', response.data.payload);
+      setViewedTag(response.data.payload.viewedTags);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -83,92 +138,113 @@ export default function Home({navigation, route}) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.contentsContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>인기 지역</Text>
-        </View>
-        <View style={styles.areaScrollContainer}>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() =>
-              handleIconPress(
-                'left',
-                scrollViewRef,
-                setScrollPosition,
-                scrollPosition,
-              )
-            }>
-            <Image source={require('../../assets/themeImg/arrow-left.png')} />
-          </TouchableOpacity>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={true}
-            onScroll={event => handleScroll(event, setScrollPosition)}
-            ref={scrollViewRef}>
-            <View style={styles.areaScroll}>
-              {regionList.map((e, i) => {
-                return <Item key={i} item={e} />;
-              })}
-            </View>
-          </ScrollView>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() =>
-              handleIconPress(
-                'right',
-                scrollViewRef,
-                setScrollPosition,
-                scrollPosition,
-              )
-            }>
-            <Image source={require('../../assets/themeImg/arrow-right.png')} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>인기 테마</Text>
-        </View>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={{alignItems: 'center'}}>
+        <View style={styles.contentsContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>인기 지역</Text>
+          </View>
+          <View style={styles.areaScrollContainer}>
+            <TouchableOpacity
+              style={styles.scrollbutton}
+              onPress={() =>
+                handleIconPress(
+                  'left',
+                  scrollViewRef,
+                  setScrollPosition,
+                  scrollPosition,
+                )
+              }>
+              <Image source={require('../../assets/themeImg/arrow-left.png')} />
+            </TouchableOpacity>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={true}
+              onScroll={event => handleScroll(event, setScrollPosition)}
+              ref={scrollViewRef}>
+              <View style={styles.areaScroll}>
+                {regionList.map((e, i) => {
+                  return <Item key={i} item={e} />;
+                })}
+              </View>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.scrollbutton}
+              onPress={() =>
+                handleIconPress(
+                  'right',
+                  scrollViewRef,
+                  setScrollPosition,
+                  scrollPosition,
+                )
+              }>
+              <Image
+                source={require('../../assets/themeImg/arrow-right.png')}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>인기 테마</Text>
+          </View>
 
-        <View style={styles.areaScrollContainer}>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() =>
-              handleIconPress(
-                'left',
-                scrollViewRef2,
-                setScrollPosition2,
-                scrollPosition2,
-              )
-            }>
-            <Image source={require('../../assets/themeImg/arrow-left.png')} />
-          </TouchableOpacity>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onScroll={event => handleScroll(event, setScrollPosition2)}
-            ref={scrollViewRef2}>
-            <View style={styles.areaScroll}>
-              {themeList.map((e, i) => {
-                return <Item key={i} item={e} />;
-              })}
-            </View>
-          </ScrollView>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() =>
-              handleIconPress(
-                'right',
-                scrollViewRef2,
-                setScrollPosition2,
-                scrollPosition2,
-              )
-            }>
-            <Image source={require('../../assets/themeImg/arrow-right.png')} />
-          </TouchableOpacity>
+          <View style={styles.areaScrollContainer}>
+            <TouchableOpacity
+              style={styles.scrollbutton}
+              onPress={() =>
+                handleIconPress(
+                  'left',
+                  scrollViewRef2,
+                  setScrollPosition2,
+                  scrollPosition2,
+                )
+              }>
+              <Image source={require('../../assets/themeImg/arrow-left.png')} />
+            </TouchableOpacity>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              onScroll={event => handleScroll(event, setScrollPosition2)}
+              ref={scrollViewRef2}>
+              <View style={styles.areaScroll}>
+                {themeList.map((e, i) => {
+                  return <Item key={i} item={e} />;
+                })}
+              </View>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.scrollbutton}
+              onPress={() =>
+                handleIconPress(
+                  'right',
+                  scrollViewRef2,
+                  setScrollPosition2,
+                  scrollPosition2,
+                )
+              }>
+              <Image
+                source={require('../../assets/themeImg/arrow-right.png')}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>추천 영상</Text>
+          </View>
+
+          {recommendedVideos.length > 0 &&
+            recommendedVideos.map((e, i) => {
+              return (
+                <TouchableOpacity
+                  style={styles.videoThumbnailContainer}
+                  key={i}
+                  onPress={() => navigation.navigate('Play', {video: e})}>
+                  <VideoThumbnail key={i} video={e} navigation={navigation} />
+                </TouchableOpacity>
+              );
+            })}
         </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>추천 영상</Text>
-        </View>
-      </View>
+      </ScrollView>
+
       <NavigationBar route={route} />
     </View>
   );
@@ -184,11 +260,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     alignItems: 'center',
+    width: '100%',
   },
   textContainer: {
     alignItems: 'flex-start',
     width: 360,
-    marginTop: 15,
+    marginTop: 10,
   },
 
   areaScroll: {
@@ -217,11 +294,33 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
+  scrollContainer: {
+    width: '100%',
+  },
+
+  videoThumbnailContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    paddingTop: 17,
+    paddingBottom: 10,
+    marginVertical: 7,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',
+    borderRadius: 10,
+  },
+
   item: {
     borderRadius: 50,
     overflow: 'hidden',
-    width: 75,
-    height: 75,
+    width: 65,
+    height: 65,
     marginRight: 14,
     backgroundColor: 'white',
     shadowColor: '#000',
@@ -238,7 +337,7 @@ const styles = StyleSheet.create({
     width: 20,
   },
   title: {
-    fontSize: 25,
+    fontSize: 23,
     color: '#4D4D4D',
     marginLeft: 15,
     fontWeight: '700',

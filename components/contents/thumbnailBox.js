@@ -12,13 +12,16 @@ export const VideoThumbnail = ({video, navigation}) => {
   // "views":440,
   // "adClicks":24
   // },
-
+  console.log('in videoTHumbnail', video.thumbnailUrl);
   return (
     // <TouchableOpacity
     //   style={styles.container}
     //   onPress={() => navigation.navigate('Play', {video})}>
     <>
-      <Image style={styles.imgStyle} source={{uri: video.thumbnailUrl}} />
+      <Image
+        style={styles.imgStyle}
+        source={{uri: video.thumbnailUrl, cache: 'force-cache'}}
+      />
       <View style={styles.informationContainer}>
         <Image
           style={styles.logo}
