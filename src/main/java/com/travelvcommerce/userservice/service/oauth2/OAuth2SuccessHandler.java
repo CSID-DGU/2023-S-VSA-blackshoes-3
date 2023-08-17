@@ -2,6 +2,7 @@ package com.travelvcommerce.userservice.service.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.userservice.dto.TokenDto;
+import com.travelvcommerce.userservice.entity.Role;
 import com.travelvcommerce.userservice.repository.UserRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.AllArgsConstructor;
@@ -35,11 +36,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("userPrincipal {}", userPrincipal.getAttributes().toString());
         String userId = userPrincipal.getName();
         String email = userPrincipal.getEmail();
+        String userType = Role.USER.getRoleName();
 
         log.info("userId {}", userId);
         log.info("email {}", email);
 
-        String userType = "USER";
         TokenDto tokenDto = jwtTokenProvider.createTokens(email, userType, userId);
         response.setStatus(HttpServletResponse.SC_OK);
         response.sendRedirect(REDIRECT_URI + "/social-login?access-token=" + tokenDto.getAccessToken() + "&refresh-token=" + tokenDto.getRefreshToken());

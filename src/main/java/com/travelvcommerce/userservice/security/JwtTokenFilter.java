@@ -1,4 +1,5 @@
 package com.travelvcommerce.userservice.security;
+import com.travelvcommerce.userservice.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -25,8 +26,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
+    @Qualifier("userDetailsService")
     @Autowired
     private UserDetailsService userDetailsService;
+    @Qualifier("sellerDetailsService")
+    @Autowired
+    private UserDetailsService sellerDetailsService;
 
 
 
@@ -40,7 +45,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String userType = tokenProvider.getUserTypeFromToken(token);  // userType을 가져옵니다.
             String userId = tokenProvider.getUserIdFromToken(token);  // userId를 가져옵니다.
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UserDetails userDetails;
+            if (userType.equals(Role.SELLER.getRoleName())) {
+                userDetails = sellerDetailsService.loadUserByUsername(email);
+            } else if (userType.equals(Role.USER.getRoleName())){
+                userDetails = userDetailsService.loadUserByUsername(email);
+            } else {
+                throw new IllegalArgumentException("유효하지 않은 사용자 타입입니다.");
+            }
 
             AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
