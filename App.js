@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState, useCallback} from 'react';
-import {Header, createStackNavigator} from '@react-navigation/stack';
+import React, {useState} from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Init from './pages/others/initialPage';
 import ThemeSelect from './pages/others/themeSelect';
@@ -56,31 +55,31 @@ export default function App() {
     return (
       <View style={styles.toggleMenuContainer}>
         <View style={styles.toggleMenuTop}>
-          <Text style={styles.menuTitle}>MyPage</Text>
+          <Text style={styles.menuTitle}>My Page</Text>
 
           <TouchableOpacity
             style={styles.closeMenuButton}
             onPress={() => drawerNavigation.closeDrawer()}>
-            <Icon name="close-outline" size={30} color={'black'} />
+            <Icon name="close-outline" size={35} color={'black'} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           style={styles.menuContentsContainer}
           onPress={() => navigation.navigate('CheckInfo')}>
-          <Icon name="person" size={30} color={'black'} />
+          <Icon name="person" size={35} color={'black'} />
           <Text style={styles.menuContentsText}>회원 정보 조회</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuContentsContainer}
           onPress={() => navigation.navigate('ThemeSelectEach')}>
-          <Icon name="bookmark" size={30} color={'black'} />
+          <Icon name="bookmark" size={35} color={'black'} />
           <Text style={styles.menuContentsText}>구독 관리</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuContentsContainer}
           onPress={() => navigation.navigate('CheckInfo')}>
-          <Icon name="chatbubble-outline" size={30} color={'black'} />
+          <Icon name="chatbubble-outline" size={35} color={'black'} />
           <Text style={styles.menuContentsText}>내가 쓴 댓글</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -101,7 +100,7 @@ export default function App() {
               console.log(e);
             }
           }}>
-          <Icon name="log-out" size={30} color={'black'} />
+          <Icon name="log-out" size={35} color={'black'} />
           <Text style={styles.menuContentsText}>로그 아웃</Text>
         </TouchableOpacity>
       </View>
@@ -113,8 +112,10 @@ export default function App() {
       screenOptions={{
         drawerPosition: 'right',
         headerShown: false,
+        drawerStyle: {
+          width: '100%',
+        },
       }}
-      drawerWidth="70%"
       initialRouteName="MainStack"
       drawerContent={props => (
         <CustomDrawer drawerNavigation={props.navigation} />
@@ -242,34 +243,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingVertical: 13,
+    paddingVertical: 15,
     backgroundColor: '#F2F8FF',
-    paddingLeft: 16,
-    paddingRight: 10,
-    borderBottomWidth: 0.5,
-    paddingBottom: 15,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
   },
   menuTitle: {
-    fontSize: 23,
+    fontSize: 25,
     fontWeight: 'bold',
     letterSpacing: 3,
     fontStyle: 'italic',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: {width: 1, height: 2},
     textShadowRadius: 1,
     color: '#828282',
   },
   menuContentsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    gap: 30,
     width: '100%',
-    paddingLeft: 25,
-    paddingVertical: 20,
-    borderBottomWidth: 0.5,
-    paddingRight: 60,
+    paddingLeft: 35,
+    paddingVertical: 25,
+    borderBottomWidth: 1,
+    borderStyle: 'dotted',
   },
   menuContentsText: {
-    fontSize: 20,
+    fontSize: 23,
     fontWeight: 'bold',
   },
 });

@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Animated, View, TouchableOpacity, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import {setAll, setTag} from '../../storage/actions';
+import {setAll} from '../../storage/actions';
 import axiosInstance from '../../utils/axiosInstance';
 
 export default function Init({navigation}) {

@@ -1,14 +1,14 @@
 import React from 'react';
 import {Image, View, TouchableOpacity, StyleSheet} from 'react-native';
-import {useRoute, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-export default function NavigationBar() {
+export default function NavigationBar({route}) {
   const navigation = useNavigation();
-  const route = useRoute();
-
   return (
     <View style={styles.style_Toolbar}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Home')}
+        style={styles.imgContainer}>
         <Image
           style={styles.img_style}
           source={
@@ -18,7 +18,9 @@ export default function NavigationBar() {
           }
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ShowVideo')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowVideo')}
+        style={styles.imgContainer}>
         <Image
           style={styles.img_style}
           source={
@@ -28,7 +30,9 @@ export default function NavigationBar() {
           }
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('My')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('My')}
+        style={styles.imgContainer}>
         <Image
           style={styles.img_style}
           source={
@@ -38,7 +42,9 @@ export default function NavigationBar() {
           }
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Log')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Log')}
+        style={styles.imgContainer}>
         <Image
           style={styles.img_style}
           source={
@@ -55,11 +61,15 @@ export default function NavigationBar() {
 const styles = StyleSheet.create({
   style_Toolbar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 45,
+
     height: 65,
     backgroundColor: 'white',
+  },
+  imgContainer: {
+    paddingHorizontal: 25,
+    paddingVertical: 10,
   },
   img_style: {
     width: 36,

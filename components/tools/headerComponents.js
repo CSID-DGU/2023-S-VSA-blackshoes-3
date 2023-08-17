@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
+import React, {useCallback} from 'react';
 
 import {
   View,
@@ -8,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  Modal,
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';

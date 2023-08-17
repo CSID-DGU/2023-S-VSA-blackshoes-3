@@ -1,5 +1,4 @@
 /* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';

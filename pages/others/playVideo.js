@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 /* eslint-disable no-shadow */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -10,6 +9,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import axiosInstance from '../../utils/axiosInstance';
@@ -17,7 +17,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import VideoPlayer from 'react-native-video-controls';
 import {Ad} from '../../components/contents/advertiseBox';
 import {useSelector} from 'react-redux';
-import {setTag} from '../../storage/actions';
 
 export default function Play({route, navigation}) {
   const [videoData, setVideoData] = useState([]);
@@ -28,8 +27,11 @@ export default function Play({route, navigation}) {
   const [like, setLike] = useState(false);
   const [countLike, setConutLike] = useState(route.params.video.likes);
   const [tagIds, setTagIds] = useState([]);
-  const [comment, setComment] = useState([]);
+  const [commentIndex, setCommentIndex] = useState(false);
+  const [comment, setComment] = useState(null);
+  const [commentInput, setCommentInput] = useState('');
   const userId = useSelector(state => state.USER);
+
   const toggleControls = () => {
     setControlsVisible(!controlsVisible);
   };
@@ -46,14 +48,17 @@ export default function Play({route, navigation}) {
       registerHistory();
 
       checkLike();
+      getComment();
     }
   }, [videoData]);
 
-  // useEffect(() => {
-  //   if (tagIds.length > 0) {
-  //     registerHistoryTag();
-  //   }
-  // }, [tagIds]);
+  useEffect(() => {
+    if (tagIds.length === 0) {
+      return;
+    } else {
+      registerHistoryTag();
+    }
+  }, [tagIds]);
 
   useEffect(() => {
     if (videoData.length === 0) {
@@ -136,7 +141,7 @@ export default function Play({route, navigation}) {
           sellerId: videoData.sellerId,
         },
       );
-      console.log(response);
+      console.log('시청기록 응답 : ', response.data.payload);
     } catch (e) {
       console.log(e);
     }
@@ -144,34 +149,32 @@ export default function Play({route, navigation}) {
 
   const registerHistoryTag = async () => {
     console.log('태그 아이디즈 : ', tagIds);
+    console.log('유저아이디 : ', userId);
     try {
       const response = axiosInstance.post(
-        `/personalized-service/${userId}/tags/viewed`,
+        `personalized-service/${userId}/tags/viewed`,
         {
           tagIdList: tagIds,
         },
       );
-      console.log(response.data);
+      console.log('response of tag');
+      console.log(response);
     } catch (e) {
       console.log(e);
     }
   };
 
-  // const getComment = async () => {
-  //   const response = await axios.get(`http://192.168.0.8:3001/api/v1/comments`);
-  //   console.log(response.data);
-  //   setComment(response.data);
-  // };
-
-  // const renderComment = item => {
-  //   return (
-  //     <View style={styles.commentContainer}>
-  //       <View style={styles.commentInfoContainer}></View>
-  //     </View>
-  //   );
-  // };
-
-  //480p.m3u8 / 720p.m3u8 / 1080p.m3u8
+  const getComment = async () => {
+    try {
+      console.log('셀러아이디 : ', videoData.sellerId);
+      const response = await axiosInstance.get(
+        `comment-service/comments/${videoData.sellerId}/${videoData.videoId}?page=0&size=10`,
+      );
+      setComment(response.data.payload);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -214,21 +217,11 @@ export default function Play({route, navigation}) {
                 <Text style={styles.smallText}>
                   {videoData.createdAt && videoData.createdAt.slice(0, 10)}
                 </Text>
-                {/* <Icon2
-                    style={styles.icon}
-                    name="visibility"
-                    size={20}
-                    color={'grey'}
-                  /> */}
+
                 <Text style={styles.smallText}>
                   조회수 {route.params.video.views}회
                 </Text>
-                {/* <Icon
-                    style={styles.icon}
-                    name="cards-heart"
-                    size={20}
-                    color={'grey'}
-                  /> */}
+
                 <Text style={styles.smallText}>좋아요 {countLike}회</Text>
               </View>
 
@@ -281,6 +274,73 @@ export default function Play({route, navigation}) {
             <View style={styles.bottomContainer}>
               {openAd && (
                 <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
+              )}
+            </View>
+            <View style={styles.commentContainer}>
+              {!commentIndex ? (
+                <TouchableOpacity
+                  style={styles.firstCommentContainer}
+                  onPress={() => setCommentIndex(true)}>
+                  {comment ? (
+                    comment.comments.length === 0 ? (
+                      <Text style={styles.commentContents}>
+                        아직 댓글이 없습니다. 댓글을 등록해주세요.
+                      </Text>
+                    ) : (
+                      <>
+                        <Text style={styles.commentUserName}>
+                          {comment.comments[0].nickname}
+                        </Text>
+                        <Text style={styles.commentContents}>
+                          {comment.comments[0].content}
+                        </Text>
+                      </>
+                    )
+                  ) : (
+                    <Text>wait hi</Text>
+                  )}
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.allCommentsContainer}>
+                  <TouchableOpacity onPress={() => setCommentIndex(false)}>
+                    <Text>close</Text>
+                  </TouchableOpacity>
+                  {comment ? (
+                    comment.comments.length === 0 ? (
+                      <Text style={styles.commentContents}>
+                        아직 댓글이 없습니다.
+                      </Text>
+                    ) : (
+                      <>
+                        <TextInput
+                          style={styles.comments.commentInput}
+                          placeholder="댓글 입력"
+                          placeholderTextColor={'#c9c9c9'}
+                          onChangeText={text => setCommentInput(text)}
+                          value={commentInput}
+                          onSubmitEditing={() => {
+                            // submitComment();
+                          }}
+                        />
+                        <TouchableOpacity
+                          style={styles.submitButton}
+                          // onPress={() => submitComment()}
+                        >
+                          <Text>submit</Text>
+                        </TouchableOpacity>
+                        {comment.comments.map((e, i) => {
+                          <TouchableOpacity
+                            style={styles.allCommentsBox}
+                            key={i}>
+                            <Text>hi</Text>
+                          </TouchableOpacity>;
+                        })}
+                      </>
+                    )
+                  ) : (
+                    <Text>wait hi</Text>
+                  )}
+                </View>
               )}
             </View>
           </ScrollView>

@@ -26,7 +26,7 @@ const executeNextRequest = () => {
 
 axiosInstance.interceptors.request.use(config => {
   config.headers.Authorization = `Bearer ${Store.getState().ACCESS}`;
-  console.log('hi : ', Store.getState().ACCESS);
+  console.log('엑세스 토큰 : ', Store.getState().ACCESS);
   return new Promise((resolve, reject) => {
     const requestCall = () => {
       resolve(config);
@@ -43,33 +43,33 @@ axiosInstance.interceptors.request.use(config => {
 
 axiosInstance.interceptors.response.use(
   function (response) {
-    isRequestInProgress = false;
     executeNextRequest();
     return response;
   },
   async error => {
-    console.log('에러');
+    console.log('에러 : ', error);
     const originalRequest = error.config;
-
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = Store.getState().REFRESH;
-      const response = await axiosInstance.post('/user-service/refresh', {
+      console.log('리프레쉬 토큰 : ', refreshToken);
+
+      const response = await axios.post(`${SERVER_IP}user-service/refresh`, {
         refreshToken: refreshToken,
       });
+
+      console.log('리프레쉬 토큰 재발급 요청 응답 : ', response);
 
       const newAccessToken = response.data.payload.accessToken;
       Store.dispatch(setToken(response.data.payload));
       originalRequest.headers.Authorization = 'Bearer ' + newAccessToken;
-      const retriedResponse = await axiosInstance(originalRequest);
 
-      isRequestInProgress = false;
       executeNextRequest();
-      return retriedResponse;
+
+      return axiosInstance(originalRequest);
     }
 
-    isRequestInProgress = false;
     executeNextRequest();
     return Promise.reject(error);
   },

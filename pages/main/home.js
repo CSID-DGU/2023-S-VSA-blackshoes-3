@@ -104,8 +104,7 @@ export default function Home({navigation, route}) {
             horizontal
             showsHorizontalScrollIndicator={true}
             onScroll={event => handleScroll(event, setScrollPosition)}
-            ref={scrollViewRef}
-            style={styles.horizontalScrollContainer}>
+            ref={scrollViewRef}>
             <View style={styles.areaScroll}>
               {regionList.map((e, i) => {
                 return <Item key={i} item={e} />;
@@ -146,8 +145,7 @@ export default function Home({navigation, route}) {
             horizontal
             showsHorizontalScrollIndicator={false}
             onScroll={event => handleScroll(event, setScrollPosition2)}
-            ref={scrollViewRef2}
-            style={styles.horizontalScrollContainer}>
+            ref={scrollViewRef2}>
             <View style={styles.areaScroll}>
               {themeList.map((e, i) => {
                 return <Item key={i} item={e} />;
@@ -168,7 +166,7 @@ export default function Home({navigation, route}) {
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>인기 상품</Text>
+          <Text style={styles.title}>추천 영상</Text>
         </View>
       </View>
       <NavigationBar route={route} />
@@ -188,13 +186,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textContainer: {
-    marginTop: 5,
     alignItems: 'flex-start',
     width: 360,
+    marginTop: 15,
   },
 
   areaScroll: {
     flexDirection: 'row',
+    alignItems: 'center',
+
+    paddingVertical: 10,
   },
 
   areaScrollContainer: {
@@ -202,10 +203,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 10,
-    height: 110,
     width: 350,
+    paddingVertical: 2,
     marginTop: 15,
-    marginBottom: 5,
+    marginBottom: 7,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -215,17 +216,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  horizontalScrollContainer: {
-    marginTop: 7,
-  },
+
   item: {
-    borderRadius: 10,
+    borderRadius: 50,
     overflow: 'hidden',
-    width: 95,
-    height: 95,
+    width: 75,
+    height: 75,
     marginRight: 14,
     backgroundColor: 'white',
-    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -246,7 +244,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontStyle: 'italic',
     width: 120,
-    marginTop: 20,
   },
 
   touch: {

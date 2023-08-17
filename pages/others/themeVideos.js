@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Toolbar from '../../components/tools/navigationBar';
 import axiosInstance from '../../utils/axiosInstance';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 export default function ThemeVideo({route, navigation}) {
@@ -50,7 +49,6 @@ export default function ThemeVideo({route, navigation}) {
             })}
         </ScrollView>
       </View>
-      <Toolbar route={route} />
     </View>
   );
 }

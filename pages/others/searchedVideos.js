@@ -4,7 +4,6 @@ import React, {useState, useEffect, useRef} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Toolbar from '../../components/tools/navigationBar';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 import axiosInstance from '../../utils/axiosInstance';
 export default function SearchedVideos({route, navigation}) {
@@ -135,8 +134,6 @@ export default function SearchedVideos({route, navigation}) {
             })}
         </ScrollView>
       </View>
-
-      <Toolbar route={route} />
     </View>
   );
 }
