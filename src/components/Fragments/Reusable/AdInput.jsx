@@ -6,7 +6,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-import { UploadInstance } from "../../../api/axios";
+import { Instance } from "../../../api/axios";
 
 const AdInput = ({
   adId,
@@ -76,13 +76,12 @@ const AdInput = ({
     const adModifyRequests = [];
     try {
       if (window.confirm("광고를 수정하시겠습니까?")) {
-        await UploadInstance.put(
-          `upload/service/videos/${userId}/${videoId}/ads`,
-          adModifyRequests
-        ).then((res) => {
-          console.log(res);
-          alert("광고가 수정되었습니다.");
-        });
+        await Instance.put(`upload/service/videos/${userId}/${videoId}/ads`, adModifyRequests).then(
+          (res) => {
+            console.log(res);
+            alert("광고가 수정되었습니다.");
+          }
+        );
       }
     } catch (err) {
       console.log(err);

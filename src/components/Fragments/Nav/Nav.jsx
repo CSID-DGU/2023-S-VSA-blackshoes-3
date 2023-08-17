@@ -1,38 +1,49 @@
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  BorderButton,
-  HoverButton0,
-  HoverButton1,
-  HoverButton2,
-  NavBox,
-  NavSection,
-} from "../../Home/HomeStyle";
-import { useContext } from "react";
+import * as H from "../../Home/HomeStyle";
+import * as S from "../../Sign/SignStyle";
+import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
+import SetModal from "../Reusable/SetModal";
 
 const Nav = () => {
+  // constant----------------------------------------------
   const navigate = useNavigate();
   const { page } = useContext(GlobalContext);
   const { userId } = useParams();
 
+  // State-------------------------------------------------
+  const [modal, setModal] = useState(false);
+
   return (
-    <NavSection>
-      <NavBox>
-        <HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} $page={page}>
+    <H.NavSection>
+      <H.NavBox>
+        <H.HoverButton0
+          width="270px"
+          onClick={() => navigate(`/home/${userId}`)}
+          $page={page}
+        >
           메인
-        </HoverButton0>
-        <HoverButton1 width="270px" onClick={() => navigate(`/home/${userId}/upload`)} $page={page}>
+        </H.HoverButton0>
+        <H.HoverButton1
+          width="270px"
+          onClick={() => navigate(`/home/${userId}/upload`)}
+          $page={page}
+        >
           영상 업로드
-        </HoverButton1>
-        <HoverButton2 width="270px" onClick={() => navigate(`/home/${userId}/manage`)} $page={page}>
+        </H.HoverButton1>
+        <H.HoverButton2
+          width="270px"
+          onClick={() => navigate(`/home/${userId}/manage`)}
+          $page={page}
+        >
           영상 관리
-        </HoverButton2>
-        <HoverButton0 width="270px" onClick={() => console.log("마이 페이지")}>
-          마이 페이지
-        </HoverButton0>
-      </NavBox>
-      <BorderButton width="270px">탈퇴하기</BorderButton>
-    </NavSection>
+        </H.HoverButton2>
+      </H.NavBox>
+      <H.BorderButton width="270px" onClick={() => setModal(true)}>
+        설정
+      </H.BorderButton>
+      <SetModal modal={modal} setModal={setModal} />
+    </H.NavSection>
   );
 };
 

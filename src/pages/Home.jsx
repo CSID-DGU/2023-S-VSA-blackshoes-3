@@ -13,7 +13,6 @@ import {
 } from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-
 import axios from "axios";
 
 // testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
@@ -22,7 +21,6 @@ import axios from "axios";
 
 const Home = () => {
   // Constant----------------------------------------------------
-
   const { userId } = useParams();
 
   // State-------------------------------------------------------

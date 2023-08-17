@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
 import { ColorButton } from "../../Sign/SignStyle";
-import { UploadInstance } from "../../../api/axios";
 import PropTypes from "prop-types";
+import { Instance } from "../../../api/axios";
 
 const Mmiddle = ({
   userId,
@@ -29,7 +29,7 @@ const Mmiddle = ({
   // Function----------------------------------------------------
   const handleVideoDelete = async () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
-      await UploadInstance.delete(`/upload-service/videos/${userId}/${videoId}`)
+      await Instance.delete(`/upload-service/videos/${userId}/${videoId}`)
         .then(() => {
           window.location.reload();
         })
@@ -47,7 +47,7 @@ const Mmiddle = ({
 
   const submitVideoName = async () => {
     try {
-      await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/title`, {
+      await Instance.put(`/upload-service/videos/${userId}/${videoId}/title`, {
         videoName,
       }).then(() => {
         alert("제목이 수정되었습니다.");
@@ -89,15 +89,11 @@ const Mmiddle = ({
       try {
         const formData = new FormData();
         formData.append("thumbnail", thumbnailModifiedFile);
-        await UploadInstance.put(
-          `/upload-service/videos/${userId}/${videoId}/thumbnail`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        ).then(() => {
+        await Instance.put(`/upload-service/videos/${userId}/${videoId}/thumbnail`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }).then(() => {
           alert("썸네일이 수정되었습니다.");
         });
       } catch (err) {
@@ -119,7 +115,7 @@ const Mmiddle = ({
   const submitVideoTag = async () => {
     if (window.confirm("태그를 수정하시겠습니까?")) {
       try {
-        await UploadInstance.put(`/upload-service/videos/${userId}/${videoId}/tags`, {
+        await Instance.put(`/upload-service/videos/${userId}/${videoId}/tags`, {
           tagIds: newTagIdList,
         }).then(() => {
           alert("태그가 수정되었습니다.");

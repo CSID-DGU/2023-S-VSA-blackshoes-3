@@ -1,24 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
-import { ResNavItem0, ResNavItem1, ResNavItem2, ResNavSection } from "../../Home/HomeStyle";
+import * as H from "../../Home/HomeStyle";
+import SetModal from "../Reusable/SetModal";
 
-const ResNav = ({ userId }) => {
+const ResNav = () => {
+  // constant----------------------------------------------
   const navigate = useNavigate();
   const { page } = useContext(GlobalContext);
+  const { userId } = useParams();
+
+  // State-------------------------------------------------
+  const [modal, setModal] = useState(false);
 
   return (
-    <ResNavSection>
-      <ResNavItem0 onClick={() => navigate(`/home/${userId}`)} $page={page}>
+    <H.ResNavSection>
+      <H.ResNavItem0 onClick={() => navigate(`/home/${userId}`)} $page={page}>
         메인
-      </ResNavItem0>
-      <ResNavItem1 onClick={() => navigate(`/home/${userId}/upload`)} $page={page}>
+      </H.ResNavItem0>
+      <H.ResNavItem1
+        onClick={() => navigate(`/home/${userId}/upload`)}
+        $page={page}
+      >
         영상 업로드
-      </ResNavItem1>
-      <ResNavItem2 onClick={() => navigate(`/home/${userId}/manage`)} $page={page}>
+      </H.ResNavItem1>
+      <H.ResNavItem2
+        onClick={() => navigate(`/home/${userId}/manage`)}
+        $page={page}
+      >
         영상 관리
-      </ResNavItem2>
-    </ResNavSection>
+      </H.ResNavItem2>
+      <H.ResNavItem0 onClick={() => setModal(true)}>설정</H.ResNavItem0>
+      <SetModal modal={modal} setModal={setModal} />
+    </H.ResNavSection>
   );
 };
 

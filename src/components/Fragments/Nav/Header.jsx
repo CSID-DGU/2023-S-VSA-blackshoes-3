@@ -5,13 +5,14 @@ import * as H from "../../Home/HomeStyle";
 import * as S from "../../Sign/SignStyle";
 import logo from "../../../assets/images/logo.svg";
 import axios from "axios";
-import { UserInstance } from "../../../api/axios";
+import { BASE_URL, Instance } from "../../../api/axios";
+import { useCookies } from "react-cookie";
 
 const Header = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
-  const accessToken = localStorage.getItem("accessToken");
-  const refreshToken = getCookie("refreshToken");
+  let accessToken = localStorage.getItem("accessToken");
+  let refreshToken = getCookie("refreshToken");
   const { userId } = useParams();
 
   // State-----------------------------------------------------
@@ -22,21 +23,25 @@ const Header = () => {
   const submitLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
       await axios
-        .post(`http://13.125.69.94:8001/user-service/logout`, {
+        .post(`${BASE_URL}user-service/logout`, {
           refreshToken,
         })
         .then((res) => {
-          console.log(res);
           localStorage.removeItem("accessToken");
-          removeCookie("refreshToken");
+          removeCookie("refreshToken", { path: "/" });
           navigate(`/`, { replace: true });
         })
         .catch((err) => {
           console.log(err);
-          if (err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다.") {
+          if (
+            err.response.data.error ===
+              "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
+            err.response.data.error ===
+              "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
+          ) {
             alert(err.response.data.error);
             localStorage.removeItem("accessToken");
-            removeCookie("refreshToken");
+            removeCookie("refreshToken", { path: "/" });
             navigate(`/`, { replace: true });
           }
         });
@@ -45,17 +50,18 @@ const Header = () => {
 
   // ComponentDidMount-----------------------------------------
   const fetchData = async () => {
-    try {
-      await UserInstance.get(`/user-service/sellers/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }).then((res) => {
-        setSellerLogo(res.data.payload.sellerLogo);
-        setSellerName(res.data.payload.sellerName);
-      });
-    } catch (err) {
-      console.log(err);
+    if (refreshToken) {
+      try {
+        await Instance.get(`user-service/sellers/${userId}`).then((res) => {
+          setSellerLogo(res.data.payload.sellerLogo);
+          setSellerName(res.data.payload.sellerName);
+        });
+      } catch (err) {
+        console.log(err);
+        if (err.response.status === 401 && err.response.data === "") {
+          window.location.reload();
+        }
+      }
     }
   };
 
@@ -69,11 +75,17 @@ const Header = () => {
       <H.HeaderRSection>
         <H.HeaderInfoBox>
           <H.LogoCircleBox>
-            <S.FullImage src={`data:image/;base64,${sellerLogo}`} alt="sellorLogo" loading="lazy" />
+            <S.FullImage
+              // data: URL 스키마를 사용하여 base64 데이터를 직접 src에 할당
+              src={`data:image/;base64,${sellerLogo}`}
+              alt="sellorLogo"
+              loading="lazy"
+              style={{ borderRadius: "10px" }}
+            />
           </H.LogoCircleBox>
           {sellerName}
         </H.HeaderInfoBox>
-        <S.ColorButton width="130px" onClick={() => submitLogout()}>
+        <S.ColorButton width="130px" onClick={submitLogout}>
           로그아웃
         </S.ColorButton>
       </H.HeaderRSection>
