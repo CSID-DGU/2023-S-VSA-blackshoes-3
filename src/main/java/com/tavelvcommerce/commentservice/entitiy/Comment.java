@@ -19,11 +19,9 @@ public class Comment {
     @Column(name = "comment_id")
     private String commentId;
 
-    @Column(name = "seller_id")
-    private String sellerId;
-
-    @Column(name = "video_id")
-    private String videoId;
+    @JoinColumn(name = "video_id")
+    @ManyToOne
+    private Video video;
 
     @Column(name = "user_id")
     private String userId;
@@ -41,10 +39,9 @@ public class Comment {
     private Timestamp updatedAt;
 
     @Builder
-    public Comment(String commentId, String sellerId, String videoId, String userId, String nickname, String content, Timestamp createdAt, Timestamp updatedAt) {
+    public Comment(String commentId, Video video, String userId, String nickname, String content, Timestamp createdAt, Timestamp updatedAt) {
         this.commentId = commentId;
-        this.sellerId = sellerId;
-        this.videoId = videoId;
+        this.video = video;
         this.userId = userId;
         this.nickname = nickname;
         this.content = content;

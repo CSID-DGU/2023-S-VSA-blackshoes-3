@@ -2,7 +2,9 @@ package com.tavelvcommerce.commentservice.service;
 
 import com.tavelvcommerce.commentservice.dto.CommentDto;
 import com.tavelvcommerce.commentservice.entitiy.Comment;
+import com.tavelvcommerce.commentservice.entitiy.Video;
 import com.tavelvcommerce.commentservice.repository.CommentRepository;
+import com.tavelvcommerce.commentservice.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,10 +23,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
+    private final VideoRepository videoRepository;
 
     @Override
     @Transactional
-    public CommentDto.CommentCreateResponseDto createComment(String commentId, String sellerId, String videoId, String userId, String nickname, String content) {
+    public CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String nickname, String content) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
@@ -37,10 +40,11 @@ public class CommentServiceImpl implements CommentService {
             throw new IllegalArgumentException("Content should not exceed 140 characters");
         }
 
+        Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video not found"));
+
         Comment comment = Comment.builder()
                 .commentId(commentId)
-                .sellerId(sellerId)
-                .videoId(videoId)
+                .video(video)
                 .userId(userId)
                 .nickname(nickname)
                 .content(content)
@@ -64,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto.CommentUpdateResponseDto updateComment(String commentId, String videoId, String userId, String content) {
+    public CommentDto.CommentUpdateResponseDto updateComment(String commentId, String userId, String content) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
@@ -77,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
             throw new IllegalArgumentException("Content should not exceed 140 characters");
         }
 
-        Comment comment = commentRepository.findByCommentIdAndVideoIdAndUserId(commentId, videoId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+        Comment comment = commentRepository.findCommentByCommentIdAndUserId(commentId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
 
         try {
             comment.updateContent(content);
@@ -95,12 +99,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void userDeleteComment(String commentId, String videoId, String userId) {
+    public void userDeleteComment(String commentId,  String userId) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
 
-        Comment comment = commentRepository.findByCommentIdAndVideoIdAndUserId(commentId, videoId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+        Comment comment = commentRepository.findCommentByCommentIdAndUserId(commentId, userId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
 
         try {
             commentRepository.delete(comment);
@@ -111,12 +115,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void sellerDeleteComment(String commentId, String videoId, String sellerId) {
+    public void sellerDeleteComment(String commentId, String sellerId) {
         if (sellerId == null || sellerId.isEmpty()) {
             throw new IllegalArgumentException("Seller ID is empty");
         }
 
-        Comment comment = commentRepository.findByCommentIdAndVideoIdAndSellerId(commentId, videoId, sellerId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+        Comment comment = commentRepository.findCommentByCommentId(commentId).orElseThrow(() -> new NoSuchElementException("Comment not found"));
+
+        if (!comment.getVideo().getSellerId().equals(sellerId)) {
+            throw new IllegalArgumentException("Seller ID does not match");
+        }
 
         try {
             commentRepository.delete(comment);
@@ -127,17 +135,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public Page<CommentDto.CommentResponseDto> sellerVideoGetComments(String videoId, String sellerId, int page, int size) {
         Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sortBy);
 
-        Page<Comment> commentPage = commentRepository.findVideosByVideoIdAndSellerId(videoId, sellerId, pageable);
+        Page<Comment> commentPage = commentRepository.findCommentsByVideoIdAndSellerId(videoId, sellerId, pageable);
 
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .sellerId(comment.getSellerId())
-                        .videoId(comment.getVideoId())
                         .userId(comment.getUserId())
                         .nickname(comment.getNickname())
                         .content(comment.getContent())
@@ -150,17 +157,38 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<CommentDto.CommentResponseDto> userGetComments(String userId, int page, int size) {
+    @Transactional
+    public Page<CommentDto.CommentResponseDto> userVideoGetComments(String videoId, int page, int size) {
         Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sortBy);
 
-        Page<Comment> commentPage = commentRepository.findVideosByUserId(userId, pageable);
+        Page<Comment> commentPage = commentRepository.findCommentsByVideoId(videoId, pageable);
 
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .sellerId(comment.getSellerId())
-                        .videoId(comment.getVideoId())
+                        .userId(comment.getUserId())
+                        .nickname(comment.getNickname())
+                        .content(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .updatedAt(comment.getUpdatedAt())
+                        .build()
+        );
+
+        return commentResponseDtoPage;
+    }
+
+    @Override
+    @Transactional
+    public Page<CommentDto.CommentResponseDto> userGetComments(String userId, int page, int size) {
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+
+        Page<Comment> commentPage = commentRepository.findCommentsByUserId(userId, pageable);
+
+        Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
+                comment -> CommentDto.CommentResponseDto.builder()
+                        .commentId(comment.getCommentId())
                         .userId(comment.getUserId())
                         .nickname(comment.getNickname())
                         .content(comment.getContent())

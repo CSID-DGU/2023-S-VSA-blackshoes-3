@@ -22,9 +22,8 @@ public class CommentController {
     private final ObjectMapper objectMapper;
     private final CommentService commentService;
 
-    @PostMapping("/comments/{sellerId}/{videoId}")
+    @PostMapping("/comments/{videoId}")
     public ResponseEntity<ResponseDto> createComment(@RequestHeader("Authorization") String id,
-                                                     @PathVariable(name = "sellerId") String sellerId,
                                                      @PathVariable(name = "videoId") String videoId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         if (!id.equals(commentRequestDto.getUserId())) {
@@ -39,7 +38,10 @@ public class CommentController {
 
         CommentDto.CommentCreateResponseDto commentCreateResponseDto;
         try {
-            commentCreateResponseDto = commentService.createComment(commentId, sellerId, videoId, userId, nickname, content);
+            commentCreateResponseDto = commentService.createComment(commentId, videoId, userId, nickname, content);
+        }catch (NoSuchElementException e){
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -53,9 +55,8 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @PutMapping("/comments/{sellerId}/{videoId}/{commentId}")
+    @PutMapping("/comments/{videoId}/{commentId}")
     public ResponseEntity<ResponseDto> updateComment(@RequestHeader("Authorization") String id,
-                                                     @PathVariable(name = "videoId") String videoId,
                                                      @PathVariable(name = "commentId") String commentId,
                                                      @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         if (!id.equals(commentRequestDto.getUserId())) {
@@ -68,7 +69,7 @@ public class CommentController {
 
         CommentDto.CommentUpdateResponseDto commentUpdateResponseDto;
         try {
-            commentUpdateResponseDto = commentService.updateComment(commentId, videoId, userId, content);
+            commentUpdateResponseDto = commentService.updateComment(commentId, userId, content);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -85,9 +86,8 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/comments/{sellerId}/{videoId}/{commentId}/delete")
+    @PutMapping("/comments/{videoId}/{commentId}/delete")
     public ResponseEntity<ResponseDto> userDeleteComment(@RequestHeader("Authorization") String id,
-                                                         @PathVariable(name = "videoId") String videoId,
                                                          @PathVariable(name = "commentId") String commentId,
                                                          @RequestBody CommentDto.CommentRequestDto commentRequestDto) {
         if (!id.equals(commentRequestDto.getUserId())) {
@@ -98,7 +98,7 @@ public class CommentController {
         String userId = commentRequestDto.getUserId();
 
         try {
-            commentService.userDeleteComment(commentId, videoId, userId);
+            commentService.userDeleteComment(commentId, userId);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -113,10 +113,9 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/comments/{sellerId}/{videoId}/{commentId}")
+    @DeleteMapping("/comments/{sellerId}/{commentId}")
     public ResponseEntity<ResponseDto> sellerDeleteComment(@RequestHeader("Authorization") String id,
                                                            @PathVariable(name = "sellerId") String sellerId,
-                                                           @PathVariable(name = "videoId") String videoId,
                                                            @PathVariable(name = "commentId") String commentId) {
         if (!id.equals(sellerId)) {
             ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
@@ -124,7 +123,7 @@ public class CommentController {
         }
 
         try {
-            commentService.sellerDeleteComment(commentId, videoId, sellerId);
+            commentService.sellerDeleteComment(commentId, sellerId);
         } catch (IllegalArgumentException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
@@ -139,20 +138,45 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/comments/{sellerId}/{videoId}")
-    public ResponseEntity<ResponseDto> sellerVideoGetComments(@RequestHeader("Authorization") String id,
-                                                              @PathVariable(name = "sellerId") String sellerId,
-                                                              @PathVariable(name = "videoId") String videoId,
-                                                              @RequestParam(name = "page") int page,
-                                                              @RequestParam(name = "size") int size) {
-        if (!id.equals(sellerId)) {
-            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
-        }
+//    @GetMapping("/comments/video")
+//    public ResponseEntity<ResponseDto> sellerVideoGetComments(@RequestHeader("Authorization") String id,
+//                                                              @RequestParam(name = "sellerId") String sellerId,
+//                                                              @RequestParam(name = "videoId") String videoId,
+//                                                              @RequestParam(name = "page") int page,
+//                                                              @RequestParam(name = "size") int size) {
+//        if (!id.equals(sellerId)) {
+//            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+//        }
+//
+//        Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
+//        try {
+//            commentResponseDtoPage = commentService.sellerVideoGetComments(videoId, sellerId, page, size);
+//        } catch (RuntimeException e) {
+//            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+//        }
+//        CommentPagePayloadDto commentPagePayloadDto = CommentPagePayloadDto.builder()
+//                .totalPages(commentResponseDtoPage.getTotalPages())
+//                .currentPage(commentResponseDtoPage.getNumber())
+//                .hasNext(commentResponseDtoPage.hasNext())
+//                .pageSize(commentResponseDtoPage.getSize())
+//                .totalElements(commentResponseDtoPage.getTotalElements())
+//                .comments(commentResponseDtoPage.getContent())
+//                .build();
+//
+//        ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentPagePayloadDto, Map.class)).build();
+//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+//    }
+
+    @GetMapping("/comments/video")
+    public ResponseEntity<ResponseDto> userVideoGetComments(@RequestParam(name = "videoId") String videoId,
+                                                            @RequestParam(name = "page") int page,
+                                                            @RequestParam(name = "size") int size) {
 
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
         try {
-            commentResponseDtoPage = commentService.sellerVideoGetComments(videoId, sellerId, page, size);
+            commentResponseDtoPage = commentService.userVideoGetComments(videoId, page, size);
         } catch (RuntimeException e) {
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
@@ -170,9 +194,9 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/comments/{userId}")
+    @GetMapping("/comments/user")
     public ResponseEntity<ResponseDto> userGetComments(@RequestHeader("Authorization") String id,
-                                                       @PathVariable(name = "userId") String userId,
+                                                       @RequestParam(name = "userId") String userId,
                                                        @RequestParam(name = "page") int page,
                                                        @RequestParam(name = "size") int size) {
         if (!id.equals(userId)) {

@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class CommentDto {
     @Getter
     public static class CommentRequestDto {
+        private String sellerId;
         private String userId;
         private String nickname;
         private String content;
