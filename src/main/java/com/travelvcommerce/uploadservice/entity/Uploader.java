@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Data
 @Entity
-@Table(name = "uploaders")
+@Table(name = "uploaders", uniqueConstraints = @UniqueConstraint(name = "uploader_unique", columnNames = {"seller_id"}))
 public class Uploader implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

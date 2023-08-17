@@ -13,7 +13,7 @@ public class Tag implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "tag_id")
+    @Column(name = "tag_id", unique = true)
     private String tagId;
     @Column(length = 20, nullable = false)
     private String type;

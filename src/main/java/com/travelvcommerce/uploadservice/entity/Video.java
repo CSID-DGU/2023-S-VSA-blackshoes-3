@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "videos",
         uniqueConstraints = @UniqueConstraint(name = "video_unique",
-                columnNames = {"video_id", "video_name"}))
+                columnNames = {"video_id"}))
 public class Video implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

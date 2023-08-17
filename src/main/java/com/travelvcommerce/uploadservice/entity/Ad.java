@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "ads",
         uniqueConstraints = @UniqueConstraint(name = "ad_unique",
-                columnNames = {"ad_id", "ad_url", "ad_content"}))
+                columnNames = {"ad_id"}))
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "temporary_videos")
+@Table(name = "temporary_videos", uniqueConstraints = @UniqueConstraint(name = "temporary_video_seller_unique", columnNames = {"seller_id"}))
 public class TemporaryVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
