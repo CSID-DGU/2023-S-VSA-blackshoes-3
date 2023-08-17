@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@Table(name = "View_Tags")
+@Table(name = "View_Tags", uniqueConstraints = @UniqueConstraint(name = "tag_user_unique", columnNames = {"tag_id", "user_id"}))
 @Data
 public class ViewTag {
     @Id
@@ -23,7 +23,7 @@ public class ViewTag {
     @Column(name = "user_id")
     private String userId;
 
-    @Column(name="tag_view_count")
+    @Column(name = "tag_view_count")
     private Long tagViewCount;
 
     @Column(name = "created_at")
