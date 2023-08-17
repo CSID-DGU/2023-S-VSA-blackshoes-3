@@ -219,17 +219,31 @@ export const ModalSection = styled.section`
   gap: 25px;
 `;
 
+export const ModalTitle = styled.h2`
+  width: 100%;
+  text-align: left;
+  font-weight: 900;
+  color: ${(props) => props.theme.secondBlack};
+`;
+
 export const ModalInputSection = styled.section`
   width: 100%;
   height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: ${(props) => `1px solid ${props.theme.secondBlack}`};
+  gap: 10px;
+`;
+
+export const ModalBetweenBox = styled.section`
+  width: ${(props) => props.width};
+  height: 100%;
+  display: flex;
+  gap: 10px;
 `;
 
 export const ModalInput = styled.input`
-  width: 80%;
+  width: 70%;
   height: 100%;
   border: none;
   border-radius: 16px;
@@ -238,4 +252,23 @@ export const ModalInput = styled.input`
   &:focus {
     outline: none;
   }
+`;
+
+export const ModalFileInput = styled(ModalInput)`
+  display: none;
+`;
+
+export const ModalFileInputLabel = styled.label`
+  width: calc(100% - 80px);
+  height: 100%;
+  border: none;
+  border-radius: 16px;
+  background-color: ${(props) => props.theme.primaryColor};
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.bgColor};
+  font-size: 14px;
+  cursor: pointer;
 `;

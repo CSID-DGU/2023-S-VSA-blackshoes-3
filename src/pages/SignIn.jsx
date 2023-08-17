@@ -13,6 +13,9 @@ const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
 const SELLOR_3_ID = "14517d06-88cb-4edf-b6dd-67a63f469b6b";
 // naver sellerId : "6b8484c1-5c2e-4c3a-a21c-54eb9a7681b5"
 
+// wanderTestSeller1@gmail.com
+// abcd1234!
+
 const SignIn = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();

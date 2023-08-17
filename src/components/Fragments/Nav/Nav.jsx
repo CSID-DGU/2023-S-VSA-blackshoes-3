@@ -3,25 +3,7 @@ import * as H from "../../Home/HomeStyle";
 import * as S from "../../Sign/SignStyle";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
-import Modal from "react-modal";
 import SetModal from "../Reusable/SetModal";
-
-const customStyles = {
-  content: {
-    backgroundColor: "white",
-    border: "2px solid #1DAE86",
-    borderRadius: "4px",
-    outline: "none",
-    padding: "20px",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "30%",
-    minWidth: "350px",
-  },
-};
-
-Modal.setAppElement("#root");
 
 const Nav = () => {
   // constant----------------------------------------------
@@ -56,12 +38,11 @@ const Nav = () => {
         >
           영상 관리
         </H.HoverButton2>
-        <H.HoverButton0 width="270px" onClick={() => setModal(true)}>
-          설정
-        </H.HoverButton0>
-        <SetModal modal={modal} setModal={setModal} />
       </H.NavBox>
-      <H.BorderButton width="270px">탈퇴하기</H.BorderButton>
+      <H.BorderButton width="270px" onClick={() => setModal(true)}>
+        설정
+      </H.BorderButton>
+      <SetModal modal={modal} setModal={setModal} />
     </H.NavSection>
   );
 };
