@@ -7,6 +7,7 @@ import landingImage from "../assets/images/travel.jpg";
 import { getCookie, setCookie } from "../Cookie";
 import axios from "axios";
 import { BASE_URL } from "../api/axios";
+import PwModal from "../components/Fragments/Reusable/PwModal";
 
 const SELLOR_1_ID = "21d40e1a-86fc-480e-a4bf-b084f8ac6c55";
 const SELLOR_2_ID = "e2d052e4-009b-44c4-963a-21996b29a779";
@@ -31,6 +32,7 @@ const SignIn = () => {
   const [isPassword, setIsPassword] = useState(false);
   const [emailMessage, setEmailMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [modal, setModal] = useState(false);
 
   // Function--------------------------------------------------
   const onChangeSignIn = async (e) => {
@@ -131,6 +133,10 @@ const SignIn = () => {
             시작하기
           </S.ColorButton>
           <S.RightAlignSection>
+            <S.SignUpText onClick={() => setModal(true)}>
+              비밀번호 찾기
+            </S.SignUpText>
+            <PwModal modal={modal} setModal={setModal} />
             <S.SignUpText onClick={() => navigate("/signup")}>
               회원가입
             </S.SignUpText>
