@@ -28,8 +28,6 @@ export default function MyLog({navigation, route}) {
 
   const getData = async () => {
     try {
-      console.log('check');
-      console.log('page', page);
       const response = await axiosInstance.get(
         `personalized-service/${userId}/videos/history?page=${page}&size=10`,
       );

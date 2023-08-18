@@ -20,6 +20,7 @@ import {Ad} from '../../components/contents/advertiseBox';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {set} from 'lodash';
+import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 
 export default function Play({route, navigation}) {
   const [videoData, setVideoData] = useState([]);
@@ -34,6 +35,8 @@ export default function Play({route, navigation}) {
   const [comment, setComment] = useState([]);
   const [commentAmmount, setCommentAmmount] = useState(0);
   const [commentPage, setCommentPage] = useState(null);
+  const [recommendVideoPage, setRecommendVideoPage] = useState(0);
+  const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [commentInput, setCommentInput] = useState('');
   const [modifying, setModifying] = useState('');
   const [modifyIndex, setModifyIndex] = useState(null);
@@ -64,7 +67,9 @@ export default function Play({route, navigation}) {
     if (tagIds.length === 0) {
       return;
     } else {
+      console.log('tagIds', tagIds);
       registerHistoryTag();
+      getRecommendVideo();
     }
   }, [tagIds]);
 
@@ -96,6 +101,7 @@ export default function Play({route, navigation}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/video?type=videoId&q=${route.params.video.videoId}`,
       );
+      console.log('response.data.payload.video', response.data.payload.video);
       setVideoData(response.data.payload.video);
       setTagIds(response.data.payload.video.videoTags.map(tag => tag.tagId));
     } catch (e) {
@@ -164,6 +170,8 @@ export default function Play({route, navigation}) {
           sellerId: videoData.sellerId,
         },
       );
+
+      console.log('videoData.videoId : ', videoData.videoId);
       const response2 = await axiosInstance.put(
         `statistics-service/${videoData.videoId}/views`,
         {
@@ -251,6 +259,27 @@ export default function Play({route, navigation}) {
       getData();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getRecommendVideo = async () => {
+    try {
+      console.log(tagIds);
+
+      const tagId = tagIds.join(',');
+
+      const response = await axiosInstance.get(
+        `content-slave-service/videos/tagIds?q=${tagId}&u=${userId}&page=${recommendVideoPage}`,
+      );
+
+      // route.params.videoId와 일치하지 않는 비디오만 필터링
+      const filteredVideos = response.data.payload.videos.filter(
+        video => video.videoId !== route.params.videoId,
+      );
+
+      setRecommendedVideos(prev => [...prev, ...filteredVideos]);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -354,11 +383,11 @@ export default function Play({route, navigation}) {
                 </ScrollView>
               </View>
 
-              <View style={styles.bottomContainer}>
-                {openAd && (
+              {openAd && (
+                <View style={styles.bottomContainer}>
                   <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
-                )}
-              </View>
+                </View>
+              )}
             </>
           )}
 
@@ -373,7 +402,7 @@ export default function Play({route, navigation}) {
                 onPress={() => setCommentIndex(true)}>
                 {comment ? (
                   comment.length === 0 ? (
-                    <Text style={styles.commentContents}>
+                    <Text style={styles.commentFirstContents}>
                       아직 댓글이 없습니다. 댓글을 등록해주세요.
                     </Text>
                   ) : (
@@ -520,6 +549,17 @@ export default function Play({route, navigation}) {
               </View>
             )}
           </View>
+          {recommendedVideos.length > 0 &&
+            recommendedVideos.map((e, i) => {
+              return (
+                <TouchableOpacity
+                  style={styles.videoThumbnailContainer}
+                  key={i}
+                  onPress={() => navigation.navigate('Play', {video: e})}>
+                  <VideoThumbnail key={i} video={e} navigation={navigation} />
+                </TouchableOpacity>
+              );
+            })}
         </View>
       )}
     </View>
@@ -662,7 +702,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 2,
-    marginBottom: 10,
     width: 75,
     height: 30,
   },
@@ -716,6 +755,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: 20,
     lineHeight: 25,
+    paddingVertical: 5,
+  },
+  commentFirstContents: {
+    fontSize: 17,
+    fontWeight: '600',
+    paddingHorizontal: 12,
+    lineHeight: 25,
+    backgroundColor: 'white',
+    borderRadius: 10,
     paddingVertical: 5,
   },
   allCommentsContainer: {
@@ -795,5 +843,14 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     paddingHorizontal: 15,
     width: '85%',
+  },
+  videoThumbnailContainer: {
+    backgroundColor: '#DEDEDE',
+    alignItems: 'center',
+    paddingTop: 17,
+    paddingBottom: 10,
+    marginVertical: 7,
+
+    width: '100%',
   },
 });

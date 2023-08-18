@@ -75,7 +75,7 @@ export default function Home({navigation, route}) {
     try {
       const tagIds = tags.map(tag => tag.tagId).join(',');
       const response = await axiosInstance.get(
-        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=3`,
+        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=${page}`,
       );
       console.log('in getRecommandVideos : ', response.data.payload);
       setRecommendedVideos(prevVideos => [
