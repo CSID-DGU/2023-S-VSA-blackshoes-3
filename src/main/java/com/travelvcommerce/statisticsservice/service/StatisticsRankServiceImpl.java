@@ -44,10 +44,10 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
     @Override
     @Transactional
-    public RankResponseDto.VideoViewRankResponseDto getVideoViewTop10(String sellerId) {
+    public RankResponseDto.VideoViewRankResponseDto getVideoViewRank(String sellerId, int size, boolean refresh) {
         String videoViewRankKey = "videoViewRank:" + sellerId;
 
-        if (redisTemplate.hasKey(videoViewRankKey)) {
+        if (!refresh && redisTemplate.hasKey(videoViewRankKey)) {
             String value = redisTemplate.opsForValue().get(videoViewRankKey);
             String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoViewRankDtoList = value.substring(aggregatedAt.length() + 1);
@@ -58,15 +58,17 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                 log.error("Error parsing video view rank value", e);
             }
 
-            RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto = RankResponseDto.VideoViewRankResponseDto.builder()
-                    .aggregatedAt(aggregatedAt)
-                    .videoViewRank(videoViewRankDtoList)
-                    .build();
+            if (videoViewRankDtoList.size() == size) {
+                RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto = RankResponseDto.VideoViewRankResponseDto.builder()
+                        .aggregatedAt(aggregatedAt)
+                        .videoViewRank(videoViewRankDtoList)
+                        .build();
 
-            return videoViewRankResponseDto;
+                return videoViewRankResponseDto;
+            }
         }
 
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, size);
         List<VideoViewCount> videoViewCountTop10 = videoViewCountRepository.findRankBySellerIdOrderByViewCountDesc(sellerId, pageable);
 
         List<RankDto.VideoViewRankDto> videoViewRankDtoList = new ArrayList<>();
@@ -103,10 +105,10 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
     @Override
     @Transactional
-    public RankResponseDto.TagViewRankResponseDto getTagViewTop10(String sellerId) {
+    public RankResponseDto.TagViewRankResponseDto getTagViewRank(String sellerId, int size, boolean refresh) {
         String tagViewRankKey = "tagViewRank:" + sellerId;
 
-        if (redisTemplate.hasKey(tagViewRankKey)) {
+        if (!refresh && redisTemplate.hasKey(tagViewRankKey)) {
             String value = redisTemplate.opsForValue().get(tagViewRankKey);
             String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringTagViewRankDtoList = value.substring(aggregatedAt.length() + 1);
@@ -118,15 +120,17 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                 log.error("Error parsing tag view rank value", e);
             }
 
-            RankResponseDto.TagViewRankResponseDto tagViewRankResponseDto = RankResponseDto.TagViewRankResponseDto.builder()
-                    .aggregatedAt(aggregatedAt)
-                    .tagViewRank(tagViewRankDtoList)
-                    .build();
+            if (tagViewRankDtoList.size() == size) {
+                RankResponseDto.TagViewRankResponseDto tagViewRankResponseDto = RankResponseDto.TagViewRankResponseDto.builder()
+                        .aggregatedAt(aggregatedAt)
+                        .tagViewRank(tagViewRankDtoList)
+                        .build();
 
-            return tagViewRankResponseDto;
+                return tagViewRankResponseDto;
+            }
         }
 
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, size);
         List<TotalTagViewCountDto> tagViewCountTop10 = tagViewCountRepository.findRankBySellerIdOrderByViewCountDesc(sellerId, pageable);
 
         List<RankDto.TagViewRankDto> tagViewRankDtoList = new ArrayList<>();
@@ -163,10 +167,10 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
     @Override
     @Transactional
-    public RankResponseDto.VideoLikeRankResponseDto getVideoLikeTop10(String sellerId) {
+    public RankResponseDto.VideoLikeRankResponseDto getVideoLikeRank(String sellerId, int size, boolean refresh) {
         String videoLikeRankKey = "videoLikeRank:" + sellerId;
 
-        if (redisTemplate.hasKey(videoLikeRankKey)) {
+        if (!refresh && redisTemplate.hasKey(videoLikeRankKey)) {
             String value = redisTemplate.opsForValue().get(videoLikeRankKey);
             String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoLikeRankDtoList = value.substring(aggregatedAt.length() + 1);
@@ -177,15 +181,17 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                 log.error("Error parsing video like rank value", e);
             }
 
-            RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto = RankResponseDto.VideoLikeRankResponseDto.builder()
-                    .aggregatedAt(aggregatedAt)
-                    .videoLikeRank(videoLikeRankDtoList)
-                    .build();
+            if (videoLikeRankDtoList.size() == size) {
+                RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto = RankResponseDto.VideoLikeRankResponseDto.builder()
+                        .aggregatedAt(aggregatedAt)
+                        .videoLikeRank(videoLikeRankDtoList)
+                        .build();
 
-            return videoLikeRankResponseDto;
+                return videoLikeRankResponseDto;
+            }
         }
 
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, size);
         List<VideoLikeCount> videoLikeCountTop10 = videoLikeCountRepository.findRankBySellerIdOrderByLikeCountDesc(sellerId, pageable);
 
         List<RankDto.VideoLikeRankDto> videoLikeRankDtoList = new ArrayList<>();
@@ -222,10 +228,10 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
 
     @Override
     @Transactional
-    public RankResponseDto.VideoAdClickRankResponseDto getAdClickTop10(String sellerId) {
+    public RankResponseDto.VideoAdClickRankResponseDto getAdClickRank(String sellerId, int size, boolean refresh) {
         String adClickRankKey = "adClickRank:" + sellerId;
 
-        if (redisTemplate.hasKey(adClickRankKey)) {
+        if (!refresh && redisTemplate.hasKey(adClickRankKey)) {
             String value = redisTemplate.opsForValue().get(adClickRankKey);
             String aggregatedAt = value.substring(0, value.indexOf("&"));
             String stringVideoAdClickRankDtoList = value.substring(aggregatedAt.length() + 1);
@@ -237,15 +243,17 @@ public class StatisticsRankServiceImpl implements StatisticsRankService {
                 log.error("Error parsing ad click rank value", e);
             }
 
-            RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto = RankResponseDto.VideoAdClickRankResponseDto.builder()
-                    .aggregatedAt(aggregatedAt)
-                    .videoAdClickRank(videoAdClickRankDtoList)
-                    .build();
+            if (videoAdClickRankDtoList.size() == size) {
+                RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto = RankResponseDto.VideoAdClickRankResponseDto.builder()
+                        .aggregatedAt(aggregatedAt)
+                        .videoAdClickRank(videoAdClickRankDtoList)
+                        .build();
 
-            return videoAdClickRankResponseDto;
+                return videoAdClickRankResponseDto;
+            }
         }
 
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, size);
         List<TotalAdClickCountDto> adClickCountTop10 = adClickCountRepository.findRankBySellerIdOrderByClickCountDesc(sellerId, pageable);
 
         List<RankDto.VideoAdClickRankDto> videoAdClickRankDtoList = new ArrayList<>();

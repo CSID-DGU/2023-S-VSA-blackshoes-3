@@ -22,7 +22,10 @@ public class StatisticsRankController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/rank/videos/views/{sellerId}")
-    public ResponseEntity<ResponseDto> getViewRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getViewRank(@RequestHeader("Authorization") String id,
+                                                   @PathVariable(name = "sellerId") String sellerId,
+                                                   @RequestParam(name = "size", defaultValue = "5") int size,
+                                                   @RequestParam(name = "refresh", defaultValue = "false") boolean refresh) {
         if (!id.equals(sellerId)) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
@@ -31,7 +34,7 @@ public class StatisticsRankController {
         RankResponseDto.VideoViewRankResponseDto videoViewRankResponseDto;
 
         try {
-            videoViewRankResponseDto = statisticsRankService.getVideoViewTop10(sellerId);
+            videoViewRankResponseDto = statisticsRankService.getVideoViewRank(sellerId, size, refresh);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
@@ -42,7 +45,10 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/tags/views/{sellerId}")
-    public ResponseEntity<ResponseDto> getTagViewRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getTagViewRank(@RequestHeader("Authorization") String id,
+                                                      @PathVariable(name = "sellerId") String sellerId,
+                                                      @RequestParam(name = "size", defaultValue = "5") int size,
+                                                      @RequestParam(name = "refresh", defaultValue = "false") boolean refresh) {
         if (!id.equals(sellerId)) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
@@ -51,7 +57,7 @@ public class StatisticsRankController {
         RankResponseDto.TagViewRankResponseDto tagRankResponseDto;
 
         try {
-            tagRankResponseDto = statisticsRankService.getTagViewTop10(sellerId);
+            tagRankResponseDto = statisticsRankService.getTagViewRank(sellerId, size, refresh);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
@@ -62,7 +68,10 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/videos/likes/{sellerId}")
-    public ResponseEntity<ResponseDto> getLikeRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getLikeRank(@RequestHeader("Authorization") String id,
+                                                   @PathVariable(name = "sellerId") String sellerId,
+                                                   @RequestParam(name = "size", defaultValue = "5") int size,
+                                                   @RequestParam(name = "refresh", defaultValue = "false") boolean refresh) {
         if (!id.equals(sellerId)) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
@@ -71,7 +80,7 @@ public class StatisticsRankController {
         RankResponseDto.VideoLikeRankResponseDto videoLikeRankResponseDto;
 
         try {
-            videoLikeRankResponseDto = statisticsRankService.getVideoLikeTop10(sellerId);
+            videoLikeRankResponseDto = statisticsRankService.getVideoLikeRank(sellerId, size, refresh);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
@@ -82,7 +91,10 @@ public class StatisticsRankController {
     }
 
     @GetMapping("/rank/videos/adClicks/{sellerId}")
-    public ResponseEntity<ResponseDto> getAdClickRank(@RequestHeader("Authorization") String id, @PathVariable(name = "sellerId") String sellerId) {
+    public ResponseEntity<ResponseDto> getAdClickRank(@RequestHeader("Authorization") String id,
+                                                      @PathVariable(name = "sellerId") String sellerId,
+                                                      @RequestParam(name = "size", defaultValue = "5") int size,
+                                                      @RequestParam(name = "refresh", defaultValue = "false") boolean refresh) {
         if (!id.equals(sellerId)) {
             ResponseDto responseDto = ResponseDto.buildResponseDto("Invalid id");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDto);
@@ -91,7 +103,7 @@ public class StatisticsRankController {
         RankResponseDto.VideoAdClickRankResponseDto videoAdClickRankResponseDto;
 
         try {
-            videoAdClickRankResponseDto = statisticsRankService.getAdClickTop10(sellerId);
+            videoAdClickRankResponseDto = statisticsRankService.getAdClickRank(sellerId, size, refresh);
         } catch (Exception e) {
             ResponseDto responseDto = ResponseDto.buildResponseDto(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
