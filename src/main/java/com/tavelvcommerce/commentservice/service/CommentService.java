@@ -4,7 +4,7 @@ import com.tavelvcommerce.commentservice.dto.CommentDto;
 import org.springframework.data.domain.Page;
 
 public interface CommentService {
-    CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String nickname, String content);
+    CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String content);
 
     CommentDto.CommentUpdateResponseDto updateComment(String commentId, String userId, String content);
 

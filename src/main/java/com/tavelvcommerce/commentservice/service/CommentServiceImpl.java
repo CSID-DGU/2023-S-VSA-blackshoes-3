@@ -2,8 +2,10 @@ package com.tavelvcommerce.commentservice.service;
 
 import com.tavelvcommerce.commentservice.dto.CommentDto;
 import com.tavelvcommerce.commentservice.entitiy.Comment;
+import com.tavelvcommerce.commentservice.entitiy.User;
 import com.tavelvcommerce.commentservice.entitiy.Video;
 import com.tavelvcommerce.commentservice.repository.CommentRepository;
+import com.tavelvcommerce.commentservice.repository.UserRepository;
 import com.tavelvcommerce.commentservice.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +26,11 @@ import java.util.NoSuchElementException;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String nickname, String content) {
+    public CommentDto.CommentCreateResponseDto createComment(String commentId, String videoId, String userId, String content) {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is empty");
         }
@@ -40,13 +43,14 @@ public class CommentServiceImpl implements CommentService {
             throw new IllegalArgumentException("Content should not exceed 140 characters");
         }
 
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+
         Video video = videoRepository.findByVideoId(videoId).orElseThrow(() -> new NoSuchElementException("Video not found"));
 
         Comment comment = Comment.builder()
                 .commentId(commentId)
                 .video(video)
-                .userId(userId)
-                .nickname(nickname)
+                .user(user)
                 .content(content)
                 .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build();
@@ -145,8 +149,8 @@ public class CommentServiceImpl implements CommentService {
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .userId(comment.getUserId())
-                        .nickname(comment.getNickname())
+                        .userId(comment.getUser().getUserId())
+                        .nickname(comment.getUser().getNickname())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())
@@ -167,8 +171,8 @@ public class CommentServiceImpl implements CommentService {
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .userId(comment.getUserId())
-                        .nickname(comment.getNickname())
+                        .userId(comment.getUser().getUserId())
+                        .nickname(comment.getUser().getNickname())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())
@@ -189,8 +193,9 @@ public class CommentServiceImpl implements CommentService {
         Page<CommentDto.CommentResponseDto> commentResponseDtoPage = commentPage.map(
                 comment -> CommentDto.CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .userId(comment.getUserId())
-                        .nickname(comment.getNickname())
+                        .videoId(comment.getVideo().getVideoId())
+                        .userId(comment.getUser().getUserId())
+                        .nickname(comment.getUser().getNickname())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())

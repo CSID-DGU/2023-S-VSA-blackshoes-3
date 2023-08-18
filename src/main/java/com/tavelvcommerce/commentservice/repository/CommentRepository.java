@@ -16,12 +16,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c WHERE c.video.videoId = :videoId AND c.video.sellerId = :sellerId")
     Page<Comment> findCommentsByVideoIdAndSellerId(String videoId, String sellerId, Pageable pageable);
 
+    @Query("SELECT c FROM Comment c WHERE c.user.userId = :userId")
     Page<Comment> findCommentsByUserId(String userId, Pageable pageable);
 
-    List<Comment> findAllByUserId(String userId);
-
-    void deleteAllByUserId(String userId);
-
+    @Query("SELECT c FROM Comment c WHERE c.commentId = :commentId AND c.user.userId = :userId")
     Optional<Comment> findCommentByCommentIdAndUserId(String commentId, String userId);
 
     Optional<Comment> findCommentByCommentId(String commentId);

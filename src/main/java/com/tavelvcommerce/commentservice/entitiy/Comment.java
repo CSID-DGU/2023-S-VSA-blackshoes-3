@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "comment_id")
@@ -23,11 +23,9 @@ public class Comment {
     @ManyToOne
     private Video video;
 
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "nickname")
-    private String nickname;
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    private User user;
 
     @Column(name = "content", nullable = false, length = 100)
     private String content;
@@ -39,11 +37,10 @@ public class Comment {
     private Timestamp updatedAt;
 
     @Builder
-    public Comment(String commentId, Video video, String userId, String nickname, String content, Timestamp createdAt, Timestamp updatedAt) {
+    public Comment(String commentId, Video video, User user, String content, Timestamp createdAt, Timestamp updatedAt) {
         this.commentId = commentId;
         this.video = video;
-        this.userId = userId;
-        this.nickname = nickname;
+        this.user = user;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -51,11 +48,6 @@ public class Comment {
 
     public void updateContent(String content) {
         this.content = content;
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 }

@@ -38,7 +38,7 @@ public class CommentController {
 
         CommentDto.CommentCreateResponseDto commentCreateResponseDto;
         try {
-            commentCreateResponseDto = commentService.createComment(commentId, videoId, userId, nickname, content);
+            commentCreateResponseDto = commentService.createComment(commentId, videoId, userId, content);
         }catch (NoSuchElementException e){
             ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
@@ -137,37 +137,6 @@ public class CommentController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-//    @GetMapping("/comments/video")
-//    public ResponseEntity<ResponseDto> sellerVideoGetComments(@RequestHeader("Authorization") String id,
-//                                                              @RequestParam(name = "sellerId") String sellerId,
-//                                                              @RequestParam(name = "videoId") String videoId,
-//                                                              @RequestParam(name = "page") int page,
-//                                                              @RequestParam(name = "size") int size) {
-//        if (!id.equals(sellerId)) {
-//            ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
-//        }
-//
-//        Page<CommentDto.CommentResponseDto> commentResponseDtoPage;
-//        try {
-//            commentResponseDtoPage = commentService.sellerVideoGetComments(videoId, sellerId, page, size);
-//        } catch (RuntimeException e) {
-//            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-//        }
-//        CommentPagePayloadDto commentPagePayloadDto = CommentPagePayloadDto.builder()
-//                .totalPages(commentResponseDtoPage.getTotalPages())
-//                .currentPage(commentResponseDtoPage.getNumber())
-//                .hasNext(commentResponseDtoPage.hasNext())
-//                .pageSize(commentResponseDtoPage.getSize())
-//                .totalElements(commentResponseDtoPage.getTotalElements())
-//                .comments(commentResponseDtoPage.getContent())
-//                .build();
-//
-//        ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(commentPagePayloadDto, Map.class)).build();
-//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-//    }
 
     @GetMapping("/comments/video")
     public ResponseEntity<ResponseDto> userVideoGetComments(@RequestParam(name = "videoId") String videoId,
