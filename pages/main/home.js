@@ -2,6 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useRef, useEffect, useState} from 'react';
+import globalStyles from '../../constant/styles';
+
 import {
   ScrollView,
   TouchableOpacity,
@@ -340,10 +342,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
+    fontFamily: 'AppleSDGothicNeoB00',
+
     color: '#4D4D4D',
     marginLeft: 15,
     fontWeight: '700',
-    fontStyle: 'italic',
     width: 120,
   },
 

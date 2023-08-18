@@ -24,7 +24,7 @@ export default function MyCommentPage({navigation, route}) {
       const response = await axiosInstance.get(
         `comment-service/comments/user?userId=${userId}&page=0&size=10`,
       );
-
+      console.log('response.data.payload : ', response.data.payload);
       setCommentContents(response.data.payload);
     } catch (e) {
       console.log(e);
@@ -39,10 +39,10 @@ export default function MyCommentPage({navigation, route}) {
           {commentContents &&
             commentContents.comments.map((e, i) => {
               return (
-                <TouchableOpacity key={i}>
+                <View key={i}>
                   <Text>{e.createdAt.split('T')[0]}</Text>
                   <Text>{e.content}</Text>
-                </TouchableOpacity>
+                </View>
               );
             })}
         </View>
@@ -54,5 +54,15 @@ export default function MyCommentPage({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 15,
+  },
+  title: {
+    fontSize: 23,
+    color: '#545454',
+    marginLeft: 15,
+    fontWeight: '400',
+    width: 120,
+    marginBottom: 10,
+    fontFamily: 'AppleSDGothicNeoB00',
   },
 });
