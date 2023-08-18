@@ -487,7 +487,7 @@ export default function Play({route, navigation}) {
                                   )}
                                 </View>
                                 {modifyIndex === i && (
-                                  <View style={styles.modifyCommentCOntainer}>
+                                  <View style={styles.modifyCommentContainer}>
                                     <Icon
                                       name="arrow-up-left"
                                       size={25}
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  modifyCommentCOntainer: {
+  modifyCommentContainer: {
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'center',
