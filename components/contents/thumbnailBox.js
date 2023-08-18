@@ -12,7 +12,6 @@ export const VideoThumbnail = ({video, navigation}) => {
   // "views":440,
   // "adClicks":24
   // },
-  console.log('in videoTHumbnail', video.thumbnailUrl);
   return (
     // <TouchableOpacity
     //   style={styles.container}

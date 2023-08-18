@@ -28,6 +28,10 @@ export default function Home({navigation, route}) {
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const scrollViewRef = useRef();
   const scrollViewRef2 = useRef();
+
+  const [page, setPage] = useState(0);
+  const [isEndOfScroll, setEndOfScroll] = useState(false);
+
   const userId = useSelector(state => state.USER);
   const dispatch = useDispatch();
 
@@ -44,7 +48,7 @@ export default function Home({navigation, route}) {
     } else {
       getRecommandVideos(viewedTag);
     }
-  }, [viewedTag]);
+  }, [viewedTag, page]);
 
   const getUserData = async () => {
     try {
@@ -70,11 +74,14 @@ export default function Home({navigation, route}) {
   const getRecommandVideos = async tags => {
     try {
       const tagIds = tags.map(tag => tag.tagId).join(',');
-      console.log('Tag IDs array : ', tagIds);
       const response = await axiosInstance.get(
-        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=0`,
+        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=3`,
       );
-      setRecommendedVideos(response.data.payload.videos);
+      console.log('in getRecommandVideos : ', response.data.payload);
+      setRecommendedVideos(prevVideos => [
+        ...prevVideos,
+        ...response.data.payload.videos,
+      ]);
     } catch (e) {
       console.log(e);
     }
@@ -134,6 +141,24 @@ export default function Home({navigation, route}) {
   const handleScroll = (event, setScrollPos) => {
     setScrollPos(event.nativeEvent.contentOffset.x);
   };
+
+  const handleScrollend = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+
+    if (offsetY + layoutHeight >= contentHeight) {
+      if (!isEndOfScroll) {
+        setEndOfScroll(true);
+        setPage(prevPage => prevPage + 1); // 스크롤이 끝에 도달하면 page 상태를 1 증가시킵니다.
+      }
+    } else {
+      if (isEndOfScroll) {
+        setEndOfScroll(false);
+      }
+    }
+  };
+
   const Item = ({item}) => (
     <View style={styles.item}>
       <ImageBackground
@@ -152,6 +177,7 @@ export default function Home({navigation, route}) {
   return (
     <View style={styles.container}>
       <ScrollView
+        onScroll={handleScrollend}
         style={styles.scrollContainer}
         contentContainerStyle={{alignItems: 'center'}}>
         <View style={styles.contentsContainer}>

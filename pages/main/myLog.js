@@ -17,64 +17,23 @@ import NavigationBar from '../../components/tools/navigationBar';
 
 export default function MyLog({navigation, route}) {
   const [page, setPage] = useState(0);
-  const [maxPage, setMaxPage] = useState(10);
   const [videoData, setVideoData] = useState([]);
   const userId = useSelector(state => state.USER);
-  const scrollViewRef = useRef(null);
   const [deleteControl, setDeleteControl] = useState(false);
   const [deleteArray, setDeleteArray] = useState([]);
-  const [isEndOfScroll, setEndOfScroll] = useState(false);
 
   useEffect(() => {
     getData();
-  }, [deleteControl]);
-  // useEffect(() => {
-  //   if (page === 0) {
-  //     fetchData(0);
-  //   } else {
-  //     setPage(0);
-  //   }
-  // }, [value]);
-
-  // useEffect(() => {
-  //   if (isEndOfScroll) {
-  //     setPage(prevPage => prevPage + 1);
-  //   }
-  // }, [isEndOfScroll]);
-
-  // useEffect(() => {
-  //   if (page === 0) {
-  //     fetchData(0);
-  //   } else {
-  //     if (page !== maxPage) {
-  //       fetchData(1);
-  //     }
-  //   }
-  // }, [page]);
-
-  const fetchData = async key => {
-    if (key === 0) {
-      scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
-      const newVideoData = await getData();
-      setVideoData(newVideoData[0]);
-      setMaxPage(newVideoData[1]);
-    } else {
-      const newVideoData = await getData();
-      setVideoData(prevVideoData => {
-        return [...prevVideoData, ...newVideoData[0]];
-      });
-    }
-  };
+  }, [page, deleteControl]);
 
   const getData = async () => {
     try {
-      console.log(userId);
+      console.log('check');
+      console.log('page', page);
       const response = await axiosInstance.get(
-        `personalized-service/${userId}/videos/history?page=0&size=10`,
+        `personalized-service/${userId}/videos/history?page=${page}&size=10`,
       );
-      console.log(response.data.payload.viewVideoIdList);
       const history = response.data.payload.viewedVideos.viewVideoIdList;
-
       await getVideoData(history);
     } catch (error) {
       console.error(error);
@@ -87,28 +46,15 @@ export default function MyLog({navigation, route}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/videoIds?q=${videoIdString}`,
       );
-      console.log(response.data.payload.videos);
-      setVideoData(response.data.payload.videos);
+      setVideoData(prevVideos => [
+        ...prevVideos,
+        ...response.data.payload.videos,
+      ]);
     } catch (e) {
       console.log(e);
     }
   };
 
-  // const handleScroll = event => {
-  //   const offsetY = event.nativeEvent.contentOffset.y;
-  //   const contentHeight = event.nativeEvent.contentSize.height;
-  //   const layoutHeight = event.nativeEvent.layoutMeasurement.height;
-
-  //   if (offsetY + layoutHeight >= contentHeight) {
-  //     if (!isEndOfScroll) {
-  //       setEndOfScroll(true);
-  //     }
-  //   } else {
-  //     if (isEndOfScroll) {
-  //       setEndOfScroll(false);
-  //     }
-  //   }
-  // };
   const deleteSubmit = async () => {
     try {
       const deletePromises = deleteArray.map(videoId => {
@@ -137,6 +83,16 @@ export default function MyLog({navigation, route}) {
     }
   };
 
+  const handleScrollend = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+
+    if (offsetY + layoutHeight >= contentHeight) {
+      setPage(prevPage => prevPage + 1);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
@@ -160,10 +116,9 @@ export default function MyLog({navigation, route}) {
         </View>
 
         <ScrollView
-          ref={scrollViewRef}
           style={styles.scrollContainer}
           contentContainerStyle={{alignItems: 'center'}}
-          // onScroll={handleScroll}
+          onScroll={handleScrollend}
           scrollEventThrottle={400}>
           {videoData.length > 0 &&
             videoData.map((e, i) => {
