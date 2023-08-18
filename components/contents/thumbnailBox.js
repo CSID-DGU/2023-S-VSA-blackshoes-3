@@ -31,11 +31,12 @@ export const VideoThumbnail = ({video, navigation}) => {
         <View style={styles.infoTextContainer}>
           <View style={styles.infoTextBox}>
             <Text style={styles.infoTitle}>{video.videoName}</Text>
+          </View>
+
+          <View style={styles.infoTextBox}>
             <Text style={styles.infoText}>
               업로드일: {video.createdAt.slice(0, 10)}
             </Text>
-          </View>
-          <View style={styles.infoTextBox}>
             <Text style={styles.infoText}>조회수: {video.views}</Text>
             <Text style={styles.infoText}>좋아요: {video.likes}</Text>
           </View>
@@ -82,25 +83,24 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   infoTextContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     width: '80%',
-    paddingLeft: 15,
-    paddingRight: 10,
+    height: '100%',
+    paddingLeft: 10,
+
+    justifyContent: 'center',
+    gap: 5,
   },
   infoTextBox: {
-    justifyContent: 'center',
-    height: '100%',
+    flexDirection: 'row',
+    gap: 10,
   },
   infoTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 
   infoText: {
-    marginBottom: 2,
-    fontSize: 13,
+    fontSize: 12,
     color: '#808080',
   },
 });

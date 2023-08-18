@@ -36,7 +36,7 @@ export default function Play({route, navigation}) {
   const [commentPage, setCommentPage] = useState(null);
   const [commentInput, setCommentInput] = useState('');
   const [modifying, setModifying] = useState('');
-  const [modifyIndex, setModifyIndex] = useState(false);
+  const [modifyIndex, setModifyIndex] = useState(null);
 
   const userId = useSelector(state => state.USER);
   const nick = useSelector(state => state.NICK);
@@ -459,39 +459,54 @@ export default function Play({route, navigation}) {
                                     {e.content}
                                   </Text>
                                   {e.userId === userId && (
-                                    <>
+                                    <View
+                                      style={styles.commentsButtonContainer}>
+                                      <TouchableOpacity
+                                        onPress={() => {
+                                          if (modifyIndex === i) {
+                                            setModifyIndex(null);
+                                            setModifying('');
+                                          } else {
+                                            setModifyIndex(i);
+                                          }
+                                        }}>
+                                        <Text>
+                                          {modifyIndex === i ? '취소' : '수정'}
+                                        </Text>
+                                      </TouchableOpacity>
                                       <TouchableOpacity
                                         onPress={() => deleteComment(e)}>
-                                        <Icon2
+                                        {/* <Icon2
                                           name="trash-outline"
                                           size={30}
                                           color={'black'}
-                                        />
+                                        /> */}
+                                        <Text>삭제</Text>
                                       </TouchableOpacity>
-                                      <TouchableOpacity
-                                        onPress={() =>
-                                          setModifyIndex(!modifyIndex)
-                                        }>
-                                        <Text>수정 버튼</Text>
-                                      </TouchableOpacity>
-                                      {modifyIndex && (
-                                        <TextInput
-                                          style={styles.commentInput}
-                                          placeholder="댓글 수정"
-                                          placeholderTextColor={'#c9c9c9'}
-                                          onChangeText={text =>
-                                            setModifying(text)
-                                          }
-                                          value={modifying}
-                                          onSubmitEditing={() => {
-                                            modifyComment(e);
-                                            setModifyIndex(false);
-                                          }}
-                                        />
-                                      )}
-                                    </>
+                                    </View>
                                   )}
                                 </View>
+                                {modifyIndex === i && (
+                                  <View style={styles.modifyCommentCOntainer}>
+                                    <Icon
+                                      name="arrow-up-left"
+                                      size={25}
+                                      color={'black'}
+                                    />
+                                    <TextInput
+                                      style={styles.commentModifyInput}
+                                      placeholder="댓글 수정"
+                                      placeholderTextColor={'#c9c9c9'}
+                                      onChangeText={text => setModifying(text)}
+                                      value={modifying}
+                                      onSubmitEditing={() => {
+                                        modifyComment(e);
+                                        setModifyIndex(null);
+                                        setModifying('');
+                                      }}
+                                    />
+                                  </View>
+                                )}
                               </TouchableOpacity>
                             );
                           })}
@@ -663,20 +678,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   firstCommentContainer: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#E0E0E0',
     paddingHorizontal: 20,
     borderRadius: 10,
     shadowColor: '#000',
     paddingVertical: 12,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 2,
-    gap: 7,
-    marginBottom: 20,
   },
   commentTitle: {
     fontWeight: 'bold',
@@ -686,9 +692,11 @@ const styles = StyleSheet.create({
   firstCommentBox: {
     flexDirection: 'row',
     backgroundColor: 'white',
+    alignItems: 'center',
     borderRadius: 10,
-    paddingVertical: 15,
-    gap: 22,
+    paddingVertical: 5,
+    gap: 10,
+    marginTop: 5,
     paddingHorizontal: 17,
     shadowOffset: {
       width: 0,
@@ -700,12 +708,15 @@ const styles = StyleSheet.create({
   },
   commentUserName: {
     color: 'black',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
   },
   commentContents: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
+    paddingHorizontal: 20,
+    lineHeight: 25,
+    paddingVertical: 5,
   },
   allCommentsContainer: {
     backgroundColor: '#F0F0F0',
@@ -739,12 +750,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 1,
+    paddingHorizontal: 15,
   },
   allCommentsBox: {
     paddingVertical: 10,
     width: 350,
     gap: 5,
     paddingHorizontal: 10,
+    borderBottomWidth: 0.6,
   },
   commentsInfo: {
     flexDirection: 'row',
@@ -760,5 +773,27 @@ const styles = StyleSheet.create({
   commentContentsAll: {fontSize: 16},
   commentContentsAllContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modifyCommentCOntainer: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    gap: 10,
+    marginTop: 5,
+  },
+  commentsButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  commentModifyInput: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    paddingHorizontal: 15,
+    width: '85%',
   },
 });

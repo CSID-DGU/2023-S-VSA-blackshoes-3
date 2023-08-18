@@ -107,14 +107,6 @@ export default function Video({navigation, route}) {
               marginTop: 11,
               width: 105,
               borderWidth: 0,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
             }}
           />
         </View>
@@ -147,7 +139,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F2F8FF',
   },
 
   contentsContainer: {
@@ -160,35 +151,19 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#DEDEDE',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
-    marginVertical: 7,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
+    borderBottomWidth: 0.5,
     width: '90%',
-    borderRadius: 10,
   },
 
   dropDownButton: {
     marginTop: 10,
     minHeight: 40,
     width: 105,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+
     borderWidth: 0,
   },
   dropdownpickerContainer: {
