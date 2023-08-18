@@ -8,6 +8,7 @@ import com.travelvcommerce.userservice.entity.Seller;
 import com.travelvcommerce.userservice.repository.SellerRepository;
 import com.travelvcommerce.userservice.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class SellerServiceImpl implements SellerService {
 
     private final PasswordEncoder passwordEncoder;
@@ -61,19 +63,37 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public SellerDto updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo) {
+    public SellerDto updateSellerName(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto) {
         Seller existingSeller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다."));
 
-        if (sellerUpdateRequestDto != null) {
+        try {
             existingSeller.updateSellerName(sellerUpdateRequestDto.getSellerName());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("판매자명을 처리하는데 실패했습니다", e);
         }
 
-        if (sellerLogo != null) {
-            try {
-                existingSeller.updateSellerLogo(sellerLogo.getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
-            }
+        SellerDto sellerDto = SellerDto.builder()
+                .sellerId(existingSeller.getSellerId())
+                .email(existingSeller.getEmail())
+                .sellerName(existingSeller.getSellerName())
+                .sellerLogo(existingSeller.getSellerLogo())
+                .createdAt(existingSeller.getCreatedAt())
+                .updatedAt(existingSeller.getUpdatedAt())
+                .build();
+
+        return sellerDto;
+    }
+
+    @Override
+    public SellerDto updateSellerLogo(String sellerId, MultipartFile sellerLogo) {
+        Seller existingSeller = sellerRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("존재하지 않는 판매자입니다."));
+
+        try {
+            existingSeller.updateSellerLogo(sellerLogo.getBytes());
+        } catch (IOException e) {
+            log.info(e.getMessage());
+            throw new RuntimeException("판매자 로고를 처리하는 데 실패했습니다.", e);
         }
 
         SellerDto sellerDto = SellerDto.builder()

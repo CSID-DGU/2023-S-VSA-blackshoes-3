@@ -11,7 +11,8 @@ import java.util.Map;
 @Transactional
 @Service
 public interface SellerService {
-    SellerDto updateSeller(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto, MultipartFile sellerLogo);
+    SellerDto updateSellerName(String sellerId, SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto);
+    SellerDto updateSellerLogo(String sellerId, MultipartFile sellerLogo);
     void deleteSeller(String sellerId);
     Map<String, String> updatePassword(String sellerId, SellerDto.SellerUpdatePasswordRequestDto sellerUpdatePasswordRequestDto);
     SellerDto registerSeller(SellerDto.SellerRegisterRequestDto sellerRegisterRequestDto);

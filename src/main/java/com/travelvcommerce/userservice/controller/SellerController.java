@@ -140,38 +140,26 @@ public class SellerController {
         }
     }
 
-    @PutMapping("/{sellerId}")
-    public ResponseEntity<ResponseDto> updateSeller(@AuthenticationPrincipal SellerPrincipal sellerPrincipal,
-                                                    @PathVariable String sellerId,
-                                                    @RequestPart(name = "updateRequest", required = false) SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto,
-                                                    @RequestPart(name = "sellerLogo", required = false) MultipartFile sellerLogo) {
+    @PutMapping("/{sellerId}/sellerName")
+    public ResponseEntity<ResponseDto> updateSellerName(@AuthenticationPrincipal SellerPrincipal sellerPrincipal,
+                                                        @PathVariable String sellerId,
+                                                        @RequestBody SellerDto.SellerUpdateRequestDto sellerUpdateRequestDto) {
         try {
             if (!sellerId.equals(sellerPrincipal.getId())) {
                 ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
             }
 
-            if (sellerUpdateRequestDto == null && sellerLogo == null) {
+            if (sellerUpdateRequestDto == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("Invalid Request").build());
             }
 
             if (sellerUpdateRequestDto != null) {
-                String sellerName = sellerUpdateRequestDto.getSellerName();
-                if(!sellerName.matches(sellerNameRegex)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자명은 특수문자를 포함하지 않는 1~10자리의 한글, 영문, 숫자 조합이어야 합니다.").build());
-                }
-            }
 
-            // MultipartFile를 byte 배열로
-            if (sellerLogo != null) {
-                byte[] sellerLogoBytes = sellerLogo.getBytes();
-                if(sellerLogoBytes.length > 16777215){
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자 로고는 16MB 이하의 파일만 업로드 가능합니다.").build());
-                }
             }
 
             // SellerService를 이용하여 저장
-            SellerDto sellerDto = sellerService.updateSeller(sellerId ,sellerUpdateRequestDto, sellerLogo);
+            SellerDto sellerDto = sellerService.updateSellerName(sellerId ,sellerUpdateRequestDto);
 
             SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = SellerDto.SellerUpdateResponseDto.builder()
                     .sellerId(sellerId)
@@ -182,11 +170,9 @@ public class SellerController {
             SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
                     .sellerId(sellerId)
                     .sellerName(sellerDto.getSellerName())
-                    .sellerLogo(sellerDto.getSellerLogo())
                     .build();
 
             kafkaUploaderInfoProducerService.updateUploader(uploaderInfoDto);
-
 
             ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(sellerUpdateResponseDto, Map.class)).build();
 
@@ -201,7 +187,62 @@ public class SellerController {
         } catch (Exception e) {
             System.out.println(e);
             ResponseDto responseDto = ResponseDto.builder().error("서버 내부 오류").build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+        }
+    }
+
+    @PutMapping("/{sellerId}/sellerLogo")
+    public ResponseEntity<ResponseDto> updateSellerLogo(@AuthenticationPrincipal SellerPrincipal sellerPrincipal,
+                                                        @PathVariable String sellerId,
+                                                        @RequestPart(name = "sellerLogo") MultipartFile sellerLogo) {
+        try {
+            if (!sellerId.equals(sellerPrincipal.getId())) {
+                ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
+            }
+
+            if (sellerLogo == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("Invalid Request").build());
+            }
+
+            // MultipartFile를 byte 배열로
+            if (sellerLogo != null) {
+                byte[] sellerLogoBytes = sellerLogo.getBytes();
+                if(sellerLogoBytes.length > 16777215){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().error("판매자 로고는 16MB 이하의 파일만 업로드 가능합니다.").build());
+                }
+            }
+
+            // SellerService를 이용하여 저장
+            SellerDto sellerDto = sellerService.updateSellerLogo(sellerId, sellerLogo);
+
+            SellerDto.SellerUpdateResponseDto sellerUpdateResponseDto = SellerDto.SellerUpdateResponseDto.builder()
+                    .sellerId(sellerId)
+                    .updatedAt(sellerDto.getUpdatedAt())
+                    .build();
+
+            // 변경된 정보를 kafka topic에 publish
+            SellerDto.SellerInfoDto uploaderInfoDto = SellerDto.SellerInfoDto.builder()
+                    .sellerId(sellerId)
+                    .sellerLogo(sellerDto.getSellerLogo())
+                    .build();
+
+            kafkaUploaderInfoProducerService.updateUploader(uploaderInfoDto);
+
+            ResponseDto responseDto = ResponseDto.builder().payload(objectMapper.convertValue(sellerUpdateResponseDto, Map.class)).build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+
+        } catch (EntityNotFoundException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        } catch (IllegalArgumentException e) {
+            ResponseDto responseDto = ResponseDto.builder().error(e.getMessage()).build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
+        } catch (Exception e) {
+            System.out.println(e);
+            ResponseDto responseDto = ResponseDto.builder().error("서버 내부 오류").build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
     }
 
