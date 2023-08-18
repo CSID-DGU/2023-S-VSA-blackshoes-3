@@ -3,7 +3,7 @@ import * as H from "../../Home/HomeStyle";
 import * as S from "../../Sign/SignStyle";
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
-import { BASE_URL, Instance } from "../../../api/axios";
+import { BASE_URL } from "../../../api/axios";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useDebounce } from "../../../hooks/useDebounce";
@@ -149,7 +149,6 @@ const PwModal = ({ modal, setModal }) => {
         .then((res) => {
           console.log(res);
           alert("비밀번호가 변경되었습니다.");
-
           setModal(false);
         });
     } catch (err) {
