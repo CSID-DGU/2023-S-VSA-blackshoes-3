@@ -95,7 +95,7 @@ export const RightAlignSection = styled.section`
   width: 450px;
   height: 30px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -145,7 +145,9 @@ export const FormHelperEmails = styled(FormHelperText)`
   margin-left: 0 !important;
   font-weight: 700 !important;
   color: ${(props) =>
-    props.is_email === "true" ? props.theme.primaryColor : props.theme.secondBlack} !important;
+    props.is_email === "true"
+      ? props.theme.primaryColor
+      : props.theme.secondBlack} !important;
 `;
 
 export const FormHelperEmailValidation = styled(FormHelperText)`
@@ -163,7 +165,9 @@ export const FormHelperPWs = styled(FormHelperText)`
   margin-left: 0 !important;
   font-weight: 700 !important;
   color: ${(props) =>
-    props.is_password === "true" ? props.theme.primaryColor : props.theme.secondBlack} !important;
+    props.is_password === "true"
+      ? props.theme.primaryColor
+      : props.theme.secondBlack} !important;
 `;
 
 export const FormHelperPWCF = styled(FormHelperText)`

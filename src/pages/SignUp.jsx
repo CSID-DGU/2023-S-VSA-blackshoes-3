@@ -52,12 +52,15 @@ const SignUp = () => {
 
   // 비밀번호 유효성 관리----------------------------------------------------
   const onChangePassword = useCallback((e) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
     const passwordCurrent = e.target.value;
     setPassword(passwordCurrent);
 
     if (!passwordRegex.test(passwordCurrent)) {
-      setPasswordMessage("숫자+영문자+특수문자를 조합하여 8글자 이상 작성하세요.");
+      setPasswordMessage(
+        "숫자+영문자+특수문자를 조합하여 8글자 이상 작성하세요."
+      );
       setIsPassword(false);
     } else {
       setPasswordMessage("유효한 비밀번호 형식입니다.");
@@ -87,7 +90,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
       await axios
-        .post(`http://13.125.69.94:8001/user-service/mail/send-verification-code`, {
+        .post(`${BASE_URL}user-service/mail/send-verification-code`, {
           email: email,
         })
         .then(() => {
@@ -103,7 +106,7 @@ const SignUp = () => {
   const emailValidationCheck = async () => {
     try {
       await axios
-        .post(`http://13.125.69.94:8001/user-service/mail/verify-code`, {
+        .post(`${BASE_URL}user-service/mail/verify-code`, {
           email: email,
           verificationCode: debouncedEmailValidation,
         })
@@ -209,7 +212,9 @@ const SignUp = () => {
               인증번호 발송
             </S.ColorButton>
           </S.InputBox>
-          <S.FormHelperEmailValidation is_email_validation={isEmailValidation ? "true" : "false"}>
+          <S.FormHelperEmailValidation
+            is_email_validation={isEmailValidation ? "true" : "false"}
+          >
             {emailValidationMessage}
           </S.FormHelperEmailValidation>
           <S.LeftAlignSection>
@@ -235,7 +240,9 @@ const SignUp = () => {
             onChange={onChangePasswordCheck}
             required
           />
-          <S.FormHelperPWCF is_password_check={isPasswordCheck ? "true" : "false"}>
+          <S.FormHelperPWCF
+            is_password_check={isPasswordCheck ? "true" : "false"}
+          >
             {passwordCheckMessage}
           </S.FormHelperPWCF>
           <S.LeftAlignSection>
