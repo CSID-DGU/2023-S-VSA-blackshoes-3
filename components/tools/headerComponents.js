@@ -156,6 +156,7 @@ export const HeaderLeftComponent = ({
           style={styles.sortTypeButton}
           onPress={() => setSortModalVisible(true)}>
           <Text style={styles.sortTypeFont}>{getLabelForValue(value)}</Text>
+          <Icon name="chevron-down-sharp" size={20} color={'white'} />
         </TouchableOpacity>
         <SearchTypeModal
           sortModalVisible={sortModalVisible}
@@ -173,9 +174,9 @@ export const HeaderLeftComponent = ({
 const styles = StyleSheet.create({
   searchBar: {
     position: 'relative',
-    left: 15,
+    left: 20,
     backgroundColor: '#EBEBEB',
-    width: 250,
+    width: 220,
     borderRadius: 10,
     height: 40,
     paddingHorizontal: 10,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   autoCompleteContainer: {
     position: 'absolute',
     top: 55,
-    left: 15,
+    left: 20,
     backgroundColor: 'white',
     width: '100%',
     zIndex: 2,
@@ -208,27 +209,18 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   sortTypeButton: {
-    backgroundColor: '#F2F8FF',
-    width: 60,
+    flexDirection: 'row',
+    backgroundColor: '#21C99B',
+    width: 80,
+    gap: 2,
     alignItems: 'center',
     marginLeft: 10,
-    height: 34,
+    height: 39,
     justifyContent: 'center',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
   },
   sortTypeFont: {
     fontWeight: '600',
-    textAlign: 'center',
-    textShadowOffset: {width: 0, height: 0.1},
-    textShadowRadius: 1,
-    textShadowColor: 'gray',
+    color: 'white',
   },
 });

@@ -7,6 +7,7 @@ export const SearchTypeModal = ({
   setValue,
   items,
 }) => {
+  console.log(items);
   return (
     <Modal
       transparent={true}
@@ -28,9 +29,9 @@ export const SearchTypeModal = ({
                 setSortModalVisible(false);
               }}>
               <Text style={styles.modalText}>
-                {item.label === 'sellerName'
+                {item.label === 'Seller'
                   ? '판매자명으로 검색'
-                  : item.label === 'videoName'
+                  : item.label === 'Video'
                   ? '영상 제목으로 검색'
                   : ''}
               </Text>
@@ -50,10 +51,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    gap: 35,
+    gap: 40,
     justifyContent: 'center',
-    width: 0,
     height: 200,
+    width: 240,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
