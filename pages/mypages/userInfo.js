@@ -125,7 +125,7 @@ export default function CheckInfo({navigation}) {
           <Text style={styles.text}>이름</Text>
           <View style={styles.rowContainer}>
             <TextInput
-              style={[styles.infoText, {width: 200}]}
+              style={[styles.infoText, {width: 212}]}
               placeholder={userData.nickname}
               placeholderTextColor={'grey'}
               onChangeText={text => setNameInput(text)}
@@ -144,14 +144,10 @@ export default function CheckInfo({navigation}) {
           {userData?.birthdate && formatDate(userData?.birthdate)}
         </View>
         <Text style={styles.title}>비밀번호 변경</Text>
+
         <View style={styles.passwordContainer}>
           <View style={styles.rowContainer1}>
             <Text style={styles.text}>기존 비밀번호</Text>
-            <TouchableOpacity
-              style={styles.modifyPasswordButton}
-              onPress={modifyPassword}>
-              <Text style={styles.modifyButtonText}>변경</Text>
-            </TouchableOpacity>
           </View>
 
           <TextInput
@@ -170,15 +166,18 @@ export default function CheckInfo({navigation}) {
             value={newPasswordInput}
           />
         </View>
+        <View style={{alignItems: 'flex-end'}}>
+          <TouchableOpacity
+            style={styles.modifyPasswordButton}
+            onPress={modifyPassword}>
+            <Text style={styles.modifyButtonText}>변경</Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.title}>회원 탈퇴</Text>
         <View style={styles.passwordContainer}>
           <View style={styles.rowContainer1}>
             <Text style={styles.text}>비밀번호 입력</Text>
-
-            <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-              <Text style={styles.modifyButtonText}>회원 탈퇴</Text>
-            </TouchableOpacity>
           </View>
           <TextInput
             style={styles.infoText}
@@ -187,6 +186,11 @@ export default function CheckInfo({navigation}) {
             onChangeText={text => setPassInput(text)}
             value={passInput}
           />
+        </View>
+        <View style={{alignItems: 'flex-end'}}>
+          <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+            <Text style={styles.modifyButtonText}>회원 탈퇴</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -199,8 +203,8 @@ const styles = StyleSheet.create({
   },
   contentsContainer: {
     backgroundColor: '#F2F8FF',
-    paddingTop: 20,
-    paddingBottom: 30,
+    paddingTop: 10,
+    paddingBottom: 25,
     paddingHorizontal: 20,
     gap: 10,
     marginTop: 20,
@@ -213,12 +217,12 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     backgroundColor: '#F2F8FF',
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingTop: 10,
+    paddingBottom: 35,
     paddingHorizontal: 20,
     gap: 10,
     marginTop: 20,
-    marginBottom: 25,
+    marginBottom: 10,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -233,7 +237,6 @@ const styles = StyleSheet.create({
   },
   infoText: {
     backgroundColor: 'white',
-    marginTop: 5,
     color: 'black',
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -265,18 +268,20 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 23,
+    fontSize: 25,
     color: 'black',
-    fontWeight: '600',
+    fontWeight: '800',
     marginTop: 10,
     marginLeft: 5,
   },
   text: {
     fontSize: 21,
     fontWeight: 'bold',
+    marginTop: 12,
   },
 
   modifyButton: {
+    paddingVertical: 12.7,
     backgroundColor: '#21C99B',
     paddingHorizontal: 20,
     alignItems: 'center',
@@ -301,9 +306,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   modifyPasswordButton: {
-    paddingVertical: 6,
+    paddingVertical: 12.7,
     backgroundColor: '#21C99B',
-    paddingHorizontal: 15,
+    alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
     shadowColor: '#000',
@@ -314,11 +319,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 1,
+    width: 100,
+    marginBottom: 20,
   },
   signOutButton: {
-    paddingVertical: 6,
-    backgroundColor: '#F7FFF5',
-    paddingHorizontal: 12,
+    paddingVertical: 12.7,
+    backgroundColor: '#21C99B',
+    alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
     shadowColor: '#000',
@@ -328,7 +335,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 2,
+    elevation: 1,
+    width: 100,
+    marginBottom: 20,
   },
   birthContainer: {
     flexDirection: 'row',

@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     paddingTop: 17,
     paddingBottom: 10,
     marginVertical: 7,
-    width: '90%',
+    width: '92%',
   },
   spinnerContainer: {
     marginTop: 200,

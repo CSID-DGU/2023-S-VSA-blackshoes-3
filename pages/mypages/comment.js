@@ -107,7 +107,7 @@ export default function MyCommentPage({navigation, route}) {
                         onPress={() =>
                           navigation.navigate('Play', {video: matchingVideo})
                         }>
-                        <Icon name="play-circle" size={35} color={'#919191'} />
+                        <Icon name="play-circle" size={31} color={'#919191'} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
@@ -118,10 +118,10 @@ export default function MyCommentPage({navigation, route}) {
                             setModifyIndex(i);
                           }
                         }}>
-                        <Icon name="edit" size={35} color={'#919191'} />
+                        <Icon name="edit" size={31} color={'#919191'} />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => deleteComment(e)}>
-                        <Icon name="trash" size={35} color={'#919191'} />
+                        <Icon name="trash" size={31} color={'#919191'} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
-    color: '#545454',
-    marginLeft: 15,
+    color: 'black',
+    marginLeft: 20,
     fontWeight: '400',
     width: 120,
     marginBottom: 20,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     justifyContent: 'space-between',
-    width: '55%',
+    width: '65%',
     borderRightWidth: 0.5,
     paddingHorizontal: 5,
     borderStyle: 'dashed',
@@ -206,8 +206,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '43%',
-    paddingHorizontal: 5,
+    width: '32%',
+    paddingHorizontal: 2,
     marginLeft: 5,
   },
   videoName: {
@@ -218,15 +218,17 @@ const styles = StyleSheet.create({
   },
   commentCreatedAt: {
     position: 'absolute',
-    top: 25,
-    left: 125,
+    top: 27,
+    left: 155,
     fontSize: 12,
     color: '#BABABA',
   },
   commentContents: {
     fontWeight: 'bold',
     fontSize: 14,
+    color: 'black',
     paddingVertical: 5,
+    letterSpacing: 1,
   },
   modfiyCommentContainer: {
     flexDirection: 'row',
