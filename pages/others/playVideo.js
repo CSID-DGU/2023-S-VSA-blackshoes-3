@@ -87,7 +87,7 @@ export default function Play({route, navigation}) {
         parseInt(ad.startTime, 10) < currentTime * 1000 &&
         parseInt(ad.endTime, 10) > currentTime * 1000
       ) {
-        setOpenAd(ad.adContent);
+        setOpenAd(ad);
         return true;
       } else {
         setOpenAd(null);
@@ -96,6 +96,7 @@ export default function Play({route, navigation}) {
     });
     return;
   }, [currentTime]);
+  console.log('In openAd : ', videoData.videoAds);
 
   const getData = async () => {
     try {
@@ -401,13 +402,7 @@ export default function Play({route, navigation}) {
                 </ScrollView>
               </View>
 
-              {openAd && (
-                <View style={styles.bottomContainer}>
-                  <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
-                </View>
-              )}
-
-              <>
+              <View style={{paddingHorizontal: 15}}>
                 <TouchableOpacity
                   style={styles.firstCommentContainer}
                   onPress={() => setCommentIndex(true)}>
@@ -433,6 +428,11 @@ export default function Play({route, navigation}) {
                     <Text>wait hi</Text>
                   )}
                 </TouchableOpacity>
+                {openAd && (
+                  <View style={styles.bottomContainer}>
+                    <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
+                  </View>
+                )}
                 {recommendedVideos.length > 0 &&
                   recommendedVideos.map((e, i) => {
                     return (
@@ -448,7 +448,7 @@ export default function Play({route, navigation}) {
                       </TouchableOpacity>
                     );
                   })}
-              </>
+              </View>
             </ScrollView>
           )}
 

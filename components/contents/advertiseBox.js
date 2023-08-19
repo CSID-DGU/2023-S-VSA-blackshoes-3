@@ -1,33 +1,38 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
+import WebView from 'react-native-webview';
 
 export const Ad = ({adContents, logoUri}) => {
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{uri: `data:image/png;base64,${logoUri}`}}
-      />
-      <Text style={styles.text}>{adContents}</Text>
+      <WebView source={{uri: adContents.adUrl}} style={styles.webview} />
+      <View style={styles.infoContainer}>
+        <Image
+          style={styles.logo}
+          source={{uri: `data:image/png;base64,${logoUri}`}}
+        />
+        <Text style={styles.text}>{adContents.adContent}</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
-    borderRadius: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 3,
-    paddingHorizontal: 25,
-    paddingVertical: 10,
+    width: '100%',
+    paddingHorizontal: 15,
+    backgroundColor: '#DEDEDE',
+    paddingVertical: 15,
+  },
+  webview: {
+    width: '100%',
+    height: 190,
+  },
+  infoContainer: {
+    width: '100%',
+
+    paddingHorizontal: 15,
+    paddingTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 20,
