@@ -12,6 +12,7 @@ import com.travelvcommerce.statisticsservice.service.KafkaVideoInfoProducerServi
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyLikedVideoException;
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyViewedVideoException;
 import com.travelvcommerce.statisticsservice.service.StatisticsUpdateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/statistics-service")
 public class StatisticsUpdateController {
-    @Autowired
-    private StatisticsUpdateService statisticsUpdateService;
-    @Autowired
-    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final StatisticsUpdateService statisticsUpdateService;
+    private final KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
+    private final ObjectMapper objectMapper;
 
     @PutMapping("/{videoId}/views")
     public ResponseEntity<ResponseDto> increaseViewCount(@PathVariable("videoId") String videoId,

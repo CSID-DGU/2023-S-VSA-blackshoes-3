@@ -7,6 +7,7 @@ import com.travelvcommerce.statisticsservice.exception.UserAlreadyLikedVideoExce
 import com.travelvcommerce.statisticsservice.exception.UserAlreadyViewedVideoException;
 import com.travelvcommerce.statisticsservice.exception.UserDidNotLikedVideoException;
 import com.travelvcommerce.statisticsservice.repository.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,21 +19,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StatisticsUpdateServiceImpl implements StatisticsUpdateService {
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-    @Autowired
-    private VideoViewCountRepository videoViewCountRepository;
-    @Autowired
-    private TagViewCountRepository tagViewCountRepository;
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private VideoLikeCountRepository videoLikeCountRepository;
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private AdClickCountRepository adClickCountRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final VideoRepository videoRepository;
+    private final VideoLikeCountRepository videoLikeCountRepository;
+    private final LikeRepository likeRepository;
+    private final AdClickCountRepository adClickCountRepository;
 
     @Override
     @Transactional

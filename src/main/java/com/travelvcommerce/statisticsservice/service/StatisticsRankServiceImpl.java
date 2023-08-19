@@ -12,6 +12,7 @@ import com.travelvcommerce.statisticsservice.repository.AdClickCountRepository;
 import com.travelvcommerce.statisticsservice.repository.TagViewCountRepository;
 import com.travelvcommerce.statisticsservice.repository.VideoLikeCountRepository;
 import com.travelvcommerce.statisticsservice.repository.VideoViewCountRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,19 +29,14 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StatisticsRankServiceImpl implements StatisticsRankService {
-    @Autowired
-    private VideoViewCountRepository videoViewCountRepository;
-    @Autowired
-    private TagViewCountRepository tagViewCountRepository;
-    @Autowired
-    private VideoLikeCountRepository videoLikeCountRepository;
-    @Autowired
-    private AdClickCountRepository adClickCountRepository;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final VideoViewCountRepository videoViewCountRepository;
+    private final TagViewCountRepository tagViewCountRepository;
+    private final VideoLikeCountRepository videoLikeCountRepository;
+    private final AdClickCountRepository adClickCountRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional

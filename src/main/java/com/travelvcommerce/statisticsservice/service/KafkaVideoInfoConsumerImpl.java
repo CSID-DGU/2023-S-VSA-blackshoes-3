@@ -6,6 +6,7 @@ import com.travelvcommerce.statisticsservice.dto.videoInfo.TagInfoDto;
 import com.travelvcommerce.statisticsservice.dto.videoInfo.VideoInfoDto;
 import com.travelvcommerce.statisticsservice.entity.*;
 import com.travelvcommerce.statisticsservice.repository.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,23 +18,16 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private AdClickCountRepository adClickCountRepository;
-    @Autowired
-    private TagViewCountRepository tagViewCountRepository;
-    @Autowired
-    private VideoViewCountRepository videoViewCountRepository;
-    @Autowired
-    private VideoLikeCountRepository videoLikeCountRepository;
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private TagRepository tagRepository;
-    @Autowired
-    private VideoRepository videoRepository;
+    private final ObjectMapper objectMapper;
+    private final AdClickCountRepository adClickCountRepository;
+    private final TagViewCountRepository tagViewCountRepository;
+    private final VideoViewCountRepository videoViewCountRepository;
+    private final VideoLikeCountRepository videoLikeCountRepository;
+    private final LikeRepository likeRepository;
+    private final TagRepository tagRepository;
+    private final VideoRepository videoRepository;
 
     @Override
     @Transactional

@@ -5,6 +5,7 @@ import com.travelvcommerce.statisticsservice.dto.RankDto;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.dto.TagRankDto;
 import com.travelvcommerce.statisticsservice.repository.TagViewCountRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -19,13 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TagRankServiceImpl implements TagRankService {
-    @Autowired
-    private TagViewCountRepository tagViewCountRepository;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final TagViewCountRepository tagViewCountRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Override
     public RankResponseDto.TagRankResponseDto getTagRankByRegion() {

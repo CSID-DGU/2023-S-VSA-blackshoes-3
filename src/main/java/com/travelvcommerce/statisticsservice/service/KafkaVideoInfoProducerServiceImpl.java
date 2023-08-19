@@ -3,17 +3,17 @@ package com.travelvcommerce.statisticsservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.count.VideoCountInfoDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class KafkaVideoInfoProducerServiceImpl implements KafkaVideoInfoProducerService {
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private KafkaProducer kafkaProducer;
+    private final ObjectMapper objectMapper;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public void updateVideoStatistics(VideoCountInfoDto videoCountInfoDto) {

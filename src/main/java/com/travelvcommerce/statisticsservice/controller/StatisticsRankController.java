@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.dto.ResponseDto;
 import com.travelvcommerce.statisticsservice.service.StatisticsRankService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,14 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/statistics-service")
 public class StatisticsRankController {
-    @Autowired
-    private StatisticsRankService statisticsRankService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final StatisticsRankService statisticsRankService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/rank/videos/views/{sellerId}")
     public ResponseEntity<ResponseDto> getViewRank(@RequestHeader("Authorization") String id,

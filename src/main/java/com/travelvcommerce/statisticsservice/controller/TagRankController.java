@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.statisticsservice.dto.RankResponseDto;
 import com.travelvcommerce.statisticsservice.dto.ResponseDto;
 import com.travelvcommerce.statisticsservice.service.TagRankService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RequestMapping("/statistics-service")
+@RequiredArgsConstructor
 @RestController
 public class TagRankController {
-    @Autowired
-    private TagRankService tagRankService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final TagRankService tagRankService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/rank/tags/region")
     public ResponseEntity<ResponseDto> getTagRankByRegion() {
