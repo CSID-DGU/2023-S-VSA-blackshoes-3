@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  ActivityIndicator as Spinner,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -118,7 +119,7 @@ export default function MyLog({navigation, route}) {
           contentContainerStyle={{alignItems: 'center'}}
           onScroll={handleScrollend}
           scrollEventThrottle={400}>
-          {videoData.length > 0 &&
+          {videoData.length > 0 ? (
             videoData.map((e, i) => {
               return (
                 <TouchableOpacity
@@ -150,7 +151,12 @@ export default function MyLog({navigation, route}) {
                   <VideoThumbnail key={i} video={e} navigation={navigation} />
                 </TouchableOpacity>
               );
-            })}
+            })
+          ) : (
+            <View style={styles.spinnerContainer}>
+              <Spinner size="big" color="black" />
+            </View>
+          )}
         </ScrollView>
       </View>
 
@@ -199,5 +205,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginVertical: 7,
     width: '90%',
+  },
+  spinnerContainer: {
+    marginTop: 200,
   },
 });

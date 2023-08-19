@@ -12,6 +12,7 @@ import {
   StyleSheet,
   ImageBackground,
   Image,
+  ActivityIndicator as Spinner,
 } from 'react-native';
 import {regionList} from '../../constant/themes';
 import {themeList} from '../../constant/themes';
@@ -270,7 +271,7 @@ export default function Home({navigation, route}) {
             <Text style={styles.title}>추천 영상</Text>
           </View>
 
-          {recommendedVideos.length > 0 &&
+          {recommendedVideos.length > 0 ? (
             recommendedVideos.map((e, i) => {
               return (
                 <TouchableOpacity
@@ -280,7 +281,12 @@ export default function Home({navigation, route}) {
                   <VideoThumbnail key={i} video={e} navigation={navigation} />
                 </TouchableOpacity>
               );
-            })}
+            })
+          ) : (
+            <View style={styles.spinnerContainer}>
+              <Spinner size="big" color="black" />
+            </View>
+          )}
         </View>
       </ScrollView>
 
@@ -293,6 +299,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
+  },
+  spinnerContainer: {
+    marginTop: 50,
   },
   contentsContainer: {
     flex: 1,
@@ -360,7 +369,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 23,
     fontFamily: 'AppleSDGothicNeoB00',
-
     color: '#4D4D4D',
     marginLeft: 15,
     fontWeight: '700',

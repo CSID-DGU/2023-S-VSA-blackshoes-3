@@ -104,7 +104,7 @@ export default function ThemeSelectEach() {
             <View
               style={{
                 ...StyleSheet.absoluteFill,
-                backgroundColor: 'rgba(236, 255, 251, 1)',
+                backgroundColor: 'rgba(70,70,70, 0.8)',
               }}
             />
           )}
@@ -112,6 +112,7 @@ export default function ThemeSelectEach() {
             style={styles.touch}
             onPress={() => handlePress(item.tagId)}>
             <Text style={isItemSelected ? styles.selectedText : styles.text}>
+              {/* <Text style={styles.text}> */}
               {item.tagName}
             </Text>
           </TouchableOpacity>
@@ -128,14 +129,13 @@ export default function ThemeSelectEach() {
           <Text style={styles.littleTitle}>지역</Text>
         </View>
         <View style={styles.areaScrollContainer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() => handleIconPress('left')}>
             <Image source={require('../../assets/themeImg/arrow-left.png')} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <ScrollView
             horizontal
-            showsHorizontalScrollIndicator={true}
             onScroll={handleScroll}
             ref={scrollViewRef}
             style={styles.horizontalScrollContainer}>
@@ -145,11 +145,11 @@ export default function ThemeSelectEach() {
               })}
             </View>
           </ScrollView>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.scrollbutton}
             onPress={() => handleIconPress('right')}>
             <Image source={require('../../assets/themeImg/arrow-right.png')} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.littleTitle}>테마</Text>
@@ -170,34 +170,24 @@ export default function ThemeSelectEach() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F8FF',
+    backgroundColor: '#F7F7F7',
   },
   contentsContainer: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     alignItems: 'center',
   },
   areaScrollContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+
     borderRadius: 10,
     height: 110,
-    width: 350,
-    marginTop: 15,
+
+    marginTop: 10,
     marginBottom: 30,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
-  horizontalScrollContainer: {
-    marginTop: 7,
-  },
+  horizontalScrollContainer: {},
   textContainer: {
     marginTop: 5,
     alignItems: 'flex-start',
@@ -211,50 +201,36 @@ const styles = StyleSheet.create({
   themeScrollcontainer: {
     marginTop: 15,
     width: 350,
-    backgroundColor: 'white',
+
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     paddingTop: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   scrollbutton: {
     width: 20,
   },
   item: {
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: 'hidden',
-    width: 95,
-    height: 95,
-    marginRight: 14,
+    width: 80,
+    height: 100,
+    marginRight: 6,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 7,
   },
 
   touch: {
     width: '100%',
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    padding: 8,
   },
 
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: '#545454',
+    color: 'black',
+
     marginLeft: 20,
     marginVertical: 15,
   },
@@ -263,25 +239,21 @@ const styles = StyleSheet.create({
     color: '#4D4D4D',
     marginLeft: 15,
     fontWeight: '700',
-    fontStyle: 'italic',
     width: 100,
   },
   text: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
+    fontWeight: '600',
+
     color: 'white',
-    fontSize: 21,
+    fontSize: 17,
     letterSpacing: 3,
     padding: 2,
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 2,
-    textShadowColor: 'gray',
   },
   selectedText: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    color: 'black',
-    fontSize: 21,
+    fontWeight: '600',
+
+    color: 'rgba(230,230,230, 0.8)',
+    fontSize: 17,
     letterSpacing: 3,
     padding: 2,
   },

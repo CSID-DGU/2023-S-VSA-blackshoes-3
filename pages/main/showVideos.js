@@ -1,7 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator as Spinner,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {TouchableOpacity} from 'react-native';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -115,7 +120,7 @@ export default function Video({navigation, route}) {
           contentContainerStyle={{alignItems: 'center'}}
           onScroll={handleScroll}
           scrollEventThrottle={400}>
-          {videoData.length > 0 &&
+          {videoData.length > 0 ? (
             videoData.map((e, i) => {
               return (
                 <TouchableOpacity
@@ -125,7 +130,12 @@ export default function Video({navigation, route}) {
                   <VideoThumbnail key={i} video={e} navigation={navigation} />
                 </TouchableOpacity>
               );
-            })}
+            })
+          ) : (
+            <View style={styles.spinnerContainer}>
+              <Spinner size="big" color="black" />
+            </View>
+          )}
         </ScrollView>
       </View>
       <NavigationBar route={route} />
@@ -142,7 +152,9 @@ const styles = StyleSheet.create({
   contentsContainer: {
     flex: 1,
   },
-
+  spinnerContainer: {
+    marginTop: 200,
+  },
   scrollContainer: {
     marginTop: 10,
     width: '100%',
