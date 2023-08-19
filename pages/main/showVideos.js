@@ -63,14 +63,12 @@ export default function Video({navigation, route}) {
 
   const getData = async () => {
     try {
-      console.log(value);
       const response = await axiosInstance.get(
         `content-slave-service/videos/sort?s=${value}&page=${page}&size=10`,
       );
-      console.log('hello');
       return [response.data.payload.videos, response.data.payload.totalPages];
     } catch (error) {
-      console.error('Error occurred while fetching data:', error);
+      console.error(error);
     }
   };
 
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
-    borderBottomWidth: 0.5,
+    marginBottom: 10,
     width: '90%',
   },
 

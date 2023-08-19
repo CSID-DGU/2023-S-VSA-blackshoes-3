@@ -150,7 +150,7 @@ export default function Home({navigation, route}) {
     if (offsetY + layoutHeight >= contentHeight) {
       if (!isEndOfScroll) {
         setEndOfScroll(true);
-        setPage(prevPage => prevPage + 1); // 스크롤이 끝에 도달하면 page 상태를 1 증가시킵니다.
+        setPage(prevPage => prevPage + 1);
       }
     } else {
       if (isEndOfScroll) {
@@ -314,22 +314,14 @@ const styles = StyleSheet.create({
   },
 
   areaScrollContainer: {
+    backgroundColor: '#DEDEDE',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: 10,
     width: 350,
     paddingVertical: 2,
     marginTop: 15,
     marginBottom: 7,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
 
   scrollContainer: {

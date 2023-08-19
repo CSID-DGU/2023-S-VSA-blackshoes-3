@@ -1,8 +1,19 @@
 import React from 'react';
-import {View, StyleSheet, Text, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import WebView from 'react-native-webview';
 
 export const Ad = ({adContents, logoUri}) => {
+  const handleOpenUrl = () => {
+    Linking.openURL(adContents.adUrl);
+  };
+
   return (
     <View style={styles.container}>
       <WebView source={{uri: adContents.adUrl}} style={styles.webview} />
@@ -12,6 +23,9 @@ export const Ad = ({adContents, logoUri}) => {
           source={{uri: `data:image/png;base64,${logoUri}`}}
         />
         <Text style={styles.text}>{adContents.adContent}</Text>
+        <TouchableOpacity onPress={handleOpenUrl}>
+          <Text>이동</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
