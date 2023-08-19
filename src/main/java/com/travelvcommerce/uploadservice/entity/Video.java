@@ -1,15 +1,19 @@
 package com.travelvcommerce.uploadservice.entity;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "videos",
         uniqueConstraints = @UniqueConstraint(name = "video_unique",
@@ -46,4 +50,45 @@ public class Video implements Serializable {
     @ManyToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "seller_id", foreignKey = @ForeignKey(name = "video_fk_seller_id"))
     private Uploader uploader;
+
+    @Builder
+    public Video(String videoId, String videoName, Timestamp createdAt, Timestamp updatedAt) {
+        this.videoId = videoId;
+        this.videoName = videoName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public void setUploader(Uploader uploader) {
+        this.uploader = uploader;
+    }
+
+    public void initializeVideoTags() {
+        this.videoTags = new ArrayList<>();
+    }
+
+    public void initializeAds() {
+        this.ads = new ArrayList<>();
+    }
+
+    public void setVideoUrl(VideoUrl videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public void updateUpdatedAt() {
+        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    public void setVideoTags(List<VideoTag> videoTags) {
+        this.videoTags = videoTags;
+    }
+
+    public void setAds(List<Ad> ads) {
+        this.ads = ads;
+    }
+
+    public void updateVideoName(String videoName) {
+        this.videoName = videoName;
+        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
+    }
 }

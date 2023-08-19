@@ -133,7 +133,7 @@ public class TemporaryVideoServiceImpl implements TemporaryVideoService {
                 .orElseThrow(() -> new NoSuchElementException("temporary video not found"));
 
         Timestamp expiredAt = new Timestamp(System.currentTimeMillis() + VIDEO_TTL);
-        temporaryVideo.setExpiredAt(expiredAt);
+        temporaryVideo.extendExpiredAt(expiredAt);
 
         TemporaryVideoDto.TemporaryVideoResponseDto temporaryVideoResponseDto =
                 modelMapper.map(temporaryVideo, TemporaryVideoDto.TemporaryVideoResponseDto.class);

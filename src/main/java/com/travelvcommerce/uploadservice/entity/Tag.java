@@ -1,13 +1,17 @@
 package com.travelvcommerce.uploadservice.entity;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Data
 @Table(name = "tags", uniqueConstraints = @UniqueConstraint(name = "tag_content_unique", columnNames = {"tag_id", "content"}))
 public class Tag implements Serializable {
     @Id

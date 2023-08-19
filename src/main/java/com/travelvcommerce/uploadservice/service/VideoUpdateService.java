@@ -18,5 +18,4 @@ public interface VideoUpdateService {
     DenormalizedVideoDto updateTags(String userId, String videoId, List<String> tagIdList);
     DenormalizedVideoDto updateAds(String userId, String videoId, List<AdDto.AdModifyRequestDto> adModifyRequestDtoList);
     DenormalizedVideoDto updateVideoName(String userId, String videoId, String videoName);
-    List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto);
 }

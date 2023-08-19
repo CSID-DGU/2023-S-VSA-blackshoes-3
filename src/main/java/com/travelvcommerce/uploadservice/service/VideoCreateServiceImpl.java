@@ -158,8 +158,8 @@ public class VideoCreateServiceImpl implements VideoCreateService {
             video = modelMapper.map(videoDto, Video.class);
 
             video.setUploader(uploader);
-            video.setVideoTags(new ArrayList<>());
-            video.setAds(new ArrayList<>());
+            video.initializeVideoTags();
+            video.initializeAds();
 
             videoRepository.save(video);
         } catch (Exception e) {
@@ -193,9 +193,16 @@ public class VideoCreateServiceImpl implements VideoCreateService {
         try {
             videoUploadRequestDto.getAdList().forEach(
                     requestAd -> {
-                        Ad ad = modelMapper.map(requestAd, Ad.class);
-                        ad.setAdId(UUID.randomUUID().toString());
+                        Ad ad = Ad.builder()
+                                .adId(UUID.randomUUID().toString())
+                                .adContent(requestAd.getAdContent())
+                                .adUrl(requestAd.getAdUrl())
+                                .startTime(requestAd.getStartTime())
+                                .endTime(requestAd.getEndTime())
+                                .build();
+
                         ad.setVideo(savedVideo);
+
                         adRepository.save(ad);
 
                         savedVideo.getAds().add(ad);
@@ -218,9 +225,11 @@ public class VideoCreateServiceImpl implements VideoCreateService {
                             log.error("tag not found", e);
                             throw new RuntimeException("tag not found");
                         }
-                        VideoTag videoTag = new VideoTag();
-                        videoTag.setVideo(savedVideo);
-                        videoTag.setTag(tag);
+                        VideoTag videoTag = VideoTag.builder()
+                                .video(savedVideo)
+                                .tag(tag)
+                                .build();
+
                         videoTagRepository.save(videoTag);
 
                         savedVideo.getVideoTags().add(videoTag);

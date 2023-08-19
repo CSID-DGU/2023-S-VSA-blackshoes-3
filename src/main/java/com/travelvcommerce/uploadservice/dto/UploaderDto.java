@@ -21,6 +21,7 @@ public class UploaderDto {
 
     @Data
     public static class UploaderModifyRequestDto {
+        private String sellerId;
         private String sellerName;
         private byte[] sellerLogo;
     }

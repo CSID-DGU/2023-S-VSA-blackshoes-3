@@ -1,10 +1,11 @@
 package com.travelvcommerce.uploadservice.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "video_tags")
 public class VideoTag {
@@ -19,4 +20,10 @@ public class VideoTag {
     @ManyToOne
     @JoinColumn(name = "tag_id", referencedColumnName = "tag_id", foreignKey = @ForeignKey(name = "video_tag_fk_tag_id"))
     private Tag tag;
+
+    @Builder
+    public VideoTag(Video video, Tag tag) {
+        this.video = video;
+        this.tag = tag;
+    }
 }

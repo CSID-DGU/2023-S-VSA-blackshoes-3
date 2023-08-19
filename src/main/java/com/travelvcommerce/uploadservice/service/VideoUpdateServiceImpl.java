@@ -55,10 +55,9 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
         S3Thumbnail s3Thumbnail = awsS3Service.updateThumbnail(videoUrl.getThumbnailS3Url(), thumbnail);
 
-        videoUrl.setThumbnailS3Url(s3Thumbnail.getS3Url());
-        videoUrl.setThumbnailCloudfrontUrl(s3Thumbnail.getCloudfrontUrl());
+        videoUrl.updateThumbnail(s3Thumbnail.getS3Url(), s3Thumbnail.getCloudfrontUrl());
 
-        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        video.updateUpdatedAt();
 
         DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.THUMBNAIL);
 
@@ -88,9 +87,13 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
         try {
             tagIdList.stream().filter(tagId -> videoTagList.stream().noneMatch(videoTag -> videoTag.getTag().getTagId().equals(tagId))).forEach(tagId -> {
-                VideoTag videoTag = new VideoTag();
-                videoTag.setVideo(video);
-                videoTag.setTag(tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found")));
+
+                Tag tag = tagRepository.findByTagId(tagId).orElseThrow(() -> new RuntimeException("tag not found"));
+
+                VideoTag videoTag = VideoTag.builder()
+                        .video(video)
+                        .tag(tag)
+                        .build();
                 video.getVideoTags().add(videoTag);
             });
         } catch (Exception e) {
@@ -100,7 +103,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
         video.setVideoTags(videoTagList);
 
-        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        video.updateUpdatedAt();
 
         DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.TAGS);
 
@@ -117,9 +120,16 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
         adModifyRequestDtoList.forEach(adModifyRequestDto -> {
             if (adModifyRequestDto.getModifyType().equals("create")) {
                 try {
-                    Ad ad = modelMapper.map(adModifyRequestDto, Ad.class);
+                    Ad ad = Ad.builder()
+                            .adId(UUID.randomUUID().toString())
+                            .adUrl(adModifyRequestDto.getAdUrl())
+                            .adContent(adModifyRequestDto.getAdContent())
+                            .startTime(adModifyRequestDto.getStartTime())
+                            .endTime(adModifyRequestDto.getEndTime())
+                            .build();
+
                     ad.setVideo(video);
-                    ad.setAdId(UUID.randomUUID().toString());
+
                     adRepository.save(ad);
 
                     adList.add(ad);
@@ -132,11 +142,10 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
                 Ad ad = adRepository.findByAdId(adModifyRequestDto.getAdId()).orElseThrow(() -> new NoSuchElementException("ad not found"));
                 adList.remove(ad);
                 try {
-                    ad.setAdUrl(adModifyRequestDto.getAdUrl());
-                    ad.setAdContent(adModifyRequestDto.getAdContent());
-                    ad.setStartTime(adModifyRequestDto.getStartTime());
-                    ad.setEndTime(adModifyRequestDto.getEndTime());
-                    adRepository.save(ad);
+                    ad.update(adModifyRequestDto.getAdUrl(),
+                            adModifyRequestDto.getAdContent(),
+                            adModifyRequestDto.getStartTime(),
+                            adModifyRequestDto.getEndTime());
 
                     adList.add(ad);
                 } catch (Exception e) {
@@ -162,7 +171,7 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
 
         video.setAds(adList);
 
-        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        video.updateUpdatedAt();
 
         DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.ADS);
 
@@ -174,31 +183,11 @@ public class VideoUpdateServiceImpl implements VideoUpdateService {
     public DenormalizedVideoDto updateVideoName(String userId, String videoId, String videoName) {
         Video video = getVideo(userId, videoId);
 
-        video.setVideoName(videoName);
-
-        video.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        video.updateVideoName(videoName);
 
         DenormalizedVideoDto denormalizedVideoDto = denormalizeVideo(video, UpdatedField.VIDEO_NAME);
 
         return denormalizedVideoDto;
-    }
-
-    @Override
-    @Transactional
-    public List<String> updateUploader(String userId, UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
-        Uploader uploader = uploaderRepository.findBySellerId(userId)
-                .orElseThrow(() -> new NoSuchElementException("uploader not found"));
-
-        uploader.setSellerName(uploaderModifyRequestDto.getSellerName());
-        uploader.setSellerLogo(uploaderModifyRequestDto.getSellerLogo());
-
-        try {
-            List<String> videoIdList = uploader.getVideos().stream().map(video -> video.getVideoId()).collect(Collectors.toList());
-            return videoIdList;
-        } catch (Exception e) {
-            log.error("update uploader error", e);
-            throw new RuntimeException("update uploader error");
-        }
     }
 
     public DenormalizedVideoDto denormalizeVideo(Video video, UpdatedField updatedField) {

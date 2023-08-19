@@ -1,16 +1,15 @@
 package com.travelvcommerce.uploadservice.entity;
 
 import com.travelvcommerce.uploadservice.dto.UploaderDto;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "uploaders", uniqueConstraints = @UniqueConstraint(name = "uploader_unique", columnNames = {"seller_id"}))
 public class Uploader implements Serializable {
@@ -31,15 +30,19 @@ public class Uploader implements Serializable {
     @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL)
     private List<Video> videos;
 
-    public static void update(Uploader uploader, UploaderDto uploaderDto) {
-        if (uploaderDto.getSellerName() != null) {
-            uploader.setSellerId(uploaderDto.getSellerId());
+    @Builder
+    public Uploader(String sellerId, String sellerName, byte[] sellerLogo) {
+        this.sellerId = sellerId;
+        this.sellerName = sellerName;
+        this.sellerLogo = sellerLogo;
+    }
+
+    public void update(UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto) {
+        if (uploaderModifyRequestDto.getSellerName() != null) {
+           this.sellerName = uploaderModifyRequestDto.getSellerName();
         }
-        if (uploaderDto.getSellerName() != null) {
-            uploader.setSellerName(uploaderDto.getSellerName());
-        }
-        if (uploaderDto.getSellerLogo() != null) {
-            uploader.setSellerLogo(uploaderDto.getSellerLogo());
+        if (uploaderModifyRequestDto.getSellerLogo() != null) {
+            this.sellerLogo = uploaderModifyRequestDto.getSellerLogo();
         }
     }
 }

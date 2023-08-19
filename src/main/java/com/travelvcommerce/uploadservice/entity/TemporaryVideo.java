@@ -1,14 +1,13 @@
 package com.travelvcommerce.uploadservice.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "temporary_videos", uniqueConstraints = @UniqueConstraint(name = "temporary_video_seller_unique", columnNames = {"seller_id"}))
 public class TemporaryVideo {
@@ -33,4 +32,18 @@ public class TemporaryVideo {
 
     @Column(name = "expired_at", nullable = false)
     Timestamp expiredAt;
+
+    @Builder
+    public TemporaryVideo(String videoId, String sellerId, String videoS3Url, String videoCloudfrontUrl, Timestamp uploadedAt, Timestamp expiredAt) {
+        this.videoId = videoId;
+        this.sellerId = sellerId;
+        this.videoS3Url = videoS3Url;
+        this.videoCloudfrontUrl = videoCloudfrontUrl;
+        this.uploadedAt = uploadedAt;
+        this.expiredAt = expiredAt;
+    }
+
+    public void extendExpiredAt(Timestamp expiredAt) {
+        this.expiredAt = expiredAt;
+    }
 }

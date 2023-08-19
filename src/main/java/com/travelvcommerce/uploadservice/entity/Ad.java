@@ -1,13 +1,14 @@
 package com.travelvcommerce.uploadservice.entity;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Time;
 import java.util.UUID;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "ads",
         uniqueConstraints = @UniqueConstraint(name = "ad_unique",
@@ -35,4 +36,32 @@ public class Ad {
     @ManyToOne
     @JoinColumn(name = "video_id", referencedColumnName = "video_id", foreignKey = @ForeignKey(name = "ad_fk_video_id"))
     private Video video;
+
+    @Builder
+    public Ad(String adId, String adUrl, String adContent, String startTime, String endTime) {
+        this.adId = adId;
+        this.adUrl = adUrl;
+        this.adContent = adContent;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
+    }
+
+    public void update(String adUrl, String adContent, String startTime, String endTime) {
+        if (adUrl != this.adUrl) {
+            this.adUrl = adUrl;
+        }
+        if (adContent != this.adContent) {
+            this.adContent = adContent;
+        }
+        if (startTime != this.startTime) {
+            this.startTime = startTime;
+        }
+        if (endTime != this.endTime) {
+            this.endTime = endTime;
+        }
+    }
 }

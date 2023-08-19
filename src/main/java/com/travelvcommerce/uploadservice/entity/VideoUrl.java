@@ -1,11 +1,11 @@
 package com.travelvcommerce.uploadservice.entity;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "video_urls")
 public class VideoUrl {
@@ -24,4 +24,18 @@ public class VideoUrl {
 
     @Column(name = "thumbnail_cloudfront_url", nullable = false)
     private String thumbnailCloudfrontUrl;
+
+    @Builder
+    public VideoUrl(String videoS3Url, String videoCloudfrontUrl, String thumbnailS3Url, String thumbnailCloudfrontUrl) {
+        this.videoS3Url = videoS3Url;
+        this.videoCloudfrontUrl = videoCloudfrontUrl;
+        this.thumbnailS3Url = thumbnailS3Url;
+        this.thumbnailCloudfrontUrl = thumbnailCloudfrontUrl;
+    }
+
+
+    public void updateThumbnail(String thumbnailS3Url, String thumbnailCloudfrontUrl) {
+        this.thumbnailS3Url = thumbnailS3Url;
+        this.thumbnailCloudfrontUrl = thumbnailCloudfrontUrl;
+    }
 }

@@ -65,15 +65,15 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
     public void updateUploader(String payload) {
         log.info("received payload='{}'", payload);
 
-        UploaderDto uploaderDto;
+        UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto;
         try {
-            uploaderDto = objectMapper.readValue(payload, UploaderDto.class);
+            uploaderModifyRequestDto = objectMapper.readValue(payload, UploaderDto.UploaderModifyRequestDto.class);
         } catch (Exception e) {
             log.error("Error converting payload to uploader dto", e);
             return;
         }
 
-        String sellerId = uploaderDto.getSellerId();
+        String sellerId = uploaderModifyRequestDto.getSellerId();
         Uploader uploader;
         try {
             uploader = uploaderRepository.findBySellerId(sellerId).orElseThrow(() -> new NoSuchElementException("uploader not found"));
@@ -83,7 +83,7 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
         }
 
         try {
-            Uploader.update(uploader, uploaderDto);
+            uploader.update(uploaderModifyRequestDto);
         } catch (Exception e) {
             log.error("Error updating uploader", e);
         }
