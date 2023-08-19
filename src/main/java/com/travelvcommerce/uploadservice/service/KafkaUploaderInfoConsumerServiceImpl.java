@@ -6,6 +6,7 @@ import com.travelvcommerce.uploadservice.dto.UploaderDto;
 import com.travelvcommerce.uploadservice.entity.Uploader;
 import com.travelvcommerce.uploadservice.entity.Video;
 import com.travelvcommerce.uploadservice.repository.UploaderRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoConsumerService {
-    @Autowired
-    private UploaderRepository uploaderRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
+    private final UploaderRepository uploaderRepository;
+    private final ObjectMapper objectMapper;
+    private final ModelMapper modelMapper;
+    private final KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @Override
     @KafkaListener(topics = "uploader-create")

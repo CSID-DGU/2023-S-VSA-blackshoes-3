@@ -5,6 +5,7 @@ import com.travelvcommerce.uploadservice.entity.TemporaryVideo;
 import com.travelvcommerce.uploadservice.repository.TemporaryVideoRepository;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
 import com.travelvcommerce.uploadservice.vo.S3Video;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,12 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TemporaryVideoServiceImpl implements TemporaryVideoService {
-    @Autowired
-    private TemporaryVideoRepository temporaryVideoRepository;
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private AwsS3Service awsS3Service;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final TemporaryVideoRepository temporaryVideoRepository;
+    private final VideoRepository videoRepository;
+    private final AwsS3Service awsS3Service;
+    private final ModelMapper modelMapper;
 
     @Value("${video.ttl}")
     private int VIDEO_TTL;

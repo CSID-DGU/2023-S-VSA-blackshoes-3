@@ -23,10 +23,7 @@ import java.nio.file.Path;
 @Slf4j
 @RequiredArgsConstructor
 public class AwsS3ServiceImpl implements AwsS3Service{
-
-    @Autowired
     private final AmazonS3Client amazonS3Client;
-
     @Value("${cloud.aws.s3.bucket}")
     private String BUCKET;
     @Value("${cloud.aws.cloudfront.distribution-domain}")

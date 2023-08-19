@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.dto.TemporaryVideoDto;
 import com.travelvcommerce.uploadservice.service.TemporaryVideoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,10 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/upload-service")
+@RequiredArgsConstructor
 public class TemporaryVideoController {
-    @Autowired
-    private TemporaryVideoService temporaryVideoService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final TemporaryVideoService temporaryVideoService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/videos/temporary/{userId}")
     public ResponseEntity<ResponseDto> checkTemporaryVideo(@RequestHeader("Authorization") String id,

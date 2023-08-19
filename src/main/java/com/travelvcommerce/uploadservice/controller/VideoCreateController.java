@@ -9,6 +9,7 @@ import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,21 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/upload-service")
 public class VideoCreateController {
-
-    @Autowired
-    private AwsS3Service awsS3Service;
-    @Autowired
-    private VideoCreateService videoCreateService;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
-    @Autowired
-    private TemporaryVideoService temporaryVideoService;
+    private final AwsS3Service awsS3Service;
+    private final VideoCreateService videoCreateService;
+    private final ObjectMapper objectMapper;
+    private final ModelMapper modelMapper;
+    private final KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
+    private final TemporaryVideoService temporaryVideoService;
 
     @PostMapping("/videos/{userId}")
     public ResponseEntity<ResponseDto> uploadVideo(@RequestHeader("Authorization") String id,

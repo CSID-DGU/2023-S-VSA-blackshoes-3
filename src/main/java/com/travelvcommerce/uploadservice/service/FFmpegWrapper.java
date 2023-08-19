@@ -23,13 +23,13 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FFmpegWrapper {
     @Value("${ffmpeg.path}")
     private String FFMPEG_PATH;
     @Value("${ffprobe.path}")
     private String FFPROBE_PATH;
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public void encodeToHls(String userId, String inputPath, String encodingPath, int idx, int resolution) throws IOException {
         FFmpeg ffmpeg = new FFmpeg(FFMPEG_PATH);

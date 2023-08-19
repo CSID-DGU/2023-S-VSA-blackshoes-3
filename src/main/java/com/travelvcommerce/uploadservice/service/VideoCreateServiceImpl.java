@@ -5,6 +5,7 @@ import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.S3Video;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +27,16 @@ import java.util.stream.Collectors;
 @Primary
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class VideoCreateServiceImpl implements VideoCreateService {
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private VideoUrlRepository videoUrlRepository;
-    @Autowired
-    private AdRepository adRepository;
-    @Autowired
-    private TagRepository tagRepository;
-    @Autowired
-    private VideoTagRepository videoTagRepository;
-    @Autowired
-    private UploaderRepository uploaderRepository;
-    @Autowired
-    private FFmpegWrapper ffmpegWrapper;
+    private final ModelMapper modelMapper;
+    private final VideoRepository videoRepository;
+    private final VideoUrlRepository videoUrlRepository;
+    private final AdRepository adRepository;
+    private final TagRepository tagRepository;
+    private final VideoTagRepository videoTagRepository;
+    private final UploaderRepository uploaderRepository;
+    private final FFmpegWrapper ffmpegWrapper;
     @Value("${video.encoding-resolutions}")
     private String ENCODING_RESOLUTIONS;
 

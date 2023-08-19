@@ -5,6 +5,7 @@ import com.travelvcommerce.uploadservice.entity.*;
 import com.travelvcommerce.uploadservice.repository.*;
 import com.travelvcommerce.uploadservice.vo.S3Thumbnail;
 import com.travelvcommerce.uploadservice.vo.UpdatedField;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +21,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class VideoUpdateServiceImpl implements VideoUpdateService {
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private VideoTagRepository videoTagRepository;
-    @Autowired
-    private TagRepository tagRepository;
-    @Autowired
-    private AdRepository adRepository;
-    @Autowired
-    private UploaderRepository uploaderRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final VideoRepository videoRepository;
+    private final VideoTagRepository videoTagRepository;
+    private final TagRepository tagRepository;
+    private final AdRepository adRepository;
+    private final UploaderRepository uploaderRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Video getVideo(String userId, String videoId) {

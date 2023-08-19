@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.uploadservice.dto.DenormalizedVideoDto;
 import com.travelvcommerce.uploadservice.repository.VideoRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @Primary
+@RequiredArgsConstructor
 public class KafkaVideoInfoProducerServiceImpl implements KafkaVideoInfoProducerService {
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private KafkaProducer kafkaProducer;
+    private final ObjectMapper objectMapper;
+    private final KafkaProducer kafkaProducer;
 
     @Transactional
     @Override

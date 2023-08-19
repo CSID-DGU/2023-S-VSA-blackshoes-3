@@ -3,6 +3,7 @@ package com.travelvcommerce.uploadservice.service;
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.entity.Tag;
 import com.travelvcommerce.uploadservice.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,10 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TagServiceImpl implements TagService{
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private TagRepository tagRepository;
+    private final ModelMapper modelMapper;
+    private final TagRepository tagRepository;
 
     @Override
     public List<TagDto> getAllTags() {

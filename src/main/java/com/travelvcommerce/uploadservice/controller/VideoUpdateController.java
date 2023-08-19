@@ -5,6 +5,7 @@ import com.travelvcommerce.uploadservice.dto.*;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.service.VideoUpdateService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,18 +18,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/upload-service")
 public class VideoUpdateController {
-    @Autowired
-    private VideoUpdateService videoUpdateService;
-    @Autowired
-    private AwsS3Service awsS3Service;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
+    private final VideoUpdateService videoUpdateService;
+    private final AwsS3Service awsS3Service;
+    private final ObjectMapper objectMapper;
+    private final ModelMapper modelMapper;
+    private final KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @PutMapping("/videos/{userId}/{videoId}/thumbnail")
     public ResponseEntity<ResponseDto> updateThumbnail(@RequestHeader("Authorization") String id,

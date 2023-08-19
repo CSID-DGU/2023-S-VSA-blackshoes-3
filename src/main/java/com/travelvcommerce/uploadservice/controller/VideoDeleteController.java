@@ -4,6 +4,7 @@ import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.service.AwsS3Service;
 import com.travelvcommerce.uploadservice.service.KafkaVideoInfoProducerService;
 import com.travelvcommerce.uploadservice.service.VideoDeleteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +14,11 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/upload-service")
+@RequiredArgsConstructor
 public class VideoDeleteController {
-    @Autowired
-    AwsS3Service awsS3Service;
-    @Autowired
-    VideoDeleteService videoDeleteService;
-    @Autowired
-    KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
+    private final AwsS3Service awsS3Service;
+    private final VideoDeleteService videoDeleteService;
+    private final KafkaVideoInfoProducerService kafkaVideoInfoProducerService;
 
     @DeleteMapping("/videos/{userId}/{videoId}")
     public ResponseEntity<ResponseDto> deleteVideo(@RequestHeader("Authorization") String id,

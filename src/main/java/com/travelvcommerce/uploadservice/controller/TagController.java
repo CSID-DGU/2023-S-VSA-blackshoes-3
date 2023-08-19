@@ -4,6 +4,7 @@ import com.travelvcommerce.uploadservice.dto.ResponseDto;
 import com.travelvcommerce.uploadservice.dto.TagDto;
 import com.travelvcommerce.uploadservice.service.TagService;
 import com.travelvcommerce.uploadservice.vo.TagType;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,11 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/upload-service")
 public class TagController {
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private TagService tagService;
+    private final ModelMapper modelMapper;
+    private final TagService tagService;
 
     @GetMapping("/tags")
     public ResponseEntity<ResponseDto> getTags() {
