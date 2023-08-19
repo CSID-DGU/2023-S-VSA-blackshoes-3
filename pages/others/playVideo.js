@@ -439,7 +439,7 @@ export default function Play({route, navigation}) {
                       <TouchableOpacity
                         style={styles.videoThumbnailContainer}
                         key={i}
-                        onPress={() => navigation.navigate('Play', {video: e})}>
+                        onPress={() => navigation.push('Play', {video: e})}>
                         <VideoThumbnail
                           key={i}
                           video={e}
