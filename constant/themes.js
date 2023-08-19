@@ -237,7 +237,7 @@ export const themeList = [
     src: require('../assets/themeImg/middleSouthAmerica.jpg'),
   },
   {
-    tagName: '오세아니아',
+    tagName: '대양주',
     tagId: 'e4303682-2199-11ee-9ef2-0a0027000003',
     type: 'region',
     src: require('../assets/themeImg/austrailia.jpg'),

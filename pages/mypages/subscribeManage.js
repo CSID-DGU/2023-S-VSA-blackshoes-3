@@ -92,10 +92,10 @@ export default function ThemeSelectEach() {
   const handleScroll = event => {
     setScrollPosition(event.nativeEvent.contentOffset.x);
   };
-  const Item = ({item}) => {
+  const Item = ({item, type}) => {
     const isItemSelected = selectedItem.includes(item.tagId);
     return (
-      <View style={styles.item}>
+      <View style={type === 0 ? styles.item : styles.themeItem}>
         <ImageBackground
           style={StyleSheet.absoluteFill}
           source={item.src}
@@ -138,10 +138,11 @@ export default function ThemeSelectEach() {
             horizontal
             onScroll={handleScroll}
             ref={scrollViewRef}
+            showsHorizontalScrollIndicator={false}
             style={styles.horizontalScrollContainer}>
             <View style={styles.areaScroll}>
               {regionList.map((e, i) => {
-                return <Item key={i} item={e} />;
+                return <Item key={i} item={e} type={0} />;
               })}
             </View>
           </ScrollView>
@@ -159,7 +160,7 @@ export default function ThemeSelectEach() {
           style={styles.themeScrollcontainer}
           contentContainerStyle={styles.itemContainer}
           data={themeList}
-          renderItem={({item}) => <Item item={item} />}
+          renderItem={({item}) => <Item item={item} type={1} />}
           numColumns={3}
         />
       </View>
@@ -187,7 +188,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 30,
   },
-  horizontalScrollContainer: {},
+  horizontalScrollContainer: {
+    marginHorizontal: 15,
+  },
   textContainer: {
     marginTop: 5,
     alignItems: 'flex-start',
@@ -197,14 +200,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingLeft: 3,
   },
-  itemContainer: {paddingBottom: 20, paddingHorizontal: 19},
+  itemContainer: {
+    paddingBottom: 20,
+    paddingHorizontal: 23,
+  },
   themeScrollcontainer: {
-    marginTop: 15,
-    width: 350,
-
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
-    paddingTop: 20,
+    width: '100%',
+    paddingTop: 10,
   },
   scrollbutton: {
     width: 20,
@@ -212,12 +214,19 @@ const styles = StyleSheet.create({
   item: {
     borderRadius: 20,
     overflow: 'hidden',
-    width: 80,
+    width: 85,
     height: 100,
     marginRight: 6,
     marginBottom: 15,
   },
-
+  themeItem: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    width: 100,
+    height: 85,
+    marginBottom: 15,
+    marginRight: 15,
+  },
   touch: {
     width: '100%',
     height: '100%',
@@ -225,12 +234,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 8,
   },
-
   title: {
     fontSize: 25,
     fontWeight: 'bold',
     color: 'black',
-
     marginLeft: 20,
     marginVertical: 15,
   },
@@ -243,7 +250,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: '600',
-
     color: 'white',
     fontSize: 17,
     letterSpacing: 3,
@@ -251,7 +257,6 @@ const styles = StyleSheet.create({
   },
   selectedText: {
     fontWeight: '600',
-
     color: 'rgba(230,230,230, 0.8)',
     fontSize: 17,
     letterSpacing: 3,

@@ -186,7 +186,7 @@ export default function Home({navigation, route}) {
             <Text style={styles.title}>인기 지역</Text>
           </View>
           <View style={styles.areaScrollContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.scrollbutton}
               onPress={() =>
                 handleIconPress(
@@ -197,10 +197,10 @@ export default function Home({navigation, route}) {
                 )
               }>
               <Image source={require('../../assets/themeImg/arrow-left.png')} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <ScrollView
               horizontal
-              showsHorizontalScrollIndicator={true}
+              showsHorizontalScrollIndicator={false}
               onScroll={event => handleScroll(event, setScrollPosition)}
               ref={scrollViewRef}>
               <View style={styles.areaScroll}>
@@ -209,7 +209,7 @@ export default function Home({navigation, route}) {
                 })}
               </View>
             </ScrollView>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.scrollbutton}
               onPress={() =>
                 handleIconPress(
@@ -222,14 +222,14 @@ export default function Home({navigation, route}) {
               <Image
                 source={require('../../assets/themeImg/arrow-right.png')}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>인기 테마</Text>
           </View>
 
           <View style={styles.areaScrollContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.scrollbutton}
               onPress={() =>
                 handleIconPress(
@@ -240,7 +240,7 @@ export default function Home({navigation, route}) {
                 )
               }>
               <Image source={require('../../assets/themeImg/arrow-left.png')} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -252,7 +252,7 @@ export default function Home({navigation, route}) {
                 })}
               </View>
             </ScrollView>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.scrollbutton}
               onPress={() =>
                 handleIconPress(
@@ -265,9 +265,9 @@ export default function Home({navigation, route}) {
               <Image
                 source={require('../../assets/themeImg/arrow-right.png')}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
-          <View style={styles.textContainer}>
+          <View style={[styles.textContainer, {marginBottom: 9}]}>
             <Text style={styles.title}>추천 영상</Text>
           </View>
 
@@ -319,16 +319,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
 
-    paddingVertical: 10,
+    paddingTop: 8,
+    paddingBottom: 10,
   },
 
   areaScrollContainer: {
-    backgroundColor: '#DEDEDE',
     flexDirection: 'row',
     alignItems: 'center',
     width: '95%',
     paddingVertical: 2,
-    marginTop: 15,
+
     marginBottom: 7,
   },
 
@@ -337,30 +337,21 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    backgroundColor: '#DEDEDE',
+    // backgroundColor: '#E3E3E3',
+    backgroundColor: 'white',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
-    marginVertical: 7,
-
+    marginVertical: 5,
     width: '95%',
   },
 
   item: {
-    borderRadius: 50,
+    borderRadius: 20,
     overflow: 'hidden',
-    width: 65,
-    height: 65,
-    marginRight: 14,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    width: 80,
+    height: 60,
+    marginRight: 10,
   },
 
   scrollbutton: {
@@ -369,28 +360,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 23,
     fontFamily: 'AppleSDGothicNeoB00',
-    color: '#4D4D4D',
+    color: 'black',
     marginLeft: 15,
-    fontWeight: '700',
+    fontWeight: '600',
     width: 120,
   },
 
   touch: {
     width: '100%',
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
   },
   text: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
+    fontWeight: '600',
     color: 'white',
-    fontSize: 21,
+    fontSize: 15,
     letterSpacing: 3,
-    padding: 2,
-    borderRadius: 5,
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 2,
-    textShadowColor: 'gray',
+    paddingLeft: 10,
+    paddingBottom: 8,
   },
 });

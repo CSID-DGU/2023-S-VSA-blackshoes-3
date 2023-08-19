@@ -117,7 +117,7 @@ export default function Video({navigation, route}) {
         <ScrollView
           ref={scrollViewRef}
           style={styles.scrollContainer}
-          contentContainerStyle={{alignItems: 'center'}}
+          contentContainerStyle={{alignItems: 'center', paddingTop: 5}}
           onScroll={handleScroll}
           scrollEventThrottle={400}>
           {videoData.length > 0 ? (
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-
   contentsContainer: {
     flex: 1,
   },
@@ -161,12 +160,13 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    backgroundColor: '#DEDEDE',
+    backgroundColor: 'white',
+
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
     marginBottom: 10,
-    width: '90%',
+    width: '92%',
   },
 
   dropDownButton: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   dropdownpickerContainer: {
     justifyContent: 'center',
     zIndex: 2,
-    marginLeft: 20,
+    marginLeft: 15,
 
     borderWidth: 0,
   },

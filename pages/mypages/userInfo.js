@@ -127,6 +127,7 @@ export default function CheckInfo({navigation}) {
             <TextInput
               style={[styles.infoText, {width: 200}]}
               placeholder={userData.nickname}
+              placeholderTextColor={'grey'}
               onChangeText={text => setNameInput(text)}
               value={nameInput}
             />
@@ -156,7 +157,7 @@ export default function CheckInfo({navigation}) {
           <TextInput
             style={styles.infoText}
             placeholder="기존 비밀번호를 입력하세요."
-            placeholderTextColor={'#C4C4C4'}
+            placeholderTextColor={'grey'}
             onChangeText={text => setOldPasswordInput(text)}
             value={oldPasswordInput}
           />
@@ -164,7 +165,7 @@ export default function CheckInfo({navigation}) {
           <TextInput
             style={styles.infoText}
             placeholder="새 비밀번호를 입력하세요."
-            placeholderTextColor={'#C4C4C4'}
+            placeholderTextColor={'grey'}
             onChangeText={text => setNewPasswordInput(text)}
             value={newPasswordInput}
           />
@@ -203,15 +204,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
     marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
-    borderRadius: 10,
     marginBottom: 30,
   },
   scrollContainer: {
@@ -226,15 +218,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
     marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
-    borderRadius: 10,
     marginBottom: 25,
   },
   rowContainer: {
@@ -251,6 +234,7 @@ const styles = StyleSheet.create({
   infoText: {
     backgroundColor: 'white',
     marginTop: 5,
+    color: 'black',
     paddingHorizontal: 10,
     paddingVertical: 10,
     textAlign: 'center',
@@ -265,10 +249,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 1,
-    marginBottom: 15,
   },
   birthText: {
     width: 90,
+    color: 'black',
     backgroundColor: 'white',
     marginTop: 5,
     paddingHorizontal: 10,
@@ -277,20 +261,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 1,
     marginBottom: 10,
   },
 
   title: {
     fontSize: 23,
-    color: '#707070',
+    color: 'black',
     fontWeight: '600',
     marginTop: 10,
     marginLeft: 5,
@@ -301,10 +277,7 @@ const styles = StyleSheet.create({
   },
 
   modifyButton: {
-    marginTop: 5,
-    marginBottom: 10,
-    paddingVertical: 11,
-    backgroundColor: '#F7FFF5',
+    backgroundColor: '#21C99B',
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -316,10 +289,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 3,
+    elevation: 1,
   },
   modifyButtonText: {
     fontSize: 16,
+    color: 'white',
     fontWeight: 'bold',
     letterSpacing: 2,
   },
@@ -328,7 +302,7 @@ const styles = StyleSheet.create({
   },
   modifyPasswordButton: {
     paddingVertical: 6,
-    backgroundColor: '#F7FFF5',
+    backgroundColor: '#21C99B',
     paddingHorizontal: 15,
     justifyContent: 'center',
     borderRadius: 10,
@@ -339,7 +313,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 2,
+    elevation: 1,
   },
   signOutButton: {
     paddingVertical: 6,

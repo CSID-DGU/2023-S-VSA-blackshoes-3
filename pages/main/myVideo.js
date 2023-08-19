@@ -33,21 +33,25 @@ export default function MyVideo({navigation, route}) {
   useEffect(() => {
     if (view === 0) {
       if (tagId.length > 0) {
+        console.log('realrealreal');
         setSelectedTagId(theme[0].tagId);
       }
     } else {
       getDataLike();
+      setSelectedTagId('');
     }
   }, [view]);
 
   useEffect(() => {
+    console.log('아이고: ', selectedTagId);
     if (selectedTagId !== '') {
-      getData();
+      getData(0);
     }
   }, [selectedTagId]);
 
   useEffect(() => {
     if (isEndOfScroll) {
+      console.log(page);
       setPage(prevPage => prevPage + 1);
     }
   }, [isEndOfScroll]);
@@ -57,7 +61,7 @@ export default function MyVideo({navigation, route}) {
       getData(0);
     } else {
       if (page !== maxPage) {
-        getData(1);
+        getData(page);
       }
     }
   }, [page]);
@@ -83,7 +87,7 @@ export default function MyVideo({navigation, route}) {
           <View
             style={{
               ...StyleSheet.absoluteFill,
-              backgroundColor: 'rgba(236, 255, 251, 1)',
+              backgroundColor: 'rgba(70,70,70, 0.8)',
             }}
           />
         )}
@@ -106,10 +110,14 @@ export default function MyVideo({navigation, route}) {
     try {
       let response;
       if (view === 0) {
+        console.log('here!!');
         response = await axiosInstance.get(
           `content-slave-service/videos/tagId?q=${selectedTagId}&s=recent&page=${page}&size=10`,
         );
+        console.log('love');
       } else {
+        console.log('love2');
+
         response = await axiosInstance.get(
           `personalized-service/${userId}/videos/liked?page=${page}&size=10`,
         );
@@ -151,6 +159,7 @@ export default function MyVideo({navigation, route}) {
       );
       const likedVideoIds = response.data.payload.likedVideos.likedVideoIdList;
       if (likedVideoIds && likedVideoIds.length > 0) {
+        console.log('like');
         await getLikedVideo(likedVideoIds);
       }
     } catch (e) {
@@ -180,7 +189,6 @@ export default function MyVideo({navigation, route}) {
       setView(e);
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
@@ -190,7 +198,7 @@ export default function MyVideo({navigation, route}) {
               styles.button,
               {borderTopLeftRadius: 10, borderBottomLeftRadius: 10},
               view === 0
-                ? {backgroundColor: '#24D9A7'}
+                ? {backgroundColor: '#21C99B'}
                 : {backgroundColor: 'white'},
             ]}
             onPress={() => handlepress(0)}>
@@ -207,7 +215,7 @@ export default function MyVideo({navigation, route}) {
                 borderBottomRightRadius: 10,
               },
               view === 1
-                ? {backgroundColor: '#24D9A7'}
+                ? {backgroundColor: '#21C99B'}
                 : {backgroundColor: 'white'},
             ]}
             onPress={() => handlepress(1)}>
@@ -335,14 +343,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
+    fontWeight: '700',
+    fontSize: 14,
     letterSpacing: 1,
   },
   selectedText: {
-    color: 'black',
-    fontWeight: '600',
-    fontSize: 16,
+    color: 'rgba(230,230,230, 0.8)',
+    fontWeight: '700',
+    fontSize: 14,
     letterSpacing: 1,
   },
   alertText: {
@@ -354,7 +362,7 @@ const styles = StyleSheet.create({
     paddingTop: 17,
     paddingBottom: 10,
     marginVertical: 7,
-    backgroundColor: '#DEDEDE',
-    width: '90%',
+    backgroundColor: 'white',
+    width: '92%',
   },
 });

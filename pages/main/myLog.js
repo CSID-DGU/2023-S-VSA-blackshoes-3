@@ -93,10 +93,15 @@ export default function MyLog({navigation, route}) {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, deleteControl && {backgroundColor: '#DEDEDE'}]}>
       <View style={styles.contentsContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>시청 기록</Text>
+          {deleteControl ? (
+            <Text style={styles.title}>시청 기록 삭제</Text>
+          ) : (
+            <Text style={styles.title}>시청 기록</Text>
+          )}
 
           {deleteControl && (
             <View style={styles.deleteButtonContainer}>
@@ -126,10 +131,10 @@ export default function MyLog({navigation, route}) {
                   style={[
                     styles.videoThumbnailContainer,
                     deleteArray.includes(e.videoId)
-                      ? {backgroundColor: '#FFDDDD'}
+                      ? {backgroundColor: '#BABABA'}
                       : deleteControl
-                      ? {backgroundColor: '#D9D9D9'}
-                      : {backgroundColor: '#DEDEDE'},
+                      ? {backgroundColor: 'white'}
+                      : {backgroundColor: 'white'},
                   ]}
                   key={i}
                   onPress={
@@ -147,6 +152,7 @@ export default function MyLog({navigation, route}) {
                   }
                   onLongPress={() => {
                     setDeleteControl(true);
+                    setDeleteArray(prev => [...prev, e.videoId]);
                   }}>
                   <VideoThumbnail key={i} video={e} navigation={navigation} />
                 </TouchableOpacity>
@@ -183,11 +189,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
-    color: '#4D4D4D',
+    color: 'black',
     marginLeft: 15,
     fontWeight: '700',
-    fontStyle: 'italic',
-    width: 120,
+    width: 200,
   },
   scrollContainer: {
     marginTop: 8,

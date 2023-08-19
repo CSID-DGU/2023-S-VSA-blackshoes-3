@@ -28,9 +28,9 @@ export const SearchTypeModal = ({
                 setSortModalVisible(false);
               }}>
               <Text style={styles.modalText}>
-                {item.label === 'Seller'
+                {item.label === 'sellerName'
                   ? '판매자명으로 검색'
-                  : item.label === 'Video'
+                  : item.label === 'videoName'
                   ? '영상 제목으로 검색'
                   : ''}
               </Text>
