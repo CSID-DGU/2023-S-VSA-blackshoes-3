@@ -11,6 +11,7 @@ import com.tavelvcommerce.commentservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,7 +29,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
     @Override
     @KafkaListener(topics = "user-create")
     @Transactional
-    public void createUserNickName(String payLoad) {
+    public void createUserNickName(String payLoad, Acknowledgment acknowledgment) {
         log.info("received payload = '{}'", payLoad);
 
         UserInfoDto userInfoDto;
@@ -50,6 +51,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
 
         try {
             userRepository.save(user);
+            acknowledgment.acknowledge();
         } catch (Exception e) {
             log.error("Error saving user nickname", e);
             return;
@@ -59,7 +61,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
     @Override
     @KafkaListener(topics = "user-update")
     @Transactional
-    public void updateUserNickname(String payload) {
+    public void updateUserNickname(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         UserInfoDto userInfoDto;
@@ -76,6 +78,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
         try {
             User user = userRepository.findByUserId(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
             user.updateNickname(nickname);
+            acknowledgment.acknowledge();
         } catch (NoSuchElementException e) {
             log.error("User not found", e);
             return;
@@ -88,7 +91,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
     @Override
     @KafkaListener(topics = "user-delete")
     @Transactional
-    public void deleteUserComment(String payload) {
+    public void deleteUserComment(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         String userId = payload;
@@ -96,6 +99,7 @@ public class KafkaUserInfoConsumerServiceImpl implements KafkaUserInfoConsumerSe
         try {
             User user = userRepository.findByUserId(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
             userRepository.delete(user);
+            acknowledgment.acknowledge();
         } catch (NoSuchElementException e) {
             log.error("User not found", e);
             return;
