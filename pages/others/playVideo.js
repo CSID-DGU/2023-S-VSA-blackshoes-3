@@ -35,6 +35,7 @@ export default function Play({route, navigation}) {
   const [comment, setComment] = useState([]);
   const [commentAmmount, setCommentAmmount] = useState(0);
   const [commentPage, setCommentPage] = useState(null);
+
   const [recommendVideoPage, setRecommendVideoPage] = useState(0);
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [commentInput, setCommentInput] = useState('');
@@ -67,11 +68,11 @@ export default function Play({route, navigation}) {
     if (tagIds.length === 0) {
       return;
     } else {
-      console.log('tagIds', tagIds);
       registerHistoryTag();
+      console.log('페이지', recommendVideoPage);
       getRecommendVideo();
     }
-  }, [tagIds]);
+  }, [tagIds, recommendVideoPage]);
 
   useEffect(() => {
     if (videoData.length === 0) {
@@ -101,7 +102,6 @@ export default function Play({route, navigation}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/video?type=videoId&q=${route.params.video.videoId}`,
       );
-      console.log('response.data.payload.video', response.data.payload.video);
       setVideoData(response.data.payload.video);
       setTagIds(response.data.payload.video.videoTags.map(tag => tag.tagId));
     } catch (e) {
@@ -184,8 +184,6 @@ export default function Play({route, navigation}) {
   };
 
   const registerHistoryTag = async () => {
-    console.log('태그 아이디즈 : ', tagIds);
-    console.log('유저아이디 : ', userId);
     try {
       const response = axiosInstance.post(
         `personalized-service/${userId}/tags/viewed`,
@@ -206,7 +204,6 @@ export default function Play({route, navigation}) {
       );
       setComment(response.data.payload.comments);
       setCommentAmmount(response.data.payload.totalElements);
-      setComment;
     } catch (e) {
       console.log(e);
     }
@@ -272,7 +269,6 @@ export default function Play({route, navigation}) {
         `content-slave-service/videos/tagIds?q=${tagId}&u=${userId}&page=${recommendVideoPage}`,
       );
 
-      // route.params.videoId와 일치하지 않는 비디오만 필터링
       const filteredVideos = response.data.payload.videos.filter(
         video => video.videoId !== route.params.videoId,
       );
@@ -280,6 +276,20 @@ export default function Play({route, navigation}) {
       setRecommendedVideos(prev => [...prev, ...filteredVideos]);
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const handleScrollend = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+    console.log('offsetY : ', offsetY);
+    console.log('contentHeight : ', contentHeight);
+    console.log('layoutHeight : ', layoutHeight);
+
+    if (offsetY + layoutHeight >= contentHeight - 1) {
+      console.log('hi');
+      setRecommendVideoPage(prevPage => prevPage + 1);
     }
   };
 
@@ -318,7 +328,15 @@ export default function Play({route, navigation}) {
       {!isFullScreen && (
         <View style={styles.contentsContainer}>
           {!commentIndex && (
-            <>
+            <ScrollView
+              style={styles.scrollVerticalContainer}
+              contentContainerStyle={
+                {
+                  // paddingHorizontal: 10,
+                }
+              }
+              onScroll={handleScrollend}
+              scrollEventThrottle={10}>
               <View style={styles.videoInfoContainer}>
                 <Text style={styles.title}>{videoData.videoName}</Text>
                 <View style={styles.subInfoContainer}>
@@ -388,7 +406,50 @@ export default function Play({route, navigation}) {
                   <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
                 </View>
               )}
-            </>
+
+              <>
+                <TouchableOpacity
+                  style={styles.firstCommentContainer}
+                  onPress={() => setCommentIndex(true)}>
+                  {comment ? (
+                    comment.length === 0 ? (
+                      <Text style={styles.commentFirstContents}>
+                        아직 댓글이 없습니다. 댓글을 등록해주세요.
+                      </Text>
+                    ) : (
+                      <>
+                        <Text style={styles.commentTitle}>댓글</Text>
+                        <View style={styles.firstCommentBox}>
+                          <Text style={styles.commentUserName}>
+                            {comment[0].nickname}
+                          </Text>
+                          <Text style={styles.commentContents}>
+                            {comment[0].content}
+                          </Text>
+                        </View>
+                      </>
+                    )
+                  ) : (
+                    <Text>wait hi</Text>
+                  )}
+                </TouchableOpacity>
+                {recommendedVideos.length > 0 &&
+                  recommendedVideos.map((e, i) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.videoThumbnailContainer}
+                        key={i}
+                        onPress={() => navigation.navigate('Play', {video: e})}>
+                        <VideoThumbnail
+                          key={i}
+                          video={e}
+                          navigation={navigation}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+              </>
+            </ScrollView>
           )}
 
           <View
@@ -396,33 +457,7 @@ export default function Play({route, navigation}) {
               styles.commentContainer,
               !commentIndex ? {paddingHorizontal: 15} : {},
             ]}>
-            {!commentIndex ? (
-              <TouchableOpacity
-                style={styles.firstCommentContainer}
-                onPress={() => setCommentIndex(true)}>
-                {comment ? (
-                  comment.length === 0 ? (
-                    <Text style={styles.commentFirstContents}>
-                      아직 댓글이 없습니다. 댓글을 등록해주세요.
-                    </Text>
-                  ) : (
-                    <>
-                      <Text style={styles.commentTitle}>댓글</Text>
-                      <View style={styles.firstCommentBox}>
-                        <Text style={styles.commentUserName}>
-                          {comment[0].nickname}
-                        </Text>
-                        <Text style={styles.commentContents}>
-                          {comment[0].content}
-                        </Text>
-                      </View>
-                    </>
-                  )
-                ) : (
-                  <Text>wait hi</Text>
-                )}
-              </TouchableOpacity>
-            ) : (
+            {commentIndex && (
               <View style={styles.allCommentsContainer}>
                 <View style={styles.allCommentsTopMenu}>
                   <Text style={styles.commentTitle}>댓글</Text>
@@ -466,7 +501,7 @@ export default function Play({route, navigation}) {
                         }}
                       />
                       <ScrollView
-                        style={styles.commentScrollContainer}
+                        style={styles.scrollContainer}
                         contentContainerStyle={{alignItems: 'center'}}>
                         <View>
                           {comment.map((e, i) => {
@@ -549,17 +584,6 @@ export default function Play({route, navigation}) {
               </View>
             )}
           </View>
-          {recommendedVideos.length > 0 &&
-            recommendedVideos.map((e, i) => {
-              return (
-                <TouchableOpacity
-                  style={styles.videoThumbnailContainer}
-                  key={i}
-                  onPress={() => navigation.navigate('Play', {video: e})}>
-                  <VideoThumbnail key={i} video={e} navigation={navigation} />
-                </TouchableOpacity>
-              );
-            })}
         </View>
       )}
     </View>
@@ -851,6 +875,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginVertical: 7,
 
+    width: '100%',
+  },
+  scrollViewContainer: {},
+  scrollVerticalContainer: {
     width: '100%',
   },
 });
