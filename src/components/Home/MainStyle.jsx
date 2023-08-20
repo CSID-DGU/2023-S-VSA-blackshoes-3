@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "styled-components";
 
 export const MainSegment = styled.section`
@@ -17,7 +18,7 @@ export const MainSegment = styled.section`
   }
 `;
 
-export const AdSection = styled(MainSegment)`
+export const StatisticBox = styled(MainSegment)`
   width: 100%;
   align-items: flex-start;
   height: 773px;
@@ -26,18 +27,33 @@ export const AdSection = styled(MainSegment)`
   padding: 30px;
 `;
 
-export const VideoSection = styled(AdSection)`
-  width: 100%;
-  height: 773px;
-  overflow-y: auto;
-`;
-
 export const MainTitle = styled.h1`
   width: 100%;
+  position: relative;
   text-align: left;
   font-size: 20px;
   font-weight: bold;
   color: ${(props) => props.theme.secondBlack};
+`;
+
+export const SmallRightSpan = styled.span`
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: 100;
+  color: ${(props) => props.theme.secondBlack};
+`;
+
+export const RefreshIcon = styled(FontAwesomeIcon)`
+  font-size: 12px;
+  color: ${(props) => props.theme.secondBlack};
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    transform: rotate(90deg);
+  }
 `;
 
 export const MainSubTitle = styled(MainTitle)`
@@ -50,5 +66,12 @@ export const StatisticSection = styled.section`
   min-width: 400px;
   min-height: 250px;
   max-height: 250px;
-  border: 1px solid green;
+`;
+
+export const StatisticEmptyBox = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

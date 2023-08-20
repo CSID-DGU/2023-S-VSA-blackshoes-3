@@ -54,10 +54,19 @@ const Header = () => {
         });
       } catch (err) {
         console.log(err);
-        if (err.response.status === 401 && err.response.data === "") {
+        if (
+          (err.response.status === 401 && err.response.data === "") ||
+          (err.response.status === 401 &&
+            err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다.")
+        ) {
           window.location.reload();
         }
       }
+    } else {
+      alert("로그인이 필요한 서비스입니다.");
+      localStorage.removeItem("accessToken");
+      removeCookie("refreshToken", { path: "/" });
+      navigate(`/`, { replace: true });
     }
   };
 
