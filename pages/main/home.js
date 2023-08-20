@@ -11,7 +11,6 @@ import {
   Text,
   StyleSheet,
   ImageBackground,
-  Image,
   ActivityIndicator as Spinner,
 } from 'react-native';
 import {regionList, themeList} from '../../constant/themes';
@@ -27,9 +26,10 @@ export default function Home({navigation, route}) {
   const scrollViewRef = useRef();
   const scrollViewRef2 = useRef();
   const [themeRank, setThemeRank] = useState([]);
+  const [selectedTag, setSelectedTag] = useState('');
+  const [regionRank, setRegionRank] = useState([]);
   const [page, setPage] = useState(0);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
-
   const userId = useSelector(state => state.USER);
   const dispatch = useDispatch();
 
@@ -48,6 +48,14 @@ export default function Home({navigation, route}) {
       getRecommandVideos(viewedTag);
     }
   }, [viewedTag, page]);
+
+  useEffect(() => {
+    if (selectedTag !== '') {
+      getRecommandVideos(selectedTag);
+    } else {
+      return;
+    }
+  }, [selectedTag]);
 
   const getUserData = async () => {
     try {
@@ -72,45 +80,52 @@ export default function Home({navigation, route}) {
 
   const getRecommandVideos = async tags => {
     try {
-      const tagIds = tags.map(tag => tag.tagId).join(',');
-      const response = await axiosInstance.get(
-        `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=${page}`,
-      );
-      const newVideos = [...recommendedVideos, ...response.data.payload.videos];
-      console.log(newVideos.length);
-      const uniqueVideos = Array.from(
-        new Set(newVideos.map(v => v.videoId)),
-      ).map(id => {
-        return newVideos.find(v => v.videoId === id);
-      });
+      console.log('tags :', tags);
 
-      setRecommendedVideos(uniqueVideos);
+      if (selectedTag === '') {
+        const tagIds = tags.map(tag => tag.tagId).join(',');
+        const response = await axiosInstance.get(
+          `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=${page}`,
+        );
+        const newVideos = [
+          ...recommendedVideos,
+          ...response.data.payload.videos,
+        ];
+        console.log(newVideos.length);
+        const uniqueVideos = Array.from(
+          new Set(newVideos.map(v => v.videoId)),
+        ).map(id => {
+          return newVideos.find(v => v.videoId === id);
+        });
+
+        setRecommendedVideos(uniqueVideos);
+      } else {
+        const response = await axiosInstance.get(
+          `content-slave-service/videos/tagIds?q=${tags}&u=${userId}&page=${page}`,
+        );
+        setRecommendedVideos(response.data.payload.videos);
+      }
     } catch (e) {
       console.log(e);
     }
   };
 
   const getThemeRank = async () => {
-    console.log('hi');
     try {
       const response = await axiosInstance.get(
         'statistics-service/rank/tags/theme',
       );
 
       setThemeRank(response.data.payload.tagRank);
+      const response2 = await axiosInstance.get(
+        'statistics-service/rank/tags/region',
+      );
+      setRegionRank(response2.data.payload.tagRank);
     } catch (e) {
       console.log(e);
     }
   };
 
-  console.log('themeList', themeList);
-  console.log('themeRank', themeRank);
-  console.log(
-    'lov: ',
-    themeList.filter(theme =>
-      themeRank.some(rank => rank.tagId === theme.tagId),
-    ),
-  );
   const getRandomTags = () => {
     const combinedList = [...regionList, ...themeList];
     combinedList.sort(() => 0.5 - Math.random());
@@ -153,10 +168,29 @@ export default function Home({navigation, route}) {
         style={StyleSheet.absoluteFill}
         source={item.src}
         resizeMode="cover">
+        {item.tagId === selectedTag && (
+          <View
+            style={{
+              ...StyleSheet.absoluteFill,
+              backgroundColor: 'rgba(70,70,70, 0.8)',
+            }}
+          />
+        )}
         <TouchableOpacity
           style={styles.touch}
-          onPress={() => navigation.navigate('ThemeVideo', {item})}>
-          <Text style={styles.text}>{item.tagName}</Text>
+          onPress={() => {
+            if (item.tagId === selectedTag) {
+              setSelectedTag('');
+            } else {
+              setSelectedTag(item.tagId);
+            }
+          }}>
+          <Text
+            style={
+              item.tagId === selectedTag ? styles.selectedText : styles.text
+            }>
+            {item.tagName}
+          </Text>
         </TouchableOpacity>
       </ImageBackground>
     </View>
@@ -178,9 +212,13 @@ export default function Home({navigation, route}) {
               showsHorizontalScrollIndicator={false}
               ref={scrollViewRef}>
               <View style={styles.areaScroll}>
-                {regionList.map((e, i) => {
-                  return <Item key={i} item={e} />;
-                })}
+                {regionList
+                  .filter(region =>
+                    regionRank.some(rank => rank.tagId === region.tagId),
+                  )
+                  .map((item, index) => {
+                    return <Item key={index} item={item} />;
+                  })}
               </View>
             </ScrollView>
           </View>
@@ -236,6 +274,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
+    paddingTop: 4,
   },
   spinnerContainer: {
     marginTop: 50,
@@ -248,7 +287,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'flex-start',
-    width: 360,
+    width: 363,
     marginTop: 10,
   },
 
@@ -311,6 +350,14 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: '600',
     color: 'white',
+    fontSize: 15,
+    letterSpacing: 3,
+    paddingLeft: 10,
+    paddingBottom: 8,
+  },
+  selectedText: {
+    color: 'rgba(230,230,230, 0.8)',
+    fontWeight: '600',
     fontSize: 15,
     letterSpacing: 3,
     paddingLeft: 10,
