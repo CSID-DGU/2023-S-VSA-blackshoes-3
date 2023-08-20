@@ -1,23 +1,61 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "../components/Fragments/Nav/Header";
 import Nav from "../components/Fragments/Nav/Nav";
 import ResNav from "../components/Fragments/Nav/ResNav";
 import { Body, GridWrapper } from "../components/Home/HomeStyle";
-import {
-  AdSection,
-  MainSegment,
-  MainSubTitle,
-  MainTitle,
-  StatisticSection,
-  VideoSection,
-} from "../components/Home/MainStyle";
+import * as M from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import axios from "axios";
+import { BASE_URL, Instance } from "../api/axios";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { faBoxOpen, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { BoldSpan, LargeFont, VideoEmptySection } from "../components/Fragments/Manage/ManageStyle";
 
-// testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
-// testSeller2 e2d052e4-009b-44c4-963a-21996b29a779
-// testSeller3 badd288d-ea48-424c-9d1b-8e0fb4375094
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const BACKGROUND_COLORS = [
+  "rgba(255, 99, 132, 0.2)",
+  "rgba(54, 162, 235, 0.2)",
+  "rgba(255, 206, 86, 0.2)",
+  "rgba(75, 192, 192, 0.2)",
+  "rgba(153, 102, 255, 0.2)",
+  "rgba(255, 159, 64, 0.2)",
+  "rgba(255, 99, 132, 0.2)",
+];
+
+const BORDER_COLORS = [
+  "rgba(255, 99, 132, 1)",
+  "rgba(54, 162, 235, 1)",
+  "rgba(255, 206, 86, 1)",
+  "rgba(75, 192, 192, 1)",
+  "rgba(153, 102, 255, 1)",
+  "rgba(255, 159, 64, 1)",
+  "rgba(255, 99, 132, 1)",
+];
+
+const OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: {
+      beginAtZero: true,
+    },
+  },
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
 
 const Home = () => {
   // Constant----------------------------------------------------
@@ -25,16 +63,108 @@ const Home = () => {
 
   // State-------------------------------------------------------
   const { page, setPage } = useContext(GlobalContext);
+  const [videoViewRank, setVideoViewRank] = useState({ labels: [], datasets: [] });
+  const [videoLikeRank, setVideoLikeRank] = useState({ labels: [], datasets: [] });
+  const [videoTagRank, setVideoTagRank] = useState({ labels: [], datasets: [] });
+  const [videoAdClickRank, setVideoAdClickRank] = useState({ labels: [], datasets: [] });
+  const [aggregatedAt, setAggregatedAt] = useState("");
 
   // Function----------------------------------------------------
   const fetchData = async () => {
     try {
-      // const uploadData = await axios.get(
-      //   `http://13.125.69.94:8011/content-slave-service/videos/${userId}/sort?q=recent&page=0&size=10`
-      // );
-      // console.log(uploadData);
+      // 동영상 조회수 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/views/${userId}`).then(
+        (res) => {
+          setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
+          const videoViewData = {
+            labels: res.data.payload.videoViewRank.map((item) =>
+              item.videoName.length > 8 ? item.videoName.slice(0, 8) + "..." : item.videoName
+            ),
+            datasets: [
+              {
+                label: "동영상 조회수 랭킹",
+                data: res.data.payload.videoViewRank.map((item) => item.views),
+                backgroundColor: BACKGROUND_COLORS,
+                borderColor: BORDER_COLORS,
+                borderWidth: 1,
+              },
+            ],
+          };
+          setVideoViewRank(videoViewData);
+        }
+      );
+      // 동영상 좋아요 수 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/likes/${userId}`).then(
+        (res) => {
+          const videoLikeData = {
+            labels: res.data.payload.videoLikeRank.map((item) =>
+              item.videoName.length > 8 ? item.videoName.slice(0, 8) + "..." : item.videoName
+            ),
+            datasets: [
+              {
+                label: "동영상 좋아요 수 랭킹",
+                data: res.data.payload.videoLikeRank.map((item) => item.likes),
+                backgroundColor: BACKGROUND_COLORS,
+                borderColor: BORDER_COLORS,
+                borderWidth: 1,
+              },
+            ],
+          };
+          setVideoLikeRank(videoLikeData);
+        }
+      );
+      // 동영상 태그 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/tags/views/${userId}`).then((res) => {
+        const videoTagData = {
+          labels: res.data.payload.tagViewRank.map((item) => item.tagName),
+          datasets: [
+            {
+              label: "동영상 태그 랭킹",
+              data: res.data.payload.tagViewRank.map((item) => item.views),
+              backgroundColor: BACKGROUND_COLORS,
+              borderColor: BORDER_COLORS,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setVideoTagRank(videoTagData);
+      });
+      // 동영상 광고클릭 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/adClicks/${userId}`).then(
+        (res) => {
+          const videoAdClickData = {
+            labels: res.data.payload.videoAdClickRank.map((item) =>
+              item.videoName.length > 8 ? item.videoName.slice(0, 8) + "..." : item.videoName
+            ),
+            datasets: [
+              {
+                label: "동영상 광고클릭 랭킹",
+                data: res.data.payload.videoAdClickRank.map((item) => item.adClicks),
+                backgroundColor: BACKGROUND_COLORS,
+                borderColor: BORDER_COLORS,
+                borderWidth: 1,
+              },
+            ],
+          };
+          setVideoAdClickRank(videoAdClickData);
+        }
+      );
     } catch (err) {
-      console.log(err);
+      //
+    }
+  };
+
+  // 데이터 집계일 새로고침-------------------------------------------
+  const refreshAggregatedAt = async () => {
+    try {
+      await Instance.get(
+        `${BASE_URL}statistics-service/rank/videos/views/${userId}?refresh=true`
+      ).then((res) => {
+        setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
+        alert("데이터 집계일을 새로고침했습니다.");
+      });
+    } catch (err) {
+      alert("데이터 집계일 새로고침에 실패했습니다.");
     }
   };
 
@@ -50,29 +180,68 @@ const Home = () => {
       <Nav />
       <Body>
         <ResNav userId={userId} />
-        <MainSegment>
-          <MainTitle>광고 통계</MainTitle>
-          <AdSection>
-            <MainSubTitle>광고 클릭 동영상 랭킹</MainSubTitle>
-            <StatisticSection></StatisticSection>
+        <M.MainSegment>
+          <M.MainTitle>조회수 통계</M.MainTitle>
+          <M.StatisticBox>
+            <M.MainSubTitle>동영상 조회수 랭킹</M.MainSubTitle>
+            <M.StatisticSection>
+              {aggregatedAt === "" ? (
+                <VideoEmptySection>
+                  <LargeFont icon={faBoxOpen} />
+                  <BoldSpan>업로드된 영상이 없습니다.</BoldSpan>
+                </VideoEmptySection>
+              ) : (
+                <Bar data={videoViewRank} options={OPTIONS} />
+              )}
+            </M.StatisticSection>
             <br />
-            <MainSubTitle>광고 클릭 태그 랭킹</MainSubTitle>
-            <StatisticSection></StatisticSection>
-          </AdSection>
-        </MainSegment>
-        <MainSegment>
-          <MainTitle>영상 통계</MainTitle>
-          <VideoSection>
-            <MainSubTitle>동영장 조회수 랭킹</MainSubTitle>
-            <StatisticSection></StatisticSection>
+            <M.MainSubTitle>동영상 좋아요 랭킹</M.MainSubTitle>
+            <M.StatisticSection>
+              {aggregatedAt === "" ? (
+                <VideoEmptySection>
+                  <LargeFont icon={faBoxOpen} />
+                  <BoldSpan>업로드된 영상이 없습니다.</BoldSpan>
+                </VideoEmptySection>
+              ) : (
+                <Bar data={videoLikeRank} options={OPTIONS} />
+              )}
+            </M.StatisticSection>
+          </M.StatisticBox>
+        </M.MainSegment>
+        <M.MainSegment>
+          <M.MainTitle>
+            상호작용 통계
+            <M.SmallRightSpan>
+              데이터 집계일: {aggregatedAt}{" "}
+              <M.RefreshIcon icon={faRefresh} onClick={refreshAggregatedAt} />
+            </M.SmallRightSpan>
+          </M.MainTitle>
+          <M.StatisticBox>
+            <M.MainSubTitle>태그 조회수 랭킹</M.MainSubTitle>
+            <M.StatisticSection>
+              {aggregatedAt === "" ? (
+                <VideoEmptySection>
+                  <LargeFont icon={faBoxOpen} />
+                  <BoldSpan>업로드된 영상이 없습니다.</BoldSpan>
+                </VideoEmptySection>
+              ) : (
+                <Bar data={videoTagRank} options={OPTIONS} />
+              )}
+            </M.StatisticSection>
             <br />
-            <MainSubTitle>동영장 좋아요 수 랭킹</MainSubTitle>
-            <StatisticSection></StatisticSection>
-            <br />
-            <MainSubTitle>동영장 태그 랭킹</MainSubTitle>
-            <StatisticSection></StatisticSection>
-          </VideoSection>
-        </MainSegment>
+            <M.MainSubTitle>동영장 광고클릭 랭킹</M.MainSubTitle>
+            <M.StatisticSection>
+              {aggregatedAt === "" ? (
+                <VideoEmptySection>
+                  <LargeFont icon={faBoxOpen} />
+                  <BoldSpan>업로드된 영상이 없습니다.</BoldSpan>
+                </VideoEmptySection>
+              ) : (
+                <Bar data={videoAdClickRank} options={OPTIONS} />
+              )}
+            </M.StatisticSection>
+          </M.StatisticBox>
+        </M.MainSegment>
       </Body>
     </GridWrapper>
   );

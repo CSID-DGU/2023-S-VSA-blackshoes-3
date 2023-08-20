@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import * as H from "../../Home/HomeStyle";
-import * as S from "../../Sign/SignStyle";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
 import SetModal from "../Reusable/SetModal";
@@ -17,11 +16,7 @@ const Nav = () => {
   return (
     <H.NavSection>
       <H.NavBox>
-        <H.HoverButton0
-          width="270px"
-          onClick={() => navigate(`/home/${userId}`)}
-          $page={page}
-        >
+        <H.HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} $page={page}>
           메인
         </H.HoverButton0>
         <H.HoverButton1
