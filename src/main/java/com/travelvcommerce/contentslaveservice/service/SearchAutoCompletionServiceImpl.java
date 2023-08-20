@@ -3,6 +3,7 @@ package com.travelvcommerce.contentslaveservice.service;
 import com.travelvcommerce.contentslaveservice.dto.SearchAutoCompletionDto;
 import com.travelvcommerce.contentslaveservice.repository.VideoRepository;
 import com.travelvcommerce.contentslaveservice.vo.UserSearchType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,11 +15,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SearchAutoCompletionServiceImpl implements SearchAutoCompletionService {
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    private final VideoRepository videoRepository;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     public SearchAutoCompletionDto.SearchAutoCompletionListDto getAutoCompletionList(String searchType, String keyword) {

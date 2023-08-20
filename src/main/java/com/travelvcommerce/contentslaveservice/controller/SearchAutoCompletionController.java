@@ -5,6 +5,7 @@ import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.SearchAutoCompletionDto;
 import com.travelvcommerce.contentslaveservice.service.SearchAutoCompletionService;
 import com.travelvcommerce.contentslaveservice.vo.UserSearchType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/content-slave-service")
+@RequiredArgsConstructor
 public class SearchAutoCompletionController {
-    @Autowired
-    private SearchAutoCompletionService searchAutoCompletionService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final SearchAutoCompletionService searchAutoCompletionService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/auto-completion")
     public ResponseEntity<ResponseDto> getAutoCompletion(@RequestParam(name = "searchType") String searchType,

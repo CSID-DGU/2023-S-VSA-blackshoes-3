@@ -5,9 +5,8 @@ import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoPagePayloadDto;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
-import com.travelvcommerce.contentslaveservice.vo.UserPersonalizedData;
-import com.travelvcommerce.contentslaveservice.vo.UserPersonalizedTypes;
 import com.travelvcommerce.contentslaveservice.vo.UserSortTypes;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("content-slave-service")
+@RequiredArgsConstructor
 public class VideoPageUserController {
-
-    @Autowired
-    private VideoService videoService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final VideoService videoService;
+    private final ObjectMapper objectMapper;
 
     // 전체 영상 조회
     @GetMapping("/videos/sort")

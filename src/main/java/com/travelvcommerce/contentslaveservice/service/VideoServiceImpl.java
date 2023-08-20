@@ -3,6 +3,7 @@ package com.travelvcommerce.contentslaveservice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.repository.VideoRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,15 +21,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
-    @Autowired
-    private VideoRepository videoRepository;
-    @Autowired
-    private GptRecommendationService gptRecommendationService;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final VideoRepository videoRepository;
+    private final GptRecommendationService gptRecommendationService;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
     private final List<String> sortTypeList = List.of("videoId", "sellerId", "createdAt", "views", "adClicks", "likes");
 
     // 전체 영상 목록 조회, 정렬 정보 q로 받아서 정렬, 페이징 처리

@@ -1,8 +1,7 @@
 package com.travelvcommerce.contentslaveservice.entity;
 
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 @Document(collection = "videos")
-@Data
-@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video {
     @Id
     private String _id;
@@ -28,6 +27,23 @@ public class Video {
     private long likes;
     private long views;
     private long adClicks;
+
+    @Builder
+    public Video(String videoId, String videoName, String videoUrl, String thumbnailUrl, String sellerId, String sellerName, String sellerLogo, String createdAt, List<Map<String, String>> videoTags, List<Map<String, String>> videoAds, long likes, long views, long adClicks) {
+        this.videoId = videoId;
+        this.videoName = videoName;
+        this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.sellerId = sellerId;
+        this.sellerName = sellerName;
+        this.sellerLogo = sellerLogo;
+        this.createdAt = createdAt;
+        this.videoTags = videoTags;
+        this.videoAds = videoAds;
+        this.likes = likes;
+        this.views = views;
+        this.adClicks = adClicks;
+    }
 
     public void update(VideoDto videoDto) {
         if (videoDto.getVideoName() != null) {

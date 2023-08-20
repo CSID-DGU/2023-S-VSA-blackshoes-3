@@ -4,6 +4,7 @@ import com.travelvcommerce.contentslaveservice.dto.ResponseDto;
 import com.travelvcommerce.contentslaveservice.dto.VideoDto;
 import com.travelvcommerce.contentslaveservice.service.VideoService;
 import com.travelvcommerce.contentslaveservice.vo.VideoIdType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,12 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
-@Slf4j
 @RestController
 @RequestMapping("content-slave-service")
+@RequiredArgsConstructor
 public class VideoDetailController {
-    @Autowired
-    private VideoService videoService;
+    private final VideoService videoService;
 
     // 개별 영상 조회
     @GetMapping("/videos/video")
