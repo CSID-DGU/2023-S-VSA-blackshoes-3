@@ -29,10 +29,7 @@ const Home = () => {
   // Function----------------------------------------------------
   const fetchData = async () => {
     try {
-      // const uploadData = await axios.get(
-      //   `http://13.125.69.94:8011/content-slave-service/videos/${userId}/sort?q=recent&page=0&size=10`
-      // );
-      // console.log(uploadData);
+      //
     } catch (err) {
       console.log(err);
     }

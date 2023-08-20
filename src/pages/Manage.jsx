@@ -85,7 +85,7 @@ const Manage = () => {
       });
       // 수정 영상 댓글 가져오기
       await Instance.get(
-        `commet-service/comments/video?videoId=${videoId}&page=0&size=10`
+        `comment-service/comments/video?videoId=${videoId}&page=0&size=10`
       ).then((res) => {
         setVideoComments(res.data.payload.comments);
       });
@@ -93,7 +93,7 @@ const Manage = () => {
       return;
     }
   };
-
+  console.log(videoComments);
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(2);
