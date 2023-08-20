@@ -50,6 +50,8 @@ export default function App() {
   const items = [
     {label: 'Video', value: 'videoName'},
     {label: 'Seller', value: 'sellerName'},
+    {label: 'Tag', value: 'tagName'},
+    {label: 'GPT', value: 'gpt'},
   ];
 
   function CustomDrawer({drawerNavigation}) {

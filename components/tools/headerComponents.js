@@ -30,7 +30,7 @@ export const HeaderTitleComponent = ({
   const navigation = useNavigation();
 
   const fetchAutoCompleteSuggestions = async query => {
-    if (query.length > 0) {
+    if (query.length > 0 && value !== 'gpt') {
       try {
         const response = await axiosInstance.get(
           `content-slave-service/auto-completion?searchType=${value}&keyword=${query}`,
@@ -64,7 +64,7 @@ export const HeaderTitleComponent = ({
           onSubmitEditing={() => {
             setSuggestions([]);
             setSearch(false);
-            navigation.push('SearchedVideos', {searchText});
+            navigation.push('SearchedVideos', {searchText, value});
           }}
         />
         {suggestions.length > 0 && (

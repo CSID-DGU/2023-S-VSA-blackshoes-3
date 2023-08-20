@@ -33,6 +33,10 @@ export const SearchTypeModal = ({
                   ? '판매자명으로 검색'
                   : item.label === 'Video'
                   ? '영상 제목으로 검색'
+                  : item.label === 'Tag'
+                  ? '태그로 검색'
+                  : item.label === 'GPT'
+                  ? 'GPT로 검색'
                   : ''}
               </Text>
             </TouchableOpacity>
@@ -53,14 +57,14 @@ const styles = StyleSheet.create({
   modalContainer: {
     gap: 40,
     justifyContent: 'center',
-    height: 200,
+    height: 315,
     width: 240,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
   },
   modalContents: {
-    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   modalText: {
     fontSize: 20,

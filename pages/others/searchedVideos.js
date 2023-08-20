@@ -6,6 +6,7 @@ import {TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 import axiosInstance from '../../utils/axiosInstance';
+
 export default function SearchedVideos({route, navigation}) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -20,7 +21,7 @@ export default function SearchedVideos({route, navigation}) {
     {label: '좋아요 순', value: 'likes'},
   ]);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
-
+  console.log(route.params.value);
   useEffect(() => {
     if (page === 0) {
       fetchData(0);
@@ -62,7 +63,7 @@ export default function SearchedVideos({route, navigation}) {
   const getData = async () => {
     try {
       const response = await axiosInstance.get(
-        `content-slave-service/videos/search?type=videoName&q=${route.params.searchText}&s=${value}&page=${page}&size=10`,
+        `content-slave-service/videos/search?type=${route.params.value}&q=${route.params.searchText}&s=${value}&page=${page}&size=10`,
       );
       return [response.data.payload.videos, response.data.payload.totalPages];
     } catch (error) {
@@ -85,7 +86,7 @@ export default function SearchedVideos({route, navigation}) {
       }
     }
   };
-  console.log(videoData);
+
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
@@ -154,12 +155,12 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    backgroundColor: '#DEDEDE',
+    backgroundColor: 'white',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
-    marginVertical: 7,
-    width: '90%',
+    marginVertical: 5,
+    width: '92%',
   },
 
   dropDownButton: {
