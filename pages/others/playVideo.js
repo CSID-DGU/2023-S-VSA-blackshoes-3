@@ -127,7 +127,7 @@ export default function Play({route, navigation}) {
         setConutLike(countLike - 1);
 
         const response2 = await axiosInstance.put(
-          `statistics-service/statistics/${videoData.videoId}/like`,
+          `statistics-service/${videoData.videoId}/likes`,
           {
             userId: userId,
             action: 'dislike',
@@ -145,7 +145,6 @@ export default function Play({route, navigation}) {
             sellerId: videoData.sellerId,
           },
         );
-
         setLike(true);
         setConutLike(countLike + 1);
 
@@ -339,7 +338,22 @@ export default function Play({route, navigation}) {
               onScroll={handleScrollend}
               scrollEventThrottle={10}>
               <View style={styles.videoInfoContainer}>
-                <Text style={styles.title}>{videoData.videoName}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 3,
+                  }}>
+                  <Text style={styles.title}>{videoData.videoName}</Text>
+
+                  <Icon2
+                    name="ellipsis-vertical-sharp"
+                    size={20}
+                    color={'black'}
+                  />
+                </View>
                 <View style={styles.subInfoContainer}>
                   <View style={styles.subInfoContainer1}>
                     <Text style={styles.smallText}>
@@ -358,23 +372,12 @@ export default function Play({route, navigation}) {
                     onPress={likes}>
                     <Icon
                       name="cards-heart"
-                      size={20}
+                      size={17}
                       color={like ? 'red' : 'grey'}
                     />
-                    <Text style={styles.likesText}>Like ~</Text>
+                    <Text style={styles.likesText}>Like</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-              <View style={styles.sellerInfoContainer}>
-                <Image
-                  style={styles.logo}
-                  source={{
-                    uri: `data:image/png;base64,${videoData.sellerLogo}`,
-                  }}
-                />
-                <Text style={styles.title}>
-                  {route.params.video.sellerName}
-                </Text>
               </View>
               <View style={styles.scrollContainer}>
                 <ScrollView
@@ -383,7 +386,7 @@ export default function Play({route, navigation}) {
                   contentContainerStyle={{
                     width: 400,
                     alignItems: 'center',
-                    gap: 20,
+                    gap: 10,
                     paddingHorizontal: 15,
                   }}>
                   {videoData.videoTags &&
@@ -401,6 +404,17 @@ export default function Play({route, navigation}) {
                     })}
                 </ScrollView>
               </View>
+              <View style={styles.sellerInfoContainer}>
+                <Image
+                  style={styles.logo}
+                  source={{
+                    uri: `data:image/png;base64,${videoData.sellerLogo}`,
+                  }}
+                />
+                <Text style={styles.sellerTitle}>
+                  {route.params.video.sellerName}
+                </Text>
+              </View>
 
               <View style={{paddingHorizontal: 15}}>
                 <TouchableOpacity
@@ -413,14 +427,49 @@ export default function Play({route, navigation}) {
                       </Text>
                     ) : (
                       <>
-                        <Text style={styles.commentTitle}>댓글</Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            gap: 7,
+                            alignItems: 'flex-end',
+                          }}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'flex-end',
+                              width: '100%',
+                              justifyContent: 'space-between',
+                            }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'flex-end',
+                                gap: 7,
+                              }}>
+                              <Text style={styles.commentTitle}>댓글</Text>
+                              <Text>{commentAmmount}</Text>
+                            </View>
+                            <Icon2
+                              name="chevron-down-sharp"
+                              size={20}
+                              color={'black'}
+                            />
+                          </View>
+                        </View>
+
                         <View style={styles.firstCommentBox}>
                           <Text style={styles.commentUserName}>
                             {comment[0].nickname}
                           </Text>
-                          <Text style={styles.commentContents}>
-                            {comment[0].content}
-                          </Text>
+                          {comment[0].content.length > 28 ? (
+                            <Text style={styles.commentContents}>
+                              {comment[0].content.slice(0, 28) + '...'}
+                            </Text>
+                          ) : (
+                            <Text style={styles.commentContents}>
+                              {comment[0].content}
+                            </Text>
+                          )}
                         </View>
                       </>
                     )
@@ -461,6 +510,7 @@ export default function Play({route, navigation}) {
               <View style={styles.allCommentsContainer}>
                 <View style={styles.allCommentsTopMenu}>
                   <Text style={styles.commentTitle}>댓글</Text>
+
                   <TouchableOpacity onPress={() => setCommentIndex(false)}>
                     <Icon
                       style={styles.icon}
@@ -510,18 +560,19 @@ export default function Play({route, navigation}) {
                                 style={styles.allCommentsBox}
                                 key={i}>
                                 <View style={styles.commentsInfo}>
-                                  <Text style={styles.commentUserNameAll}>
-                                    {e.nickname}
-                                  </Text>
-                                  <Text style={styles.commentDate}>
-                                    {e.createdAt.split('T')[0]}
-                                  </Text>
-                                </View>
-                                <View
-                                  style={styles.commentContentsAllContainer}>
-                                  <Text style={styles.commentContentsAll}>
-                                    {e.content}
-                                  </Text>
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                      alignItems: 'flex-end',
+                                      gap: 7,
+                                    }}>
+                                    <Text style={styles.commentUserNameAll}>
+                                      {e.nickname}
+                                    </Text>
+                                    <Text style={styles.commentDate}>
+                                      {e.createdAt.split('T')[0]}
+                                    </Text>
+                                  </View>
                                   {e.userId === userId && (
                                     <View
                                       style={styles.commentsButtonContainer}>
@@ -534,7 +585,7 @@ export default function Play({route, navigation}) {
                                             setModifyIndex(i);
                                           }
                                         }}>
-                                        <Text>
+                                        <Text style={{fontSize: 13}}>
                                           {modifyIndex === i ? '취소' : '수정'}
                                         </Text>
                                       </TouchableOpacity>
@@ -545,10 +596,16 @@ export default function Play({route, navigation}) {
                                           size={30}
                                           color={'black'}
                                         /> */}
-                                        <Text>삭제</Text>
+                                        <Text style={{fontSize: 13}}>삭제</Text>
                                       </TouchableOpacity>
                                     </View>
                                   )}
+                                </View>
+                                <View
+                                  style={styles.commentContentsAllContainer}>
+                                  <Text style={styles.commentContentsAll}>
+                                    {e.content}
+                                  </Text>
                                 </View>
                                 {modifyIndex === i && (
                                   <View style={styles.modifyCommentContainer}>
@@ -650,9 +707,7 @@ const styles = StyleSheet.create({
 
   videoInfoContainer: {
     paddingTop: 20,
-    paddingBottom: 10,
     paddingHorizontal: 20,
-    gap: 10,
     width: '100%',
   },
   title: {
@@ -660,6 +715,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#404040',
   },
+  sellerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#404040',
+  },
+
   smallText: {
     color: 'gray',
     marginRight: 15,
@@ -679,8 +740,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 15,
+    marginLeft: 17,
     gap: 10,
+    marginBottom: 10,
   },
   logo: {
     width: 30,
@@ -690,10 +752,11 @@ const styles = StyleSheet.create({
   likesContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+
     gap: 5,
     backgroundColor: 'white',
-    paddingHorizontal: 13,
+    paddingLeft: 5,
+    paddingRight: 10,
     paddingVertical: 2.5,
     borderRadius: 10,
     shadowColor: '#000',
@@ -703,11 +766,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 1,
   },
   likesText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   scrollContainer: {
     height: 60,
@@ -725,12 +788,13 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 1,
     width: 75,
-    height: 30,
+    height: 27,
   },
   tagName: {
-    fontSize: 15,
+    fontSize: 13,
+    fontWeight: '600',
     textAlign: 'center',
   },
   adContainer: {
@@ -741,11 +805,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   firstCommentContainer: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: 'white',
     paddingHorizontal: 20,
     borderRadius: 10,
     shadowColor: '#000',
     paddingVertical: 12,
+    marginBottom: 5,
   },
   commentTitle: {
     fontWeight: 'bold',
@@ -754,28 +819,21 @@ const styles = StyleSheet.create({
   },
   firstCommentBox: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     borderRadius: 10,
-    paddingVertical: 5,
+
     gap: 10,
     marginTop: 5,
     paddingHorizontal: 17,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 0.5,
   },
   commentUserName: {
     color: 'black',
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 13,
+    fontWeight: '600',
   },
   commentContents: {
-    fontSize: 17,
+    fontSize: 13,
     fontWeight: '600',
     paddingHorizontal: 20,
     lineHeight: 25,
@@ -834,15 +892,16 @@ const styles = StyleSheet.create({
   commentsInfo: {
     flexDirection: 'row',
     gap: 10,
+    justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
   commentUserNameAll: {
-    fontSize: 19,
+    fontSize: 13,
     color: 'black',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   commentDate: {fontSize: 11},
-  commentContentsAll: {fontSize: 16},
+  commentContentsAll: {fontSize: 15},
   commentContentsAllContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -869,7 +928,7 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   videoThumbnailContainer: {
-    backgroundColor: '#DEDEDE',
+    backgroundColor: 'white',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,

@@ -14,8 +14,7 @@ import {
   Image,
   ActivityIndicator as Spinner,
 } from 'react-native';
-import {regionList} from '../../constant/themes';
-import {themeList} from '../../constant/themes';
+import {regionList, themeList} from '../../constant/themes';
 import {useDispatch, useSelector} from 'react-redux';
 import {setTag, setNickName} from '../../storage/actions';
 import axiosInstance from '../../utils/axiosInstance';
@@ -23,13 +22,11 @@ import NavigationBar from '../../components/tools/navigationBar';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 
 export default function Home({navigation, route}) {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [scrollPosition2, setScrollPosition2] = useState(0);
   const [viewedTag, setViewedTag] = useState([]);
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const scrollViewRef = useRef();
   const scrollViewRef2 = useRef();
-
+  const [themeRank, setThemeRank] = useState([]);
   const [page, setPage] = useState(0);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
 
@@ -40,6 +37,7 @@ export default function Home({navigation, route}) {
     getSubscribedData();
     getViewData();
     getUserData();
+    getThemeRank();
   }, []);
 
   useEffect(() => {
@@ -78,28 +76,41 @@ export default function Home({navigation, route}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/tagIds?q=${tagIds}&u=${userId}&page=${page}`,
       );
-      console.log('in getRecommandVideos : ', response.data.payload);
-      setRecommendedVideos(prevVideos => [
-        ...prevVideos,
-        ...response.data.payload.videos,
-      ]);
+      const newVideos = [...recommendedVideos, ...response.data.payload.videos];
+      console.log(newVideos.length);
+      const uniqueVideos = Array.from(
+        new Set(newVideos.map(v => v.videoId)),
+      ).map(id => {
+        return newVideos.find(v => v.videoId === id);
+      });
+
+      setRecommendedVideos(uniqueVideos);
     } catch (e) {
       console.log(e);
     }
   };
 
-  // const getRecommandVideos = async () => {
-  //   try {
-  //     console.log('viewTag array : ', viewedTag);
-  //     const response = await axiosInstance.get(
-  //       `content-slave-service/videos/tagIds?q=${viewedTag[0].tagId},${viewedTag[1].tagId},${viewedTag[2].tagId},${viewedTag[3].tagId},${viewedTag[4].tagId}&u=${userId}&page=0`,
-  //     );
-  //     setRecommendedVideos(response.data.payload.videos);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+  const getThemeRank = async () => {
+    console.log('hi');
+    try {
+      const response = await axiosInstance.get(
+        'statistics-service/rank/tags/theme',
+      );
 
+      setThemeRank(response.data.payload.tagRank);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  console.log('themeList', themeList);
+  console.log('themeRank', themeRank);
+  console.log(
+    'lov: ',
+    themeList.filter(theme =>
+      themeRank.some(rank => rank.tagId === theme.tagId),
+    ),
+  );
   const getRandomTags = () => {
     const combinedList = [...regionList, ...themeList];
     combinedList.sort(() => 0.5 - Math.random());
@@ -117,30 +128,6 @@ export default function Home({navigation, route}) {
     } catch (e) {
       console.log(e);
     }
-  };
-
-  const handleIconPress = (direction, scrollRef, setScrollPos, currentPos) => {
-    if (direction === 'left') {
-      let newScrollPosition = currentPos - 250;
-      scrollRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-      setScrollPos(newScrollPosition);
-    } else if (direction === 'right') {
-      let newScrollPosition = currentPos + 250;
-      scrollRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-      setScrollPos(newScrollPosition);
-    }
-  };
-
-  const handleScroll = (event, setScrollPos) => {
-    setScrollPos(event.nativeEvent.contentOffset.x);
   };
 
   const handleScrollend = event => {
@@ -186,22 +173,9 @@ export default function Home({navigation, route}) {
             <Text style={styles.title}>인기 지역</Text>
           </View>
           <View style={styles.areaScrollContainer}>
-            {/* <TouchableOpacity
-              style={styles.scrollbutton}
-              onPress={() =>
-                handleIconPress(
-                  'left',
-                  scrollViewRef,
-                  setScrollPosition,
-                  scrollPosition,
-                )
-              }>
-              <Image source={require('../../assets/themeImg/arrow-left.png')} />
-            </TouchableOpacity> */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              onScroll={event => handleScroll(event, setScrollPosition)}
               ref={scrollViewRef}>
               <View style={styles.areaScroll}>
                 {regionList.map((e, i) => {
@@ -209,63 +183,26 @@ export default function Home({navigation, route}) {
                 })}
               </View>
             </ScrollView>
-            {/* <TouchableOpacity
-              style={styles.scrollbutton}
-              onPress={() =>
-                handleIconPress(
-                  'right',
-                  scrollViewRef,
-                  setScrollPosition,
-                  scrollPosition,
-                )
-              }>
-              <Image
-                source={require('../../assets/themeImg/arrow-right.png')}
-              />
-            </TouchableOpacity> */}
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>인기 테마</Text>
           </View>
 
           <View style={styles.areaScrollContainer}>
-            {/* <TouchableOpacity
-              style={styles.scrollbutton}
-              onPress={() =>
-                handleIconPress(
-                  'left',
-                  scrollViewRef2,
-                  setScrollPosition2,
-                  scrollPosition2,
-                )
-              }>
-              <Image source={require('../../assets/themeImg/arrow-left.png')} />
-            </TouchableOpacity> */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              onScroll={event => handleScroll(event, setScrollPosition2)}
               ref={scrollViewRef2}>
               <View style={styles.areaScroll}>
-                {themeList.map((e, i) => {
-                  return <Item key={i} item={e} />;
-                })}
+                {themeList
+                  .filter(theme =>
+                    themeRank.some(rank => rank.tagId === theme.tagId),
+                  )
+                  .map((item, index) => {
+                    return <Item key={index} item={item} />;
+                  })}
               </View>
             </ScrollView>
-            {/* <TouchableOpacity
-              style={styles.scrollbutton}
-              onPress={() =>
-                handleIconPress(
-                  'right',
-                  scrollViewRef2,
-                  setScrollPosition2,
-                  scrollPosition2,
-                )
-              }>
-              <Image
-                source={require('../../assets/themeImg/arrow-right.png')}
-              />
-            </TouchableOpacity> */}
           </View>
           <View style={[styles.textContainer, {marginBottom: 9}]}>
             <Text style={styles.title}>추천 영상</Text>
@@ -337,7 +274,6 @@ const styles = StyleSheet.create({
   },
 
   videoThumbnailContainer: {
-    // backgroundColor: '#E3E3E3',
     backgroundColor: 'white',
     alignItems: 'center',
     paddingTop: 17,

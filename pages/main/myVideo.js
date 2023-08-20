@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator as Spinner,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -23,6 +24,7 @@ export default function MyVideo({navigation, route}) {
   const [selectedTagId, setSelectedTagId] = useState('');
   const [page, setPage] = useState(0);
   const [maxPage, setMaxPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userId = useSelector(state => state.USER);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
@@ -33,7 +35,6 @@ export default function MyVideo({navigation, route}) {
   useEffect(() => {
     if (view === 0) {
       if (tagId.length > 0) {
-        console.log('realrealreal');
         setSelectedTagId(theme[0].tagId);
       }
     } else {
@@ -43,7 +44,6 @@ export default function MyVideo({navigation, route}) {
   }, [view]);
 
   useEffect(() => {
-    console.log('아이고: ', selectedTagId);
     if (selectedTagId !== '') {
       getData(0);
     }
@@ -51,18 +51,20 @@ export default function MyVideo({navigation, route}) {
 
   useEffect(() => {
     if (isEndOfScroll) {
-      console.log(page);
-      setPage(prevPage => prevPage + 1);
+      if (page < maxPage || page === maxPage) {
+        setPage(prevPage => prevPage + 1);
+      }
     }
   }, [isEndOfScroll]);
 
   useEffect(() => {
+    console.log(page);
+
     if (page === 0) {
       getData(0);
     } else {
-      if (page !== maxPage) {
-        getData(page);
-      }
+      console.log('won');
+      getData(page);
     }
   }, [page]);
 
@@ -107,6 +109,8 @@ export default function MyVideo({navigation, route}) {
   );
 
   const getData = async key => {
+    setIsLoading(true);
+
     try {
       let response;
       if (view === 0) {
@@ -135,6 +139,7 @@ export default function MyVideo({navigation, route}) {
     } catch (e) {
       console.log(e);
     }
+    setIsLoading(false);
   };
 
   const handleScroll = event => {
@@ -142,7 +147,7 @@ export default function MyVideo({navigation, route}) {
     const contentHeight = event.nativeEvent.contentSize.height;
     const layoutHeight = event.nativeEvent.layoutMeasurement.height;
 
-    if (offsetY + layoutHeight >= contentHeight) {
+    if (offsetY + layoutHeight >= contentHeight - 1) {
       if (!isEndOfScroll) {
         setEndOfScroll(true);
       }
@@ -226,22 +231,25 @@ export default function MyVideo({navigation, route}) {
           </TouchableOpacity>
         </View>
         <View style={styles.horizontalContainer}>
-          {view === 0 && videoData.length > 0 && (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={true}
-              contentContainerStyle={{
-                alignItems: 'center',
-                gap: 20,
-                paddingHorizontal: 15,
-              }}>
-              <View style={styles.areaScroll}>
-                {theme.map((e, i) => {
-                  return <Item key={i} item={e} />;
-                })}
-              </View>
-            </ScrollView>
-          )}
+          {view === 0 &&
+            (tagId.length > 0 ? (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={true}
+                contentContainerStyle={{
+                  alignItems: 'center',
+                  gap: 20,
+                  paddingHorizontal: 15,
+                }}>
+                <View style={styles.areaScroll}>
+                  {theme.map((e, i) => {
+                    return <Item key={i} item={e} />;
+                  })}
+                </View>
+              </ScrollView>
+            ) : (
+              <Text style={styles.alertText}>태그를 구독해주세요.</Text>
+            ))}
         </View>
 
         <ScrollView
@@ -249,7 +257,11 @@ export default function MyVideo({navigation, route}) {
           onScroll={handleScroll}
           style={styles.videoContainer}
           contentContainerStyle={{alignItems: 'center'}}>
-          {videoData.length > 0 ? (
+          {isLoading ? (
+            <View style={styles.spinnerContainer}>
+              <Spinner size="big" color="black" />
+            </View>
+          ) : videoData.length > 0 ? (
             videoData.map((e, i) => {
               return (
                 <TouchableOpacity
@@ -261,7 +273,7 @@ export default function MyVideo({navigation, route}) {
               );
             })
           ) : view === 0 ? (
-            <Text style={styles.alertText}>태그를 구독해주세요.</Text>
+            <Text style={styles.alertText}>해당 태그에 영상이 없습니다.</Text>
           ) : (
             <Text style={styles.alertText}>좋아요한 영상이 없습니다.</Text>
           )}
@@ -284,6 +296,9 @@ const styles = StyleSheet.create({
   videoContainer: {
     marginTop: 5,
     width: '100%',
+  },
+  spinnerContainer: {
+    marginTop: 50,
   },
 
   buttonContainer: {

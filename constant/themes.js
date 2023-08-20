@@ -1,4 +1,4 @@
-export const regionList = [
+export const themeList = [
   {
     tagName: '자연',
     tagId: 'e430375c-2199-11ee-9ef2-0a0027000003',
@@ -133,7 +133,7 @@ export const regionList = [
   },
 ];
 
-export const themeList = [
+export const regionList = [
   {
     tagName: '국내',
     tagId: 'e4302d24-2199-11ee-9ef2-0a0027000003',
