@@ -70,20 +70,20 @@ public class TagController {
         }
     }
 
-    @GetMapping("/{userId}/tags/viewed")
-    public ResponseEntity<ResponseDto> getViewedTagList(@RequestHeader("Authorization") String id,
+    //조회했던 태그 중 tf-idf 값이 가장 높은 태그 5개를 추천해줌
+    @GetMapping("/{userId}/tags/viewed/recommended")
+    public ResponseEntity<ResponseDto> getRecommendedViewedTagList(@RequestHeader("Authorization") String id,
                                                         @PathVariable String userId) {
-        if (!id.equals(userId)) {
+        /*if (!id.equals(userId)) {
             ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
-        }
-
+        }*/
         try {
-            List<Map<String, Object>> viewedTagListWithDetails = tagService.getViewedTagList(userId);
+            List<String> viewedTagListWithDetails = tagService.getRecommendedTagIdList(userId);
 
             Map<String, Object> viewedTagListResponse = new HashMap<>();
             viewedTagListResponse.put("userId", userId);
-            viewedTagListResponse.put("viewedTags", viewedTagListWithDetails);
+            viewedTagListResponse.put("recommendedViewedTags", viewedTagListWithDetails);
 
             ResponseDto responseDto = ResponseDto.builder().payload(viewedTagListResponse).build();
 
@@ -150,17 +150,16 @@ public class TagController {
     public ResponseEntity<ResponseDto> viewTag(@RequestHeader("Authorization") String id,
                                                @PathVariable String userId,
                                                @RequestBody TagDto.ViewTagRequestDto viewTagRequestDto){
-        if (!id.equals(userId)) {
+        /*if (!id.equals(userId)) {
             ResponseDto responseDto = ResponseDto.builder().error("Invalid id").build();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDto);
-        }
+        }*/
 
         List<String> tagIdList = viewTagRequestDto.getTagIdList();
 
         List<Map<String, String>> viewTagResponseList = new ArrayList<>();
-        for(String tagId : tagIdList){
-            viewTagResponseList.add(tagService.viewTag(userId, tagId));
-        }
+
+        viewTagResponseList.add(tagService.viewTag(userId, tagIdList));
 
         ResponseDto responseDto = ResponseDto.builder()
                 .payload(Collections.singletonMap("viewTagResponseList", viewTagResponseList))

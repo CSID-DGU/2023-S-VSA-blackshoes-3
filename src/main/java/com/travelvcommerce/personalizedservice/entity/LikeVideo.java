@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "Like_Videos", uniqueConstraints = @UniqueConstraint(name = "like_video_unique", columnNames = {"video_id", "user_id"}))
+@Table(name = "like_videos", uniqueConstraints = @UniqueConstraint(name = "like_video_unique", columnNames = {"video_id", "user_id"}))
 public class LikeVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

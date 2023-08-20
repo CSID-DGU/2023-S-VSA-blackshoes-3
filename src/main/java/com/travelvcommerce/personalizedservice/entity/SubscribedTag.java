@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Subscribed_Tags", uniqueConstraints = @UniqueConstraint(name = "tag_user_unique", columnNames = {"tag_id", "user_id"}))
+@Table(name = "subscribed_tags", uniqueConstraints = @UniqueConstraint(name = "tag_user_unique", columnNames = {"tag_id", "user_id"}))
 public class SubscribedTag {
 
     @Id
@@ -36,9 +36,3 @@ public class SubscribedTag {
         this.createdAt = createdAt;
     }
 }
-
-/*
-* 1. post
-* 2. delete
-* 3. 초기 일괄 post
- */
