@@ -10,6 +10,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Modal,
+  FlatList,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import axiosInstance from '../../utils/axiosInstance';
@@ -18,8 +20,7 @@ import Icon2 from 'react-native-vector-icons/Ionicons';
 import VideoPlayer from 'react-native-video-controls';
 import {Ad} from '../../components/contents/advertiseBox';
 import {useSelector} from 'react-redux';
-import axios from 'axios';
-import {set} from 'lodash';
+
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 
 export default function Play({route, navigation}) {
@@ -36,11 +37,18 @@ export default function Play({route, navigation}) {
   const [commentAmmount, setCommentAmmount] = useState(0);
   const [commentPage, setCommentPage] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [resolution, setResolution] = useState('/720p.m3u8');
   const [recommendVideoPage, setRecommendVideoPage] = useState(0);
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [commentInput, setCommentInput] = useState('');
   const [modifying, setModifying] = useState('');
   const [modifyIndex, setModifyIndex] = useState(null);
+
+  const res = [
+    {label: '480p', value: '/480p.m3u8'},
+    {label: '720p', value: '/720p.m3u8'},
+    {label: '1080p', value: '/1080p.m3u8'},
+  ];
 
   const userId = useSelector(state => state.USER);
   const nick = useSelector(state => state.NICK);
@@ -50,9 +58,11 @@ export default function Play({route, navigation}) {
   };
 
   const videoRef = useRef(null);
+
   useEffect(() => {
+    console.log('hi');
     getData();
-  }, []);
+  }, [resolution]);
 
   useEffect(() => {
     if (videoData.length === 0) {
@@ -96,13 +106,15 @@ export default function Play({route, navigation}) {
     });
     return;
   }, [currentTime]);
-  console.log('In openAd : ', videoData.videoAds);
 
   const getData = async () => {
     try {
+      console.log('화질 : ', resolution);
       const response = await axiosInstance.get(
         `content-slave-service/videos/video?type=videoId&q=${route.params.video.videoId}`,
       );
+      console.log('videoData : ', response.data.payload.video.videoUrl);
+
       setVideoData(response.data.payload.video);
       setTagIds(response.data.payload.video.videoTags.map(tag => tag.tagId));
     } catch (e) {
@@ -243,7 +255,6 @@ export default function Play({route, navigation}) {
       console.log(error);
     }
   };
-
   const modifyComment = async e => {
     try {
       const response = await axiosInstance.put(
@@ -261,8 +272,6 @@ export default function Play({route, navigation}) {
 
   const getRecommendVideo = async () => {
     try {
-      console.log(tagIds);
-
       const tagId = tagIds.join(',');
 
       const response = await axiosInstance.get(
@@ -270,7 +279,7 @@ export default function Play({route, navigation}) {
       );
 
       const filteredVideos = response.data.payload.videos.filter(
-        video => video.videoId !== route.params.videoId,
+        video => video.videoId !== route.params.video.videoId,
       );
 
       const newVideos = [...recommendedVideos, ...filteredVideos];
@@ -291,9 +300,6 @@ export default function Play({route, navigation}) {
     const offsetY = event.nativeEvent.contentOffset.y;
     const contentHeight = event.nativeEvent.contentSize.height;
     const layoutHeight = event.nativeEvent.layoutMeasurement.height;
-    console.log('offsetY : ', offsetY);
-    console.log('contentHeight : ', contentHeight);
-    console.log('layoutHeight : ', layoutHeight);
 
     if (offsetY + layoutHeight >= contentHeight - 1) {
       console.log('hi');
@@ -301,7 +307,10 @@ export default function Play({route, navigation}) {
     }
   };
 
-  const changeResolution = () => {};
+  const selectResolution = value => {
+    setResolution(value);
+    setOpenModal(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -313,7 +322,7 @@ export default function Play({route, navigation}) {
           <>
             <VideoPlayer
               ref={videoRef}
-              source={{uri: videoData.videoUrl}}
+              source={{uri: videoData.videoUrl + resolution}}
               fullscreen={isFullScreen}
               onEnterFullscreen={() => {
                 setFullScreen(true);
@@ -331,12 +340,54 @@ export default function Play({route, navigation}) {
               onProgress={({currentTime}) => setCurrentTime(currentTime)}
               onTouchEnd={toggleControls}
             />
+            {openAd && (
+              <Text style={styles.adInScreen}>{openAd.adContent}</Text>
+            )}
           </>
         )}
       </View>
 
       {!isFullScreen && (
         <View style={styles.contentsContainer}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={openModal}
+            onRequestClose={() => {
+              setOpenModal(false);
+            }}>
+            <TouchableOpacity
+              style={styles.centeredView}
+              onPress={() => setOpenModal(false)}>
+              <View style={styles.modalView}>
+                <FlatList
+                  data={res}
+                  style={styles.modalFlat}
+                  keyExtractor={item => item.value}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      style={[
+                        resolution === item.value && {
+                          backgroundColor: '#c9c9c9',
+                        },
+                        styles.modalContents,
+                      ]}
+                      onPress={() => selectResolution(item.value)}>
+                      <Text
+                        style={[
+                          styles.resolutionText,
+                          resolution === item.value
+                            ? {color: 'white'}
+                            : {color: 'black'},
+                        ]}>
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </TouchableOpacity>
+          </Modal>
           {!commentIndex && (
             <ScrollView
               style={styles.scrollVerticalContainer}
@@ -374,20 +425,17 @@ export default function Play({route, navigation}) {
                     <Text style={styles.smallText}>
                       조회수 {route.params.video.views}회
                     </Text>
-
-                    <Text style={styles.smallText}>좋아요 {countLike}회</Text>
+                    <TouchableOpacity
+                      style={styles.likesContainer}
+                      onPress={likes}>
+                      <Icon
+                        name="cards-heart"
+                        size={15}
+                        color={like ? 'red' : 'grey'}
+                      />
+                      <Text style={{color: 'grey'}}>{countLike}회</Text>
+                    </TouchableOpacity>
                   </View>
-
-                  <TouchableOpacity
-                    style={styles.likesContainer}
-                    onPress={likes}>
-                    <Icon
-                      name="cards-heart"
-                      size={17}
-                      color={like ? 'red' : 'grey'}
-                    />
-                    <Text style={styles.likesText}>Like</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
               <View style={styles.scrollContainer}>
@@ -428,71 +476,73 @@ export default function Play({route, navigation}) {
               </View>
 
               <View style={{paddingHorizontal: 15}}>
-                <TouchableOpacity
-                  style={styles.firstCommentContainer}
-                  onPress={() => setCommentIndex(true)}>
-                  {comment ? (
-                    comment.length === 0 ? (
+                {openAd ? (
+                  <View style={styles.firstCommentContainer}>
+                    <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
+                  </View>
+                ) : comment ? (
+                  comment.length === 0 ? (
+                    <TouchableOpacity
+                      style={styles.firstCommentContainer}
+                      onPress={() => (openAd ? null : setCommentIndex(true))}>
                       <Text style={styles.commentFirstContents}>
                         아직 댓글이 없습니다. 댓글을 등록해주세요.
                       </Text>
-                    ) : (
-                      <>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.firstCommentContainer}
+                      onPress={() => (openAd ? null : setCommentIndex(true))}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          gap: 7,
+                          alignItems: 'flex-end',
+                        }}>
                         <View
                           style={{
                             flexDirection: 'row',
-                            gap: 7,
                             alignItems: 'flex-end',
+                            width: '100%',
+                            justifyContent: 'space-between',
                           }}>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'flex-end',
-                              width: '100%',
-                              justifyContent: 'space-between',
+                              gap: 7,
                             }}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'flex-end',
-                                gap: 7,
-                              }}>
-                              <Text style={styles.commentTitle}>댓글</Text>
-                              <Text>{commentAmmount}</Text>
-                            </View>
-                            <Icon2
-                              name="chevron-down-sharp"
-                              size={20}
-                              color={'black'}
-                            />
+                            <Text style={styles.commentTitle}>댓글</Text>
+                            <Text>{commentAmmount}</Text>
                           </View>
+                          <Icon2
+                            name="chevron-down-sharp"
+                            size={20}
+                            color={'black'}
+                          />
                         </View>
+                      </View>
 
-                        <View style={styles.firstCommentBox}>
-                          <Text style={styles.commentUserName}>
-                            {comment[0].nickname}
+                      <View style={styles.firstCommentBox}>
+                        <Text style={styles.commentUserName}>
+                          {comment[0].nickname}
+                        </Text>
+                        {comment[0].content.length > 28 ? (
+                          <Text style={styles.commentContents}>
+                            {comment[0].content.slice(0, 28) + '...'}
                           </Text>
-                          {comment[0].content.length > 28 ? (
-                            <Text style={styles.commentContents}>
-                              {comment[0].content.slice(0, 28) + '...'}
-                            </Text>
-                          ) : (
-                            <Text style={styles.commentContents}>
-                              {comment[0].content}
-                            </Text>
-                          )}
-                        </View>
-                      </>
-                    )
-                  ) : (
-                    <Text>wait hi</Text>
-                  )}
-                </TouchableOpacity>
-                {openAd && (
-                  <View style={styles.bottomContainer}>
-                    <Ad adContents={openAd} logoUri={videoData.sellerLogo} />
-                  </View>
+                        ) : (
+                          <Text style={styles.commentContents}>
+                            {comment[0].content}
+                          </Text>
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  )
+                ) : (
+                  <Text>wait hi</Text>
                 )}
+
                 {recommendedVideos.length > 0 &&
                   recommendedVideos.map((e, i) => {
                     return (
@@ -696,7 +746,7 @@ const styles = StyleSheet.create({
     transform: [{translateY: -25}],
   },
   bottomContainer: {
-    paddingVertical: 20,
+    paddingVertical: 10,
     gap: 10,
     width: '100%',
     alignItems: 'center',
@@ -737,14 +787,15 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   subInfoContainer: {
-    marginTop: 5,
+    marginTop: 7,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   subInfoContainer1: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: 5,
   },
   icon: {marginRight: 5},
   sellerInfoContainer: {
@@ -766,10 +817,9 @@ const styles = StyleSheet.create({
 
     gap: 5,
     backgroundColor: 'white',
-    paddingLeft: 5,
-    paddingRight: 10,
-    paddingVertical: 2.5,
-    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -950,5 +1000,44 @@ const styles = StyleSheet.create({
   scrollViewContainer: {},
   scrollVerticalContainer: {
     width: '100%',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    height: 225,
+    margin: 20,
+    width: 180,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingVertical: 35,
+    alignItems: 'center',
+  },
+  modalFlat: {
+    width: '100%',
+  },
+  modalContents: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  resolutionText: {
+    padding: 10,
+    fontSize: 18,
+    marginTop: 5,
+  },
+  adInScreen: {
+    position: 'absolute',
+    top: 20,
+    right: 15,
+    width: '50%',
+    paddingVertical: 5,
+    borderRadius: 5,
+    fontSize: 16,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    paddingHorizontal: 10,
   },
 });

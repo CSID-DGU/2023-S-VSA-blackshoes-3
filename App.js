@@ -19,6 +19,7 @@ import CheckInfo from './pages/mypages/userInfo';
 import ThemeSelectEach from './pages/mypages/subscribeManage';
 import MyCommentPage from './pages/mypages/comment';
 import SearchedVideos from './pages/others/searchedVideos';
+import KakaoLogin from './pages/signpages/kakao';
 import NavigationContainer from '@react-navigation/native';
 import NavigationBar from './components/tools/navigationBar';
 import {themeList, regionList} from './constant/themes';
@@ -229,6 +230,13 @@ export default function App() {
             <Stack.Screen
               name="FindPw"
               component={FindPw}
+              options={{
+                headerRight: () => <></>,
+              }}
+            />
+            <Stack.Screen
+              name="Kakao"
+              component={KakaoLogin}
               options={{
                 headerRight: () => <></>,
               }}

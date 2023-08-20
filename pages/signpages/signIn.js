@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import axios from '../../utils/axiosInstance';
+import {set} from 'lodash';
 
 export default function SignIn({navigation}) {
   return (
@@ -20,7 +22,9 @@ export default function SignIn({navigation}) {
           <TouchableOpacity style={[styles.googleLogin, styles.button]}>
             <Text style={styles.text}>구글 로그인</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.kakaoLogin, styles.button]}>
+          <TouchableOpacity
+            style={[styles.kakaoLogin, styles.button]}
+            onPress={() => navigation.navigate('Kakao')}>
             <Text style={styles.text}>카카오 로그인</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.naverLogin, styles.button]}>

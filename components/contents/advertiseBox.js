@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   View,
@@ -7,6 +8,7 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import WebView from 'react-native-webview';
 
 export const Ad = ({adContents, logoUri}) => {
@@ -15,50 +17,102 @@ export const Ad = ({adContents, logoUri}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <WebView source={{uri: adContents.adUrl}} style={styles.webview} />
-      <View style={styles.infoContainer}>
-        <Image
-          style={styles.logo}
-          source={{uri: `data:image/png;base64,${logoUri}`}}
-        />
-        <Text style={styles.text}>{adContents.adContent}</Text>
-        <TouchableOpacity onPress={handleOpenUrl}>
-          <Text>이동</Text>
-        </TouchableOpacity>
+    <>
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: 7,
+          alignItems: 'flex-end',
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              gap: 7,
+            }}>
+            <Text style={styles.commentTitle}>광고</Text>
+          </View>
+          <TouchableOpacity onPress={handleOpenUrl}>
+            <Icon name="log-in" size={20} color={'black'} />
+          </TouchableOpacity>
+        </View>
+
+        {/* <Text style={styles.goButton}>상품 확인</Text> */}
       </View>
-    </View>
+      <View style={styles.adContentsContainer}>
+        {adContents &&
+          (adContents.length > 40 ? (
+            <Text style={styles.text}>
+              {adContents.adContent.slice(0, 40) + '...'}
+            </Text>
+          ) : (
+            <Text style={styles.text}>{adContents.adContent}</Text>
+          ))}
+      </View>
+      {/* <WebView
+        source={{uri: adContents.adUrl}}
+        startInLoadingState={true}
+        style={styles.webview}
+        onLoad={() => {
+          // WebView가 완전히 로드된 후에만 아래의 스크립트를 실행
+          this.webview.injectJavaScript('window.scrollTo(0, 0);');
+        }}
+        ref={webview => {
+          this.webview = webview;
+        }}
+      /> */}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    paddingHorizontal: 15,
-    backgroundColor: '#DEDEDE',
-    paddingVertical: 15,
+    lineHeight: 25,
+    backgroundColor: '#C2C2C2',
+    borderRadius: 10,
+    paddingVertical: 5,
+    flexDirection: 'row',
   },
   webview: {
     width: '100%',
-    height: 190,
+    height: 400,
   },
-  infoContainer: {
-    width: '100%',
-
-    paddingHorizontal: 15,
-    paddingTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-    borderRadius: 15,
+  commentTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: 'black',
   },
   text: {
-    fontSize: 25,
-    fontStyle: 'italic',
-    fontWeight: 'bold',
+    color: 'black',
+  },
+  adContentsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingVertical: 2,
+    gap: 10,
+    marginTop: 5,
+    paddingHorizontal: 5,
+  },
+
+  goButton: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
+
+// backgroundColor: 'white',
+// paddingHorizontal: 20,
+// borderRadius: 10,
+// shadowColor: '#000',
+// paddingVertical: 12,
+// marginBottom: 5,

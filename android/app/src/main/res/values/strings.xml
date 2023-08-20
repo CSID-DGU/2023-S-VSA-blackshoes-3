@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">wander2</string>
+    <string name="kakao_app_key">aa53aed00ed39912c4e6691ef37a269c</string>
 </resources>
