@@ -7,6 +7,7 @@ import com.travelvcommerce.personalizedservice.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,36 +26,42 @@ public class KafkaHistoryInfoConsumerServiceImpl implements KafkaHistoryInfoCons
     @Override
     @KafkaListener(topics = "user-delete")
     @Transactional
-    public void userDelete(String payload) {
+    public void userDelete(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         String userId = payload;
 
         viewVideoRepository.deleteByUserId(userId);
         likeVideoRepository.deleteByUserId(userId);
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "uploader-delete")
     @Transactional
-    public void uploaderDelete(String payload){
+    public void uploaderDelete(String payload, Acknowledgment acknowledgment){
         log.info("received payload='{}'", payload);
 
         String uploaderId = payload;
 
         viewVideoRepository.deleteBySellerId(uploaderId);
         likeVideoRepository.deleteBySellerId(uploaderId);
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "video-delete")
     @Transactional
-    public void videoDelete(String payload){
+    public void videoDelete(String payload, Acknowledgment acknowledgment){
         log.info("received payload='{}'", payload);
 
         String videoId = payload;
 
         viewVideoRepository.deleteByVideoId(videoId);
         likeVideoRepository.deleteByVideoId(videoId);
+
+        acknowledgment.acknowledge();
     }
 }
