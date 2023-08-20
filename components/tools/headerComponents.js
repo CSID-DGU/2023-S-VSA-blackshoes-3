@@ -8,11 +8,12 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Modal,
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
-
+import {themeList, regionList} from '../../constant/themes';
 import {SearchTypeModal} from '../modals/searchTypeModal';
 import {debounce} from 'lodash';
 
@@ -21,16 +22,14 @@ import axiosInstance from '../../utils/axiosInstance';
 export const HeaderTitleComponent = ({
   value,
   search,
-  setSearch,
   searchText,
   setSearchText,
   suggestions,
   setSuggestions,
 }) => {
   const navigation = useNavigation();
-
   const fetchAutoCompleteSuggestions = async query => {
-    if (query.length > 0 && value !== 'gpt') {
+    if (query.length > 0 && value !== 'gpt' && value !== 'tagName') {
       try {
         const response = await axiosInstance.get(
           `content-slave-service/auto-completion?searchType=${value}&keyword=${query}`,
@@ -55,7 +54,8 @@ export const HeaderTitleComponent = ({
     return (
       <>
         <TextInput
-          placeholder="검색"
+          placeholder={value === 'gpt' ? 'ChatGpt의 영상 추천' : '검색'}
+          placeholderTextColor={'#757575'}
           style={styles.searchBar}
           onChangeText={text => {
             setSearchText(text);
@@ -63,7 +63,6 @@ export const HeaderTitleComponent = ({
           }}
           onSubmitEditing={() => {
             setSuggestions([]);
-            setSearch(false);
             navigation.push('SearchedVideos', {searchText, value});
           }}
         />
@@ -78,8 +77,7 @@ export const HeaderTitleComponent = ({
                   onPress={() => {
                     setSearchText(item);
                     setSuggestions([]);
-                    setSearch(false);
-                    navigation.push('SearchedVideos', {searchText});
+                    navigation.push('SearchedVideos', {searchText, value});
                   }}>
                   <Text style={styles.autoCompleteText}>{item}</Text>
                 </TouchableOpacity>
@@ -87,6 +85,27 @@ export const HeaderTitleComponent = ({
             />
           </View>
         )}
+        {/* {value === 'tagName' && (
+          <FlatList
+            horizontal={true}
+            data={[...themeList, ...regionList]}
+            keyExtractor={(item, index) => index.toString()}
+            style={styles.tagRecommendContainer}
+            nestedScrollEnabled={true}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setSearchText(item.tagName);
+                  navigation.push('SearchedVideos', {
+                    searchText,
+                    value,
+                  });
+                }}>
+                <Text style={styles.autoCompleteText}>{item.tagName}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )} */}
       </>
     );
   } else {
@@ -179,7 +198,7 @@ const styles = StyleSheet.create({
     width: 220,
     borderRadius: 10,
     height: 40,
-    paddingHorizontal: 10,
+    paddingLeft: 15,
   },
   autoCompleteContainer: {
     position: 'absolute',
@@ -188,6 +207,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '100%',
     zIndex: 2,
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  tagRecommendContainer: {
+    position: 'absolute',
+    top: 55,
+    left: 20,
+    backgroundColor: 'white',
+    width: '100%',
+    flex: 1,
+    height: 200,
     padding: 15,
     borderRadius: 10,
     shadowColor: '#000',

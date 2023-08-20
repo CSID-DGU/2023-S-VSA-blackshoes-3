@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, Text, ScrollView} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -122,7 +122,7 @@ export default function SearchedVideos({route, navigation}) {
           contentContainerStyle={{alignItems: 'center'}}
           onScroll={handleScroll}
           scrollEventThrottle={400}>
-          {videoData.length > 0 &&
+          {videoData.length > 0 ? (
             videoData.map((e, i) => {
               return (
                 <TouchableOpacity
@@ -132,7 +132,14 @@ export default function SearchedVideos({route, navigation}) {
                   <VideoThumbnail key={i} video={e} navigation={navigation} />
                 </TouchableOpacity>
               );
-            })}
+            })
+          ) : (
+            <View style={{marginTop: 20}}>
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                검색 결과가 없습니다.
+              </Text>
+            </View>
+          )}
         </ScrollView>
       </View>
     </View>

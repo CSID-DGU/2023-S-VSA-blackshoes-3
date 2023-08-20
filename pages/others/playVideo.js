@@ -35,7 +35,7 @@ export default function Play({route, navigation}) {
   const [comment, setComment] = useState([]);
   const [commentAmmount, setCommentAmmount] = useState(0);
   const [commentPage, setCommentPage] = useState(null);
-
+  const [openModal, setOpenModal] = useState(false);
   const [recommendVideoPage, setRecommendVideoPage] = useState(0);
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const [commentInput, setCommentInput] = useState('');
@@ -273,7 +273,15 @@ export default function Play({route, navigation}) {
         video => video.videoId !== route.params.videoId,
       );
 
-      setRecommendedVideos(prev => [...prev, ...filteredVideos]);
+      const newVideos = [...recommendedVideos, ...filteredVideos];
+
+      const uniqueVideos = Array.from(
+        new Set(newVideos.map(a => a.videoId)),
+      ).map(videoId => {
+        return newVideos.find(a => a.videoId === videoId);
+      });
+
+      setRecommendedVideos(uniqueVideos);
     } catch (e) {
       console.log(e);
     }
@@ -292,6 +300,8 @@ export default function Play({route, navigation}) {
       setRecommendVideoPage(prevPage => prevPage + 1);
     }
   };
+
+  const changeResolution = () => {};
 
   return (
     <View style={styles.container}>
@@ -347,12 +357,13 @@ export default function Play({route, navigation}) {
                     marginBottom: 3,
                   }}>
                   <Text style={styles.title}>{videoData.videoName}</Text>
-
-                  <Icon2
-                    name="ellipsis-vertical-sharp"
-                    size={20}
-                    color={'black'}
-                  />
+                  <TouchableOpacity onPress={() => setOpenModal(true)}>
+                    <Icon2
+                      name="ellipsis-vertical-sharp"
+                      size={20}
+                      color={'black'}
+                    />
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.subInfoContainer}>
                   <View style={styles.subInfoContainer1}>
@@ -840,9 +851,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   commentFirstContents: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
-    paddingHorizontal: 12,
+    paddingHorizontal: 5,
     lineHeight: 25,
     backgroundColor: 'white',
     borderRadius: 10,

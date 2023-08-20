@@ -21,12 +21,13 @@ import MyCommentPage from './pages/mypages/comment';
 import SearchedVideos from './pages/others/searchedVideos';
 import NavigationContainer from '@react-navigation/native';
 import NavigationBar from './components/tools/navigationBar';
+import {themeList, regionList} from './constant/themes';
 import {
   HeaderTitleComponent,
   HeaderRightComponent,
   HeaderLeftComponent,
 } from './components/tools/headerComponents';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, FlatList, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Store from './storage/store';
@@ -41,7 +42,7 @@ const Stack = createStackNavigator();
 export default function App() {
   console.log('count render');
   const [search, setSearch] = useState(false);
-  const [value, setValue] = useState('videoName');
+  const [value, setValue] = useState('gpt');
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const [sortModalVisible, setSortModalVisible] = useState(false);
