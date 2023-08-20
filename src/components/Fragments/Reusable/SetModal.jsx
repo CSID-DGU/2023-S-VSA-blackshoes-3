@@ -9,8 +9,8 @@ import { useParams } from "react-router-dom";
 const customStyles = {
   content: {
     backgroundColor: "white",
-    border: "2px solid #1DAE86",
-    borderRadius: "4px",
+    border: "1px solid #1DAE86",
+    borderRadius: "16px",
     outline: "none",
     padding: "20px",
     top: "50%",
@@ -35,12 +35,9 @@ const SetModal = ({ modal, setModal }) => {
   // function----------------------------------------------
   const submitNewName = async () => {
     try {
-      await Instance.put(
-        `${BASE_URL}user-service/sellers/${userId}/sellerName`,
-        {
-          sellerName,
-        }
-      ).then((res) => {
+      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/sellerName`, {
+        sellerName,
+      }).then((res) => {
         alert("이름이 변경되었습니다.");
       });
     } catch (err) {
@@ -53,15 +50,11 @@ const SetModal = ({ modal, setModal }) => {
     const formData = new FormData();
     formData.append("sellerLogo", sellerLogo);
     try {
-      await Instance.put(
-        `${BASE_URL}user-service/sellers/${userId}/sellerLogo`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      ).then((res) => {
+      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/sellerLogo`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
         alert("로고가 변경되었습니다.");
       });
     } catch (err) {
@@ -89,12 +82,10 @@ const SetModal = ({ modal, setModal }) => {
   // ComponentDidMount-------------------------------------
   const fetchData = async () => {
     try {
-      await Instance.get(`${BASE_URL}user-service/sellers/${userId}`).then(
-        (res) => {
-          setSellerName(res.data.payload.sellerName);
-          setSellerLogo(res.data.payload.sellerLogo);
-        }
-      );
+      await Instance.get(`${BASE_URL}user-service/sellers/${userId}`).then((res) => {
+        setSellerName(res.data.payload.sellerName);
+        setSellerLogo(res.data.payload.sellerLogo);
+      });
     } catch (err) {
       console.log(err);
     }
@@ -104,11 +95,7 @@ const SetModal = ({ modal, setModal }) => {
   }, []);
 
   return (
-    <Modal
-      isOpen={modal}
-      onRequestClose={() => setModal(false)}
-      style={customStyles}
-    >
+    <Modal isOpen={modal} onRequestClose={() => setModal(false)} style={customStyles}>
       <H.ModalSection>
         <H.ModalTitle>회원 이름 수정</H.ModalTitle>
         <H.ModalInputSection>
@@ -155,9 +142,7 @@ const SetModal = ({ modal, setModal }) => {
               placeholder="로고 이미지"
               onChange={(e) => setSellerLogo(e.target.files[0])}
             />
-            <H.ModalFileInputLabel htmlFor="file-input">
-              로고 업로드
-            </H.ModalFileInputLabel>
+            <H.ModalFileInputLabel htmlFor="file-input">로고 업로드</H.ModalFileInputLabel>
             <S.ColorButton width="80px" onClick={submitNewLogo}>
               수정
             </S.ColorButton>

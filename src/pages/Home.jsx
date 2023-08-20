@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "../components/Fragments/Nav/Header";
 import Nav from "../components/Fragments/Nav/Nav";
 import ResNav from "../components/Fragments/Nav/ResNav";
@@ -13,11 +13,7 @@ import {
 } from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import axios from "axios";
-
-// testSeller1 21d40e1a-86fc-480e-a4bf-b084f8ac6c55
-// testSeller2 e2d052e4-009b-44c4-963a-21996b29a779
-// testSeller3 badd288d-ea48-424c-9d1b-8e0fb4375094
+import { BASE_URL, Instance } from "../api/axios";
 
 const Home = () => {
   // Constant----------------------------------------------------
@@ -25,11 +21,39 @@ const Home = () => {
 
   // State-------------------------------------------------------
   const { page, setPage } = useContext(GlobalContext);
+  const [videoViewRank, setVideoViewRank] = useState([]);
+  const [videoLikeRank, setVideoLikeRank] = useState([]);
+  const [videoTagRank, setVideoTagRank] = useState([]);
+  const [videoAdClickRank, setVideoAdClickRank] = useState([]);
 
   // Function----------------------------------------------------
   const fetchData = async () => {
     try {
-      //
+      // 동영상 조회수 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/views/${userId}`).then(
+        (res) => {
+          console.log(res);
+        }
+      );
+
+      // 동영상 좋아요 수 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/likes/${userId}`).then(
+        (res) => {
+          console.log(res);
+        }
+      );
+
+      // 동영상 태그 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/tags/views/${userId}`).then((res) => {
+        console.log(res);
+      });
+
+      // 동영상 광고클릭 랭킹
+      await Instance.get(`${BASE_URL}statistics-service/rank/videos/adClicks/${userId}`).then(
+        (res) => {
+          console.log(res);
+        }
+      );
     } catch (err) {
       console.log(err);
     }
@@ -48,7 +72,7 @@ const Home = () => {
       <Body>
         <ResNav userId={userId} />
         <MainSegment>
-          <MainTitle>광고 통계</MainTitle>
+          <MainTitle>조회수 통계</MainTitle>
           <AdSection>
             <MainSubTitle>광고 클릭 동영상 랭킹</MainSubTitle>
             <StatisticSection></StatisticSection>
@@ -58,7 +82,7 @@ const Home = () => {
           </AdSection>
         </MainSegment>
         <MainSegment>
-          <MainTitle>영상 통계</MainTitle>
+          <MainTitle>상호작용 통계</MainTitle>
           <VideoSection>
             <MainSubTitle>동영장 조회수 랭킹</MainSubTitle>
             <StatisticSection></StatisticSection>

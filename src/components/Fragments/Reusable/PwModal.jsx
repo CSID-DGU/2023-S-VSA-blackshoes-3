@@ -11,8 +11,8 @@ import { useDebounce } from "../../../hooks/useDebounce";
 const customStyles = {
   content: {
     backgroundColor: "white",
-    border: "2px solid #1DAE86",
-    borderRadius: "4px",
+    border: "1px solid #1DAE86",
+    borderRadius: "16px",
     outline: "none",
     padding: "20px",
     top: "50%",
@@ -67,8 +67,7 @@ const PwModal = ({ modal, setModal }) => {
 
   // 비밀번호 유효성 관리----------------------------------------------------
   const onChangePassword = useCallback((e) => {
-    const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
     const passwordCurrent = e.target.value;
     setPassword(passwordCurrent);
 
@@ -158,11 +157,7 @@ const PwModal = ({ modal, setModal }) => {
   };
 
   return (
-    <Modal
-      isOpen={modal}
-      onRequestClose={() => setModal(false)}
-      style={customStyles}
-    >
+    <Modal isOpen={modal} onRequestClose={() => setModal(false)} style={customStyles}>
       <H.ModalSection>
         <H.ModalTitle>회원 이메일 입력</H.ModalTitle>
         <H.ModalInputSection>
@@ -187,9 +182,7 @@ const PwModal = ({ modal, setModal }) => {
             <S.FormHelperEmails is_email={isEmail ? "true" : "false"}>
               {emailMessage}
             </S.FormHelperEmails>
-            <S.FormHelperEmailValidation
-              is_email_validation={isEmailValidation ? "true" : "false"}
-            >
+            <S.FormHelperEmailValidation is_email_validation={isEmailValidation ? "true" : "false"}>
               {emailValidationMessage}
             </S.FormHelperEmailValidation>
           </H.ModalBetweenBox>
@@ -217,9 +210,7 @@ const PwModal = ({ modal, setModal }) => {
             <S.FormHelperPWs is_password={isPassword ? "true" : "false"}>
               {passwordMessage}
             </S.FormHelperPWs>
-            <S.FormHelperPWCF
-              is_password_check={isPasswordCheck ? "true" : "false"}
-            >
+            <S.FormHelperPWCF is_password_check={isPasswordCheck ? "true" : "false"}>
               {passwordCheckMessage}
             </S.FormHelperPWCF>
           </H.ModalBetweenBox>

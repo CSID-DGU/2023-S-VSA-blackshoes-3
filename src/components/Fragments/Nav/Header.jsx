@@ -6,12 +6,10 @@ import * as S from "../../Sign/SignStyle";
 import logo from "../../../assets/images/logo.svg";
 import axios from "axios";
 import { BASE_URL, Instance } from "../../../api/axios";
-import { useCookies } from "react-cookie";
 
 const Header = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
-  let accessToken = localStorage.getItem("accessToken");
   let refreshToken = getCookie("refreshToken");
   const { userId } = useParams();
 
@@ -26,7 +24,7 @@ const Header = () => {
         .post(`${BASE_URL}user-service/logout`, {
           refreshToken,
         })
-        .then((res) => {
+        .then(() => {
           localStorage.removeItem("accessToken");
           removeCookie("refreshToken", { path: "/" });
           navigate(`/`, { replace: true });
@@ -34,10 +32,8 @@ const Header = () => {
         .catch((err) => {
           console.log(err);
           if (
-            err.response.data.error ===
-              "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
-            err.response.data.error ===
-              "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
+            err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
+            err.response.data.error === "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
           ) {
             alert(err.response.data.error);
             localStorage.removeItem("accessToken");
