@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
     @Override
     @KafkaListener(topics = "uploader-create")
     @Transactional
-    public void createUploader(String payload) {
+    public void createUploader(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         UploaderDto uploaderDto;
@@ -55,12 +56,14 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
         } catch (Exception e) {
             log.error("Error saving uploader", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "uploader-update")
     @Transactional
-    public void updateUploader(String payload) {
+    public void updateUploader(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         UploaderDto.UploaderModifyRequestDto uploaderModifyRequestDto;
@@ -103,12 +106,14 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
         } catch (Exception e) {
             log.error("Error publishing updated video", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "uploader-delete")
     @Transactional
-    public void deleteUploader(String payload) {
+    public void deleteUploader(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         String sellerId = payload;
@@ -130,5 +135,7 @@ public class KafkaUploaderInfoConsumerServiceImpl implements KafkaUploaderInfoCo
         } catch (Exception e) {
             log.error("Error deleting uploader", e);
         }
+
+        acknowledgment.acknowledge();
     }
 }
