@@ -370,6 +370,7 @@ export const AdModifySection = styled.section`
 
 export const AdCommentSection = styled.section`
   width: 100%;
+  height: calc(100% - 400px);
   max-height: calc(100% - 400px);
   display: flex;
   flex-direction: column;
@@ -424,7 +425,6 @@ export const AdCommentEmptySection = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: ${(props) => `1px solid ${props.theme.middleGray}`};
 `;
 
 export const EmptyCenterBox = styled.section`

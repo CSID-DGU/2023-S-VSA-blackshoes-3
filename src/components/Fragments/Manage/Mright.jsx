@@ -8,7 +8,6 @@ import { ColorButton } from "../../Sign/SignStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Instance } from "../../../api/axios";
-import { useParams } from "react-router-dom";
 
 const Mright = ({ videoAds, userId, videoId, videoComments }) => {
   // Constant----------------------------------------------------
@@ -21,12 +20,11 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
       try {
         await Instance.delete(
           `comment-service/comments/${userId}/${commentId}`
-        ).thene((res) => {
-          console.log(res);
+        ).then((res) => {
           alert("댓글을 삭제했습니다.");
         });
       } catch (err) {
-        console.log(err);
+        alert("댓글 삭제에 실패했습니다.");
       }
     }
   };

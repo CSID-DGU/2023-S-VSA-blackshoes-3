@@ -55,7 +55,12 @@ const AdInput = ({
     }
   };
 
-  const handleAdContent = (savedAdContent, setHandler, setNewHandler, event) => {
+  const handleAdContent = (
+    savedAdContent,
+    setHandler,
+    setNewHandler,
+    event
+  ) => {
     if (savedAdContent) {
       setNewHandler(event.target.value);
     } else {
@@ -76,12 +81,13 @@ const AdInput = ({
     const adModifyRequests = [];
     try {
       if (window.confirm("광고를 수정하시겠습니까?")) {
-        await Instance.put(`upload/service/videos/${userId}/${videoId}/ads`, adModifyRequests).then(
-          (res) => {
-            console.log(res);
-            alert("광고가 수정되었습니다.");
-          }
-        );
+        await Instance.put(
+          `upload/service/videos/${userId}/${videoId}/ads`,
+          adModifyRequests
+        ).then((res) => {
+          console.log(res);
+          alert("광고가 수정되었습니다.");
+        });
       }
     } catch (err) {
       console.log(err);
@@ -92,6 +98,7 @@ const AdInput = ({
   return (
     <A.AdInputSection key={adId}>
       <A.TimeBox>
+        <A.NormalSpan>시작</A.NormalSpan>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["TimeField"]}>
             <TimeField
@@ -101,8 +108,17 @@ const AdInput = ({
               }}
               format="HH:mm:ss"
               color="success"
-              defaultValue={adStartTime && dayjs.unix(parseInt(adStartTime) / 1000 - 32400)}
+              defaultValue={
+                adStartTime && dayjs.unix(parseInt(adStartTime) / 1000 - 32400)
+              }
             />
+          </DemoContainer>
+        </LocalizationProvider>
+      </A.TimeBox>
+      <A.TimeBox>
+        <A.NormalSpan>종료</A.NormalSpan>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["TimeField"]}>
             <TimeField
               label="종료 시간"
               onChange={(e) => {
@@ -110,7 +126,9 @@ const AdInput = ({
               }}
               format="HH:mm:ss"
               color="success"
-              defaultValue={adEndTime && dayjs.unix(parseInt(adEndTime) / 1000 - 32400)}
+              defaultValue={
+                adEndTime && dayjs.unix(parseInt(adEndTime) / 1000 - 32400)
+              }
             />
           </DemoContainer>
         </LocalizationProvider>
@@ -123,7 +141,9 @@ const AdInput = ({
           defaultValue={adContent && adContent}
           width="85%"
           height="100px"
-          onChange={(e) => handleAdContent(adContent, setAdContent, setNewAdContent, e)}
+          onChange={(e) =>
+            handleAdContent(adContent, setAdContent, setNewAdContent, e)
+          }
         />
       </A.ContentBox>
       <A.LinkBox>

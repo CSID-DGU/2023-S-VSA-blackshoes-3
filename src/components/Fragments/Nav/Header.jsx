@@ -11,8 +11,6 @@ import Proptypes from "prop-types";
 const Header = ({ isRefresh }) => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
-  const accessToken = localStorage.getItem("accessToken");
-  const refreshToken = getCookie("refreshToken");
   const { userId } = useParams();
 
   // State-----------------------------------------------------
@@ -29,6 +27,7 @@ const Header = ({ isRefresh }) => {
 
   const submitLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
+      const refreshToken = getCookie("refreshToken");
       await axios
         .post(`${BASE_URL}user-service/logout`, {
           refreshToken,
@@ -53,6 +52,8 @@ const Header = ({ isRefresh }) => {
 
   // ComponentDidMount-----------------------------------------
   const fetchData = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = getCookie("refreshToken");
     if (refreshToken && accessToken) {
       try {
         await Instance.get(`user-service/sellers/${userId}`, {

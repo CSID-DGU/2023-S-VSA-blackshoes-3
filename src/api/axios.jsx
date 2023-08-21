@@ -55,7 +55,6 @@ Instance.interceptors.response.use(
           await Instance.post("user-service/refresh", {
             refreshToken,
           }).then(async (res) => {
-            console.log(res);
             const newAccessToken = res.data.payload.accessToken;
             const newRefreshToken = res.data.payload.refreshToken;
             // Access Token 재발급
