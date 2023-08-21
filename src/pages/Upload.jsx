@@ -145,14 +145,7 @@ const Upload = () => {
           requestUpload: {
             videoName: videoName,
             tagIdList: tagIdList,
-            adList: [
-              {
-                adUrl: adUrl,
-                adContent: adContent,
-                startTime: startTime,
-                endTime: endTime,
-              },
-            ],
+            adList: adList,
           },
         };
         const jsonData = JSON.stringify(requestData.requestUpload);

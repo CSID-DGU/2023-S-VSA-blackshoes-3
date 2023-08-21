@@ -22,7 +22,7 @@ const UploadAdInput = ({ adIdx, adInputs, setAdInputs, handleAdList }) => {
 
   useEffect(() => {
     handleAdList(adIdx, ad);
-  }, [ad]);
+  }, [ad.startTime, ad.endTime, ad.adContent, ad.adUrl]);
 
   // Function----------------------------------------------------
   const removeInput = (adIdx, event) => {
@@ -30,13 +30,12 @@ const UploadAdInput = ({ adIdx, adInputs, setAdInputs, handleAdList }) => {
     setAdInputs(updatedInputs);
   };
 
-  const handleTime = (savedTime, setHandler, setNewHandler, event) => {
+  const handleTime = (setHandler, event) => {
     const receivedTime = new Date(event.$d);
     const hours = receivedTime.getHours();
     const minutes = receivedTime.getMinutes();
     const seconds = receivedTime.getSeconds();
     const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
-
     setHandler(totalMilliseconds.toString());
   };
 

@@ -3,7 +3,7 @@ import * as A from "./UploadStyle";
 import * as M from "../Manage/ManageStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
-import UploadAdInput from "../Reusable/AdInput";
+import UploadAdInput from "../Reusable/UploadAdInput";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 const Vad = ({ step, handleAdList }) => {
