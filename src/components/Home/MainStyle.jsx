@@ -21,7 +21,8 @@ export const MainSegment = styled.section`
 export const StatisticBox = styled(MainSegment)`
   width: 100%;
   align-items: flex-start;
-  height: 773px;
+  height: 100%;
+  /* max-height: 773px; */
   border-radius: 24px;
   background-color: ${(props) => props.theme.bgColor};
   padding: 30px;
