@@ -45,7 +45,7 @@ const Header = ({ isRefresh }) => {
               "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
           ) {
             alert(err.response.data.error);
-            removeAll();
+            // removeAll();
           }
         });
     }

@@ -5,13 +5,31 @@ import * as U from "../Upload/UploadStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
 import { ColorButton } from "../../Sign/SignStyle";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Instance } from "../../../api/axios";
+import { useParams } from "react-router-dom";
 
-const Mright = ({ videoAds, userId, videoId }) => {
+const Mright = ({ videoAds, userId, videoId, videoComments }) => {
   // Constant----------------------------------------------------
 
   // State-------------------------------------------------------
 
   // Function----------------------------------------------------
+  const removeComment = async (commentId) => {
+    if (window.confirm("댓글을 삭제하시겠습니까?")) {
+      try {
+        await Instance.delete(
+          `comment-service/comments/${userId}/${commentId}`
+        ).thene((res) => {
+          console.log(res);
+          alert("댓글을 삭제했습니다.");
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
 
   // ComponentDidMount--------------------------------------------
   useEffect(() => {
@@ -54,9 +72,29 @@ const Mright = ({ videoAds, userId, videoId }) => {
       <U.TitleLeftBox>
         <U.SpanTitle>댓글조회</U.SpanTitle>
       </U.TitleLeftBox>
-      <M.AdCommentEmptySection>
-        <M.BoldSpan>영상 선택 후 댓글을 조회할 수 있습니다.</M.BoldSpan>
-      </M.AdCommentEmptySection>
+      {videoComments.length === 0 ? (
+        <M.AdCommentEmptySection>
+          <M.BoldSpan>영상 선택 후 댓글을 조회할 수 있습니다.</M.BoldSpan>
+        </M.AdCommentEmptySection>
+      ) : (
+        <M.AdCommentSection>
+          {videoComments.map((params) => (
+            <M.CommentBox key={params.commentId}>
+              <M.CommentLeftBox>
+                <M.CommentContent>
+                  {params.nickname} {params.createdAt.slice(0, 10)}
+                </M.CommentContent>
+                <M.CommentContent>{params.content}</M.CommentContent>
+              </M.CommentLeftBox>
+              <M.CommentRightBox
+                onClick={() => removeComment(params.commentId)}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </M.CommentRightBox>
+            </M.CommentBox>
+          ))}
+        </M.AdCommentSection>
+      )}
     </M.RightBox>
   );
 };
@@ -67,4 +105,5 @@ Mright.propTypes = {
   videoAds: PropTypes.array,
   userId: PropTypes.string,
   videoId: PropTypes.string,
+  videoComments: PropTypes.array,
 };

@@ -100,102 +100,100 @@ const Home = () => {
 
   // Function----------------------------------------------------
   const fetchData = async () => {
-    if (ACCESS_TOKEN && REFRESH_TOKEN) {
-      try {
-        // 동영상 조회수 랭킹
-        await Instance.get(
-          `statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`,
-          HEADERS
-        ).then((res) => {
-          setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
-          const videoViewData = {
-            labels: res.data.payload.videoViewRank.map((item) =>
-              item.videoName.length > 8
-                ? item.videoName.slice(0, 8) + "..."
-                : item.videoName
-            ),
-            datasets: [
-              {
-                label: "동영상 조회수 랭킹",
-                data: res.data.payload.videoViewRank.map((item) => item.views),
-                backgroundColor: BACKGROUND_COLORS,
-                borderColor: BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          };
-          setVideoViewRank(videoViewData);
-        });
-        // 동영상 좋아요 수 랭킹
-        await Instance.get(
-          `statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`,
-          HEADERS
-        ).then((res) => {
-          const videoLikeData = {
-            labels: res.data.payload.videoLikeRank.map((item) =>
-              item.videoName.length > 8
-                ? item.videoName.slice(0, 8) + "..."
-                : item.videoName
-            ),
-            datasets: [
-              {
-                label: "동영상 좋아요 수 랭킹",
-                data: res.data.payload.videoLikeRank.map((item) => item.likes),
-                backgroundColor: BACKGROUND_COLORS,
-                borderColor: BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          };
-          setVideoLikeRank(videoLikeData);
-        });
-        // 동영상 태그 랭킹
-        await Instance.get(
-          `statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`,
-          HEADERS
-        ).then((res) => {
-          const videoTagData = {
-            labels: res.data.payload.tagViewRank.map((item) => item.tagName),
-            datasets: [
-              {
-                label: "동영상 태그 랭킹",
-                data: res.data.payload.tagViewRank.map((item) => item.views),
-                backgroundColor: BACKGROUND_COLORS,
-                borderColor: BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          };
-          setVideoTagRank(videoTagData);
-        });
-        // 동영상 광고클릭 랭킹
-        await Instance.get(
-          `statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`,
-          HEADERS
-        ).then((res) => {
-          const videoAdClickData = {
-            labels: res.data.payload.videoAdClickRank.map((item) =>
-              item.videoName.length > 8
-                ? item.videoName.slice(0, 8) + "..."
-                : item.videoName
-            ),
-            datasets: [
-              {
-                label: "동영상 광고클릭 랭킹",
-                data: res.data.payload.videoAdClickRank.map(
-                  (item) => item.adClicks
-                ),
-                backgroundColor: BACKGROUND_COLORS,
-                borderColor: BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          };
-          setVideoAdClickRank(videoAdClickData);
-        });
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      // 동영상 조회수 랭킹
+      await Instance.get(
+        `statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`,
+        HEADERS
+      ).then((res) => {
+        setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
+        const videoViewData = {
+          labels: res.data.payload.videoViewRank.map((item) =>
+            item.videoName.length > 8
+              ? item.videoName.slice(0, 8) + "..."
+              : item.videoName
+          ),
+          datasets: [
+            {
+              label: "동영상 조회수 랭킹",
+              data: res.data.payload.videoViewRank.map((item) => item.views),
+              backgroundColor: BACKGROUND_COLORS,
+              borderColor: BORDER_COLORS,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setVideoViewRank(videoViewData);
+      });
+      // 동영상 좋아요 수 랭킹
+      await Instance.get(
+        `statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`,
+        HEADERS
+      ).then((res) => {
+        const videoLikeData = {
+          labels: res.data.payload.videoLikeRank.map((item) =>
+            item.videoName.length > 8
+              ? item.videoName.slice(0, 8) + "..."
+              : item.videoName
+          ),
+          datasets: [
+            {
+              label: "동영상 좋아요 수 랭킹",
+              data: res.data.payload.videoLikeRank.map((item) => item.likes),
+              backgroundColor: BACKGROUND_COLORS,
+              borderColor: BORDER_COLORS,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setVideoLikeRank(videoLikeData);
+      });
+      // 동영상 태그 랭킹
+      await Instance.get(
+        `statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`,
+        HEADERS
+      ).then((res) => {
+        const videoTagData = {
+          labels: res.data.payload.tagViewRank.map((item) => item.tagName),
+          datasets: [
+            {
+              label: "동영상 태그 랭킹",
+              data: res.data.payload.tagViewRank.map((item) => item.views),
+              backgroundColor: BACKGROUND_COLORS,
+              borderColor: BORDER_COLORS,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setVideoTagRank(videoTagData);
+      });
+      // 동영상 광고클릭 랭킹
+      await Instance.get(
+        `statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`,
+        HEADERS
+      ).then((res) => {
+        const videoAdClickData = {
+          labels: res.data.payload.videoAdClickRank.map((item) =>
+            item.videoName.length > 8
+              ? item.videoName.slice(0, 8) + "..."
+              : item.videoName
+          ),
+          datasets: [
+            {
+              label: "동영상 광고클릭 랭킹",
+              data: res.data.payload.videoAdClickRank.map(
+                (item) => item.adClicks
+              ),
+              backgroundColor: BACKGROUND_COLORS,
+              borderColor: BORDER_COLORS,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setVideoAdClickRank(videoAdClickData);
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 

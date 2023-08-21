@@ -10,9 +10,6 @@ export const Instance = axios.create({
   },
 });
 
-const accessToken = localStorage.getItem("accessToken");
-const refreshToken = getCookie("refreshToken");
-
 // Refresh Token 관련 변수
 let isRefreshing = false;
 let refreshQueue = [];
@@ -32,6 +29,8 @@ const processQueue = (error, token = null) => {
 
 Instance.interceptors.request.use(
   (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = getCookie("refreshToken");
     if (accessToken && refreshToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -52,22 +51,23 @@ Instance.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
+          const refreshToken = getCookie("refreshToken");
           await Instance.post("user-service/refresh", {
             refreshToken,
           }).then(async (res) => {
             console.log(res);
+            const newAccessToken = res.data.payload.accessToken;
+            const newRefreshToken = res.data.payload.refreshToken;
             // Access Token 재발급
             localStorage.removeItem("accessToken");
-            const newAccessToken = res.data.payload.accessToken;
             localStorage.setItem("accessToken", newAccessToken);
             // Refresh Token 재발급
             removeCookie("refreshToken", { path: "/" });
-            const newRefreshToken = res.data.payload.refreshToken;
             setCookie("refreshToken", newRefreshToken);
             // 헤더 새 토큰 반영
-            Instance.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${newAccessToken}`;
+            // Instance.defaults.headers.common[
+            //   "Authorization"
+            // ] = `Bearer ${newAccessToken}`;
             originalRequest.headers[
               "Authorization"
             ] = `Bearer ${newAccessToken}`;
