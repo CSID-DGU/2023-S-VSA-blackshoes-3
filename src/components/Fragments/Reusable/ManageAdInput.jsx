@@ -7,8 +7,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { Instance } from "../../../api/axios";
+import { ColorButton } from "../../Sign/SignStyle";
 
-const AdInput = ({
+const ManageAdInput = ({
   adId,
   userId,
   videoId,
@@ -22,6 +23,7 @@ const AdInput = ({
   setAdContent,
   adUrl,
   setAdUrl,
+  addAddInput,
 }) => {
   // Constant----------------------------------------------------
 
@@ -32,14 +34,27 @@ const AdInput = ({
   const [newAdUrl, setNewAdUrl] = useState(adUrl);
 
   // Function----------------------------------------------------
-  const removeInput = (id, event) => {
-    if (adInputs.length > 1) {
-      const updatedInputs = adInputs.filter((i) => i.id !== id);
-      setAdInputs(updatedInputs);
-    } else {
-      event.preventDefault();
-      alert("광고를 하나 이상 등록해야 합니다.");
-    }
+  const deleteAd = () => {
+    const adModifyRequest = {
+      adId,
+      modifyType: "delete",
+    };
+    submitVideoAds(adModifyRequest);
+
+    const updatedInputs = adInputs.filter((i) => i.adId !== adId);
+    setAdInputs(updatedInputs);
+  };
+
+  const updateAd = () => {
+    const adModifyRequest = {
+      adId: adId,
+      modifyType: "update",
+      startTime: newStartTime,
+      endTime: newEndTime,
+      adContent: newAdContent,
+      adUrl: newAdUrl,
+    };
+    submitVideoAds(adModifyRequest);
   };
 
   const handleTime = (savedTime, setHandler, setNewHandler, event) => {
@@ -76,15 +91,13 @@ const AdInput = ({
     }
   };
 
-  const submitVideoAds = async (e) => {
-    e.preventDefault();
-    const adModifyRequests = [];
+  const submitVideoAds = async (adModifyRequest) => {
+    const adModifyRequests = [adModifyRequest];
     try {
       if (window.confirm("광고를 수정하시겠습니까?")) {
-        await Instance.put(
-          `upload/service/videos/${userId}/${videoId}/ads`,
-          adModifyRequests
-        ).then((res) => {
+        await Instance.put(`upload-service/videos/${userId}/${videoId}/ads`, {
+          adModifyRequests: adModifyRequests,
+        }).then((res) => {
           console.log(res);
           alert("광고가 수정되었습니다.");
         });
@@ -98,7 +111,6 @@ const AdInput = ({
   return (
     <A.AdInputSection key={adId}>
       <A.TimeBox>
-        <A.NormalSpan>시작</A.NormalSpan>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["TimeField"]}>
             <TimeField
@@ -112,13 +124,6 @@ const AdInput = ({
                 adStartTime && dayjs.unix(parseInt(adStartTime) / 1000 - 32400)
               }
             />
-          </DemoContainer>
-        </LocalizationProvider>
-      </A.TimeBox>
-      <A.TimeBox>
-        <A.NormalSpan>종료</A.NormalSpan>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["TimeField"]}>
             <TimeField
               label="종료 시간"
               onChange={(e) => {
@@ -157,27 +162,25 @@ const AdInput = ({
           onChange={(e) => handleAdUrl(adUrl, setAdUrl, setNewAdUrl, e)}
         />
       </A.LinkBox>
-      <A.RemoveButton onClick={() => removeInput(adId, event)}>
-        <A.SmallImage src={Minus} alt="minus" />
-      </A.RemoveButton>
+      <ColorButton width="100%" onClick={() => updateAd()}>
+        변경
+      </ColorButton>
+      <ColorButton width="100%" onClick={() => deleteAd()}>
+        삭제
+      </ColorButton>
     </A.AdInputSection>
   );
 };
 
-export default AdInput;
+export default ManageAdInput;
 
-AdInput.propTypes = {
-  adId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+ManageAdInput.propTypes = {
+  adId: PropTypes.string,
   userId: PropTypes.string,
   videoId: PropTypes.string,
+  adStartTime: PropTypes.string,
+  adEndTime: PropTypes.string,
+  adContent: PropTypes.string,
   adInputs: PropTypes.array,
   setAdInputs: PropTypes.func,
-  adStartTime: PropTypes.string,
-  setStartTime: PropTypes.func,
-  adEndTime: PropTypes.string,
-  setEndTime: PropTypes.func,
-  adContent: PropTypes.string,
-  setAdContent: PropTypes.func,
-  adUrl: PropTypes.string,
-  setAdUrl: PropTypes.func,
 };

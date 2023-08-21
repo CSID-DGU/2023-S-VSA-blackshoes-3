@@ -1,24 +1,25 @@
 import { useState } from "react";
-import AdInput from "../Reusable/AdInput";
 import * as A from "./UploadStyle";
+import * as M from "../Manage/ManageStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
+import UploadAdInput from "../Reusable/UploadAdInput";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
-const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
+const Vad = ({ step, handleAdList }) => {
   // Constant----------------------------------------------------
-  const defaultInput = {
-    id: Date.now(),
-  };
 
   // State-------------------------------------------------------
-  const [adInputs, setAdInputs] = useState([defaultInput]);
+  const [adInputs, setAdInputs] = useState([]);
+  const [adIdx, setAdIdx] = useState(0);
 
   // Function----------------------------------------------------
   const addInput = (e) => {
     e.preventDefault();
     const newInput = {
-      id: Date.now(),
+      id: adIdx,
     };
+    setAdIdx(adIdx + 1);
     setAdInputs([...adInputs, newInput]);
   };
 
@@ -31,21 +32,23 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
           <A.FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
         </A.AdUploadButton>
       </A.TitleLeftBox>
-      <A.AdUploadGridBox>
-        {adInputs.length === 0
-          ? "광고를 추가해주세요."
-          : adInputs.map((params) => (
-              <AdInput
-                key={params.id}
-                adId={params.id}
-                adInputs={adInputs}
-                setAdInputs={setAdInputs}
-                setStartTime={setStartTime}
-                setEndTime={setEndTime}
-                setAdContent={setAdContent}
-                setAdUrl={setAdUrl}
-              />
-            ))}
+      <A.AdUploadGridBox $adInputs={adInputs}>
+        {adInputs.length === 0 ? (
+          <M.VideoEmptySection>
+            <M.LargeFont icon={faBoxOpen} />
+            <M.BoldSpan>등록된 광고가 없습니다.</M.BoldSpan>
+          </M.VideoEmptySection>
+        ) : (
+          adInputs.map((params) => (
+            <UploadAdInput
+              key={params.id}
+              adIdx={params.id}
+              adInputs={adInputs}
+              setAdInputs={setAdInputs}
+              handleAdList={handleAdList}
+            />
+          ))
+        )}
       </A.AdUploadGridBox>
     </A.AdUploadSection>
   );
@@ -55,8 +58,5 @@ export default Vad;
 
 Vad.propTypes = {
   step: PropTypes.object,
-  setStartTime: PropTypes.func,
-  setEndTime: PropTypes.func,
-  setAdContent: PropTypes.func,
-  setAdUrl: PropTypes.func,
+  handleAdList: PropTypes.func,
 };

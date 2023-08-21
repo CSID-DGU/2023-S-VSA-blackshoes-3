@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import AdInput from "../Reusable/AdInput";
 import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
@@ -8,11 +7,13 @@ import { ColorButton } from "../../Sign/SignStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Instance } from "../../../api/axios";
+import ManageAdInput from "../Reusable/ManageAdInput";
 
 const Mright = ({ videoAds, userId, videoId, videoComments }) => {
   // Constant----------------------------------------------------
 
   // State-------------------------------------------------------
+  const [adInputs, setAdInputs] = useState([]);
 
   // Function----------------------------------------------------
   const removeComment = async (commentId) => {
@@ -31,9 +32,9 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
 
   // ComponentDidMount--------------------------------------------
   useEffect(() => {
-    //
-  }, []);
-  // console.log(videoAds);
+    setAdInputs(videoAds);
+  }, [videoAds]);
+
   return (
     <M.RightBox>
       <U.TitleBetweenBox style={{ borderBottom: `1px solid #c4c4c4` }}>
@@ -54,7 +55,7 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
           </M.EmptyCenterBox>
         ) : (
           videoAds.map((params) => (
-            <AdInput
+            <ManageAdInput
               key={params.adId}
               adId={params.adId}
               userId={userId}
@@ -63,6 +64,8 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
               adUrl={params.adUrl}
               adStartTime={params.startTime}
               adEndTime={params.endTime}
+              adInputs={adInputs}
+              setAdInputs={setAdInputs}
             />
           ))
         )}

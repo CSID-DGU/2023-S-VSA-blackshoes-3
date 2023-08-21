@@ -16,11 +16,11 @@ export const Wrapper = styled.div`
 `;
 
 export const GridWrapper = styled.div`
-  width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: 336px calc(100% - 336px);
   grid-template-rows: 100px calc(100% - 100px);
+  overflow: hidden;
   @media all and (max-width: 900px) {
     grid-template-columns: 1fr;
   }
@@ -194,13 +194,13 @@ export const Body = styled.div`
   align-items: flex-start;
   gap: 20px;
   background-color: #f6f7f9;
-  padding: 30px;
-
+  padding: 20px;
   transition: all 0.3s;
   @media all and (max-width: 1480px) {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    overflow-y: auto;
   }
   @media all and (max-width: 900px) {
     grid-column: 1 / 3;

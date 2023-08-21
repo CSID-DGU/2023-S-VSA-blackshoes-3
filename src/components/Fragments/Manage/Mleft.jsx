@@ -53,11 +53,19 @@ const Mleft = ({ videoList, videoId, setVideoId, setSortOption }) => {
               $clicked_id={videoId}
               $video_id={v.videoId}
             >
-              <M.VideoListThumbnail src={v.thumbnailUrl} alt="video-thumbnail" loading="lazy" />
+              <M.VideoListThumbnail
+                src={v.thumbnailUrl}
+                alt="video-thumbnail"
+                loading="lazy"
+              />
               <M.VideoListInfo>
                 <LogoCircleBox>
-                  {/* <M.LogoImage src={v.sellorLogo} alt="Sellor-Logo" loading="lazy" /> */}
-                  LOGO
+                  <M.LogoImage
+                    // data: URL 스키마를 사용하여 base64 데이터를 직접 src에 할당
+                    src={`data:image/;base64,${v.sellerLogo}`}
+                    alt="Sellor-Logo"
+                    loading="lazy"
+                  />
                 </LogoCircleBox>
                 <M.InfoRightWrapper>
                   <M.InfoRightBox>

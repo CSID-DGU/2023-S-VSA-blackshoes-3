@@ -6,7 +6,7 @@ import { Body, GridWrapper } from "../components/Home/HomeStyle";
 import * as M from "../components/Home/MainStyle";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
-import { BASE_URL, Instance } from "../api/axios";
+import { Instance } from "../api/axios";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,7 +23,6 @@ import {
   LargeFont,
   VideoEmptySection,
 } from "../components/Fragments/Manage/ManageStyle";
-import { getCookie } from "../Cookie";
 
 ChartJS.register(
   CategoryScale,
@@ -69,15 +68,6 @@ const OPTIONS = {
   },
 };
 
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
-const REFRESH_TOKEN = getCookie("refreshToken");
-
-const HEADERS = {
-  headers: {
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-  },
-};
-
 const CHART_DEFAULT_OPTIONS = {
   labels: [],
   datasets: [],
@@ -103,8 +93,7 @@ const Home = () => {
     try {
       // 동영상 조회수 랭킹
       await Instance.get(
-        `statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`,
-        HEADERS
+        `statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`
       ).then((res) => {
         setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
         const videoViewData = {
@@ -127,8 +116,7 @@ const Home = () => {
       });
       // 동영상 좋아요 수 랭킹
       await Instance.get(
-        `statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`,
-        HEADERS
+        `statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`
       ).then((res) => {
         const videoLikeData = {
           labels: res.data.payload.videoLikeRank.map((item) =>
@@ -150,8 +138,7 @@ const Home = () => {
       });
       // 동영상 태그 랭킹
       await Instance.get(
-        `statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`,
-        HEADERS
+        `statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`
       ).then((res) => {
         const videoTagData = {
           labels: res.data.payload.tagViewRank.map((item) => item.tagName),
@@ -169,8 +156,7 @@ const Home = () => {
       });
       // 동영상 광고클릭 랭킹
       await Instance.get(
-        `statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`,
-        HEADERS
+        `statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`
       ).then((res) => {
         const videoAdClickData = {
           labels: res.data.payload.videoAdClickRank.map((item) =>
@@ -225,7 +211,13 @@ const Home = () => {
       <Body>
         <ResNav userId={userId} />
         <M.MainSegment>
-          <M.MainTitle>조회수 통계</M.MainTitle>
+          <M.MainTitle>
+            조회수 통계
+            <M.SmallRightSpan res="left">
+              데이터 집계일: {aggregatedAt}{" "}
+              <M.RefreshIcon icon={faRefresh} onClick={refreshAggregatedAt} />
+            </M.SmallRightSpan>
+          </M.MainTitle>
           <M.StatisticBox>
             <M.MainSubTitle>동영상 조회수 랭킹</M.MainSubTitle>
             <M.StatisticSection>
@@ -255,7 +247,7 @@ const Home = () => {
         <M.MainSegment>
           <M.MainTitle>
             상호작용 통계
-            <M.SmallRightSpan>
+            <M.SmallRightSpan res="right">
               데이터 집계일: {aggregatedAt}{" "}
               <M.RefreshIcon icon={faRefresh} onClick={refreshAggregatedAt} />
             </M.SmallRightSpan>
