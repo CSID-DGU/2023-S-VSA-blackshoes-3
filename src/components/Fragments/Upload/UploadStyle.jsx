@@ -352,7 +352,7 @@ export const AdUploadGridBox = styled.section`
   grid-template-columns: repeat(1, 1fr);
   grid-template-rows: repeat(auto-fit, 1fr);
   justify-items: center;
-  gap: 10px;
+  gap: 40px;
   @media all and (max-width: 1480px) {
     grid-template-columns: repeat(2, 1fr);
   }

@@ -211,7 +211,13 @@ const Home = () => {
       <Body>
         <ResNav userId={userId} />
         <M.MainSegment>
-          <M.MainTitle>조회수 통계</M.MainTitle>
+          <M.MainTitle>
+            조회수 통계
+            <M.SmallRightSpan res="left">
+              데이터 집계일: {aggregatedAt}{" "}
+              <M.RefreshIcon icon={faRefresh} onClick={refreshAggregatedAt} />
+            </M.SmallRightSpan>
+          </M.MainTitle>
           <M.StatisticBox>
             <M.MainSubTitle>동영상 조회수 랭킹</M.MainSubTitle>
             <M.StatisticSection>
@@ -241,7 +247,7 @@ const Home = () => {
         <M.MainSegment>
           <M.MainTitle>
             상호작용 통계
-            <M.SmallRightSpan>
+            <M.SmallRightSpan res="right">
               데이터 집계일: {aggregatedAt}{" "}
               <M.RefreshIcon icon={faRefresh} onClick={refreshAggregatedAt} />
             </M.SmallRightSpan>

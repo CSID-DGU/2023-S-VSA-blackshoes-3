@@ -35,6 +35,7 @@ export const MainTitle = styled.h1`
 `;
 
 export const SmallRightSpan = styled.span`
+  display: ${(props) => (props.res === "right" ? "block" : "none")};
   position: absolute;
   top: 50%;
   right: 0;
@@ -42,6 +43,9 @@ export const SmallRightSpan = styled.span`
   font-size: 12px;
   font-weight: 100;
   color: ${(props) => props.theme.secondBlack};
+  @media all and (max-width: 1480px) {
+    display: ${(props) => (props.res === "left" ? "block" : "none")};
+  }
 `;
 
 export const RefreshIcon = styled(FontAwesomeIcon)`
