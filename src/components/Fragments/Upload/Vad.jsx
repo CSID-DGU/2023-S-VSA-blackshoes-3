@@ -1,24 +1,23 @@
 import { useState } from "react";
-import AdInput from "../Reusable/AdInput";
 import * as A from "./UploadStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
+import UploadAdInput from "../Reusable/AdInput";
 
-const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
+const Vad = ({ step, handleAdList }) => {
   // Constant----------------------------------------------------
-  const defaultInput = {
-    id: Date.now(),
-  };
 
   // State-------------------------------------------------------
-  const [adInputs, setAdInputs] = useState([defaultInput]);
+  const [adInputs, setAdInputs] = useState([]);
+  const [adIdx, setAdIdx] = useState(0);
 
   // Function----------------------------------------------------
   const addInput = (e) => {
     e.preventDefault();
     const newInput = {
-      id: Date.now(),
+      id: adIdx,
     };
+    setAdIdx(adIdx + 1);
     setAdInputs([...adInputs, newInput]);
   };
 
@@ -35,15 +34,12 @@ const Vad = ({ step, setStartTime, setEndTime, setAdContent, setAdUrl }) => {
         {adInputs.length === 0
           ? "광고를 추가해주세요."
           : adInputs.map((params) => (
-              <AdInput
+              <UploadAdInput
                 key={params.id}
-                adId={params.id}
+                adIdx={params.id}
                 adInputs={adInputs}
                 setAdInputs={setAdInputs}
-                setStartTime={setStartTime}
-                setEndTime={setEndTime}
-                setAdContent={setAdContent}
-                setAdUrl={setAdUrl}
+                handleAdList={handleAdList}
               />
             ))}
       </A.AdUploadGridBox>
@@ -55,8 +51,5 @@ export default Vad;
 
 Vad.propTypes = {
   step: PropTypes.object,
-  setStartTime: PropTypes.func,
-  setEndTime: PropTypes.func,
-  setAdContent: PropTypes.func,
-  setAdUrl: PropTypes.func,
+  handleAdList: PropTypes.func,
 };

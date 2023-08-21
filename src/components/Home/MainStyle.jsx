@@ -3,7 +3,6 @@ import { styled } from "styled-components";
 
 export const MainSegment = styled.section`
   width: 750px;
-  min-height: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,12 +19,10 @@ export const MainSegment = styled.section`
 
 export const StatisticBox = styled(MainSegment)`
   width: 100%;
-  align-items: flex-start;
-  height: 100%;
   /* max-height: 773px; */
   border-radius: 24px;
   background-color: ${(props) => props.theme.bgColor};
-  padding: 30px;
+  padding: 20px;
 `;
 
 export const MainTitle = styled.h1`

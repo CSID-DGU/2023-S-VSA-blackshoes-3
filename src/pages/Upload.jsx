@@ -38,10 +38,6 @@ const Upload = () => {
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
   const [adList, setAdList] = useState([]);
-  const [adUrl, setAdUrl] = useState("");
-  const [adContent, setAdContent] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
   //
   const [isSocketOpen, setIsSocketOpen] = useState(false);
   const [percentage, setPercentage] = useState(0);
@@ -207,6 +203,16 @@ const Upload = () => {
     }
   };
 
+  const handleAdList = (idx, ad) => {
+    const adListCopy = [...adList];
+    if (adListCopy[idx] !== undefined) {
+      adListCopy[idx] = ad;
+    } else {
+      adListCopy.push(ad);
+    }
+    setAdList(adListCopy);
+  };
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(1);
@@ -296,13 +302,7 @@ const Upload = () => {
           />
         </V.VideoUploadSection>
         {/* 영상 광고 등록 컴포넌트 조각 */}
-        <Vad
-          step={step}
-          setStartTime={setStartTime}
-          setEndTime={setEndTime}
-          setAdContent={setAdContent}
-          setAdUrl={setAdUrl}
-        />
+        <Vad step={step} handleAdList={handleAdList} />
       </V.VideoForm>
     </GridWrapper>
   );

@@ -64,7 +64,6 @@ export const MiddleBox = styled.div`
   align-items: center;
   gap: 20px;
   position: relative;
-  padding: 20px 20px 0 20px;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
     width: 100%;

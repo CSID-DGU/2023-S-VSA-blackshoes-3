@@ -6,9 +6,8 @@ import * as S from "../../Sign/SignStyle";
 import logo from "../../../assets/images/logo.svg";
 import axios from "axios";
 import { BASE_URL, Instance } from "../../../api/axios";
-import Proptypes from "prop-types";
 
-const Header = ({ isRefresh }) => {
+const Header = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -56,11 +55,7 @@ const Header = ({ isRefresh }) => {
     const refreshToken = getCookie("refreshToken");
     if (refreshToken && accessToken) {
       try {
-        await Instance.get(`user-service/sellers/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }).then((res) => {
+        await Instance.get(`user-service/sellers/${userId}`).then((res) => {
           setSellerLogo(res.data.payload.sellerLogo);
           setSellerName(res.data.payload.sellerName);
         });
@@ -102,7 +97,3 @@ const Header = ({ isRefresh }) => {
 };
 
 export default Header;
-
-Header.propTypes = {
-  isRefresh: Proptypes.bool,
-};
