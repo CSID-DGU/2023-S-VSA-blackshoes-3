@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
     @Override
     @Transactional
     @KafkaListener(topics = "video-create")
-    public void createVideo(String payload) {
+    public void createVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         VideoInfoDto.VideoCreateDto videoCreateDto;
@@ -77,12 +78,14 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         } catch (Exception e) {
             log.error("Error creating ad click count", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @Transactional
     @KafkaListener(topics = "video-update")
-    public void updateVideo(String payload) {
+    public void updateVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         VideoInfoDto.VideoUpdateDto videoUpdateDto;
@@ -115,12 +118,14 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         } catch (Exception e) {
             log.error("Error updating video name", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @Transactional
     @KafkaListener(topics = "video-delete")
-    public void deleteVideo(String payload) {
+    public void deleteVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
         String videoId = payload;
 
@@ -130,6 +135,8 @@ public class KafkaVideoInfoConsumerImpl implements KafkaVideoInfoConsumer {
         } catch (Exception e) {
             log.error("Error deleting video", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     private Video createVideoEntity(VideoInfoDto.VideoCreateDto videoCreateDto) {
