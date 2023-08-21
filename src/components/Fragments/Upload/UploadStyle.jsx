@@ -338,6 +338,7 @@ export const AdUploadSection = styled(VideoUploadSection)`
   overflow-y: auto;
   @media all and (max-width: 1480px) {
     width: 100%;
+    min-height: 400px;
     overflow-y: visible;
   }
   @media all and (max-width: 900px) {
@@ -354,7 +355,8 @@ export const AdUploadGridBox = styled.section`
   justify-items: center;
   gap: 40px;
   @media all and (max-width: 1480px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: ${(props) =>
+      props.$adInputs.length === 0 ? `repeat(1, 1fr)` : `repeat(2, 1fr)`};
   }
   @media all and (max-width: 900px) {
     grid-template-columns: repeat(1, 1fr);

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import * as A from "./UploadStyle";
+import * as M from "../Manage/ManageStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
 import UploadAdInput from "../Reusable/AdInput";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 const Vad = ({ step, handleAdList }) => {
   // Constant----------------------------------------------------
@@ -30,18 +32,23 @@ const Vad = ({ step, handleAdList }) => {
           <A.FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
         </A.AdUploadButton>
       </A.TitleLeftBox>
-      <A.AdUploadGridBox>
-        {adInputs.length === 0
-          ? "광고를 추가해주세요."
-          : adInputs.map((params) => (
-              <UploadAdInput
-                key={params.id}
-                adIdx={params.id}
-                adInputs={adInputs}
-                setAdInputs={setAdInputs}
-                handleAdList={handleAdList}
-              />
-            ))}
+      <A.AdUploadGridBox $adInputs={adInputs}>
+        {adInputs.length === 0 ? (
+          <M.VideoEmptySection>
+            <M.LargeFont icon={faBoxOpen} />
+            <M.BoldSpan>등록된 광고가 없습니다.</M.BoldSpan>
+          </M.VideoEmptySection>
+        ) : (
+          adInputs.map((params) => (
+            <UploadAdInput
+              key={params.id}
+              adIdx={params.id}
+              adInputs={adInputs}
+              setAdInputs={setAdInputs}
+              handleAdList={handleAdList}
+            />
+          ))
+        )}
       </A.AdUploadGridBox>
     </A.AdUploadSection>
   );
