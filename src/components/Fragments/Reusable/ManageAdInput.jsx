@@ -36,7 +36,7 @@ const ManageAdInput = ({
   // Function----------------------------------------------------
   const deleteAd = () => {
     const adModifyRequest = {
-      adId: adId,
+      adId,
       modifyType: "delete",
     };
     submitVideoAds(adModifyRequest);
