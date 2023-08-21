@@ -93,7 +93,7 @@ const Manage = () => {
       return;
     }
   };
-  console.log(videoComments);
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(2);
@@ -158,7 +158,12 @@ const Manage = () => {
             themeTag={themeTag}
           />
         </M.LeftMiddleBox>
-        <Mright videoAds={videoAds} userId={userId} videoId={videoId} />
+        <Mright
+          videoAds={videoAds}
+          userId={userId}
+          videoId={videoId}
+          videoComments={videoComments}
+        />
       </Body>
     </GridWrapper>
   );

@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
 import * as H from "../../Home/HomeStyle";
-import SetModal from "../Reusable/SetModal";
+import { MemoizedSetModal } from "../Reusable/SetModal";
 
 const ResNav = () => {
   // constant----------------------------------------------
@@ -31,7 +31,7 @@ const ResNav = () => {
         영상 관리
       </H.ResNavItem2>
       <H.ResNavItem0 onClick={() => setModal(true)}>설정</H.ResNavItem0>
-      <SetModal modal={modal} setModal={setModal} />
+      <MemoizedSetModal modal={modal} setModal={setModal} />
     </H.ResNavSection>
   );
 };
