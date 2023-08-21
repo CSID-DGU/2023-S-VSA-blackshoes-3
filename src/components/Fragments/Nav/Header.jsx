@@ -6,6 +6,7 @@ import * as S from "../../Sign/SignStyle";
 import logo from "../../../assets/images/logo.svg";
 import axios from "axios";
 import { BASE_URL, Instance } from "../../../api/axios";
+import Proptypes from "prop-types";
 
 const Header = ({ isRefresh }) => {
   // Constant--------------------------------------------------
@@ -100,3 +101,7 @@ const Header = ({ isRefresh }) => {
 };
 
 export default Header;
+
+Header.propTypes = {
+  isRefresh: Proptypes.bool,
+};
