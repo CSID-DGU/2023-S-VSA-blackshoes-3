@@ -54,16 +54,11 @@ const Header = ({ isRefresh }) => {
   const fetchData = async () => {
     if (refreshToken && accessToken) {
       try {
-        await Instance.get(
-          `user-service/sellers/${userId}?refresh=${
-            !isRefresh ? false : isRefresh
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        ).then((res) => {
+        await Instance.get(`user-service/sellers/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }).then((res) => {
           setSellerLogo(res.data.payload.sellerLogo);
           setSellerName(res.data.payload.sellerName);
         });
@@ -72,9 +67,7 @@ const Header = ({ isRefresh }) => {
       }
     } else {
       alert("로그인이 필요한 서비스입니다.");
-      localStorage.removeItem("accessToken");
-      removeCookie("refreshToken", { path: "/" });
-      navigate(`/`, { replace: true });
+      removeAll();
     }
   };
 

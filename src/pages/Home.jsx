@@ -101,7 +101,7 @@ const Home = () => {
     try {
       // 동영상 조회수 랭킹
       await Instance.get(
-        `${BASE_URL}statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`,
+        `statistics-service/rank/videos/views/${userId}?refresh=${isRefresh}`,
         HEADERS
       ).then((res) => {
         setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
@@ -125,7 +125,7 @@ const Home = () => {
       });
       // 동영상 좋아요 수 랭킹
       await Instance.get(
-        `${BASE_URL}statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`,
+        `statistics-service/rank/videos/likes/${userId}?refresh=${isRefresh}`,
         HEADERS
       ).then((res) => {
         const videoLikeData = {
@@ -148,7 +148,7 @@ const Home = () => {
       });
       // 동영상 태그 랭킹
       await Instance.get(
-        `${BASE_URL}statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`,
+        `statistics-service/rank/tags/views/${userId}?refresh=${isRefresh}`,
         HEADERS
       ).then((res) => {
         const videoTagData = {
@@ -167,7 +167,7 @@ const Home = () => {
       });
       // 동영상 광고클릭 랭킹
       await Instance.get(
-        `${BASE_URL}statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`,
+        `statistics-service/rank/videos/adClicks/${userId}?refresh=${isRefresh}`,
         HEADERS
       ).then((res) => {
         const videoAdClickData = {
@@ -200,7 +200,7 @@ const Home = () => {
     try {
       setIsRefresh(true);
       await Instance.get(
-        `${BASE_URL}statistics-service/rank/videos/views/${userId}?refresh=true`
+        `statistics-service/rank/videos/views/${userId}?refresh=true`
       ).then((res) => {
         setAggregatedAt(res.data.payload.aggregatedAt.slice(0, 19));
         alert("데이터 집계일을 새로고침했습니다.");

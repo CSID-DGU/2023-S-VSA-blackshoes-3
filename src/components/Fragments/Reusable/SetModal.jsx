@@ -4,7 +4,8 @@ import * as S from "../../Sign/SignStyle";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { BASE_URL, Instance } from "../../../api/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { removeCookie } from "../../../Cookie";
 
 const customStyles = {
   content: {
@@ -23,9 +24,11 @@ const customStyles = {
 
 Modal.setAppElement("#root");
 
-const SetModal = ({ modal, setModal }) => {
+const SetModal = ({ modal, setModal, accessToken, refreshToken }) => {
   // Constant----------------------------------------------
   const { userId } = useParams();
+  const navigate = useNavigate();
+
   // State-------------------------------------------------
   const [sellerName, setSellerName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -33,14 +36,18 @@ const SetModal = ({ modal, setModal }) => {
   const [sellerLogo, setSellerLogo] = useState(null);
 
   // function----------------------------------------------
+  const removeAll = () => {
+    localStorage.removeItem("accessToken");
+    removeCookie("refreshToken", { path: "/" });
+    console.clear();
+    navigate(`/`, { replace: true });
+  };
+
   const submitNewName = async () => {
     try {
-      await Instance.put(
-        `${BASE_URL}user-service/sellers/${userId}/sellerName`,
-        {
-          sellerName,
-        }
-      ).then((res) => {
+      await Instance.put(`user-service/sellers/${userId}/sellerName`, {
+        sellerName,
+      }).then((res) => {
         alert("이름이 변경되었습니다.");
       });
     } catch (err) {
@@ -54,7 +61,7 @@ const SetModal = ({ modal, setModal }) => {
     formData.append("sellerLogo", sellerLogo);
     try {
       await Instance.put(
-        `${BASE_URL}user-service/sellers/${userId}/sellerLogo`,
+        `user-service/sellers/${userId}/sellerLogo`,
         formData,
         {
           headers: {
@@ -72,7 +79,7 @@ const SetModal = ({ modal, setModal }) => {
 
   const submitNewPassword = async () => {
     try {
-      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/password`, {
+      await Instance.put(`user-service/sellers/${userId}/password`, {
         oldPassword,
         newPassword,
       }).then(() => {
@@ -88,21 +95,26 @@ const SetModal = ({ modal, setModal }) => {
 
   // ComponentDidMount-------------------------------------
   const fetchData = async () => {
-    try {
-      await Instance.get(`${BASE_URL}user-service/sellers/${userId}`).then(
-        (res) => {
+    if (accessToken && refreshToken) {
+      try {
+        await Instance.get(`user-service/sellers/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }).then((res) => {
           setSellerName(res.data.payload.sellerName);
           setSellerLogo(res.data.payload.sellerLogo);
-        }
-      );
-    } catch (err) {
-      console.log(err);
+        });
+      } catch (err) {
+        console.log(err);
+        removeAll();
+      }
     }
   };
   useEffect(() => {
     fetchData();
   }, []);
-  console.log("실행됨");
+
   return (
     <Modal
       isOpen={modal}
@@ -173,4 +185,6 @@ export const MemoizedSetModal = React.memo(SetModal);
 SetModal.propTypes = {
   modal: PropTypes.bool,
   setModal: PropTypes.func,
+  accessToken: PropTypes.string,
+  refreshToken: PropTypes.string,
 };

@@ -9,6 +9,7 @@ const Nav = () => {
   const navigate = useNavigate();
   const { page } = useContext(GlobalContext);
   const { userId } = useParams();
+  const accessToken = localStorage.getItem("accessToken");
 
   // State-------------------------------------------------
   const [modal, setModal] = useState(false);
@@ -41,7 +42,11 @@ const Nav = () => {
       <H.BorderButton width="270px" onClick={() => setModal(true)}>
         설정
       </H.BorderButton>
-      <MemoizedSetModal modal={modal} setModal={setModal} />
+      <MemoizedSetModal
+        modal={modal}
+        setModal={setModal}
+        accessToken={accessToken}
+      />
     </H.NavSection>
   );
 };
