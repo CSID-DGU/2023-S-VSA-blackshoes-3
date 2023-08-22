@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F2F8FF',
   },
   contentsContainer: {
     flex: 1,
@@ -65,35 +64,24 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '100%',
   },
-  textContainer: {width: '100%'},
+  textContainer: {
+    marginTop: 15,
+  },
 
   title: {
-    fontSize: 30,
-    color: '#525252',
-    fontWeight: 'bold',
-    marginTop: 15,
-    paddingHorizontal: 20,
-    fontStyle: 'italic',
-    textShadowOffset: {width: 0, height: 1},
-    textShadowRadius: 2,
-    textShadowColor: 'gray',
+    fontSize: 23,
+    color: 'black',
+    marginLeft: 15,
+    fontWeight: '700',
+    width: 200,
   },
 
   videoThumbnailContainer: {
-    backgroundColor: 'white',
     alignItems: 'center',
     paddingTop: 17,
     paddingBottom: 10,
-    marginVertical: 7,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
-    width: '90%',
-    borderRadius: 10,
+    marginBottom: 7,
+    width: '92%',
+    backgroundColor: 'white',
   },
 });

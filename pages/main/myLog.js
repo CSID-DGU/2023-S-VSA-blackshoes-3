@@ -32,7 +32,9 @@ export default function MyLog({navigation, route}) {
       const response = await axiosInstance.get(
         `personalized-service/${userId}/videos/history?page=${page}&size=10`,
       );
+
       const history = response.data.payload.viewedVideos.viewVideoIdList;
+      console.log('hi : ', history);
       await getVideoData(history);
     } catch (error) {
       console.error(error);
@@ -45,6 +47,7 @@ export default function MyLog({navigation, route}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/videoIds?q=${videoIdString}`,
       );
+      console.log('rio : ', response.data.payload.videos);
       setVideoData(prevVideos => [
         ...prevVideos,
         ...response.data.payload.videos,
@@ -53,7 +56,7 @@ export default function MyLog({navigation, route}) {
       console.log(e);
     }
   };
-
+  console.log('비디오 데이따 : ', videoData);
   const deleteSubmit = async () => {
     try {
       const deletePromises = deleteArray.map(videoId => {
@@ -159,9 +162,7 @@ export default function MyLog({navigation, route}) {
               );
             })
           ) : (
-            <View style={styles.spinnerContainer}>
-              <Spinner size="big" color="black" />
-            </View>
+            <Text style={styles.alertText}>시청 기록이 없습니다.</Text>
           )}
         </ScrollView>
       </View>
@@ -213,5 +214,10 @@ const styles = StyleSheet.create({
   },
   spinnerContainer: {
     marginTop: 200,
+  },
+  alertText: {
+    fontSize: 23,
+    marginTop: 30,
+    textAlign: 'center',
   },
 });

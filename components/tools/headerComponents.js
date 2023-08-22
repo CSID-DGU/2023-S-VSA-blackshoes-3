@@ -85,27 +85,6 @@ export const HeaderTitleComponent = ({
             />
           </View>
         )}
-        {/* {value === 'tagName' && (
-          <FlatList
-            horizontal={true}
-            data={[...themeList, ...regionList]}
-            keyExtractor={(item, index) => index.toString()}
-            style={styles.tagRecommendContainer}
-            nestedScrollEnabled={true}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setSearchText(item.tagName);
-                  navigation.push('SearchedVideos', {
-                    searchText,
-                    value,
-                  });
-                }}>
-                <Text style={styles.autoCompleteText}>{item.tagName}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        )} */}
       </>
     );
   } else {

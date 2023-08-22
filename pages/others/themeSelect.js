@@ -75,10 +75,10 @@ export default function ThemeSelect({navigation}) {
     }
   };
 
-  const Item = ({item}) => {
+  const Item = ({item, type}) => {
     const isItemSelected = selectedItem.includes(item.tagId);
     return (
-      <View style={styles.item}>
+      <View style={type === 0 ? styles.item : styles.themeItem}>
         <ImageBackground
           style={StyleSheet.absoluteFill}
           source={item.src}
@@ -87,7 +87,7 @@ export default function ThemeSelect({navigation}) {
             <View
               style={{
                 ...StyleSheet.absoluteFill,
-                backgroundColor: 'rgba(236, 255, 251, 1)',
+                backgroundColor: 'rgba(70,70,70, 0.8)',
               }}
             />
           )}
@@ -111,28 +111,16 @@ export default function ThemeSelect({navigation}) {
           <Text style={styles.littleTitle}>지역</Text>
         </View>
         <View style={styles.areaScrollContainer}>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() => handleIconPress('left')}>
-            <Image source={require('../../assets/themeImg/arrow-left.png')} />
-          </TouchableOpacity>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={true}
-            onScroll={handleScroll}
-            ref={scrollViewRef}
             style={styles.horizontalScrollContainer}>
             <View style={styles.areaScroll}>
               {regionList.map((e, i) => {
-                return <Item key={i} item={e} />;
+                return <Item key={i} item={e} type={0} />;
               })}
             </View>
           </ScrollView>
-          <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() => handleIconPress('right')}>
-            <Image source={require('../../assets/themeImg/arrow-right.png')} />
-          </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.littleTitle}>테마</Text>
@@ -142,7 +130,7 @@ export default function ThemeSelect({navigation}) {
           style={styles.themeScrollcontainer}
           contentContainerStyle={styles.itemContainer}
           data={themeList}
-          renderItem={({item}) => <Item item={item} />}
+          renderItem={({item}) => <Item item={item} type={1} />}
           numColumns={3}
         />
       </View>
@@ -156,33 +144,24 @@ export default function ThemeSelect({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F8FF',
   },
   contentsContainer: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     alignItems: 'center',
   },
   areaScrollContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+
     borderRadius: 10,
     height: 110,
-    width: 350,
-    marginTop: 15,
+
+    marginTop: 10,
     marginBottom: 30,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   horizontalScrollContainer: {
-    marginTop: 7,
+    marginHorizontal: 15,
   },
   textContainer: {
     marginTop: 5,
@@ -193,54 +172,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingLeft: 3,
   },
-  itemContainer: {paddingBottom: 20, paddingHorizontal: 19},
+  itemContainer: {
+    paddingBottom: 20,
+    paddingHorizontal: 23,
+  },
   themeScrollcontainer: {
-    marginTop: 15,
-    width: 350,
-    backgroundColor: 'white',
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
-    paddingTop: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    width: '100%',
+    paddingTop: 10,
   },
   scrollbutton: {
     width: 20,
   },
   item: {
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: 'hidden',
-    width: 95,
-    height: 95,
-    marginRight: 14,
+    width: 85,
+    height: 100,
+    marginRight: 6,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 7,
   },
-
+  themeItem: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    width: 100,
+    height: 85,
+    marginBottom: 15,
+    marginRight: 15,
+  },
   touch: {
     width: '100%',
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    padding: 8,
   },
-
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: '#545454',
+    color: 'black',
     marginLeft: 20,
     marginVertical: 15,
   },
@@ -249,25 +218,19 @@ const styles = StyleSheet.create({
     color: '#4D4D4D',
     marginLeft: 15,
     fontWeight: '700',
-    fontStyle: 'italic',
     width: 100,
   },
   text: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
+    fontWeight: '600',
     color: 'white',
-    fontSize: 21,
+    fontSize: 17,
     letterSpacing: 3,
     padding: 2,
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 2,
-    textShadowColor: 'gray',
   },
   selectedText: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    color: 'black',
-    fontSize: 21,
+    fontWeight: '600',
+    color: 'rgba(230,230,230, 0.8)',
+    fontSize: 17,
     letterSpacing: 3,
     padding: 2,
   },
@@ -286,7 +249,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    fontStyle: 'italic',
     fontWeight: 'bold',
     fontSize: 20,
     letterSpacing: 3,

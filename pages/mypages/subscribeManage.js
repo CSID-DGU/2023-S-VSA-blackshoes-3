@@ -19,8 +19,6 @@ import {useFocusEffect} from '@react-navigation/native';
 import {setTag} from '../../storage/actions';
 
 export default function ThemeSelectEach() {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const scrollViewRef = useRef();
   const userId = useSelector(state => state.USER);
   const tag = useSelector(state => state.TAG);
   const [selectedItem, setSelectedItem] = useState(tag);
@@ -71,27 +69,6 @@ export default function ThemeSelectEach() {
     }
   };
 
-  const handleIconPress = direction => {
-    if (direction === 'left') {
-      let newScrollPosition = scrollPosition - 200;
-      scrollViewRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-    } else if (direction === 'right') {
-      let newScrollPosition = scrollPosition + 200;
-      scrollViewRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-    }
-  };
-
-  const handleScroll = event => {
-    setScrollPosition(event.nativeEvent.contentOffset.x);
-  };
   const Item = ({item, type}) => {
     const isItemSelected = selectedItem.includes(item.tagId);
     return (
@@ -129,15 +106,9 @@ export default function ThemeSelectEach() {
           <Text style={styles.littleTitle}>지역</Text>
         </View>
         <View style={styles.areaScrollContainer}>
-          {/* <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() => handleIconPress('left')}>
-            <Image source={require('../../assets/themeImg/arrow-left.png')} />
-          </TouchableOpacity> */}
+
           <ScrollView
             horizontal
-            onScroll={handleScroll}
-            ref={scrollViewRef}
             showsHorizontalScrollIndicator={false}
             style={styles.horizontalScrollContainer}>
             <View style={styles.areaScroll}>
@@ -146,11 +117,6 @@ export default function ThemeSelectEach() {
               })}
             </View>
           </ScrollView>
-          {/* <TouchableOpacity
-            style={styles.scrollbutton}
-            onPress={() => handleIconPress('right')}>
-            <Image source={require('../../assets/themeImg/arrow-right.png')} />
-          </TouchableOpacity> */}
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.littleTitle}>테마</Text>
@@ -171,7 +137,6 @@ export default function ThemeSelectEach() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
   },
   contentsContainer: {
     flex: 1,

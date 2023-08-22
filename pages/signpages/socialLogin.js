@@ -8,6 +8,13 @@ import {View, Alert, ActivityIndicator as Spinner} from 'react-native';
 import {WebView} from 'react-native-webview';
 
 import {SERVER_IP} from '../../config';
+import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import {
+  setUserId,
+  setRefreshToken,
+  setAccessToken,
+} from '../../storage/actions';
 
 const getParams = url => {
   const paramPart = url.split('?')[1];
@@ -25,42 +32,13 @@ const getParams = url => {
 const SocialLogin = ({route, navigation}) => {
   const [url, setUrl] = useState('');
 
-  // useEffect(() => {
-  //   kakao();
-  // }, []);
-  console.log('route.params.what : ', route.params.what);
-
-  // const kakao = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${SERVER_IP}oauth2/authorize/${route.params.what}`,
-  //     );
-  //     console.log('response : ', response);
-  //     setKakaoUrl(response.data.accounts_login_url);
-  //     console.log('fine');
-  //   } catch (e) {
-  //     console.log(e);
-  //     if (e.response && e.response.status === 401) {
-  //     }
-  //   }
-  // };
+  const dispatch = useDispatch();
 
   const handleWebViewNavigationStateChange = navState => {
     setUrl(navState.url);
   };
 
   console.log('url : ', url);
-
-  const handleTokenExtraction = url => {
-    const myUrl = new URL(url);
-    const params = new URLSearchParams(myUrl.search);
-    const accessToken = params.get('access-token');
-    const refreshToken = params.get('refresh-token');
-    if (accessToken && refreshToken) {
-      console.log('Access Token:', accessToken);
-      console.log('Refresh Token:', refreshToken);
-    }
-  };
 
   useEffect(() => {
     if (url === 'http://13.125.69.94:8001/login?error') {
@@ -75,28 +53,31 @@ const SocialLogin = ({route, navigation}) => {
     }
     if (url.includes('social-login')) {
       const params = getParams(url);
-      console.log('Access Token:', params['access-token']);
-      console.log('Refresh Token:', params['refresh-token']);
+      dispatch(setUserId(params['userId']));
+      dispatch(setAccessToken(params['access-token']));
+      dispatch(setRefreshToken(params['refresh-token']));
+      // console.log('User Id: ', params['userId']);
+      // console.log('Access Token:', params['access-token']);
+      // console.log('Refresh Token:', params['refresh-token']);
+      navigation.navigate('Home');
     }
   }, [url]);
 
   return (
-    <>
-      {/* {kakaoUrl === '' ? (
-        <View style={{flex: 1}}>
+    <View style={{flex: 1}}>
+      {url.includes('social-login') ? (
+        <View style={{marginTop: 30}}>
           <Spinner size="big" color="black" />
         </View>
-      ) : ( */}
-      <View style={{flex: 1}}>
+      ) : (
         <WebView
           source={{
             uri: `${SERVER_IP}oauth2/authorize/${route.params.what}`,
           }}
           onNavigationStateChange={handleWebViewNavigationStateChange}
         />
-      </View>
-      {/* //) */}
-    </>
+      )}
+    </View>
   );
 };
 
