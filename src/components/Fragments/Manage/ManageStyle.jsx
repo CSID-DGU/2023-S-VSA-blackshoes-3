@@ -142,6 +142,15 @@ export const VideoListInfo = styled.section`
   padding-left: 5px;
 `;
 
+export const VideoListAddText = styled.p`
+  width: 100%;
+  text-align: center;
+  color: ${(props) => props.theme.secondBlack};
+  font-size: 14px;
+  margin: 10px 0;
+  cursor: pointer;
+`;
+
 export const VideoEmptySection = styled.section`
   width: 100%;
   height: 100%;

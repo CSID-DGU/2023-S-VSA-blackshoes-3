@@ -411,7 +411,7 @@ export const RemoveButton = styled.button`
   border-radius: 8px;
   background-color: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.primaryColor};
-  font-size: 20px;
+  font-size: 14px;
   cursor: pointer;
 `;
 
