@@ -49,6 +49,7 @@ const Manage = () => {
         const videoRecentData = await Instance.get(
           `content-slave-service/videos/${userId}/sort?s=recent&page=0&size=10`
         );
+        console.log(videoRecentData);
         setVideoList(videoRecentData.data.payload.videos);
       } else if (sortOption === "조회수순") {
         const videoViewData = await Instance.get(
