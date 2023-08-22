@@ -22,25 +22,17 @@ export const Ad = ({adContents, logoUri}) => {
         style={{
           flexDirection: 'row',
           gap: 7,
-          alignItems: 'flex-end',
         }}>
         <View
           style={{
             flexDirection: 'row',
-            alignItems: 'flex-end',
             width: '100%',
             justifyContent: 'space-between',
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-              gap: 7,
-            }}>
-            <Text style={styles.commentTitle}>광고</Text>
-          </View>
-          <TouchableOpacity onPress={handleOpenUrl}>
-            <Icon name="log-in" size={20} color={'black'} />
+          <Text style={styles.commentTitle}>광고</Text>
+
+          <TouchableOpacity style={styles.moveAdButton} onPress={handleOpenUrl}>
+            <Text style={styles.moveAdButtonText}>상품 확인</Text>
           </TouchableOpacity>
         </View>
 
@@ -73,13 +65,6 @@ export const Ad = ({adContents, logoUri}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    lineHeight: 25,
-    backgroundColor: '#C2C2C2',
-    borderRadius: 10,
-    paddingVertical: 5,
-    flexDirection: 'row',
-  },
   webview: {
     width: '100%',
     height: 400,
@@ -104,8 +89,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
 
-  goButton: {
-    fontSize: 13,
+  moveAdButton: {
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: '#21C99B',
+  },
+  moveAdButtonText: {
+    color: 'white',
     fontWeight: '600',
   },
 });

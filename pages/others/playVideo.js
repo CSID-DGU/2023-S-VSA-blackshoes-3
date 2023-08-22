@@ -12,6 +12,7 @@ import {
   TextInput,
   Modal,
   FlatList,
+  Linking,
 } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import axiosInstance from '../../utils/axiosInstance';
@@ -312,6 +313,10 @@ export default function Play({route, navigation}) {
     setOpenModal(false);
   };
 
+  const handleOpenUrl = () => {
+    Linking.openURL(openAd.adcontent.adUrl);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -340,8 +345,15 @@ export default function Play({route, navigation}) {
               onProgress={({currentTime}) => setCurrentTime(currentTime)}
               onTouchEnd={toggleControls}
             />
-            {openAd && (
-              <Text style={styles.adInScreen}>{openAd.adContent}</Text>
+            {openAd && isFullScreen && (
+              <View style={styles.adInScreenContiner}>
+                <Text style={styles.adInScreen}>{openAd.adContent}</Text>
+                <TouchableOpacity
+                  style={styles.moveAdButton}
+                  onPress={handleOpenUrl}>
+                  <Text style={styles.moveAdButtonText}>상품 확인</Text>
+                </TouchableOpacity>
+              </View>
             )}
           </>
         )}
@@ -540,7 +552,7 @@ export default function Play({route, navigation}) {
                     </TouchableOpacity>
                   )
                 ) : (
-                  <Text>wait hi</Text>
+                  <Text>wait</Text>
                 )}
 
                 {recommendedVideos.length > 0 &&
@@ -670,11 +682,11 @@ export default function Play({route, navigation}) {
                                 </View>
                                 {modifyIndex === i && (
                                   <View style={styles.modifyCommentContainer}>
-                                    <Icon
+                                    {/* <Icon
                                       name="arrow-up-left"
                                       size={25}
                                       color={'black'}
-                                    />
+                                    /> */}
                                     <TextInput
                                       style={styles.commentModifyInput}
                                       placeholder="댓글 수정"
@@ -889,13 +901,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
   },
   commentUserName: {
-    color: 'black',
     fontSize: 13,
     fontWeight: '600',
   },
   commentContents: {
     fontSize: 13,
     fontWeight: '600',
+    color: 'black',
+
     paddingHorizontal: 20,
     lineHeight: 25,
     paddingVertical: 5,
@@ -933,7 +946,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     marginTop: 10,
-    marginHorizontal: 15,
+    marginHorizontal: 17.5,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -947,7 +960,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: 350,
     gap: 5,
-    paddingHorizontal: 10,
+
     borderBottomWidth: 0.6,
   },
   commentsInfo: {
@@ -955,24 +968,24 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    paddingHorizontal: 10,
   },
   commentUserNameAll: {
     fontSize: 13,
-    color: 'black',
     fontWeight: '600',
   },
   commentDate: {fontSize: 11},
-  commentContentsAll: {fontSize: 15},
+  commentContentsAll: {fontSize: 15, color: 'black'},
   commentContentsAllContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   modifyCommentContainer: {
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 40,
     gap: 10,
     marginTop: 5,
   },
@@ -984,9 +997,16 @@ const styles = StyleSheet.create({
   commentModifyInput: {
     backgroundColor: 'white',
     borderRadius: 10,
-    borderWidth: 0.5,
+
     paddingHorizontal: 15,
-    width: '85%',
+    width: '100%',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 1,
   },
   videoThumbnailContainer: {
     backgroundColor: 'white',
@@ -1030,14 +1050,32 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   adInScreen: {
+    fontSize: 13,
+  },
+
+  adInScreenContiner: {
     position: 'absolute',
     top: 20,
-    right: 15,
-    width: '50%',
+    right: 30,
     paddingVertical: 5,
     borderRadius: 5,
     fontSize: 16,
     backgroundColor: 'rgba(255,255,255,0.7)',
     paddingHorizontal: 10,
+    alignItems: 'flex-end',
+  },
+  moveAdButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 3,
+    marginHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: '#21C99B',
+    width: 70,
+  },
+  moveAdButtonText: {
+    color: 'white',
+    fontWeight: '600',
   },
 });

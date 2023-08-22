@@ -25,23 +25,36 @@ export default function MyVideo({navigation, route}) {
   const [page, setPage] = useState(0);
   const [maxPage, setMaxPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-
   const userId = useSelector(state => state.USER);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
   const scrollViewRef = useRef(null);
-  const tagId = useSelector(state => state.TAG);
-  const theme = getMatchingThemeNames(tagId, regionList, themeList);
+  const [tagId, setTagId] = useState([]);
+  //const tagId = useSelector(state => state.TAG);
+  const [theme, setTheme] = useState([]);
 
   useEffect(() => {
     if (view === 0) {
-      if (tagId.length > 0) {
-        setSelectedTagId(theme[0].tagId);
-      }
+      getSubscribedDATA();
     } else {
       getDataLike();
       setSelectedTagId('');
+      setTheme([]);
     }
   }, [view]);
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    if (theme.length > 0) {
+      setSelectedTagId(theme[0].tagId);
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    if (tagId.length > 0) {
+      getMatchingThemeNames(tagId, regionList, themeList);
+    }
+  }, [tagId]);
 
   useEffect(() => {
     if (selectedTagId !== '') {
@@ -58,12 +71,9 @@ export default function MyVideo({navigation, route}) {
   }, [isEndOfScroll]);
 
   useEffect(() => {
-    console.log(page);
-
     if (page === 0) {
       getData(0);
     } else {
-      console.log('won');
       getData(page);
     }
   }, [page]);
@@ -76,7 +86,7 @@ export default function MyVideo({navigation, route}) {
     const matchedThemeListThemes = themeLists.filter(theme1 =>
       tagIds.includes(theme1.tagId),
     );
-    return [...matchedRegionThemes, ...matchedThemeListThemes];
+    setTheme([...matchedRegionThemes, ...matchedThemeListThemes]);
   }
 
   const Item = ({item}) => (
@@ -114,14 +124,14 @@ export default function MyVideo({navigation, route}) {
     try {
       let response;
       if (view === 0) {
-        console.log('here!!');
         response = await axiosInstance.get(
           `content-slave-service/videos/tagId?q=${selectedTagId}&s=recent&page=${page}&size=10`,
         );
-        console.log('love');
+        console.log(
+          'response.data.payload.videos : ',
+          response.data.payload.videos,
+        );
       } else {
-        console.log('love2');
-
         response = await axiosInstance.get(
           `personalized-service/${userId}/videos/liked?page=${page}&size=10`,
         );
@@ -157,6 +167,7 @@ export default function MyVideo({navigation, route}) {
       }
     }
   };
+
   const getDataLike = async () => {
     try {
       const response = await axiosInstance.get(
@@ -164,10 +175,10 @@ export default function MyVideo({navigation, route}) {
       );
       const likedVideoIds = response.data.payload.likedVideos.likedVideoIdList;
       if (likedVideoIds && likedVideoIds.length > 0) {
-        console.log('like');
         await getLikedVideo(likedVideoIds);
       }
     } catch (e) {
+      //여기 마크
       if (e.response && e.response.status === 404) {
         console.log(e.response.status);
         setVideoData([]);
@@ -194,6 +205,18 @@ export default function MyVideo({navigation, route}) {
       setView(e);
     }
   };
+
+  const getSubscribedDATA = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `personalized-service/${userId}/tags/subscribed`,
+      );
+      setTagId(response.data.payload.subscribedTagList);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.contentsContainer}>
@@ -232,7 +255,7 @@ export default function MyVideo({navigation, route}) {
         </View>
         <View style={styles.horizontalContainer}>
           {view === 0 &&
-            (tagId.length > 0 ? (
+            (theme.length > 0 ? (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={true}
@@ -248,6 +271,9 @@ export default function MyVideo({navigation, route}) {
                 </View>
               </ScrollView>
             ) : (
+              // <View style={styles.spinner}>
+              //   <Spinner size="big" color="black" />
+              // </View>
               <Text style={styles.alertText}>태그를 구독해주세요.</Text>
             ))}
         </View>
@@ -371,7 +397,9 @@ const styles = StyleSheet.create({
   alertText: {
     fontSize: 23,
     marginTop: 30,
+    textAlign: 'center',
   },
+
   videoThumbnailContainer: {
     alignItems: 'center',
     paddingTop: 17,

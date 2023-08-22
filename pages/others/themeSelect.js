@@ -23,6 +23,7 @@ export default function ThemeSelect({navigation}) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollViewRef = useRef();
   const userId = useSelector(state => state.USER);
+
   const handlePress = e => {
     if (selectedItem.includes(e)) {
       setSelectedItem(() => selectedItem.filter(el => el !== e));

@@ -19,15 +19,19 @@ export default function SignIn({navigation}) {
             }}>
             <Text style={styles.whiteText}>로그인</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.googleLogin, styles.button]}>
+          <TouchableOpacity
+            style={[styles.googleLogin, styles.button]}
+            onPress={() => navigation.navigate('Social', {what: 'google'})}>
             <Text style={styles.text}>구글 로그인</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.kakaoLogin, styles.button]}
-            onPress={() => navigation.navigate('Kakao')}>
+            onPress={() => navigation.navigate('Social', {what: 'kakao'})}>
             <Text style={styles.text}>카카오 로그인</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.naverLogin, styles.button]}>
+          <TouchableOpacity
+            style={[styles.naverLogin, styles.button]}
+            onPress={() => navigation.navigate('Social', {what: 'naver'})}>
             <Text style={styles.whiteText}>네이버 로그인</Text>
           </TouchableOpacity>
         </View>

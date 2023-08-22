@@ -11,7 +11,6 @@ import {
 import axiosInstance from '../../utils/axiosInstance';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 export default function ThemeVideo({route, navigation}) {
-  // console.log(route.params.item.tagId);
   const [videoData, setVideoData] = useState([]);
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function ThemeVideo({route, navigation}) {
       `content-slave-service/videos/search?type=tagName&q=${route.params.item.tagName}&s=recent&page=0&size=10`,
     );
     setVideoData(response.data.payload.videos);
-    // console.log(route.params.item.tagName);
   };
 
   return (

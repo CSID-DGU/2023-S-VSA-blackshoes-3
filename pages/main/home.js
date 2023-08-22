@@ -21,6 +21,13 @@ import NavigationBar from '../../components/tools/navigationBar';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
 
 export default function Home({navigation, route}) {
+  //남은 거 :
+  //1. myVideos화면 버그 수정,
+  //2. myVideos화면에서 includes함수 제거
+  //3. 에러 핸들링,
+  //4. 로그인 화면 고치기,
+  //5. 통계 서비스
+
   const [viewedTag, setViewedTag] = useState([]);
   const [recommendedVideos, setRecommendedVideos] = useState([]);
   const scrollViewRef = useRef();
@@ -203,9 +210,12 @@ export default function Home({navigation, route}) {
         style={styles.scrollContainer}
         contentContainerStyle={{alignItems: 'center'}}>
         <View style={styles.contentsContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>인기 지역</Text>
-          </View>
+          {regionRank.length > 0 && (
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>인기 지역</Text>
+            </View>
+          )}
+
           <View style={styles.areaScrollContainer}>
             <ScrollView
               horizontal
@@ -222,9 +232,11 @@ export default function Home({navigation, route}) {
               </View>
             </ScrollView>
           </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>인기 테마</Text>
-          </View>
+          {themeRank.length > 0 && (
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>인기 테마</Text>
+            </View>
+          )}
 
           <View style={styles.areaScrollContainer}>
             <ScrollView
@@ -242,9 +254,11 @@ export default function Home({navigation, route}) {
               </View>
             </ScrollView>
           </View>
-          <View style={[styles.textContainer, {marginBottom: 9}]}>
-            <Text style={styles.title}>추천 영상</Text>
-          </View>
+          {recommendedVideos.length > 0 && (
+            <View style={[styles.textContainer, {marginBottom: 9}]}>
+              <Text style={styles.title}>추천 영상</Text>
+            </View>
+          )}
 
           {recommendedVideos.length > 0 ? (
             recommendedVideos.map((e, i) => {
