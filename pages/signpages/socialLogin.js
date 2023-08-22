@@ -9,6 +9,19 @@ import {WebView} from 'react-native-webview';
 
 import {SERVER_IP} from '../../config';
 
+const getParams = url => {
+  const paramPart = url.split('?')[1];
+  if (!paramPart) return {};
+
+  const paramStrings = paramPart.split('&');
+
+  return paramStrings.reduce((acc, paramString) => {
+    const [key, value] = paramString.split('=');
+    acc[key] = decodeURIComponent(value);
+    return acc;
+  }, {});
+};
+
 const SocialLogin = ({route, navigation}) => {
   const [url, setUrl] = useState('');
 
@@ -38,6 +51,17 @@ const SocialLogin = ({route, navigation}) => {
 
   console.log('url : ', url);
 
+  const handleTokenExtraction = url => {
+    const myUrl = new URL(url);
+    const params = new URLSearchParams(myUrl.search);
+    const accessToken = params.get('access-token');
+    const refreshToken = params.get('refresh-token');
+    if (accessToken && refreshToken) {
+      console.log('Access Token:', accessToken);
+      console.log('Refresh Token:', refreshToken);
+    }
+  };
+
   useEffect(() => {
     if (url === 'http://13.125.69.94:8001/login?error') {
       Alert.alert(
@@ -49,7 +73,11 @@ const SocialLogin = ({route, navigation}) => {
       navigation.navigate('SignIn');
       return;
     }
-    //if(url === '')
+    if (url.includes('social-login')) {
+      const params = getParams(url);
+      console.log('Access Token:', params['access-token']);
+      console.log('Refresh Token:', params['refresh-token']);
+    }
   }, [url]);
 
   return (
