@@ -3,7 +3,7 @@ import * as H from "../../Home/HomeStyle";
 import * as S from "../../Sign/SignStyle";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { BASE_URL, Instance } from "../../../api/axios";
+import { Instance } from "../../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { removeCookie } from "../../../Cookie";
 
@@ -13,12 +13,13 @@ const customStyles = {
     border: "1px solid #1DAE86",
     borderRadius: "16px",
     outline: "none",
-    padding: "20px",
+    padding: "30px",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "50%",
     minWidth: "350px",
+    height: "60%",
   },
 };
 
@@ -87,6 +88,24 @@ const SetModal = ({ modal, setModal, accessToken, refreshToken }) => {
         setOldPassword("");
         setNewPassword("");
       });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
+  };
+
+  // 회원탈퇴-----------------------------------------------
+  const submitWithdrawal = async () => {
+    try {
+      if (window.confirm("정말로 탈퇴하시겠습니까?")) {
+        await Instance.post(`user-service/sellers/${userId}/withdrawal`, {
+          password: oldPassword,
+        }).then(() => {
+          alert("회원 탈퇴가 완료되었습니다.");
+          navigate(`/`, { replace: true });
+          removeAll();
+        });
+      }
     } catch (err) {
       console.log(err);
       alert(err.response.data.error);
@@ -174,6 +193,17 @@ const SetModal = ({ modal, setModal, accessToken, refreshToken }) => {
               수정
             </S.ColorButton>
           </H.ModalBetweenBox>
+        </H.ModalInputSection>
+        <H.ModalTitle>회원 탈퇴</H.ModalTitle>
+        <H.ModalInputSection>
+          <H.ModalInput
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+          <S.ColorButton width="30%" onClick={submitWithdrawal}>
+            탈퇴
+          </S.ColorButton>
         </H.ModalInputSection>
       </H.ModalSection>
     </Modal>

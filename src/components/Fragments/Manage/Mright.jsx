@@ -3,7 +3,6 @@ import * as M from "./ManageStyle";
 import * as U from "../Upload/UploadStyle";
 import PlusButton from "../../../assets/images/plus-button.svg";
 import PropTypes from "prop-types";
-import { ColorButton } from "../../Sign/SignStyle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Instance } from "../../../api/axios";
@@ -14,6 +13,7 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
 
   // State-------------------------------------------------------
   const [adInputs, setAdInputs] = useState([]);
+  const [adInputId, setAdInputId] = useState(undefined);
 
   // Function----------------------------------------------------
   const removeComment = async (commentId) => {
@@ -21,13 +21,29 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
       try {
         await Instance.delete(
           `comment-service/comments/${userId}/${commentId}`
-        ).then((res) => {
+        ).then(() => {
           alert("댓글을 삭제했습니다.");
         });
       } catch (err) {
         alert("댓글 삭제에 실패했습니다.");
       }
     }
+  };
+
+  useEffect(() => {
+    setAdInputs(videoAds);
+  }, [videoAds]);
+
+  const addAdInput = (e) => {
+    e.preventDefault();
+    const newInput = {
+      adId: adInputId,
+      adContent: "",
+      adUrl: "",
+      startTime: "",
+      endTime: "",
+    };
+    setAdInputs([...adInputs, newInput]);
   };
 
   // ComponentDidMount--------------------------------------------
@@ -41,12 +57,14 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
         <U.SpanTitle>
           광고수정{" "}
           <U.AdUploadButton>
-            <U.FullIcon src={PlusButton} alt="plus-button" loading="lazy" />
+            <U.FullIcon
+              src={PlusButton}
+              alt="plus-button"
+              loading="lazy"
+              onClick={addAdInput}
+            />
           </U.AdUploadButton>
         </U.SpanTitle>
-        <ColorButton width="70px" style={{ height: "35px" }}>
-          변경
-        </ColorButton>
       </U.TitleBetweenBox>
       <M.AdModifySection>
         {videoAds.length === 0 ? (
@@ -54,7 +72,7 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
             <M.BoldSpan>영상 선택 후 광고를 수정할 수 있습니다.</M.BoldSpan>
           </M.EmptyCenterBox>
         ) : (
-          videoAds.map((params) => (
+          adInputs.map((params) => (
             <ManageAdInput
               key={params.adId}
               adId={params.adId}
@@ -66,6 +84,7 @@ const Mright = ({ videoAds, userId, videoId, videoComments }) => {
               adEndTime={params.endTime}
               adInputs={adInputs}
               setAdInputs={setAdInputs}
+              setAdInputId={setAdInputId}
             />
           ))
         )}

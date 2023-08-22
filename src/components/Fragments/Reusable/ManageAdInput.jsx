@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as A from "../Upload/UploadStyle";
 import Minus from "../../../assets/images/minus.svg";
 import { LocalizationProvider, TimeField } from "@mui/x-date-pickers";
@@ -7,45 +7,56 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { Instance } from "../../../api/axios";
-import { ColorButton } from "../../Sign/SignStyle";
 
 const ManageAdInput = ({
-  adId,
   userId,
+  adId,
   videoId,
   adInputs,
   setAdInputs,
   adStartTime,
-  setStartTime,
   adEndTime,
-  setEndTime,
   adContent,
-  setAdContent,
   adUrl,
-  setAdUrl,
-  addAddInput,
 }) => {
   // Constant----------------------------------------------------
 
   // State-------------------------------------------------------
-  const [newStartTime, setNewStartTime] = useState(adStartTime);
-  const [newEndTime, setNewEndTime] = useState(adEndTime);
-  const [newAdContent, setNewAdContent] = useState(adContent);
-  const [newAdUrl, setNewAdUrl] = useState(adUrl);
+  const [newStartTime, setNewStartTime] = useState(
+    adStartTime ? adStartTime : ""
+  );
+  const [newEndTime, setNewEndTime] = useState(adEndTime ? adEndTime : "");
+  const [newAdContent, setNewAdContent] = useState(adContent ? adContent : "");
+  const [newAdUrl, setNewAdUrl] = useState(adUrl ? adUrl : "");
 
   // Function----------------------------------------------------
-  const deleteAd = () => {
-    const adModifyRequest = {
-      adId,
-      modifyType: "delete",
-    };
-    submitVideoAds(adModifyRequest);
-
-    const updatedInputs = adInputs.filter((i) => i.adId !== adId);
-    setAdInputs(updatedInputs);
+  const deleteAd = (adId, event) => {
+    if (adId !== undefined) {
+      const updatedInputs = adInputs.filter((i) => i.adId !== adId);
+      const adModifyRequest = {
+        adId: adId,
+        modifyType: "delete",
+      };
+      submitModifyVideoAds(adModifyRequest);
+      setAdInputs(updatedInputs);
+    } else {
+      window.alert("새로고침이 필요합니다.");
+    }
   };
 
-  const updateAd = () => {
+  const createAd = async () => {
+    const adModifyRequest = {
+      adId: adId,
+      modifyType: "create",
+      startTime: newStartTime,
+      endTime: newEndTime,
+      adContent: newAdContent,
+      adUrl: newAdUrl,
+    };
+    submitModifyVideoAds(adModifyRequest);
+  };
+
+  const updateAd = async () => {
     const adModifyRequest = {
       adId: adId,
       modifyType: "update",
@@ -54,47 +65,48 @@ const ManageAdInput = ({
       adContent: newAdContent,
       adUrl: newAdUrl,
     };
-    submitVideoAds(adModifyRequest);
+    submitModifyVideoAds(adModifyRequest);
   };
 
-  const handleTime = (savedTime, setHandler, setNewHandler, event) => {
+  const handleTime = (setHandler, event) => {
     const receivedTime = new Date(event.$d);
     const hours = receivedTime.getHours();
     const minutes = receivedTime.getMinutes();
     const seconds = receivedTime.getSeconds();
     const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
-    if (savedTime) {
-      setNewHandler(totalMilliseconds.toString());
-    } else {
-      setHandler(totalMilliseconds.toString());
-    }
+    setHandler(totalMilliseconds.toString());
   };
 
-  const handleAdContent = (
-    savedAdContent,
-    setHandler,
-    setNewHandler,
-    event
-  ) => {
-    if (savedAdContent) {
-      setNewHandler(event.target.value);
-    } else {
-      setHandler(event.target.value);
-    }
+  const handleStartTime = (event) => {
+    setNewStartTime(event);
+    console.log(event);
   };
 
-  const handleAdUrl = (savedAdUrl, setHandler, setNewHandler, event) => {
-    if (savedAdUrl) {
-      setNewHandler(event.target.value);
-    } else {
-      setHandler(event.target.value);
-    }
+  const handleEndTime = (event) => {
+    setNewEndTime(event);
+    console.log(event);
   };
 
-  const submitVideoAds = async (adModifyRequest) => {
+  const handleAdContent = (event) => {
+    setNewAdContent(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleAdUrl = (event) => {
+    setNewAdUrl(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const submitModifyVideoAds = async (adModifyRequest) => {
     const adModifyRequests = [adModifyRequest];
     try {
-      if (window.confirm("광고를 수정하시겠습니까?")) {
+      if (
+        adModifyRequest.modifyType === "create"
+          ? window.confirm("광고를 추가하시겠습니까?")
+          : adModifyRequest.modifyType === "delete"
+          ? window.confirm("광고를 삭제하시겠습니까?")
+          : window.confirm("광고를 수정하시겠습니까?")
+      ) {
         await Instance.put(`upload-service/videos/${userId}/${videoId}/ads`, {
           adModifyRequests: adModifyRequests,
         }).then((res) => {
@@ -111,24 +123,28 @@ const ManageAdInput = ({
   return (
     <A.AdInputSection key={adId}>
       <A.TimeBox>
+        <A.NormalSpan>시작</A.NormalSpan>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["TimeField"]}>
             <TimeField
               label="시작 시간"
-              onChange={(e) => {
-                handleTime(adStartTime, setStartTime, setNewStartTime, e);
-              }}
+              onChange={(e) => handleTime(handleStartTime, e)}
               format="HH:mm:ss"
               color="success"
               defaultValue={
-                adStartTime && dayjs.unix(parseInt(adStartTime) / 1000 - 32400)
+                adEndTime && dayjs.unix(parseInt(adEndTime) / 1000 - 32400)
               }
             />
+          </DemoContainer>
+        </LocalizationProvider>
+      </A.TimeBox>
+      <A.TimeBox>
+        <A.NormalSpan>종료</A.NormalSpan>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["TimeField"]}>
             <TimeField
               label="종료 시간"
-              onChange={(e) => {
-                handleTime(adEndTime, setEndTime, setNewEndTime, e);
-              }}
+              onChange={(e) => handleTime(handleEndTime, e)}
               format="HH:mm:ss"
               color="success"
               defaultValue={
@@ -143,12 +159,10 @@ const ManageAdInput = ({
         <A.AdInput
           type="text"
           placeholder="광고로 등록할 내용을 입력해주세요."
-          defaultValue={adContent && adContent}
           width="85%"
           height="100px"
-          onChange={(e) =>
-            handleAdContent(adContent, setAdContent, setNewAdContent, e)
-          }
+          onChange={(e) => handleAdContent(e)}
+          defaultValue={adContent && adContent}
         />
       </A.ContentBox>
       <A.LinkBox>
@@ -156,18 +170,20 @@ const ManageAdInput = ({
         <A.AdInput
           type="text"
           placeholder="광고 링크를 첨부해주세요."
-          defaultValue={adUrl && adUrl}
           width="85%"
           height="35px"
-          onChange={(e) => handleAdUrl(adUrl, setAdUrl, setNewAdUrl, e)}
+          onChange={(e) => handleAdUrl(e)}
+          defaultValue={adUrl && adUrl}
         />
       </A.LinkBox>
-      <ColorButton width="100%" onClick={() => updateAd()}>
-        변경
-      </ColorButton>
-      <ColorButton width="100%" onClick={() => deleteAd()}>
-        삭제
-      </ColorButton>
+      {adId !== undefined ? (
+        <A.RemoveButton onClick={() => updateAd()}>광고 수정</A.RemoveButton>
+      ) : (
+        <A.RemoveButton onClick={() => createAd()}>광고 추가</A.RemoveButton>
+      )}
+      <A.RemoveButton onClick={() => deleteAd(adId, event)}>
+        광고 삭제
+      </A.RemoveButton>
     </A.AdInputSection>
   );
 };
@@ -175,12 +191,19 @@ const ManageAdInput = ({
 export default ManageAdInput;
 
 ManageAdInput.propTypes = {
-  adId: PropTypes.string,
+  adIdx: PropTypes.number,
   userId: PropTypes.string,
+  adId: PropTypes.string,
   videoId: PropTypes.string,
-  adStartTime: PropTypes.string,
-  adEndTime: PropTypes.string,
-  adContent: PropTypes.string,
   adInputs: PropTypes.array,
   setAdInputs: PropTypes.func,
+  adStartTime: PropTypes.string,
+  setStartTime: PropTypes.func,
+  adEndTime: PropTypes.string,
+  setEndTime: PropTypes.func,
+  adContent: PropTypes.string,
+  setAdContent: PropTypes.func,
+  adUrl: PropTypes.string,
+  setAdUrl: PropTypes.func,
+  handleAdList: PropTypes.func,
 };

@@ -103,7 +103,6 @@ export const VideoListWrapper = styled.section`
   gap: 10px;
   overflow-y: auto;
   padding-right: 10px;
-  border: 2px solid ${(props) => props.theme.middleGray};
   @media all and (max-width: 1280px) {
     align-items: center;
   }
@@ -148,7 +147,8 @@ export const VideoListAddText = styled.p`
   text-align: center;
   color: ${(props) => props.theme.secondBlack};
   font-size: 14px;
-  border: 1px solid ${(props) => props.theme.middleGray};
+  margin: 10px 0;
+  cursor: pointer;
 `;
 
 export const VideoEmptySection = styled.section`
