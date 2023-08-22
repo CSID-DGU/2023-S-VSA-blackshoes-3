@@ -64,7 +64,6 @@ export const MiddleBox = styled.div`
   align-items: center;
   gap: 20px;
   position: relative;
-  padding: 20px 20px 0 20px;
   transition: all 0.3s;
   @media all and (max-width: 1280px) {
     width: 100%;
@@ -116,7 +115,9 @@ export const VideoListBox = styled.section`
   flex-direction: column;
   padding: 10px;
   border: ${(props) =>
-    props.$video_id === props.$clicked_id ? `3px solid ${props.theme.secondBlack}` : ``};
+    props.$video_id === props.$clicked_id
+      ? `3px solid ${props.theme.secondBlack}`
+      : ``};
   @media all and (max-width: 1280px) {
     max-width: 600px;
   }
@@ -139,6 +140,15 @@ export const VideoListInfo = styled.section`
   border: 1px solid ${(props) => props.theme.middleGray};
   border-top: none;
   padding-left: 5px;
+`;
+
+export const VideoListAddText = styled.p`
+  width: 100%;
+  text-align: center;
+  color: ${(props) => props.theme.secondBlack};
+  font-size: 14px;
+  margin: 10px 0;
+  cursor: pointer;
 `;
 
 export const VideoEmptySection = styled.section`
@@ -358,11 +368,63 @@ export const InputButton = styled.label`
 export const AdModifySection = styled.section`
   width: 100%;
   height: 400px;
+  max-height: 400px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   overflow: auto;
   padding-right: 10px;
+`;
+
+export const AdCommentSection = styled.section`
+  width: 100%;
+  height: calc(100% - 400px);
+  max-height: calc(100% - 400px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  padding-right: 10px;
+`;
+
+export const CommentBox = styled.section`
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const CommentLeftBox = styled.section`
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  background-color: ${(props) => props.theme.lightGray};
+  border: none;
+  border-radius: 16px 0 0 16px;
+  padding-left: 10px;
+`;
+
+export const CommentContent = styled.h3`
+  width: 100%;
+  color: ${(props) => props.theme.secondBlack};
+  font-size: 14px;
+`;
+
+export const CommentRightBox = styled.section`
+  width: 20%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) => props.theme.primaryColor};
+  color: ${(props) => props.theme.bgColor};
+  border: none;
+  border-radius: 0 16px 16px 0;
+  cursor: pointer;
 `;
 
 export const AdCommentEmptySection = styled.section`
@@ -371,7 +433,6 @@ export const AdCommentEmptySection = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: ${(props) => `1px solid ${props.theme.middleGray}`}; */
 `;
 
 export const EmptyCenterBox = styled.section`

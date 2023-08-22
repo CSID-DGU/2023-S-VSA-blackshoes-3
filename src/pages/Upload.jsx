@@ -14,11 +14,6 @@ import SockJS from "sockjs-client/dist/sockjs.min.js";
 import Stomp from "stompjs";
 import { Instance } from "../api/axios";
 
-// Upload EC2
-// 210.94.179.19:9127
-// Content-Slave
-// 13.125.69.94:8011
-
 const Upload = () => {
   // Constant----------------------------------------------------
   const navigate = useNavigate();
@@ -43,10 +38,6 @@ const Upload = () => {
   const [regionTag, setRegionTag] = useState([]);
   const [themeTag, setThemeTag] = useState([]);
   const [adList, setAdList] = useState([]);
-  const [adUrl, setAdUrl] = useState("");
-  const [adContent, setAdContent] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
   //
   const [isSocketOpen, setIsSocketOpen] = useState(false);
   const [percentage, setPercentage] = useState(0);
@@ -61,32 +52,38 @@ const Upload = () => {
 
   const fetchData = async () => {
     try {
-      await Instance.get(`/upload-service/videos/temporary/${userId}`).then(async (res) => {
-        if (res.status === 200) {
-          if (window.confirm(`이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`)) {
-            const expiredAt = new Date(res.data.payload.expiredAt);
-            setVideoExpireState(
-              `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
-            );
-            setVideoId(res.data.payload.videoId);
-            setPreview2(res.data.payload.videoCloudfrontUrl);
-            setStep({
-              first: false,
-              second: true,
-            });
-          } else {
-            await Instance.delete(
-              `/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
-            )
-              .then(() => {
-                alert("이전에 작성하던 영상을 삭제했습니다.");
-              })
-              .catch(() => {
-                alert("이전에 작성하던 영상을 삭제하는데 실패했습니다.");
+      await Instance.get(`/upload-service/videos/temporary/${userId}`).then(
+        async (res) => {
+          if (res.status === 200) {
+            if (
+              window.confirm(
+                `이전에 작성하던 영상이 있습니다. 이어서 작성하시겠습니까?`
+              )
+            ) {
+              const expiredAt = new Date(res.data.payload.expiredAt);
+              setVideoExpireState(
+                `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
+              );
+              setVideoId(res.data.payload.videoId);
+              setPreview2(res.data.payload.videoCloudfrontUrl);
+              setStep({
+                first: false,
+                second: true,
               });
+            } else {
+              await Instance.delete(
+                `/upload-service/videos/temporary/${userId}/${res.data.payload.videoId}`
+              )
+                .then(() => {
+                  alert("이전에 작성하던 영상을 삭제했습니다.");
+                })
+                .catch(() => {
+                  alert("이전에 작성하던 영상을 삭제하는데 실패했습니다.");
+                });
+            }
           }
         }
-      });
+      );
     } catch (err) {
       if (err.status === 404) {
         alert("이전에 작성하던 영상이 없습니다.");
@@ -148,14 +145,7 @@ const Upload = () => {
           requestUpload: {
             videoName: videoName,
             tagIdList: tagIdList,
-            adList: [
-              {
-                adUrl: adUrl,
-                adContent: adContent,
-                startTime: startTime,
-                endTime: endTime,
-              },
-            ],
+            adList: adList,
           },
         };
         const jsonData = JSON.stringify(requestData.requestUpload);
@@ -164,11 +154,15 @@ const Upload = () => {
         formData.append("thumbnail", thumbnailFile);
         formData.append("requestUpload", blob);
         try {
-          await Instance.post(`/upload-service/videos/${userId}/${videoId}`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }).then((res) => {
+          await Instance.post(
+            `/upload-service/videos/${userId}/${videoId}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          ).then((res) => {
             console.log(res);
             alert("동영상 최종 업로드가 완료되었습니다.");
             navigate(`/home/${userId}/manage`);
@@ -185,7 +179,9 @@ const Upload = () => {
   const handleVideoExtend = async () => {
     if (window.confirm("영상이 지금으로부터 30분 후 만료됩니다.")) {
       try {
-        await Instance.put(`/upload-service/videos/temporary/${userId}/${videoId}`).then((res) => {
+        await Instance.put(
+          `/upload-service/videos/temporary/${userId}/${videoId}`
+        ).then((res) => {
           const expiredAt = new Date(res.data.payload.expiredAt);
           setVideoExpireState(
             `${expiredAt.getHours()}시 ${expiredAt.getMinutes()}분에 영상이 만료됩니다 --- `
@@ -198,6 +194,16 @@ const Upload = () => {
     } else {
       return;
     }
+  };
+
+  const handleAdList = (idx, ad) => {
+    const adListCopy = [...adList];
+    if (adListCopy[idx] !== undefined) {
+      adListCopy[idx] = ad;
+    } else {
+      adListCopy.push(ad);
+    }
+    setAdList(adListCopy);
   };
 
   // ComponentDidMount-------------------------------------------
@@ -248,9 +254,15 @@ const Upload = () => {
             <V.SpanTitle>영상 등록</V.SpanTitle>
             <V.MiddleSpan $preview2={preview2}>
               {videoExpireState}{" "}
-              <V.ExtendSpan onClick={handleVideoExtend}>만료 시간 연장</V.ExtendSpan>
+              <V.ExtendSpan onClick={handleVideoExtend}>
+                만료 시간 연장
+              </V.ExtendSpan>
             </V.MiddleSpan>
-            <ColorButton width="65px" style={{ height: "35px" }} onClick={handleNextStep}>
+            <ColorButton
+              width="65px"
+              style={{ height: "35px" }}
+              onClick={handleNextStep}
+            >
               {step.first && step.second ? "등록" : "다음"}
             </ColorButton>
           </V.TitleBetweenBox>
@@ -283,13 +295,7 @@ const Upload = () => {
           />
         </V.VideoUploadSection>
         {/* 영상 광고 등록 컴포넌트 조각 */}
-        <Vad
-          step={step}
-          setStartTime={setStartTime}
-          setEndTime={setEndTime}
-          setAdContent={setAdContent}
-          setAdUrl={setAdUrl}
-        />
+        <Vad step={step} handleAdList={handleAdList} />
       </V.VideoForm>
     </GridWrapper>
   );

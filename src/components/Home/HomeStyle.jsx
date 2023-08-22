@@ -16,11 +16,11 @@ export const Wrapper = styled.div`
 `;
 
 export const GridWrapper = styled.div`
-  width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: 336px calc(100% - 336px);
   grid-template-rows: 100px calc(100% - 100px);
+  overflow: hidden;
   @media all and (max-width: 900px) {
     grid-template-columns: 1fr;
   }
@@ -107,20 +107,26 @@ export const HoverButton0 = styled.button`
   height: 50px;
   border: none;
   border-radius: 16px;
-  background-color: ${(props) => (props.$page === 0 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 0 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 0 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 0 ? props.theme.bgColor : props.theme.textColor};
   font-size: 14px;
   cursor: pointer;
 `;
 
 export const HoverButton1 = styled(HoverButton0)`
-  background-color: ${(props) => (props.$page === 1 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 1 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 1 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 1 ? props.theme.bgColor : props.theme.textColor};
 `;
 
 export const HoverButton2 = styled(HoverButton0)`
-  background-color: ${(props) => (props.$page === 2 ? props.theme.primaryColor : "transparent")};
-  color: ${(props) => (props.$page === 2 ? props.theme.bgColor : props.theme.textColor)};
+  background-color: ${(props) =>
+    props.$page === 2 ? props.theme.primaryColor : "transparent"};
+  color: ${(props) =>
+    props.$page === 2 ? props.theme.bgColor : props.theme.textColor};
 `;
 
 export const BorderButton = styled.button`
@@ -180,7 +186,7 @@ export const ResNavItem2 = styled(ResNavItem0)`
 // Body-------------------------------------------------------------
 export const Body = styled.div`
   width: calc(100vw - 336px);
-  height: 100%;
+  max-height: calc(100vh - 100px);
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   display: flex;
@@ -188,13 +194,13 @@ export const Body = styled.div`
   align-items: flex-start;
   gap: 20px;
   background-color: #f6f7f9;
-  padding: 30px;
-
+  padding: 20px;
   transition: all 0.3s;
   @media all and (max-width: 1480px) {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    overflow-y: auto;
   }
   @media all and (max-width: 900px) {
     grid-column: 1 / 3;

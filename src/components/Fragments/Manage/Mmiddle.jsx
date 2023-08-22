@@ -89,11 +89,15 @@ const Mmiddle = ({
       try {
         const formData = new FormData();
         formData.append("thumbnail", thumbnailModifiedFile);
-        await Instance.put(`/upload-service/videos/${userId}/${videoId}/thumbnail`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }).then(() => {
+        await Instance.put(
+          `/upload-service/videos/${userId}/${videoId}/thumbnail`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        ).then(() => {
           alert("썸네일이 수정되었습니다.");
         });
       } catch (err) {
@@ -136,11 +140,19 @@ const Mmiddle = ({
   return (
     <M.MiddleBox>
       <M.PreviewSection $thumbnail_preview={thumbnailPreview}>
-        <M.ThumbnailPreview src={thumbnailPreview} alt="thumbnail_preview" loading="lazy" />
+        <M.ThumbnailPreview
+          src={thumbnailPreview}
+          alt="thumbnail_preview"
+          loading="lazy"
+        />
       </M.PreviewSection>
       <U.TitleBetweenBox>
         <U.SpanTitle>영상 정보 수정</U.SpanTitle>
-        <ColorButton width="70px" style={{ height: "35px" }} onClick={handleVideoDelete}>
+        <ColorButton
+          width="70px"
+          style={{ height: "35px" }}
+          onClick={handleVideoDelete}
+        >
           삭제
         </ColorButton>
       </U.TitleBetweenBox>
@@ -148,8 +160,15 @@ const Mmiddle = ({
         수정을 원하는 영상을 클릭해주세요.
       </M.VideoModifyWrapper>
       {videoUrl && (
-        <M.VideoModify controls ref={videoRef} className="video-js vjs-default-skin">
-          <M.VideoSource src={`${videoUrl}/${selectedQuality}.m3u8`} type="application/x-mpegURL" />
+        <M.VideoModify
+          controls
+          ref={videoRef}
+          className="video-js vjs-default-skin"
+        >
+          <M.VideoSource
+            src={`${videoUrl}/${selectedQuality}.m3u8`}
+            type="application/x-mpegURL"
+          />
         </M.VideoModify>
       )}
       <M.InfoModify>
@@ -174,7 +193,11 @@ const Mmiddle = ({
               <M.InputButton htmlFor="file-input">File</M.InputButton>
             </M.SecondBlackP>
             <M.CenterBox>
-              <M.FileTextInput type="text" defaultValue={videoThumbnail} disabled={!videoId} />
+              <M.FileTextInput
+                type="text"
+                defaultValue={videoThumbnail}
+                disabled={!videoId}
+              />
               <M.FileInput
                 type="file"
                 id="file-input"
@@ -182,14 +205,20 @@ const Mmiddle = ({
                 onChange={handleVideoThumbnail}
                 disabled={!videoId}
               />
-              <M.ExchangeButton onClick={submitVideoThumbnail} disabled={!videoId}>
+              <M.ExchangeButton
+                onClick={submitVideoThumbnail}
+                disabled={!videoId}
+              >
                 변경
               </M.ExchangeButton>
             </M.CenterBox>
           </M.InfoVerticalBox>
         </M.InfoFlexBox>
         <M.SecondBlackP>
-          태그 <M.InputButton onClick={() => videoId && submitVideoTag()}>변경</M.InputButton>
+          태그{" "}
+          <M.InputButton onClick={() => videoId && submitVideoTag()}>
+            변경
+          </M.InputButton>
         </M.SecondBlackP>
         <M.TagSection>
           <U.TagCheckSection>

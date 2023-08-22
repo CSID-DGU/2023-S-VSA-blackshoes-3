@@ -21,7 +21,7 @@ const Manage = () => {
 
   // State-------------------------------------------------------
   const { setPage } = useContext(GlobalContext);
-  const [videoList, setVideoList] = useState([]);
+  const [videoListData, setVideoListData] = useState({});
   const [sortOption, setSortOption] = useState("최신순");
   const [selectedQuality, setSelectedQuality] = useState(qualities[0]);
   const videoRef = useRef(null);
@@ -49,22 +49,22 @@ const Manage = () => {
         const videoRecentData = await Instance.get(
           `content-slave-service/videos/${userId}/sort?s=recent&page=0&size=10`
         );
-        setVideoList(videoRecentData.data.payload.videos);
+        setVideoListData(videoRecentData.data.payload);
       } else if (sortOption === "조회수순") {
         const videoViewData = await Instance.get(
           `content-slave-service/videos/${userId}/sort?s=views&page=0&size=10`
         );
-        setVideoList(videoViewData.data.payload.videos);
+        setVideoListData(videoViewData.data.payload);
       } else if (sortOption === "좋아요순") {
         const videoLikeData = await Instance.get(
           `content-slave-service/videos/${userId}/sort?s=likes&page=0&size=10`
         );
-        setVideoList(videoLikeData.data.payload.videos);
+        setVideoListData(videoLikeData.data.payload);
       } else if (sortOption === "광고클릭순") {
         const videoAdsData = await Instance.get(
           `content-slave-service/videos/${userId}/sort?s=adClicks&page=0&size=10`
         );
-        setVideoList(videoAdsData.data.payload.videos);
+        setVideoListData(videoAdsData.data.payload);
       }
     } catch (err) {
       console.log(err);
@@ -93,7 +93,7 @@ const Manage = () => {
       return;
     }
   };
-  console.log(videoComments);
+
   // ComponentDidMount-------------------------------------------
   useEffect(() => {
     setPage(2);
@@ -138,9 +138,10 @@ const Manage = () => {
         <ResNav userId={userId} />
         <M.LeftMiddleBox>
           <Mleft
-            videoList={videoList}
+            videoListData={videoListData}
             videoId={videoId}
             setVideoId={setVideoId}
+            sortOption={sortOption}
             setSortOption={setSortOption}
           />
           <Mmiddle
@@ -158,7 +159,12 @@ const Manage = () => {
             themeTag={themeTag}
           />
         </M.LeftMiddleBox>
-        <Mright videoAds={videoAds} userId={userId} videoId={videoId} />
+        <Mright
+          videoAds={videoAds}
+          userId={userId}
+          videoId={videoId}
+          videoComments={videoComments}
+        />
       </Body>
     </GridWrapper>
   );

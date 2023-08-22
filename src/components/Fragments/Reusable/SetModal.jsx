@@ -2,9 +2,10 @@ import Modal from "react-modal";
 import * as H from "../../Home/HomeStyle";
 import * as S from "../../Sign/SignStyle";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { BASE_URL, Instance } from "../../../api/axios";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Instance } from "../../../api/axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { removeCookie } from "../../../Cookie";
 
 const customStyles = {
   content: {
@@ -12,20 +13,23 @@ const customStyles = {
     border: "1px solid #1DAE86",
     borderRadius: "16px",
     outline: "none",
-    padding: "20px",
+    padding: "30px",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "50%",
     minWidth: "350px",
+    height: "60%",
   },
 };
 
 Modal.setAppElement("#root");
 
-const SetModal = ({ modal, setModal }) => {
+const SetModal = ({ modal, setModal, accessToken, refreshToken }) => {
   // Constant----------------------------------------------
   const { userId } = useParams();
+  const navigate = useNavigate();
+
   // State-------------------------------------------------
   const [sellerName, setSellerName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -33,9 +37,16 @@ const SetModal = ({ modal, setModal }) => {
   const [sellerLogo, setSellerLogo] = useState(null);
 
   // function----------------------------------------------
+  const removeAll = () => {
+    localStorage.removeItem("accessToken");
+    removeCookie("refreshToken", { path: "/" });
+    console.clear();
+    navigate(`/`, { replace: true });
+  };
+
   const submitNewName = async () => {
     try {
-      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/sellerName`, {
+      await Instance.put(`user-service/sellers/${userId}/sellerName`, {
         sellerName,
       }).then((res) => {
         alert("이름이 변경되었습니다.");
@@ -50,11 +61,15 @@ const SetModal = ({ modal, setModal }) => {
     const formData = new FormData();
     formData.append("sellerLogo", sellerLogo);
     try {
-      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/sellerLogo`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res) => {
+      await Instance.put(
+        `user-service/sellers/${userId}/sellerLogo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      ).then((res) => {
         alert("로고가 변경되었습니다.");
       });
     } catch (err) {
@@ -65,7 +80,7 @@ const SetModal = ({ modal, setModal }) => {
 
   const submitNewPassword = async () => {
     try {
-      await Instance.put(`${BASE_URL}user-service/sellers/${userId}/password`, {
+      await Instance.put(`user-service/sellers/${userId}/password`, {
         oldPassword,
         newPassword,
       }).then(() => {
@@ -79,15 +94,40 @@ const SetModal = ({ modal, setModal }) => {
     }
   };
 
-  // ComponentDidMount-------------------------------------
-  const fetchData = async () => {
+  // 회원탈퇴-----------------------------------------------
+  const submitWithdrawal = async () => {
     try {
-      await Instance.get(`${BASE_URL}user-service/sellers/${userId}`).then((res) => {
-        setSellerName(res.data.payload.sellerName);
-        setSellerLogo(res.data.payload.sellerLogo);
-      });
+      if (window.confirm("정말로 탈퇴하시겠습니까?")) {
+        await Instance.post(`user-service/sellers/${userId}/withdrawal`, {
+          password: oldPassword,
+        }).then(() => {
+          alert("회원 탈퇴가 완료되었습니다.");
+          navigate(`/`, { replace: true });
+          removeAll();
+        });
+      }
     } catch (err) {
       console.log(err);
+      alert(err.response.data.error);
+    }
+  };
+
+  // ComponentDidMount-------------------------------------
+  const fetchData = async () => {
+    if (accessToken && refreshToken) {
+      try {
+        await Instance.get(`user-service/sellers/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }).then((res) => {
+          setSellerName(res.data.payload.sellerName);
+          setSellerLogo(res.data.payload.sellerLogo);
+        });
+      } catch (err) {
+        console.log(err);
+        removeAll();
+      }
     }
   };
   useEffect(() => {
@@ -95,7 +135,11 @@ const SetModal = ({ modal, setModal }) => {
   }, []);
 
   return (
-    <Modal isOpen={modal} onRequestClose={() => setModal(false)} style={customStyles}>
+    <Modal
+      isOpen={modal}
+      onRequestClose={() => setModal(false)}
+      style={customStyles}
+    >
       <H.ModalSection>
         <H.ModalTitle>회원 이름 수정</H.ModalTitle>
         <H.ModalInputSection>
@@ -142,20 +186,35 @@ const SetModal = ({ modal, setModal }) => {
               placeholder="로고 이미지"
               onChange={(e) => setSellerLogo(e.target.files[0])}
             />
-            <H.ModalFileInputLabel htmlFor="file-input">로고 업로드</H.ModalFileInputLabel>
+            <H.ModalFileInputLabel htmlFor="file-input">
+              로고 업로드
+            </H.ModalFileInputLabel>
             <S.ColorButton width="80px" onClick={submitNewLogo}>
               수정
             </S.ColorButton>
           </H.ModalBetweenBox>
+        </H.ModalInputSection>
+        <H.ModalTitle>회원 탈퇴</H.ModalTitle>
+        <H.ModalInputSection>
+          <H.ModalInput
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+          <S.ColorButton width="30%" onClick={submitWithdrawal}>
+            탈퇴
+          </S.ColorButton>
         </H.ModalInputSection>
       </H.ModalSection>
     </Modal>
   );
 };
 
-export default SetModal;
+export const MemoizedSetModal = React.memo(SetModal);
 
 SetModal.propTypes = {
   modal: PropTypes.bool,
   setModal: PropTypes.func,
+  accessToken: PropTypes.string,
+  refreshToken: PropTypes.string,
 };

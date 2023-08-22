@@ -10,7 +10,6 @@ import { BASE_URL, Instance } from "../../../api/axios";
 const Header = () => {
   // Constant--------------------------------------------------
   const navigate = useNavigate();
-  let refreshToken = getCookie("refreshToken");
   const { userId } = useParams();
 
   // State-----------------------------------------------------
@@ -18,27 +17,33 @@ const Header = () => {
   const [sellerName, setSellerName] = useState("");
 
   // Function--------------------------------------------------
+  const removeAll = () => {
+    localStorage.removeItem("accessToken");
+    removeCookie("refreshToken", { path: "/" });
+    console.clear();
+    navigate(`/`, { replace: true });
+  };
+
   const submitLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
+      const refreshToken = getCookie("refreshToken");
       await axios
         .post(`${BASE_URL}user-service/logout`, {
           refreshToken,
         })
         .then(() => {
-          localStorage.removeItem("accessToken");
-          removeCookie("refreshToken", { path: "/" });
-          navigate(`/`, { replace: true });
+          removeAll();
         })
         .catch((err) => {
           console.log(err);
           if (
-            err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
-            err.response.data.error === "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
+            err.response.data.error ===
+              "리프레시 토큰은 비어 있거나 null일 수 없습니다." ||
+            err.response.data.error ===
+              "로그아웃 오류: 리프레시 토큰이 일치하지 않습니다."
           ) {
             alert(err.response.data.error);
-            localStorage.removeItem("accessToken");
-            removeCookie("refreshToken", { path: "/" });
-            navigate(`/`, { replace: true });
+            // removeAll();
           }
         });
     }
@@ -46,7 +51,9 @@ const Header = () => {
 
   // ComponentDidMount-----------------------------------------
   const fetchData = async () => {
-    if (refreshToken) {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = getCookie("refreshToken");
+    if (refreshToken && accessToken) {
       try {
         await Instance.get(`user-service/sellers/${userId}`).then((res) => {
           setSellerLogo(res.data.payload.sellerLogo);
@@ -54,19 +61,10 @@ const Header = () => {
         });
       } catch (err) {
         console.log(err);
-        if (
-          (err.response.status === 401 && err.response.data === "") ||
-          (err.response.status === 401 &&
-            err.response.data.error === "리프레시 토큰은 비어 있거나 null일 수 없습니다.")
-        ) {
-          window.location.reload();
-        }
       }
     } else {
       alert("로그인이 필요한 서비스입니다.");
-      localStorage.removeItem("accessToken");
-      removeCookie("refreshToken", { path: "/" });
-      navigate(`/`, { replace: true });
+      removeAll();
     }
   };
 

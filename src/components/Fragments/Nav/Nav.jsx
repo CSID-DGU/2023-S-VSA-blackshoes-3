@@ -2,13 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as H from "../../Home/HomeStyle";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../../context/GlobalContext";
-import SetModal from "../Reusable/SetModal";
+import { MemoizedSetModal } from "../Reusable/SetModal";
 
 const Nav = () => {
   // constant----------------------------------------------
   const navigate = useNavigate();
   const { page } = useContext(GlobalContext);
   const { userId } = useParams();
+  const accessToken = localStorage.getItem("accessToken");
 
   // State-------------------------------------------------
   const [modal, setModal] = useState(false);
@@ -16,7 +17,11 @@ const Nav = () => {
   return (
     <H.NavSection>
       <H.NavBox>
-        <H.HoverButton0 width="270px" onClick={() => navigate(`/home/${userId}`)} $page={page}>
+        <H.HoverButton0
+          width="270px"
+          onClick={() => navigate(`/home/${userId}`)}
+          $page={page}
+        >
           메인
         </H.HoverButton0>
         <H.HoverButton1
@@ -37,7 +42,11 @@ const Nav = () => {
       <H.BorderButton width="270px" onClick={() => setModal(true)}>
         설정
       </H.BorderButton>
-      <SetModal modal={modal} setModal={setModal} />
+      <MemoizedSetModal
+        modal={modal}
+        setModal={setModal}
+        accessToken={accessToken}
+      />
     </H.NavSection>
   );
 };

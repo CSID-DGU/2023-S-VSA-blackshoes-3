@@ -3,7 +3,6 @@ import { styled } from "styled-components";
 
 export const MainSegment = styled.section`
   width: 750px;
-  min-height: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,11 +19,10 @@ export const MainSegment = styled.section`
 
 export const StatisticBox = styled(MainSegment)`
   width: 100%;
-  align-items: flex-start;
-  height: 773px;
+  /* max-height: 773px; */
   border-radius: 24px;
   background-color: ${(props) => props.theme.bgColor};
-  padding: 30px;
+  padding: 20px;
 `;
 
 export const MainTitle = styled.h1`
@@ -37,6 +35,7 @@ export const MainTitle = styled.h1`
 `;
 
 export const SmallRightSpan = styled.span`
+  display: ${(props) => (props.res === "right" ? "block" : "none")};
   position: absolute;
   top: 50%;
   right: 0;
@@ -44,6 +43,9 @@ export const SmallRightSpan = styled.span`
   font-size: 12px;
   font-weight: 100;
   color: ${(props) => props.theme.secondBlack};
+  @media all and (max-width: 1480px) {
+    display: ${(props) => (props.res === "left" ? "block" : "none")};
+  }
 `;
 
 export const RefreshIcon = styled(FontAwesomeIcon)`
