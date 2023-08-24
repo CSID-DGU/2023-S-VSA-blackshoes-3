@@ -1,52 +1,44 @@
 package com.travelvcommerce.personalizedservice.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-@Entity
-@NoArgsConstructor
-@Table(name = "View_Tags", uniqueConstraints = @UniqueConstraint(name = "tag_user_unique", columnNames = {"tag_id", "user_id"}))
 @Data
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+@Document(collection = "view_tags")
 public class ViewTag {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String _id;
 
-    @Column(name = "tag_id")
-    private String tagId;
-
-    @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "tag_view_count")
-    private Long tagViewCount;
+    private List<Set<String>> tagIdSetList;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private String tagId;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @CreatedDate
+    private String createdAt;
 
-    public void increaseViewCount() {
-        this.tagViewCount++;
+    @LastModifiedDate
+    private String updatedAt;
+
+    public void appendTagIdSet(Set<String> tagIdSet) {
+        this.tagIdSetList.add(tagIdSet);
+        this.updatedAt = Timestamp.valueOf(LocalDateTime.now()).toString();
     }
 
-    @Builder
-    public ViewTag(String tagId, String userId, LocalDateTime createdAt, LocalDateTime updatedAt, Long tagViewCount) {
-        this.tagId = tagId;
-        this.userId = userId;
-        this.tagViewCount = tagViewCount;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public void initializeTagIdSet() {
+        this.tagIdSetList = new ArrayList<>();
     }
 }
-/*
- * 비디오 조회기록 삭제하더라도 태그 조회 기록은 남아있음.
- * TagId, ViewDate, UserId
- * MariaDB
- * */

@@ -8,10 +8,11 @@ import java.util.Map;
 
 @Service
 public interface TagService {
-    List<String> getSubscribedTagList(String userId);
-    List<Map<String, Object>> getViewedTagList(String userId);
+    List<String> getRecommendedTagIdList(String userId);
+
     Map<String, String> initSubscribedTagList(String userId, TagDto.InitTagListRequestDto initTagListRequestDto);
     Map<String, String> subscribeTag(String userId, TagDto.SubscribeTagRequestDto subscribeTagRequestDto);
     Map<String, String> unsubscribeTag(String userId, String tagId);
-    Map<String, String> viewTag(String userId, String tagId);
+    Map<String, String> viewTag(String userId, List<String> tagIdList);
+    List<String> getSubscribedTagList(String userId);
 }
