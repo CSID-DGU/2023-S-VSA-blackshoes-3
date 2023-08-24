@@ -36,7 +36,7 @@
 
 <hr/>
 
-## 🏫 연계 기관 : 모바일 앱 협동 조합
+## 연계 기관 : 모바일 앱 협동 조합
 
 
 - **기업 요구사항**
@@ -77,28 +77,30 @@
 >     - 영상 인코딩 서버 분리 배포
 >     - SockJS Stomp JS 활용 동영상 진행도 시각화
 
+---
+
 ### CMS WEB UI 디자인
-![Wanderlust 로그인](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/e13285ae-d0d7-4920-88f6-5a283519f375)
-![Wanderlust 회원가입](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/a5bd621f-b0a2-4f75-992c-dd1c42d6266f)
-![Wanderlust 비밀번호 찾기](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/0891e9db-27e5-4a2c-9e1b-8ecb09e91490)
-![Wanderlust 통계 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/96a6e547-1861-4d4f-8c85-6305709caf8e)
-![Wanderlust 업로드 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/cb20436a-8de9-4098-b7c3-7c8f493bfba3)
-![Wanderlust 관리 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/3794aae7-c9f9-4d35-868a-ef9c3945eaf2)
-![Wanderlust 회원 정보 수정](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/dc5b3d1f-627d-468e-be3d-3bed07aea6ae)
+> ![Wanderlust 로그인](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/e13285ae-d0d7-4920-88f6-5a283519f375)
+> ![Wanderlust 회원가입](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/a5bd621f-b0a2-4f75-992c-dd1c42d6266f)
+> ![Wanderlust 비밀번호 찾기](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/0891e9db-27e5-4a2c-9e1b-8ecb09e91490)
+> ![Wanderlust 통계 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/96a6e547-1861-4d4f-8c85-6305709caf8e)
+> ![Wanderlust 업로드 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/cb20436a-8de9-4098-b7c3-7c8f493bfba3)
+> ![Wanderlust 관리 페이지](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/3794aae7-c9f9-4d35-868a-ef9c3945eaf2)
+> ![Wanderlust 회원 정보 수정](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/dc5b3d1f-627d-468e-be3d-3bed07aea6ae)
 
 
 ### 시스템 구조도
-![WANDERLUST 시스템 구조도](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/7709a13e-3c18-4e01-8801-4e7a6b10d392)
+> ![WANDERLUST 시스템 구조도](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/7709a13e-3c18-4e01-8801-4e7a6b10d392)
 
 
 <hr/>
 
 ### 배포 링크
-http://www.roberniro-projects.xyz/
+> http://www.roberniro-projects.xyz/
 
 ### 유튜브 시연
-https://www.youtube.com/watch?v=EyDKypFDwgE
+> https://www.youtube.com/watch?v=EyDKypFDwgE
 
 ### 발표 자료
-https://drive.google.com/drive/folders/1bAkz9T9r50oekLjm5VMDQYYh0wHFJowW
+> https://drive.google.com/drive/folders/1bAkz9T9r50oekLjm5VMDQYYh0wHFJowW
 
