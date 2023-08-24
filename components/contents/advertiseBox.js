@@ -1,15 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  Linking,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import WebView from 'react-native-webview';
+import {View, StyleSheet, Text, TouchableOpacity, Linking} from 'react-native';
 
 export const Ad = ({adContents, logoUri}) => {
   const handleOpenUrl = () => {
@@ -48,18 +39,6 @@ export const Ad = ({adContents, logoUri}) => {
             <Text style={styles.text}>{adContents.adContent}</Text>
           ))}
       </View>
-      {/* <WebView
-        source={{uri: adContents.adUrl}}
-        startInLoadingState={true}
-        style={styles.webview}
-        onLoad={() => {
-          // WebView가 완전히 로드된 후에만 아래의 스크립트를 실행
-          this.webview.injectJavaScript('window.scrollTo(0, 0);');
-        }}
-        ref={webview => {
-          this.webview = webview;
-        }}
-      /> */}
     </>
   );
 };

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ScrollView,
   TouchableOpacity,

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 
 import {
   ScrollView,
@@ -10,7 +10,6 @@ import {
   StyleSheet,
   FlatList,
   ImageBackground,
-  Image,
 } from 'react-native';
 import {themeList} from '../../constant/themes';
 
@@ -20,8 +19,7 @@ import {useSelector} from 'react-redux';
 
 export default function ThemeSelect({navigation}) {
   const [selectedItem, setSelectedItem] = useState([]);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const scrollViewRef = useRef();
+
   const userId = useSelector(state => state.USER);
 
   const handlePress = e => {
@@ -30,28 +28,6 @@ export default function ThemeSelect({navigation}) {
     } else {
       setSelectedItem(() => [...selectedItem, e]);
     }
-  };
-
-  const handleIconPress = direction => {
-    if (direction === 'left') {
-      let newScrollPosition = scrollPosition - 200;
-      scrollViewRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-    } else if (direction === 'right') {
-      let newScrollPosition = scrollPosition + 200;
-      scrollViewRef.current.scrollTo({
-        x: newScrollPosition,
-        y: 0,
-        animated: true,
-      });
-    }
-  };
-  console.log(selectedItem);
-  const handleScroll = event => {
-    setScrollPosition(event.nativeEvent.contentOffset.x);
   };
 
   const submitData = async () => {

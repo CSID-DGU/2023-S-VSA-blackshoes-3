@@ -1,21 +1,8 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Text, Image} from 'react-native';
 
 export const VideoThumbnail = ({video, navigation}) => {
-  //   "videoId":"v43039bd-2199-11ee-9ef2-0a0027000003",
-  // "videoName":"test25",
-  // "thumbnailUrl":"test25.com/thumbnail",
-  // "sellerName":"seller3",
-  // "sellerLogoUrl":null,
-  // "createdAt":"2023-07-25 12:49:23.480000",
-  // "likes":320,
-  // "views":440,
-  // "adClicks":24
-  // },
   return (
-    // <TouchableOpacity
-    //   style={styles.container}
-    //   onPress={() => navigation.navigate('Play', {video})}>
     <>
       <Image
         style={styles.imgStyle}

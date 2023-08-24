@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable quotes */
 import React, {useState, useEffect} from 'react';
 
 import {View, Alert, ActivityIndicator as Spinner} from 'react-native';
@@ -8,7 +7,6 @@ import {View, Alert, ActivityIndicator as Spinner} from 'react-native';
 import {WebView} from 'react-native-webview';
 
 import {SERVER_IP} from '../../config';
-import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {
   setUserId,
@@ -56,9 +54,6 @@ const SocialLogin = ({route, navigation}) => {
       dispatch(setUserId(params['userId']));
       dispatch(setAccessToken(params['access-token']));
       dispatch(setRefreshToken(params['refresh-token']));
-      // console.log('User Id: ', params['userId']);
-      // console.log('Access Token:', params['access-token']);
-      // console.log('Refresh Token:', params['refresh-token']);
       navigation.navigate('Home');
     }
   }, [url]);

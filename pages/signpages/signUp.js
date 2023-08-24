@@ -20,7 +20,6 @@ import {useDispatch} from 'react-redux';
 import {firstEmail} from '../../storage/actions';
 
 export default function SignUp({navigation}) {
-  ///user-service/users/join
   const [value, setValue] = useState('naver.com');
   const email = [
     {label: '직접입력', value: '직접입력'},

@@ -9,7 +9,6 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  ActivityIndicator as Spinner,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -24,12 +23,10 @@ export default function MyVideo({navigation, route}) {
   const [selectedTagId, setSelectedTagId] = useState('');
   const [page, setPage] = useState(0);
   const [maxPage, setMaxPage] = useState(10);
-  const [isLoading, setIsLoading] = useState(false);
   const userId = useSelector(state => state.USER);
   const [isEndOfScroll, setEndOfScroll] = useState(false);
   const scrollViewRef = useRef(null);
   const [tagId, setTagId] = useState([]);
-  //const tagId = useSelector(state => state.TAG);
   const [theme, setTheme] = useState([]);
 
   useEffect(() => {
@@ -119,8 +116,6 @@ export default function MyVideo({navigation, route}) {
   );
 
   const getData = async key => {
-    // setIsLoading(true);
-
     try {
       let response;
       if (view === 0) {
@@ -149,7 +144,6 @@ export default function MyVideo({navigation, route}) {
     } catch (e) {
       console.log(e);
     }
-    // setIsLoading(false);
   };
 
   const handleScroll = event => {

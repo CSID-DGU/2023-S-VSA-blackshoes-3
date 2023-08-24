@@ -36,7 +36,6 @@ export default function Play({route, navigation}) {
   const [commentIndex, setCommentIndex] = useState(false);
   const [comment, setComment] = useState([]);
   const [commentAmmount, setCommentAmmount] = useState(0);
-  const [commentPage, setCommentPage] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [resolution, setResolution] = useState('/720p.m3u8');
   const [recommendVideoPage, setRecommendVideoPage] = useState(0);
