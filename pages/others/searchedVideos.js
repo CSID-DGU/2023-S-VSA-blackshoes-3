@@ -1,7 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  ActivityIndicator as Spinner,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {VideoThumbnail} from '../../components/contents/thumbnailBox';
@@ -13,7 +19,7 @@ export default function SearchedVideos({route, navigation}) {
   const [maxPage, setMaxPage] = useState(10);
   const [videoData, setVideoData] = useState([]);
   const scrollViewRef = useRef(null);
-
+  const [noSearch, setNoSearch] = useState(false);
   const [value, setValue] = useState('recent');
   const [items, setItems] = useState([
     {label: '최신 순', value: 'recent'},
@@ -66,6 +72,9 @@ export default function SearchedVideos({route, navigation}) {
       const response = await axiosInstance.get(
         `content-slave-service/videos/search?type=${route.params.value}&q=${route.params.searchText}&s=${value}&page=${page}&size=10`,
       );
+      if (response.data.payload.videos.length === 0) {
+        setNoSearch(true);
+      }
       return [response.data.payload.videos, response.data.payload.totalPages];
     } catch (error) {
       console.error('Error occurred while fetching data:', error);
@@ -134,11 +143,17 @@ export default function SearchedVideos({route, navigation}) {
                 </TouchableOpacity>
               );
             })
-          ) : (
+          ) : noSearch ? (
             <View style={{marginTop: 20}}>
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>
                 검색 결과가 없습니다.
               </Text>
+            </View>
+          ) : (
+            <View style={{marginTop: 20}}>
+              <View style={styles.spinnerContainer}>
+                <Spinner size="big" color="black" />
+              </View>
             </View>
           )}
         </ScrollView>
@@ -175,20 +190,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     minHeight: 40,
     width: 105,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+
     borderWidth: 0,
   },
   dropdownpickerContainer: {
     justifyContent: 'center',
     zIndex: 2,
-    marginLeft: 20,
+    marginLeft: 15,
 
     borderWidth: 0,
   },

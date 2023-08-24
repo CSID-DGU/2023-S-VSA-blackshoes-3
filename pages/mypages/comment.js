@@ -103,7 +103,7 @@ export default function MyCommentPage({navigation, route}) {
                 ? matchingVideo.videoName
                 : 'Unknown';
               return (
-                <>
+                <View key={i}>
                   <View key={i} style={styles.commentBox}>
                     <View style={styles.infoContainer}>
                       <Text style={styles.videoName}>{videoNickname}</Text>
@@ -139,7 +139,7 @@ export default function MyCommentPage({navigation, route}) {
                   {modifyIndex === i && (
                     <View key={i + 100}>
                       <View style={styles.modfiyCommentContainer}>
-                        <Icon2 name="arrow-up-left" size={25} color={'black'} />
+                        {/* <Icon2 name="arrow-up-left" size={25} color={'black'} /> */}
                         <TextInput
                           style={styles.commentModifyInput}
                           placeholder="댓글 수정"
@@ -152,25 +152,27 @@ export default function MyCommentPage({navigation, route}) {
                             setModifying('');
                           }}
                         />
-                        <TouchableOpacity
-                          onPress={() => {
-                            modifyComment(e);
-                            setModifyIndex(null);
-                            setModifying('');
-                          }}>
-                          <Icon name="send" size={25} color={'black'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setModifyIndex(null);
-                            setModifying('');
-                          }}>
-                          <Icon2 name="close" size={25} color={'black'} />
-                        </TouchableOpacity>
+                        <View style={styles.buttonsContainer}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              modifyComment(e);
+                              setModifyIndex(null);
+                              setModifying('');
+                            }}>
+                            <Icon name="send" size={24} color={'black'} />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setModifyIndex(null);
+                              setModifying('');
+                            }}>
+                            <Icon2 name="close" size={33} color={'black'} />
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
                   )}
-                </>
+                </View>
               );
             })}
         </View>
@@ -243,13 +245,13 @@ const styles = StyleSheet.create({
   modfiyCommentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   commentModifyInput: {
     backgroundColor: 'white',
     borderRadius: 10,
-    width: '75%',
     paddingHorizontal: 15,
+    width: 270,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -257,5 +259,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 1,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    gap: 5,
   },
 });

@@ -149,7 +149,7 @@ export default function Home({navigation, route}) {
     const contentHeight = event.nativeEvent.contentSize.height;
     const layoutHeight = event.nativeEvent.layoutMeasurement.height;
 
-    if (offsetY + layoutHeight >= contentHeight) {
+    if (offsetY + layoutHeight >= contentHeight - 1) {
       if (!isEndOfScroll) {
         setEndOfScroll(true);
         setPage(prevPage => prevPage + 1);
@@ -202,7 +202,7 @@ export default function Home({navigation, route}) {
         style={styles.scrollContainer}
         contentContainerStyle={{alignItems: 'center'}}>
         <View style={styles.contentsContainer}>
-          {regionRank.length > 0 && (
+          {regionList.length > 0 && (
             <View style={styles.textContainer}>
               <Text style={styles.title}>인기 지역</Text>
             </View>
@@ -224,7 +224,7 @@ export default function Home({navigation, route}) {
               </View>
             </ScrollView>
           </View>
-          {themeRank.length > 0 && (
+          {themeList.length > 0 && (
             <View style={styles.textContainer}>
               <Text style={styles.title}>인기 테마</Text>
             </View>
