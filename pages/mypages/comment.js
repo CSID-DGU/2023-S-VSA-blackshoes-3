@@ -73,6 +73,7 @@ export default function MyCommentPage({navigation, route}) {
           content: modifying,
         },
       );
+      setCommentContents([]);
       getUserComment();
     } catch (error) {
       console.log(error);
@@ -87,12 +88,8 @@ export default function MyCommentPage({navigation, route}) {
           userId: userId,
         },
       );
-      setCommentContents(prevState => ({
-        ...prevState,
-        comments: prevState.comments.filter(
-          comment => comment.commentId !== e.commentId,
-        ),
-      }));
+      setCommentContents([]);
+      getUserComment();
     } catch (error) {
       console.log(error);
     }
@@ -287,6 +284,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 1,
+    marginBottom: 10,
   },
   buttonsContainer: {
     flexDirection: 'row',
