@@ -1,4 +1,4 @@
-[header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=250&section=header&text=산학연계%20프로젝트%20우수상&fontSize=60&animation=fadeIn&fontAlignY=32&desc=2023%20동국대학교%20웹%20개발자%20양성%20장학%20과정&descAlignY=51&descAlign=70)
+![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=250&section=header&text=산학연계%20프로젝트%20우수상&fontSize=60&animation=fadeIn&fontAlignY=32&desc=2023%20동국대학교%20웹%20개발자%20양성%20장학%20과정&descAlignY=51&descAlign=70)
 
 # 여행 비디오 커머스 플랫폼 WANDERLUST
 
