@@ -24,16 +24,28 @@ export default function SignIn({navigation}) {
           <TouchableOpacity
             style={[styles.googleLogin, styles.button]}
             onPress={() => navigation.navigate('Social', {what: 'google'})}>
+            <Image
+              source={require('../../assets/google_logo.png')}
+              resizeMode="contain"
+            />
             <Text style={styles.text}>구글 로그인</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.kakaoLogin, styles.button]}
             onPress={() => navigation.navigate('Social', {what: 'kakao'})}>
+            <Image
+              source={require('../../assets/kakao_logo.png')}
+              resizeMode="contain"
+            />
             <Text style={styles.text}>카카오 로그인</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.naverLogin, styles.button]}
             onPress={() => navigation.navigate('Social', {what: 'naver'})}>
+            <Image
+              source={require('../../assets/naver_logo.png')}
+              resizeMode="contain"
+            />
             <Text style={styles.whiteText}>네이버 로그인</Text>
           </TouchableOpacity>
         </View>
@@ -86,7 +98,7 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   linkContainer: {
-    flex: 0.3,
+    flex: 0.25,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -94,6 +106,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   button: {
+    flexDirection: 'row',
+    gap: 10,
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
