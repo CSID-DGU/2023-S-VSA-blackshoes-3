@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ScrollView, View, Text, StyleSheet, TextInput} from 'react-native';
 import {useSelector} from 'react-redux';
 import axiosInstance from '../../utils/axiosInstance';
@@ -13,16 +13,26 @@ export default function MyCommentPage({navigation, route}) {
   const [commentContents, setCommentContents] = useState(null);
   const [modifying, setModifying] = useState('');
   const [modifyIndex, setModifyIndex] = useState(null);
+  const [page, setPage] = useState(0);
+  const [isEndOfScroll, setIsEndOfScroll] = useState(false);
+  const scrollViewRef = useRef(null);
+
   const [videoData, setVideoData] = useState([]);
   useEffect(() => {
     getUserComment();
   }, []);
 
+  useEffect(() => {
+    if (isEndOfScroll) {
+      setPage(prevPage => prevPage + 1);
+    }
+  }, [isEndOfScroll]);
+
   const getUserComment = async () => {
     try {
       console.log('userId in getUserComment : ', userId);
       const response = await axiosInstance.get(
-        `comment-service/comments/user?userId=${userId}&page=0&size=10`,
+        `comment-service/comments/user?userId=${userId}&page=${page}&size=10`,
       );
       const videoIds = response.data.payload.comments.map(item => item.videoId);
       setCommentContents(response.data.payload);
@@ -232,5 +242,20 @@ const styles = StyleSheet.create({
   },
   modfiyCommentContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  commentModifyInput: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: '75%',
+    paddingHorizontal: 15,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 1,
   },
 });

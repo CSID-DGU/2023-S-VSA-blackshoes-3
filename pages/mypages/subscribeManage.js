@@ -9,7 +9,6 @@ import {
   StyleSheet,
   FlatList,
   ImageBackground,
-  Image,
 } from 'react-native';
 import {themeList} from '../../constant/themes';
 import {regionList} from '../../constant/themes';
@@ -106,7 +105,6 @@ export default function ThemeSelectEach() {
           <Text style={styles.littleTitle}>지역</Text>
         </View>
         <View style={styles.areaScrollContainer}>
-
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}

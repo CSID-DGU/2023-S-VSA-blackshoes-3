@@ -1,6 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {StyleSheet, Animated, View, TouchableOpacity, Text} from 'react-native';
+import {
+  StyleSheet,
+  Image,
+  Animated,
+  View,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {setAll, setNickName} from '../../storage/actions';

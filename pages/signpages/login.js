@@ -125,6 +125,7 @@ export default function Login({navigation}) {
           <Text style={styles.text}>비밀번호</Text>
           <TextInput
             style={styles.longTextInput}
+            secureTextEntry={true}
             placeholder="비밀번호를 입력해 주세요"
             placeholderTextColor={'#C4C4C4'}
             onChangeText={text => setPasswordInput(text)}

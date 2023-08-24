@@ -119,7 +119,7 @@ export default function MyVideo({navigation, route}) {
   );
 
   const getData = async key => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
       let response;
@@ -149,7 +149,7 @@ export default function MyVideo({navigation, route}) {
     } catch (e) {
       console.log(e);
     }
-    setIsLoading(false);
+    // setIsLoading(false);
   };
 
   const handleScroll = event => {
@@ -178,7 +178,6 @@ export default function MyVideo({navigation, route}) {
         await getLikedVideo(likedVideoIds);
       }
     } catch (e) {
-      //여기 마크
       if (e.response && e.response.status === 404) {
         console.log(e.response.status);
         setVideoData([]);
@@ -271,9 +270,6 @@ export default function MyVideo({navigation, route}) {
                 </View>
               </ScrollView>
             ) : (
-              // <View style={styles.spinner}>
-              //   <Spinner size="big" color="black" />
-              // </View>
               <Text style={styles.alertText}>태그를 구독해주세요.</Text>
             ))}
         </View>
@@ -283,11 +279,7 @@ export default function MyVideo({navigation, route}) {
           onScroll={handleScroll}
           style={styles.videoContainer}
           contentContainerStyle={{alignItems: 'center'}}>
-          {isLoading ? (
-            <View style={styles.spinnerContainer}>
-              <Spinner size="big" color="black" />
-            </View>
-          ) : videoData.length > 0 ? (
+          {videoData.length > 0 ? (
             videoData.map((e, i) => {
               return (
                 <TouchableOpacity

@@ -151,6 +151,7 @@ export default function CheckInfo({navigation}) {
           </View>
 
           <TextInput
+            secureTextEntry={true}
             style={styles.infoText}
             placeholder="기존 비밀번호를 입력하세요."
             placeholderTextColor={'grey'}
@@ -160,6 +161,7 @@ export default function CheckInfo({navigation}) {
           <Text style={styles.text}>새 비밀번호</Text>
           <TextInput
             style={styles.infoText}
+            secureTextEntry={true}
             placeholder="새 비밀번호를 입력하세요."
             placeholderTextColor={'grey'}
             onChangeText={text => setNewPasswordInput(text)}
@@ -181,6 +183,7 @@ export default function CheckInfo({navigation}) {
           </View>
           <TextInput
             style={styles.infoText}
+            secureTextEntry={true}
             placeholder="비밀번호를 입력하세요."
             placeholderTextColor={'#C4C4C4'}
             onChangeText={text => setPassInput(text)}

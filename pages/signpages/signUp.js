@@ -285,6 +285,7 @@ export default function SignUp({navigation}) {
           </View>
           <View style={styles.rowContainer}>
             <TextInput
+              secureTextEntry={true}
               style={styles.textInput}
               placeholder="인증번호를 입력해 주세요"
               placeholderTextColor={'#C4C4C4'}
@@ -318,6 +319,7 @@ export default function SignUp({navigation}) {
         <View style={styles.normalContainer}>
           <Text style={styles.text}>비밀번호</Text>
           <TextInput
+            secureTextEntry={true}
             style={styles.longTextInput}
             placeholder="비밀번호를 입력해 주세요"
             placeholderTextColor={'#C4C4C4'}
@@ -328,6 +330,7 @@ export default function SignUp({navigation}) {
         <View style={styles.normalContainer}>
           <Text style={styles.text}>비밀번호 확인</Text>
           <TextInput
+            secureTextEntry={true}
             style={styles.longTextInput}
             placeholder="비밀번호를 확인해 주세요"
             placeholderTextColor={'#C4C4C4'}

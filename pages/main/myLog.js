@@ -37,7 +37,7 @@ export default function MyLog({navigation, route}) {
       console.log('hi : ', history);
       await getVideoData(history);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   };
 
@@ -53,13 +53,15 @@ export default function MyLog({navigation, route}) {
         ...response.data.payload.videos,
       ]);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
-  console.log('비디오 데이따 : ', videoData);
+  // console.log('비디오 데이따 : ', videoData);
   const deleteSubmit = async () => {
     try {
       const deletePromises = deleteArray.map(videoId => {
+        setVideoData(prev => prev.filter(e => e.videoId !== videoId));
+
         return axiosInstance.delete(
           `personalized-service/${userId}/videos/history/${videoId}`,
         );

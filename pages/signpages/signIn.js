@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import axios from '../../utils/axiosInstance';
-import {set} from 'lodash';
+import React from 'react';
+import {View, Image, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 export default function SignIn({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.explainContainer}>
-        <Text stlye={styles.greyText}>서비스 설명 이미지</Text>
+        <Image
+          style={styles.imgStyle}
+          source={require('../../assets/first_real_real.jpg')}
+          resizeMode="contain"
+        />
       </View>
 
       <View style={styles.contentsContainer}>
@@ -58,13 +60,14 @@ const styles = StyleSheet.create({
   explainContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 0.45,
+    flex: 0.4,
     width: '100%',
   },
+  imgStyle: {},
   contentsContainer: {
     backgroundColor: 'white',
     alignItems: 'center',
-    flex: 0.55,
+    flex: 0.6,
     width: '100%',
     shadowColor: '#000',
     shadowOffset: {
@@ -79,8 +82,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 0.7,
     width: '100%',
-    gap: 15,
-    paddingTop: 25,
+    gap: 20,
+    paddingTop: 40,
   },
   linkContainer: {
     flex: 0.3,

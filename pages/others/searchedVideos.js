@@ -60,6 +60,7 @@ export default function SearchedVideos({route, navigation}) {
     }
   };
 
+  console.log('video', videoData);
   const getData = async () => {
     try {
       const response = await axiosInstance.get(
