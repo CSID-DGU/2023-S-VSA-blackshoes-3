@@ -35,7 +35,9 @@ export default function Play({route, navigation}) {
   const [tagIds, setTagIds] = useState([]);
   const [commentIndex, setCommentIndex] = useState(false);
   const [comment, setComment] = useState([]);
+  const [commentCurrentPage, setCommentCurrentPage] = useState(0);
   const [commentAmmount, setCommentAmmount] = useState(0);
+  const [commentPages, setCommentPages] = useState(10);
   const [openModal, setOpenModal] = useState(false);
   const [resolution, setResolution] = useState('/720p.m3u8');
   const [recommendVideoPage, setRecommendVideoPage] = useState(0);
@@ -43,6 +45,15 @@ export default function Play({route, navigation}) {
   const [commentInput, setCommentInput] = useState('');
   const [modifying, setModifying] = useState('');
   const [modifyIndex, setModifyIndex] = useState(null);
+  const [isEndOfScroll, setIsEndOfScroll] = useState(false);
+
+  const commentScrollView = useRef(null);
+
+  useEffect(() => {
+    if (commentCurrentPage !== 0) {
+      getComment();
+    }
+  }, [commentCurrentPage]);
 
   const res = [
     {label: '480p', value: '/480p.m3u8'},
@@ -106,6 +117,12 @@ export default function Play({route, navigation}) {
     });
     return;
   }, [currentTime]);
+
+  useEffect(() => {
+    if (isEndOfScroll) {
+      setCommentCurrentPage(prevPage => prevPage + 1);
+    }
+  }, [isEndOfScroll]);
 
   const getData = async () => {
     try {
@@ -211,11 +228,16 @@ export default function Play({route, navigation}) {
 
   const getComment = async () => {
     try {
-      const response = await axiosInstance.get(
-        `comment-service/comments/video?videoId=${videoData.videoId}&page=0&size=10`,
-      );
-      setComment(response.data.payload.comments);
-      setCommentAmmount(response.data.payload.totalElements);
+      if (commentCurrentPage < commentPages) {
+        const response = await axiosInstance.get(
+          `comment-service/comments/video?videoId=${videoData.videoId}&page=${commentCurrentPage}&size=10`,
+        );
+        setComment(prev => {
+          return [...prev, ...response.data.payload.comments];
+        });
+        setCommentAmmount(response.data.payload.totalElements);
+        setCommentPages(response.data.payload.totalPages);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -314,6 +336,22 @@ export default function Play({route, navigation}) {
 
   const handleOpenUrl = () => {
     Linking.openURL(openAd.adcontent.adUrl);
+  };
+
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+
+    if (offsetY + layoutHeight >= contentHeight - 1) {
+      if (!isEndOfScroll) {
+        setIsEndOfScroll(true);
+      }
+    } else {
+      if (isEndOfScroll) {
+        setIsEndOfScroll(false);
+      }
+    }
   };
 
   return (
@@ -454,7 +492,6 @@ export default function Play({route, navigation}) {
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{
-                    width: 400,
                     alignItems: 'center',
                     gap: 10,
                     paddingHorizontal: 15,
@@ -583,7 +620,11 @@ export default function Play({route, navigation}) {
                 <View style={styles.allCommentsTopMenu}>
                   <Text style={styles.commentTitle}>댓글</Text>
 
-                  <TouchableOpacity onPress={() => setCommentIndex(false)}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCommentIndex(false);
+                      setCommentCurrentPage(0);
+                    }}>
                     <Icon
                       style={styles.icon}
                       name="close"
@@ -623,7 +664,9 @@ export default function Play({route, navigation}) {
                         }}
                       />
                       <ScrollView
+                        ref={commentScrollView}
                         style={styles.scrollContainer}
+                        onScroll={handleScroll}
                         contentContainerStyle={{alignItems: 'center'}}>
                         <View>
                           {comment.map((e, i) => {

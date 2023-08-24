@@ -90,7 +90,6 @@ export default function Home({navigation, route}) {
           ...recommendedVideos,
           ...response.data.payload.videos,
         ];
-        console.log(newVideos.length);
         const uniqueVideos = Array.from(
           new Set(newVideos.map(v => v.videoId)),
         ).map(id => {

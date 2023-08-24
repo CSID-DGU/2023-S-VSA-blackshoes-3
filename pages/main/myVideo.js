@@ -30,6 +30,7 @@ export default function MyVideo({navigation, route}) {
   const [theme, setTheme] = useState([]);
 
   useEffect(() => {
+    setPage(0);
     if (view === 0) {
       getSubscribedDATA();
     } else {
@@ -54,6 +55,8 @@ export default function MyVideo({navigation, route}) {
   }, [tagId]);
 
   useEffect(() => {
+    setPage(0);
+
     if (selectedTagId !== '') {
       getData(0);
     }
@@ -165,7 +168,7 @@ export default function MyVideo({navigation, route}) {
   const getDataLike = async () => {
     try {
       const response = await axiosInstance.get(
-        `personalized-service/${userId}/videos/liked?page=0&size=10`,
+        `personalized-service/${userId}/videos/liked?page=${page}&size=10`,
       );
       const likedVideoIds = response.data.payload.likedVideos.likedVideoIdList;
       if (likedVideoIds && likedVideoIds.length > 0) {

@@ -24,7 +24,7 @@ export default function MyLog({navigation, route}) {
 
   useEffect(() => {
     getData();
-  }, [page, deleteControl]);
+  }, [page]);
 
   const getData = async () => {
     try {

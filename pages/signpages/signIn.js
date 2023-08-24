@@ -6,7 +6,6 @@ export default function SignIn({navigation}) {
     <View style={styles.container}>
       <View style={styles.explainContainer}>
         <Image
-          style={styles.imgStyle}
           source={require('../../assets/first_real_real.jpg')}
           resizeMode="contain"
         />
@@ -75,7 +74,6 @@ const styles = StyleSheet.create({
     flex: 0.4,
     width: '100%',
   },
-  imgStyle: {},
   contentsContainer: {
     backgroundColor: 'white',
     alignItems: 'center',

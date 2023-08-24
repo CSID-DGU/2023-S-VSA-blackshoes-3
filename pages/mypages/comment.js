@@ -10,17 +10,18 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default function MyCommentPage({navigation, route}) {
   const userId = useSelector(state => state.USER);
-  const [commentContents, setCommentContents] = useState(null);
+  const [commentContents, setCommentContents] = useState([]);
   const [modifying, setModifying] = useState('');
   const [modifyIndex, setModifyIndex] = useState(null);
   const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(10);
   const [isEndOfScroll, setIsEndOfScroll] = useState(false);
   const scrollViewRef = useRef(null);
 
   const [videoData, setVideoData] = useState([]);
   useEffect(() => {
     getUserComment();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     if (isEndOfScroll) {
@@ -31,12 +32,20 @@ export default function MyCommentPage({navigation, route}) {
   const getUserComment = async () => {
     try {
       console.log('userId in getUserComment : ', userId);
-      const response = await axiosInstance.get(
-        `comment-service/comments/user?userId=${userId}&page=${page}&size=10`,
-      );
-      const videoIds = response.data.payload.comments.map(item => item.videoId);
-      setCommentContents(response.data.payload);
-      getVideoData(videoIds);
+      if (page < totalPage) {
+        const response = await axiosInstance.get(
+          `comment-service/comments/user?userId=${userId}&page=${page}&size=10`,
+        );
+        const videoIds = response.data.payload.comments.map(
+          item => item.videoId,
+        );
+        console.log(response.data.payload.comments);
+        setTotalPage(response.data.payload.totalPages);
+        setCommentContents(prev => {
+          return [...prev, ...response.data.payload.comments];
+        });
+        getVideoData(videoIds);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -89,13 +98,32 @@ export default function MyCommentPage({navigation, route}) {
     }
   };
 
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+
+    if (offsetY + layoutHeight >= contentHeight - 1) {
+      if (!isEndOfScroll) {
+        setIsEndOfScroll(true);
+      }
+    } else {
+      if (isEndOfScroll) {
+        setIsEndOfScroll(false);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>내가 쓴 댓글</Text>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView
+        style={styles.scrollContainer}
+        ref={scrollViewRef}
+        onScroll={handleScroll}>
         <View style={styles.contentsContainer}>
-          {commentContents &&
-            commentContents.comments.map((e, i) => {
+          {commentContents.length > 0 &&
+            commentContents.map((e, i) => {
               const matchingVideo = videoData.find(
                 v => v.videoId === e.videoId,
               );
