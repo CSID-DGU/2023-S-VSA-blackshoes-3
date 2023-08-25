@@ -1,9 +1,9 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+This is a [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=250&section=header&text=industry-academia-linked%20Project%20Excellence%20Award&fontSize=60&animation=fadeIn&fontAlignY=32&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=51&descAlign=70)
+![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=240&section=header&text=Industry-Academia%20Collaboration%20Project&fontSize=43&animation=fadeIn&fontAlignY=32&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=55&descAlign=50)
 
 
-# **Tour Video Commerce Platform *WANDERLUST***
+# **A Travel-specialized Video Commerce Platform *WANDERLUST***
 
 <table>
 <tr>
@@ -48,7 +48,6 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
     - Development of user authentication features
     - Development of content registration management features
     - Development of content streaming features
-
   ```
 
 - **Why, A Travel-specialized Video Commerce Platform?**
@@ -57,30 +56,29 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
    - Rapid growth in the video commerce industry
    - Increase in collaborations between YouTubers and travel companies
    - Poor advertising sales performance compared to video views
-
   ```
 
 <hr/>
 
-- **제안**
->  1. AI를 활용한 추천 여행 영상 제공
->  2. 사용 기록 기반 개인 추천 영상 제공
->  3. 구매 성사 기반의 광고 비즈니스 모델
+- **Proposal**
+>  1. Offering travel video recommendations using AI
+>  2. Providing personalized video recommendations based on user history
+>  3. Advertising business model based on completed purchases
 
 
-- **해결 방안**
->  1. 영상 인코딩 및 CDN
+- **Solutions**
+>  1. Video encoding and CDN
 >     - AWS CloudFront, S3
->     - FFMPEG, Video.js(React Native) 라이브러리
->  2. 사용자를 위한 개인화 영상 제공
->     - GPT API 활용, 자연어 기반 추천 영상 제공
->     - TF-IDF 알고리즘 활용 개인화 영상 제공
->  3. 판매자를 위한 통계 제공
->     - Chart.js 라이브러리 활용 데이터 시각화
->     - Redis 활용 통계 등록 중복 방지 구현
->  4. UX 향상을 위한 성능 개선
->     - 영상 인코딩 서버 분리 배포
->     - SockJS Stomp JS 활용 동영상 진행도 시각화
+>     - FFMPEG, Video.js(React Native) library
+>  2. Personalized video offerings for users
+>     - Utilizing GPT API, providing recommendation videos based on natural language
+>     - Providing personalized videos using TF-IDF algorithm
+>  3. Providing statistics for sellers
+>     - Data visualization using Chart.js library
+>     - Implementation of duplicate statistics registration prevention using Redis
+>  4. Performance improvements for enhanced UX
+>     - Separate deployment for video encoding servers
+>     - Video progress visualization using SockJS Stomp JS
 
 ---
 
@@ -91,14 +89,15 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 <hr/>
 
-### 배포 링크
+### Deployment Link
 > http://www.roberniro-projects.xyz/
 
-### 유튜브 시연
+### Youtube
 > https://www.youtube.com/watch?v=EyDKypFDwgE
 
-### 발표 자료
+### Presentation
 > https://drive.google.com/drive/folders/1bAkz9T9r50oekLjm5VMDQYYh0wHFJowW
+
 # Getting Started
 
 >**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
