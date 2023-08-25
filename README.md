@@ -111,7 +111,7 @@
 #### Personalized Service
 > ![Personalized Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-personalized-service.png)
 
-#### Contents Slave Service
+#### Statistics Service
 > ![Contents Slave Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-contents-slave-service.png)
 
 #### Comment Service
