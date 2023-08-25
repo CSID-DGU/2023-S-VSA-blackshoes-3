@@ -38,6 +38,12 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     public GatewayFilter apply(Config config) {
         return (((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+            String path = request.getPath().toString();
+
+            if (path.contains("/actuator/info")) {
+                return chain.filter(exchange);
+            }
+
             if (request.getMethod() == HttpMethod.OPTIONS) {
                 return chain.filter(exchange);
             }
