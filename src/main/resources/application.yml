@@ -1,0 +1,35 @@
+server:
+  port: 8041
+
+spring:
+  application:
+    name: comment-service
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${MARIA_HOST}:${MARIA_PORT}/comment_service?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: ${MARIA_USERNAME}
+    password: ${MARIA_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:9092
+
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+eureka:
+    client:
+      service-url:
+        defaultZone: http://${EUREKA_HOST}:8761/eureka/
+      register-with-eureka: true
+      fetch-registry: true
+    instance:
+        instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+        hostname: ${INSTANCE_HOST}
