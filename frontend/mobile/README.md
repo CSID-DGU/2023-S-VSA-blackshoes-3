@@ -1,6 +1,6 @@
 This is a [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=240&section=header&text=Industry%20Collaboration%20Project&fontSize=45&animation=fadeIn&fontAlignY=28&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=55&descAlign=50)
+![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=240&section=header&text=University-Industry%20Collaboration%20Project&fontSize=50&animation=fadeIn&fontAlignY=28&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=50&descAlign=60)
 
 > Get Excellence Award
 
