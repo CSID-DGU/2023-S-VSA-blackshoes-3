@@ -8,6 +8,7 @@ import com.tavelvcommerce.commentservice.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,7 +23,7 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
     @Override
     @KafkaListener(topics = "video-create")
     @Transactional
-    public void createVideo(String payload) {
+    public void createVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         VideoInfoDto.VideoCreateDto videoCreateDto;
@@ -38,6 +39,7 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
                 .sellerId(videoCreateDto.getSellerId())
                 .build();
 
+        acknowledgment.acknowledge();
         try {
             videoRepository.save(video);
         } catch (Exception e) {
@@ -49,13 +51,15 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
     @Override
     @KafkaListener(topics = "video-delete")
     @Transactional
-    public void deleteVideo(String payload) {
+    public void deleteVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         String videoId = payload;
 
         try {
             videoRepository.deleteAllByVideoId(videoId);
+
+            acknowledgment.acknowledge();
         } catch (Exception e) {
             log.error("Error deleting video comment", e);
             return;
