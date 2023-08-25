@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +20,7 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
 
     @Override
     @KafkaListener(topics = "video-create")
-    public void createVideo(String payload) {
+    public void createVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         VideoDto videoDto;
@@ -35,11 +36,13 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
         } catch (Exception e) {
             log.error("Error saving video", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "video-update")
-    public void updateVideo(String payload) {
+    public void updateVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         VideoDto videoDto;
@@ -61,11 +64,13 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
         } catch (Exception e) {
             log.error("Error updating video", e);
         }
+
+        acknowledgment.acknowledge();
     }
 
     @Override
     @KafkaListener(topics = "video-delete")
-    public void deleteVideo(String payload) {
+    public void deleteVideo(String payload, Acknowledgment acknowledgment) {
         log.info("received payload='{}'", payload);
 
         String videoId = payload;
@@ -75,5 +80,7 @@ public class KafkaVideoInfoConsumerServiceImpl implements KafkaVideoInfoConsumer
         } catch (Exception e) {
             log.error("Error deleting video", e);
         }
+
+        acknowledgment.acknowledge();
     }
 }
