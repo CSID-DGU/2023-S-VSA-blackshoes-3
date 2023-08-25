@@ -1,0 +1,71 @@
+server:
+  port: 9127
+  tomcat:
+    max-http-form-post-size: ${MAX_FILE_SIZE}
+
+spring:
+  application:
+    name: upload-service
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${MARIA_HOST}:${MARIA_PORT}/upload_service?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: ${MARIA_USERNAME}
+    password: ${MARIA_PASSWORD}
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:9092
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    s3:
+      bucket: travel-v-commerce
+
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    cloudfront:
+      distribution-domain: ${CLOUDFRONT_DOMAIN}
+
+ffmpeg:
+  path: ${FFMPEG_PATH}
+ffprobe:
+  path: ${FFPROBE_PATH}
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
+eureka:
+  client:
+      service-url:
+        defaultZone: http://${EUREKA_HOST}:8761/eureka/
+      register-with-eureka: true
+      fetch-registry: true
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+video:
+  ttl: ${VIDEO_TTL}
+  directory: ${VIDEO_DIRECTORY}
+  check-interval: ${VIDEO_CHECK_INTERVAL}
+  encoding-resolutions: ${VIDEO_ENCODING_RESOLUTIONS}
