@@ -102,11 +102,21 @@
 ## Backend
 
 ### ERD
+#### User Service
 > ![User Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-user-service.png)
+
+#### Upload Service
 > ![Upload Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-upload-service.png)
+
+#### Personalized Service
 > ![Personalized Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-personalized-service.png)
-> ![Contents Slave Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/contents-slave-service.png)
+
+#### Contents Slave Service
+> ![Contents Slave Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-contents-slave-service.png)
+
+#### Comment Service
 > ![Comment Service](https://github.com/CSID-DGU/2023-S-VSA-blackshoes-3/raw/main/images/erd-comment-service.png)
+> 
 ### 시스템 구조도
 > ![WANDERLUST 시스템 구조도](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/7709a13e-3c18-4e01-8801-4e7a6b10d392)
 
