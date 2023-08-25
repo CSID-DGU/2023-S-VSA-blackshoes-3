@@ -43,6 +43,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         TokenDto tokenDto = jwtTokenProvider.createTokens(email, userType, userId);
         response.setStatus(HttpServletResponse.SC_OK);
-        response.sendRedirect(REDIRECT_URI + "/social-login?access-token=" + tokenDto.getAccessToken() + "&refresh-token=" + tokenDto.getRefreshToken());
+        response.sendRedirect(REDIRECT_URI + "/social-login?userId=" + userId + "&access-token=" + tokenDto.getAccessToken() + "&refresh-token=" + tokenDto.getRefreshToken());
     }
 }
