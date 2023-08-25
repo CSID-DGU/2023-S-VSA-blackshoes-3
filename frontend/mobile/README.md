@@ -1,6 +1,7 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=250&section=header&text=산학연계%20프로젝트%20우수상&fontSize=60&animation=fadeIn&fontAlignY=32&desc=2023%20DonggukUniversity%20Web%20Developer%20%20Traning%20Course&descAlignY=51&descAlign=70)
+![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=250&section=header&text=industry-academia-linked%20Project%20Excellence%20Award&fontSize=60&animation=fadeIn&fontAlignY=32&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=51&descAlign=70)
+
 
 # **Tour Video Commerce Platform *WANDERLUST***
 
