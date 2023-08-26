@@ -40,8 +40,6 @@
 </table>
 
 
-> 담당 파트 : CMS WEB Front-End
-
 <hr/>
 
 ## 연계 기관 : 모바일 앱 협동 조합
