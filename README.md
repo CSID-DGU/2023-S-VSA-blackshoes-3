@@ -96,18 +96,12 @@
 > ![Wanderlust 회원 정보 수정](https://github.com/dgu-web-t3-blackshoe/travel-v-commerce-web/assets/102159721/dc5b3d1f-627d-468e-be3d-3bed07aea6ae)
 
 ### CMS Mobile UI 디자인
-> <p align="center">
->  <img src="./frontend/mobile/assets/uiImg/main/videoHome.jpg" width="230" />
->  <img src="./frontend/mobile/assets/uiImg/main/videoSort.jpg" width="230" />
->  <img src="./frontend/mobile/assets/uiImg/main/myVideos.jpg" width="230" />
->  <img src="./frontend/mobile//assets/uiImg/main/log.jpg" width="230" />
-> </p>
-> <p align="center">
->  <img src="./frontend/mobile/assets/uiImg/playVideo/playVideoMain.jpg" width="230" />
->  <img src="./frontend/mobile/assets/uiImg/playVideo/videoAd.jpg" width="230"/>
->  <img src="./frontend/mobile/assets/uiImg/playVideo/videoComment.jpg" width="230" />
->  <img src="./frontend/mobile/assets/uiImg/playVideo/resolutionModal.jpg" width="230" />
-> </p>
+
+>  <img src="./frontend/mobile/assets/uiImg/main/mainAll.jpg" width="100%"/>
+>
+> 
+>  <img src="./frontend/mobile/assets/uiImg/playVideo/playVideoAll.jpg" width="100%"/>
+>
 > <p align="center">
 >  <img src="./frontend/mobile/assets/uiImg/search/gptSearch.jpg" width="190" />
 >  <img src="./frontend/mobile/assets/uiImg/search/autoComplete.jpg" width="190" />
@@ -115,7 +109,7 @@
 >  <img src="./frontend/mobile/assets/uiImg/myPage/comment.jpg" width="190" />
 >  <img src="./frontend/mobile/assets/uiImg/myPage/subscribeMangage.jpg" width="190" />
 > </p>
-> <p align="center">
+> <p align="center" width='100%'>
 >  <img src="./frontend/mobile/assets/uiImg/sign/loginMain.jpg" width="200" />
 >  <img src="./frontend/mobile/assets/uiImg/sign/signUp.jpg" width="200" />
 >  <img src="./frontend/mobile/assets/uiImg/sign/socialLogin.jpg" width="200" />
