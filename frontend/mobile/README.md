@@ -1,4 +1,5 @@
 This is a [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
 
 ![header](https://capsule-render.vercel.app/api?type=waving&color=1DAE86&height=220&section=header&text=University-Industry%20Collaboration%20Project&fontSize=40&animation=fadeIn&fontAlignY=28&desc=2023%20Dongguk%20University%20Web%20Developer%20Training%20Course&descAlignY=52&descAlign=65)
 > Get Excellence Award
@@ -98,5 +99,3 @@ This is a [**React Native**](https://reactnative.dev) project, bootstrapped usin
 ### Presentation
 > https://drive.google.com/drive/folders/1bAkz9T9r50oekLjm5VMDQYYh0wHFJowW
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
