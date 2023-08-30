@@ -102,14 +102,12 @@
 >  <img src="./frontend/mobile/assets/uiImg/main/myVideos.jpg" width="230" />
 >  <img src="./frontend/mobile//assets/uiImg/main/log.jpg" width="230" />
 > </p>
-
 > <p align="center">
 >  <img src="./frontend/mobile/assets/uiImg/playVideo/playVideoMain.jpg" width="230" />
 >  <img src="./frontend/mobile/assets/uiImg/playVideo/videoAd.jpg" width="230"/>
 >  <img src="./frontend/mobile/assets/uiImg/playVideo/videoComment.jpg" width="230" />
 >  <img src="./frontend/mobile/assets/uiImg/playVideo/resolutionModal.jpg" width="230" />
 > </p>
-
 > <p align="center">
 >  <img src="./frontend/mobile/assets/uiImg/search/gptSearch.jpg" width="190" />
 >  <img src="./frontend/mobile/assets/uiImg/search/autoComplete.jpg" width="190" />
@@ -117,7 +115,6 @@
 >  <img src="./frontend/mobile/assets/uiImg/myPage/comment.jpg" width="190" />
 >  <img src="./frontend/mobile/assets/uiImg/myPage/subscribeMangage.jpg" width="190" />
 > </p>
-
 > <p align="center">
 >  <img src="./frontend/mobile/assets/uiImg/sign/loginMain.jpg" width="200" />
 >  <img src="./frontend/mobile/assets/uiImg/sign/signUp.jpg" width="200" />
