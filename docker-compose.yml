@@ -1,0 +1,288 @@
+version: "3"
+services:
+  zookeeper:
+    hostname: zookeeper
+    image: wurstmeister/zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    networks:
+      - travel-v-commerce-net
+
+  kafka:
+    hostname: kafka
+    image: wurstmeister/kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+    depends_on:
+      - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  kafdrop:
+    hostname: kafdrop
+    image: obsidiandynamics/kafdrop
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - kafka
+      - zookeeper
+
+  user-service-maria:
+    image: mariadb
+    restart: always
+    ports:
+      - 3301:3301
+    networks:
+      - travel-v-commerce-net
+    volumes:
+      - .user_service/data/:/var/lib/mysql
+    environment:
+      MYSQL_TCP_PORT: 3301
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: user_service
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6000:6379
+    networks:
+      - travel-v-commerce-net
+    environment:
+      REDIS_PORT: 6379
+      REDIS_PASSWORD:
+    volumes:
+      - .redis/data/:/data
+
+  content-slave-service-mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27011:27011
+    command: mongod --port 27011
+    volumes:
+      - .content_slave_service/mongodb:/data/db
+    networks:
+      - travel-v-commerce-net
+    environment:
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
+      MONGO_INITDB_DATABASE: content_slave_service
+
+  upload-service-maria:
+    image: mariadb
+    restart: always
+    ports:
+      - 3321:3321
+    volumes:
+      - .upload_service/data/:/var/lib/mysql
+    networks:
+      - travel-v-commerce-net
+    environment:
+      MYSQL_TCP_PORT: 3321
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: upload_service
+
+  statistics-service-maria:
+    image: mariadb
+    restart: always
+    ports:
+      - 3331:3331
+    volumes:
+      - .statistics_service/data/:/var/lib/mysql
+    networks:
+      - travel-v-commerce-net
+    environment:
+      MYSQL_TCP_PORT: 3331
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: statistics_service
+
+  comment-service-maria:
+    image: mariadb
+    restart: always
+    ports:
+      - 3341:3341
+    volumes:
+      - .comment_service/data/:/var/lib/mysql
+    networks:
+      - travel-v-commerce-net
+    environment:
+      MYSQL_TCP_PORT: 3341
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: comment_service
+
+  personalized-service-maria:
+    image: mariadb
+    restart: always
+    ports:
+      - 3351:3351
+    volumes:
+      - .personalized_service/data/:/var/lib/mysql
+    networks:
+      - travel-v-commerce-net
+    environment:
+      MYSQL_TCP_PORT: 3351
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: personalized_service
+
+  user-servcie:
+    image: roberniro/blackshoes-user-service:dev6.0
+    ports:
+      - 8001:8001
+    restart: always
+    depends_on:
+      - user-service-maria
+      - redis
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_HOST: kafka
+      MARIA_HOST: user-service-maria
+      MARIA_PORT: 3301
+      MARIA_PASSWORD:
+      MARIA_USERNAME:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD:
+      MAIL_PASSWORD:
+      MAIL_USERNAME:
+      CLIENT_BASE_URL: http://localhost:3000
+      OAUTH_BASE_URL:
+      GOOGLE_CLIENT_ID:
+      GOOGLE_CLIENT_SECRET:
+      NAVER_CLIENT_ID:
+      NAVER_CLIENT_SECRET:
+      KAKAO_CLIENT_ID:
+      KAKAO_CLIENT_SECRET:
+      JWT_SECRET:
+      JWT_TOKEN_EXPIRY:
+      JWT_REFRESH_TOKEN_EXPIRY:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+
+  content-slave-service:
+    image: roberniro/blackshoes-content-slave-service:dev1.0
+    ports:
+      - 8011:8011
+    restart: always
+    depends_on:
+      - content-slave-service-mongo
+      - redis
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_HOST: kafka
+      MONGO_HOST: content-slave-service-mongo
+      MONGO_PORT: 27011
+      MONGO_PASSWORD:
+      MONGO_USERNAME:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD:
+      CHATGPT_API_KEY:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+
+  statistics-servcie:
+    image: roberniro/blackshoes-statistics-service:dev2.0
+    ports:
+      - 8031:8031
+    restart: always
+    depends_on:
+      - statistics-service-maria
+      - redis
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_HOST: kafka
+      MARIA_HOST: statistics-service-maria
+      MARIA_PORT: 3331
+      MARIA_PASSWORD:
+      MARIA_USERNAME:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+
+  comment-service:
+    image: roberniro/blackshoes-comment-service:dev3.0
+    ports:
+      - 8041:8041
+    restart: always
+    depends_on:
+      - comment-service-maria
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_HOST: kafka
+      MARIA_HOST: comment-service-maria
+      MARIA_PORT: 3341
+      MARIA_PASSWORD:
+      MARIA_USERNAME:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+
+  personalized-service:
+    image: roberniro/blackshoes-personalized-service:dev2.0
+    ports:
+      - 8051:8051
+    restart: always
+    depends_on:
+      - personalized-service-maria
+    networks:
+      - travel-v-commerce-net
+    environment:
+      KAFKA_HOST: kafka
+      MARIA_HOST: personalized-service-maria
+      MARIA_PORT: 3351
+      MARIA_PASSWORD:
+      MARIA_USERNAME:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+
+  discovery-servcie:
+    image: roberniro/blackshoes-discovery-service:dev1.0
+    ports:
+      - 8761:8761
+    restart: always
+    networks:
+      - travel-v-commerce-net
+
+  gateway-service:
+    image: roberniro/blackshoes-gateway-service:dev2.0
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      - travel-v-commerce-net
+    environment:
+      EUREKA_HOST:
+      INSTANCE_HOST:
+      JWT_SECRET:
+
+  web:
+    image: roberniro/blackshoes-web:dev1.0
+    ports:
+      - "5173:5173"
+    restart: always
+    expose:
+      - "5173"
+
+networks:
+  travel-v-commerce-net:
+    driver: bridge
